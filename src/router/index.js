@@ -12,7 +12,7 @@ const router = [
         component: Hello
     },
     {
-        path:'/arrow',
+        path:'/home',
         component: Arrow
     }
 ]

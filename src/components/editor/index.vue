@@ -1,6 +1,6 @@
 <template>
     <div class="graphEditorContainer">
-        <router-link to="/arrow">Arrow Signs</router-link>
+        <router-link to="/home">Click Here to go Home Screen</router-link>
         <graph-editor ref="graphEditor"/>
     </div>
 </template>

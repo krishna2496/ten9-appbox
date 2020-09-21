@@ -1,10 +1,11 @@
 <template>
-  <div class="graphContainer" tabindex="1" ref="container"/>
+  <div class="graphContainer" tabindex="1" ref="container" v-on:dblclick="doubleClick()"/>
 </template>
 
 <script>
 import {
   mxGraph as MxGraph,
+  mxUtils as MxUtils,
   mxEvent as MxEvent,
   mxPoint as MxPoint,
   mxRubberband as MxRubberBand,
@@ -68,6 +69,38 @@ export default {
       this.graph.pageBreakColor = 'none'
       MxRubberBand.prototype.defaultOpacity = 30
       MxEvent.disableContextMenu(this.container)
+            this.rubberBand = new MxRubberBand(this.graph)
+      this.graph.setCellsEditable(false) // 不可修改
+      this.keyHandler = new MxKeyHandler(this.graph)
+      this.keyHandler.bindKey(46, () => {
+        const cells = this.graph.getSelectionCells() || []
+
+        this.graph.removeCells(cells, true)
+      })
+
+            this.graph.popupMenuHandler.factoryMethod = (menu) => {
+        menu.addItem('Get Code', null, () => {
+          this.graphXml = this.encode(this.graph)
+          this.$alert(this.graphXml)
+          this.$message('Code')
+        })
+        menu.addSeparator()
+        menu.addItem('Remove', null, () => {
+          this.$confirm('Are you sure you want to clean graph', '!!!Warning!!!')
+            .then(() => {
+              this.graph.selectAll()
+              this.graph.removeCells(this.graph.getSelectionCells())
+              setTimeout(() => {
+                this.decode(this.graphXml, this.graph)
+                this.$message('Remove successfully')
+              }, 1000)
+            })
+            .catch(() => {
+
+            })
+
+        })
+      }
 
       this.graph.setPanning(true)
       this.graph.pageScale = GRAPH_CONFIG['scale']
@@ -120,6 +153,15 @@ export default {
       this.createGraph()
       this.initGraph()
       return this.graph
+    },
+    doubleClick()
+    {
+      console.log(this.graph);
+      var doc = MxUtils.createXmlDocument();
+      var node = doc.createElement('MyNode')
+      node.setAttribute('label', 'MyLabel');
+      node.setAttribute('attribute1', 'value1');
+      this.graph.insertVertex(this.graph.getDefaultParent(), null, node, this.graph.lastMouseX, this.graph.lastMouseY, 80, 30);
     }
   },
   activated() {
