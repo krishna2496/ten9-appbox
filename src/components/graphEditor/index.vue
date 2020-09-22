@@ -1,5 +1,5 @@
 <template>
-  <div class="graphContainer" tabindex="1" ref="container" v-on:dblclick="doubleClick()"/>
+  <div class="graphContainer" tabindex="1" ref="container" />
 </template>
 
 <script>
@@ -9,13 +9,16 @@ import {
   mxEvent as MxEvent,
   mxPoint as MxPoint,
   mxRubberband as MxRubberBand,
-  mxKeyHandler as MxKeyHandler
+  mxKeyHandler as MxKeyHandler,
+  mxGraphModel as MxGraphModel,
+  mxEventSource as MxEventSource
 } from 'mxgraph/javascript/mxClient'
 import {
   graphUtility,
   resetScrollbars,
   lazyZoom
 } from '@/components/graphEditor/graphUtility'
+import {dblClick} from '@/components/graphEditor/custom'
 import {PAGE_FORMATS} from '@/components/graphEditor/pageFormat'
 
 const GRAPH_CONFIG = {
@@ -111,6 +114,7 @@ export default {
       this.setPageFormat()
 
       graphUtility(this)
+      
 
       this.graph.view.validate()
       this.graph.sizeDidChange()
@@ -126,6 +130,9 @@ export default {
           evt.preventDefault()
         }
       })
+      this.graph.container.addEventListener('click', (evt) => {
+       dblClick(this,evt,[]);
+      }, true)
       this.keyHandler = new MxKeyHandler(this.graph)
       this.keyHandler.bindKey(46, () => {
         const cells = this.graph.getSelectionCells() || []

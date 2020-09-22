@@ -91,6 +91,8 @@ export default {
         this.graph.removeCells(cells, true)
       })
 
+
+      //Right Click Popup
       this.graph.popupMenuHandler.factoryMethod = (menu) => {
         menu.addItem('Get Code', null, () => {
           this.graphXml = this.encode(this.graph)
@@ -104,6 +106,13 @@ export default {
         })
         menu.addSeparator()
         menu.addItem('Remove All Data', null, () => {
+          console.log('menu',this.graph.getSelectionCells());
+              this.graph.selectAll()
+              this.graph.removeCells()
+        })
+        //undo
+         menu.addSeparator()
+        menu.addItem('Undo', null, () => {
           console.log('menu',this.graph.getSelectionCells());
               this.graph.selectAll()
               this.graph.removeCells()
@@ -199,11 +208,13 @@ export default {
     },
       doubleClick()
     {
-      var doc = MxUtils.createXmlDocument();
-      var node = doc.createElement('MyNode')
-      node.setAttribute('label', 'MyLabel');
-      node.setAttribute('attribute1', 'value1');
-      this.graph.insertVertex(this.graph.getDefaultParent(), null, node, this.graph.lastMouseX, this.graph.lastMouseY, 80, 30);
+      console.log(MxEvent);
+      MxGraph.prototype.dblClick(MxEvent,MxCell);
+      // var doc = MxUtils.createXmlDocument();
+      // var node = doc.createElement('MyNode')
+      // node.setAttribute('label', 'MyLabel');
+      // node.setAttribute('attribute1', 'value1');
+      // this.graph.insertVertex(this.graph.getDefaultParent(), null, node, this.graph.lastMouseX, this.graph.lastMouseY, 80, 30);
     },
     addShape(index)
     {
