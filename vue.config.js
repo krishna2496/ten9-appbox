@@ -2,6 +2,9 @@ module.exports = {
     publicPath: '/',
     outputDir: 'dist',
     lintOnSave: true,
+    configureWebpack: {
+      devtool: 'source-map'
+    },
     chainWebpack: (config) => {
       config.module
         .rule('')
@@ -15,4 +18,3 @@ module.exports = {
         .end()
     }
   }
-  
