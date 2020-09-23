@@ -11,14 +11,15 @@ import {
   mxRubberband as MxRubberBand,
   mxKeyHandler as MxKeyHandler,
   mxGraphModel as MxGraphModel,
-  mxEventSource as MxEventSource
+  mxEventSource as MxEventSource,
+  mxCellState as MxCellState
 } from 'mxgraph/javascript/mxClient'
 import {
   graphUtility,
   resetScrollbars,
   lazyZoom
 } from '@/components/graphEditor/graphUtility'
-import {dblClick} from '@/components/graphEditor/custom'
+import {dblClick,rotate} from '@/components/graphEditor/custom'
 import {PAGE_FORMATS} from '@/components/graphEditor/pageFormat'
 
 const GRAPH_CONFIG = {
@@ -87,6 +88,13 @@ export default {
           this.$alert(this.graphXml)
           this.$message('Code')
         })
+         menu.addSeparator()
+          menu.addItem('Rotate', null, () => {
+          const cells = this.graph.getSelectionCells()
+          //var cellState = new MxCellState(cells);
+          console.log('cells',cells);
+          rotate(cells);
+        })
         menu.addSeparator()
         menu.addItem('Remove', null, () => {
           this.$confirm('Are you sure you want to clean graph', '!!!Warning!!!')
@@ -130,8 +138,9 @@ export default {
           evt.preventDefault()
         }
       })
-      this.graph.container.addEventListener('click', (evt) => {
-       dblClick(this,evt,[]);
+      this.graph.container.addEventListener('dblclick', (evt) => {
+        console.log('vm',this);
+       dblClick(this.graph,evt,null);
       }, true)
       this.keyHandler = new MxKeyHandler(this.graph)
       this.keyHandler.bindKey(46, () => {

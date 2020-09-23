@@ -87,7 +87,7 @@ export default {
       this.keyHandler = new MxKeyHandler(this.graph)
       this.keyHandler.bindKey(46, () => {
         const cells = this.graph.getSelectionCells() || []
-
+        console.log('cells',cells);
         this.graph.removeCells(cells, true)
       })
 
