@@ -1,0 +1,3 @@
+### Checks everything for developers and make sure VS Code checks when you open files
+dist/
+node_modules/
