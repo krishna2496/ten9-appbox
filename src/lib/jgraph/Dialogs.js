@@ -2555,3 +2555,8 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		this.window.destroy();
 	}
 };
+
+module.exports = {
+	OpenDialog,
+	Dialog
+};

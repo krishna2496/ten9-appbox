@@ -4,61 +4,29 @@
 
 const {
 	mxClient,
-	mxToolbar,
-	mxEdgeStyle,
 	mxConnectionHandler,
-	mxEllipse,
-	mxConnectionConstraint,
-	mxWindow,
-	mxObjectCodec,
-	mxGraphModel,
-	mxActor,
-	mxPopupMenu,
-	mxShape,
 	mxEventObject,
 	mxGraph,
 	mxPopupMenuHandler,
 	mxPrintPreview,
 	mxEventSource,
 	mxRectangle,
-	mxVertexHandler,
 	mxMouseEvent,
 	mxGraphView,
-	mxCodecRegistry,
-	mxImage,
-	mxGeometry,
-	mxCellState,
-	mxRubberband,
-	mxConstraintHandler,
-	mxKeyHandler,
-	mxDragSource,
 	mxUtils,
 	mxEvent,
+	mxPolyline,
 	mxCodec,
-	mxCell,
 	mxConstants,
 	mxPoint,
+	mxPopupMenu,
 	mxGraphHandler,
-	mxCylinder,
-	mxCellRenderer,
-	mxText,
 	mxUndoManager,
-	mxStencilRegistry,
-	mxStencil,
-	mxSvgCanvas2D,
-	mxCellHighlight,
-	mxStackLayout,
-	mxConnector,
-	mxEdgeHandler,
-	mxGuide,
-	mxCellEditor,
-	mxSelectionCellsHandler,
-	mxOutline,
-	mxPanningHandler,
 	mxRectangleShape,
 } = require('mxgraph/javascript/mxClient');
 
 const Graph = require('./Graph');
+const Base64 = require('../deflate/base64');
 
 /**
  * Editor constructor executed on page load.
@@ -2821,4 +2789,8 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 
 })();
 
-module.exports = Editor;
+module.exports = {
+	Editor,
+	Dialog,
+	ErrorDialog,
+};

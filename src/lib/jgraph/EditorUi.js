@@ -2,66 +2,32 @@
  * Copyright (c) 2006-2012, JGraph Ltd
  */
 
-
 const {
 	mxClient,
-	mxToolbar,
-	mxEdgeStyle,
-	mxConnectionHandler,
-	mxEllipse,
-	mxConnectionConstraint,
-	mxWindow,
-	mxObjectCodec,
-	mxGraphModel,
-	mxActor,
-	mxPopupMenu,
-	mxShape,
-	mxEventObject,
-	mxGraph,
-	mxPopupMenuHandler,
-	mxPrintPreview,
-	mxEventSource,
-	mxRectangle,
-	mxVertexHandler,
-	mxMouseEvent,
-	mxGraphView,
-	mxCodecRegistry,
-	mxImage,
-	mxGeometry,
-	mxCellState,
-	mxRubberband,
-	mxConstraintHandler,
-	mxKeyHandler,
-	mxDragSource,
-	mxUtils,
-	mxEvent,
-	mxCodec,
-	mxCell,
-	mxConstants,
-	mxPoint,
-	mxGraphHandler,
-	mxCylinder,
-	mxCellRenderer,
-	mxText,
-	mxUndoManager,
-	mxStencilRegistry,
-	mxStencil,
-	mxSvgCanvas2D,
-	mxCellHighlight,
-	mxStackLayout,
-	mxConnector,
-	mxEdgeHandler,
-	mxGuide,
-	mxCellEditor,
-	mxSelectionCellsHandler,
-	mxOutline,
-	mxPanningHandler,
-	mxResources,
 	mxClipboard,
+	mxCodecRegistry,
+	mxConnectionHandler,
+	mxConstants,
+	mxEvent,
+	mxEventObject,
+	mxEventSource,
+	mxGraphModel,
+	mxImage,
+	mxKeyHandler,
+	mxObjectCodec,
+	mxObjectIdentity,
+	mxOutline,
+	mxPoint,
+	mxPopupMenu,
+	mxRectangle,
+	mxResources,
+	mxStackLayout,
+	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
-const Editor = require('./Editor');
+const { Editor, Dialog, ErrorDialog } = require('./Editor');
 const Actions = require('./Actions');
+const Sidebar = require('./Sidebar');
 
 const urlParams = {};
 
@@ -3531,7 +3497,7 @@ EditorUi.prototype.createUi = function()
 
 	// TEN9: Implement this.sidebar
 	// Creates the sidebar
-	this.sidebar = (this.editor.chromeless || true) ? null : this.createSidebar(this.sidebarContainer);
+	this.sidebar = (this.editor.chromeless) ? null : this.createSidebar(this.sidebarContainer);
 	
 	if (this.sidebar != null)
 	{

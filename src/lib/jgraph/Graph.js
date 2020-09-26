@@ -2,64 +2,70 @@
  * Copyright (c) 2006-2012, JGraph Ltd
  */
 const {
-	mxClient,
-	mxToolbar,
-	mxEdgeStyle,
-	mxConnectionHandler,
-	mxEllipse,
-	mxConnectionConstraint,
-	mxWindow,
-	mxObjectCodec,
-	mxGraphModel,
-	mxActor,
-	mxPopupMenu,
-	mxShape,
-	mxEventObject,
-	mxGraph,
-	mxPopupMenuHandler,
-	mxPrintPreview,
-	mxEventSource,
-	mxRectangle,
-	mxVertexHandler,
-	mxMouseEvent,
-	mxGraphView,
-	mxCodecRegistry,
-	mxImage,
-	mxGeometry,
-	mxCellState,
-	mxRubberband,
-	mxConstraintHandler,
-	mxKeyHandler,
-	mxDragSource,
-	mxUtils,
-	mxEvent,
-	mxCodec,
 	mxCell,
-	mxConstants,
-	mxPoint,
-	mxGraphHandler,
-	mxCylinder,
-	mxCellRenderer,
-	mxText,
-	mxUndoManager,
-	mxStencilRegistry,
-	mxStencil,
-	mxSvgCanvas2D,
-	mxCellHighlight,
-	mxStackLayout,
-	mxConnector,
-	mxEdgeHandler,
-	mxGuide,
 	mxCellEditor,
-	mxSelectionCellsHandler,
+	mxCellHighlight,
+	mxCellRenderer,
+	mxCellState,
+	mxClient,
+	mxCodec,
+	mxConnectionConstraint,
+	mxConnectionHandler,
+	mxConnector,
+	mxConstants,
+	mxConstraintHandler,
+	mxDictionary,
+	mxDragSource,
+	mxElbowEdgeHandler,
+	mxEdgeHandler,
+	mxEdgeStyle,
+	mxEllipse,
+	mxEvent,
+	mxEventObject,
+	mxGeometry,
+	mxGeometryChange,
+	mxGraph,
+	mxGraphHandler,
+	mxGraphModel,
+	mxGraphView,
+	mxGuide,
+	mxImage,
+	mxImageShape,
+	mxLayoutManager,
+	mxObjectIdentity,
 	mxOutline,
 	mxPanningHandler,
+	mxPoint,
+	mxPolyline,
+	mxPopupMenu,
+	mxPopupMenuHandler,
+	mxRectangle,
 	mxResources,
-	mxLayoutManager,
-	mxDictionary,
-	mxGeometryChange,
+	mxRubberband,
+	mxSelectionCellsHandler,
+	mxShape,
+    mxStackLayout,
+	mxStencil,
+	mxStencilRegistry,
+	mxStyleRegistry,
+	mxSvgCanvas2D,
+	mxText,
+	mxUtils,
 	mxValueChange,
+	mxVertexHandler,
 } = require('mxgraph/javascript/mxClient');
+
+const Sidebar = require('./Sidebar');
+// TEN9: TODO: replace sanitizer and remove use of window here
+const sanitizer = require('../sanitizer/sanitizer.min');
+const html_sanitize = window.html_sanitize;
+
+const pako = require('../deflate/pako.min');
+const Base64 = require('../deflate/base64');
+
+
+const STENCIL_PATH = 'stencils';
+const STYLE_PATH = 'styles';
 
 const urlParams = {};
 
@@ -1329,6 +1335,8 @@ Graph.decompress = function(data, inflate, checked)
 		var inflated = decodeURIComponent((inflate) ?
 			pako.inflate(tmp, {to: 'string'}) :
 			pako.inflateRaw(tmp, {to: 'string'}));
+
+		console.log(inflated);
 
 		return (checked) ? inflated : Graph.zapGremlins(inflated);
 	}
@@ -6022,10 +6030,12 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.loadStylesheet = function()
 		{
-			var node = (this.themes != null) ? this.themes[this.defaultThemeName] :
-				(!mxStyleRegistry.dynamicLoading) ? null :
-				mxUtils.load(STYLE_PATH + '/default.xml').getDocumentElement();
-			
+			// TEN9: Themes updatea
+			var node = mxUtils.load(STYLE_PATH + '/default.xml').getDocumentElement();
+			// var node = (this.themes != null) ? this.themes[this.defaultThemeName] :
+			// 	(!mxStyleRegistry.dynamicLoading) ? null :
+			// 	mxUtils.load(STYLE_PATH + '/default.xml').getDocumentElement();
+
 			if (node != null)
 			{
 				var dec = new mxCodec(node.ownerDocument);
@@ -10471,8 +10481,9 @@ if (typeof mxVertexHandler != 'undefined')
 		mxEdgeHandler.prototype.fixedHandleImage = HoverIcons.prototype.fixedHandle;
 		mxEdgeHandler.prototype.labelHandleImage = HoverIcons.prototype.secondaryHandle;
 		mxOutline.prototype.sizerImage = HoverIcons.prototype.mainHandle;
-		
-		if (window.Sidebar != null)
+
+		// TEN9: Force sidebar
+		if (true || window.Sidebar != null)
 		{
 			Sidebar.prototype.triangleUp = HoverIcons.prototype.triangleUp;
 			Sidebar.prototype.triangleRight = HoverIcons.prototype.triangleRight;

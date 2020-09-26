@@ -5,6 +5,10 @@
 </template>
 
 <style lang="scss">
+@import './styles/common.css';
+@import './styles/grapheditor.css';
+
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
