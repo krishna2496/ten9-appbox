@@ -27,6 +27,8 @@ const {
 
 const { Editor, Dialog, ErrorDialog } = require('./Editor');
 const Actions = require('./Actions');
+// register Shapes
+require('./Shapes');
 const Sidebar = require('./Sidebar');
 
 const urlParams = {};
