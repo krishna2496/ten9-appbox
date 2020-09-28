@@ -25,22 +25,21 @@ const {
 window.mxCell = mxCell;
 window.mxGeometry = mxGeometry;
 window.mxGraphModel = mxGraphModel;
-window.mxClient = mxClient;
-window.mxCodec = mxCodec;
-window.mxConstants = mxConstants;
-window.mxDictionary = mxDictionary;
-window.mxDragSource = mxDragSource;
-window.mxEvent = mxEvent;
-window.mxEventObject = mxEventObject;
-window.mxGeometry = mxGeometry;
-window.mxGraphModel = mxGraphModel;
 window.mxPoint = mxPoint;
-window.mxPopupMenu = mxPopupMenu;
-window.mxRectangle = mxRectangle;
-window.mxResources = mxResources;
-window.mxStencilRegistry = mxStencilRegistry;
-window.mxStackLayout = mxStackLayout;
-window.mxUtils = mxUtils;
+
+// window.mxClient = mxClient;
+// window.mxCodec = mxCodec;
+// window.mxConstants = mxConstants;
+// window.mxDictionary = mxDictionary;
+// window.mxDragSource = mxDragSource;
+// window.mxEvent = mxEvent;
+// window.mxEventObject = mxEventObject;
+// window.mxPopupMenu = mxPopupMenu;
+// window.mxRectangle = mxRectangle;
+// window.mxResources = mxResources;
+// window.mxStencilRegistry = mxStencilRegistry;
+// window.mxStackLayout = mxStackLayout;
+// window.mxUtils = mxUtils;
 
 const { Dialog } = require('./Editor');
 
