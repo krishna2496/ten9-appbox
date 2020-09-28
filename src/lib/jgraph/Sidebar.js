@@ -3,28 +3,52 @@
  */
 
 const {
-	mxClient,
-	mxGraphModel,
-	mxPopupMenu,
-	mxEventObject,
-	mxRectangle,
-	mxGeometry,
-	mxDragSource,
-	mxUtils,
-	mxEvent,
-	mxCodec,
 	mxCell,
+	mxClient,
+	mxCodec,
 	mxConstants,
+	mxDictionary,
+	mxDragSource,
+	mxEvent,
+	mxEventObject,
+	mxGeometry,
+	mxGraphModel,
 	mxPoint,
+	mxPopupMenu,
+	mxRectangle,
+	mxResources,
 	mxStencilRegistry,
 	mxStackLayout,
-	mxResources,
-	mxDictionary,
+	mxUtils,
 } = require('mxgraph/javascript/mxClient');
+
+window.mxCell = mxCell;
+window.mxGeometry = mxGeometry;
+window.mxGraphModel = mxGraphModel;
+window.mxClient = mxClient;
+window.mxCodec = mxCodec;
+window.mxConstants = mxConstants;
+window.mxDictionary = mxDictionary;
+window.mxDragSource = mxDragSource;
+window.mxEvent = mxEvent;
+window.mxEventObject = mxEventObject;
+window.mxGeometry = mxGeometry;
+window.mxGraphModel = mxGraphModel;
+window.mxPoint = mxPoint;
+window.mxPopupMenu = mxPopupMenu;
+window.mxRectangle = mxRectangle;
+window.mxResources = mxResources;
+window.mxStencilRegistry = mxStencilRegistry;
+window.mxStackLayout = mxStackLayout;
+window.mxUtils = mxUtils;
 
 const { Dialog } = require('./Editor');
 
+const pako = require('../deflate/pako.min');
+const Base64 = require('../deflate/base64');
+
 const STENCIL_PATH = 'stencils';
+const STYLE_PATH = 'styles';
 const urlParams = {};
 
 /**
@@ -107,6 +131,14 @@ Sidebar.prototype.init = function()
 {
 	var dir = STENCIL_PATH;
 	
+	this.addImagePalette('clipart', mxResources.get('clipart'), dir + '/clipart/', '_128x128.png',
+		['Earth_globe', 'Empty_Folder', 'Full_Folder', 'Gear', 'Lock', 'Software', 'Virus', 'Email',
+		 'Database', 'Router_Icon', 'iPad', 'iMac', 'Laptop', 'MacBook', 'Monitor_Tower', 'Printer',
+		 'Server_Tower', 'Workstation', 'Firewall_02', 'Wireless_Router_N', 'Credit_Card',
+		 'Piggy_Bank', 'Graph', 'Safe', 'Shopping_Cart', 'Suit1', 'Suit2', 'Suit3', 'Pilot1',
+		 'Worker1', 'Soldier1', 'Doctor1', 'Tech1', 'Security1', 'Telesales1'], null,
+		 {'Wireless_Router_N': 'wireless router switch wap wifi access point wlan',
+		  'Router_Icon': 'router switch'});
 	this.addSearchPalette(true);
 	this.addGeneralPalette(true);
 	this.addMiscPalette(false);
@@ -3400,6 +3432,7 @@ Sidebar.prototype.createVertexTemplateFromData = function(data, width, height, t
 	var codec = new mxCodec(doc);
 
 	var model = new mxGraphModel();
+	console.log(model);
 	codec.decode(doc.documentElement, model);
 	
 	var cells = this.graph.cloneCells(model.root.getChildAt(0).children);

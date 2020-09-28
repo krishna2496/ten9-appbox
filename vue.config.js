@@ -16,7 +16,7 @@ module.exports = {
           'mxText,mxSvgCanvas2D,mxCellHighlight,mxStackLayout,mxConnector,mxEdgeHandler,mxGuide,mxCellEditor,' +
           'mxSelectionCellsHandler,mxOutline,mxPanningHandler,mxResources,mxLayoutManager,mxRectangleShape,mxDictionary,' +
           'mxClipboard,mxGeometryChange,mxValueChange,mxPolyline,mxImageShape,mxElbowEdgeHandler,mxObjectIdentity,' +
-          'mxStyleRegistry',
+          'mxStyleRegistry,mxGraphLayout,mxLine,mxHandle',
       )
       .end();
   },

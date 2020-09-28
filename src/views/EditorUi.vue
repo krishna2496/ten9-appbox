@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-ui" ref="container" />
+  <div class="geEditor" ref="container" />
 </template>
 
 <script>
@@ -37,10 +37,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.editor-ui {
-  width: 100%;
-  height: 100%;
-}
-</style>

@@ -26,12 +26,15 @@ const {
 	mxGeometryChange,
 	mxGraph,
 	mxGraphHandler,
+	mxGraphLayout,
 	mxGraphModel,
 	mxGraphView,
 	mxGuide,
+	mxHandle,
 	mxImage,
 	mxImageShape,
 	mxLayoutManager,
+	mxLine,
 	mxObjectIdentity,
 	mxOutline,
 	mxPanningHandler,
@@ -55,6 +58,9 @@ const {
 	mxVertexHandler,
 } = require('mxgraph/javascript/mxClient');
 
+window.mxGraphModel = mxGraphModel;
+window.mxCell = mxCell;
+
 const Sidebar = require('./Sidebar');
 // TEN9: TODO: replace sanitizer and remove use of window here
 const sanitizer = require('../sanitizer/sanitizer.min');
@@ -62,7 +68,6 @@ const html_sanitize = window.html_sanitize;
 
 const pako = require('../deflate/pako.min');
 const Base64 = require('../deflate/base64');
-
 
 const STENCIL_PATH = 'stencils';
 const STYLE_PATH = 'styles';
