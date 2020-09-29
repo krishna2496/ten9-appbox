@@ -3343,9 +3343,6 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 	var contLeft = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) : 0;
 	this.diagramContainer.style.left =  (contLeft + diagContOffset.x) + 'px';
 	this.diagramContainer.style.top = (tmp + diagContOffset.y) + 'px';
-	// TEN9: Added diagramContainer Height
-	// TEN9: TODO: Debug why this was needed.
-	this.diagramContainer.style.height = '880px';
 	this.footerContainer.style.height = this.footerHeight + 'px';
 	this.hsplit.style.top = this.sidebarContainer.style.top;
 	this.hsplit.style.bottom = (this.footerHeight + off) + 'px';
