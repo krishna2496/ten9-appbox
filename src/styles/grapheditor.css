@@ -547,7 +547,7 @@ div.mxWindow .geButton {
 	white-space: nowrap;
 	border-radius:3px;
 	background-color:#0052cc;
-	currsor:pointer;
+	cursor: pointer;
 	transition: background-color 0.1s ease-out;
 	overflow:hidden;
 	text-overflow: ellipsis;
@@ -833,6 +833,7 @@ html td.mxWindowTitle {
 }
 .geTemplateDlg ::-webkit-scrollbar-track {
 	background:whiteSmoke;
+	box-shadow:inset 0 0 4px rgba(0,0,0,0.1);
 	-webkit-box-shadow:inset 0 0 4px rgba(0,0,0,0.1);
 }
 .geTemplateDlg ::-webkit-scrollbar-thumb {

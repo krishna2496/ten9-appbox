@@ -22,26 +22,11 @@ const {
 	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
+// TEN9: TODO: Centralize all globals
 window.mxCell = mxCell;
 window.mxGeometry = mxGeometry;
 window.mxGraphModel = mxGraphModel;
 window.mxPoint = mxPoint;
-
-// window.mxClient = mxClient;
-// window.mxCodec = mxCodec;
-// window.mxConstants = mxConstants;
-// window.mxDictionary = mxDictionary;
-// window.mxDragSource = mxDragSource;
-// window.mxEvent = mxEvent;
-// window.mxEventObject = mxEventObject;
-// window.mxPopupMenu = mxPopupMenu;
-// window.mxRectangle = mxRectangle;
-// window.mxResources = mxResources;
-// window.mxStencilRegistry = mxStencilRegistry;
-// window.mxStackLayout = mxStackLayout;
-// window.mxUtils = mxUtils;
-
-const { Dialog } = require('./Editor');
 
 const pako = require('../deflate/pako.min');
 const Base64 = require('../deflate/base64');
@@ -53,8 +38,12 @@ const urlParams = {};
 /**
  * Construcs a new sidebar for the given editor.
  */
-function Sidebar(editorUi, container)
+// TEN9: Importing Dialog here is a circular dependency. Pass in dialog instead
+var Dialog = {};
+
+function Sidebar(editorUi, container, dialogCtor)
 {
+	Dialog = dialogCtor;
 	this.editorUi = editorUi;
 	this.container = container;
 	this.palettes = new Object();
@@ -130,16 +119,8 @@ Sidebar.prototype.init = function()
 {
 	var dir = STENCIL_PATH;
 	
-	this.addImagePalette('clipart', mxResources.get('clipart'), dir + '/clipart/', '_128x128.png',
-		['Earth_globe', 'Empty_Folder', 'Full_Folder', 'Gear', 'Lock', 'Software', 'Virus', 'Email',
-		 'Database', 'Router_Icon', 'iPad', 'iMac', 'Laptop', 'MacBook', 'Monitor_Tower', 'Printer',
-		 'Server_Tower', 'Workstation', 'Firewall_02', 'Wireless_Router_N', 'Credit_Card',
-		 'Piggy_Bank', 'Graph', 'Safe', 'Shopping_Cart', 'Suit1', 'Suit2', 'Suit3', 'Pilot1',
-		 'Worker1', 'Soldier1', 'Doctor1', 'Tech1', 'Security1', 'Telesales1'], null,
-		 {'Wireless_Router_N': 'wireless router switch wap wifi access point wlan',
-		  'Router_Icon': 'router switch'});
-	this.addSearchPalette(false);
-	this.addGeneralPalette(false);
+	this.addSearchPalette(true);
+	this.addGeneralPalette(true);
 	this.addMiscPalette(false);
 	this.addAdvancedPalette(false);
 	this.addBasicPalette(dir);
@@ -3662,7 +3643,7 @@ Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, 
 		}))(items[i], (titles != null) ? titles[i] : null, (tags != null) ? tags[items[i]] : null);
 	}
 
-	this.addPaletteFunctions(id, title, true, fns);
+	this.addPaletteFunctions(id, title, false, fns);
 };
 
 /**

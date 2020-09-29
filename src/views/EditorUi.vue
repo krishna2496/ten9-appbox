@@ -3,7 +3,13 @@
 </template>
 
 <script>
-import EditorUi from '@/lib/jgraph/EditorUi.js';
+import { mxResources } from 'mxgraph/javascript/mxClient';
+import EditorUi from '@/lib/jgraph/EditorUi';
+import { Editor } from '@/lib/jgraph/Editor';
+import Graph from '@/lib/jgraph/Graph';
+
+const defaultStyleXml = require('@/styles/default.xml');
+const resourcesFile = require('@/locale/grapheditor.txt');
 
 export default {
   name: 'EditorUi',
@@ -15,25 +21,18 @@ export default {
     };
   },
   mounted() {
-    this.editorUi = new EditorUi(null, this.$refs.container);
+    mxResources.loadDefaultBundle = false;
+    mxResources.parse(resourcesFile);
 
+    const parser = new DOMParser();
+    const defaultStyleDoc = parser.parseFromString(defaultStyleXml, 'application/xml');
+
+    var themes = {};
+    themes[Graph.prototype.defaultThemeName] = defaultStyleDoc.documentElement;
+
+    this.editor = new Editor(false, themes);
+    this.editorUi = new EditorUi(this.editor, this.$refs.container);
     this.graph = this.editorUi.editor.graph;
-
-    // Gets the default parent for inserting new cells. This
-    // is normally the first child of the root (ie. layer 0).
-    var parent = this.graph.getDefaultParent();
-
-    // Adds cells to the model in a single step
-    this.graph.getModel().beginUpdate();
-    try {
-      let v1 = this.graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
-      let v2 = this.graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
-
-      this.graph.insertEdge(parent, null, '', v1, v2);
-    } finally {
-      // Updates the display
-      this.graph.getModel().endUpdate();
-    }
   },
 };
 </script>

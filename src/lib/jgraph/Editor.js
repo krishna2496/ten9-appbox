@@ -2358,7 +2358,6 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 						mxEvent.addListener(this.backgroundPageShape.node, 'dblclick',
 							mxUtils.bind(this, function(evt)
 							{
-								console.log('hello');
 								graph.dblClick(evt);
 							})
 						);

@@ -22,16 +22,18 @@ const {
 	mxRectangle,
 	mxResources,
 	mxStackLayout,
+	mxStylesheet,
 	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
 const { Editor, Dialog, ErrorDialog } = require('./Editor');
 const Actions = require('./Actions');
-// register Shapes
-require('./Shapes');
 const Sidebar = require('./Sidebar');
-
+const Shapes = require('./Shapes');
 const urlParams = {};
+
+// TEN9: TODO: Centralize all globals
+window.mxStylesheet = mxStylesheet;
 
 /**
  * Constructs a new graph editor
@@ -3472,7 +3474,7 @@ EditorUi.prototype.createUi = function()
 {
 	// TEN9: Implement this.menus
 	// Creates menubar
-	this.menubar = (this.editor.chromeless || !this.menus) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
+	this.menubar = (this.editor.chromeless || !this.menus || true) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
 	
 	if (this.menubar != null)
 	{
@@ -3597,7 +3599,7 @@ EditorUi.prototype.createToolbar = function(container)
  */
 EditorUi.prototype.createSidebar = function(container)
 {
-	return new Sidebar(this, container);
+	return new Sidebar(this, container, Dialog);
 };
 
 /**

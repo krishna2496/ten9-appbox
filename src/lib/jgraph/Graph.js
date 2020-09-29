@@ -1341,8 +1341,6 @@ Graph.decompress = function(data, inflate, checked)
 			pako.inflate(tmp, {to: 'string'}) :
 			pako.inflateRaw(tmp, {to: 'string'}));
 
-		console.log(inflated);
-
 		return (checked) ? inflated : Graph.zapGremlins(inflated);
 	}
 };
@@ -6035,11 +6033,9 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.loadStylesheet = function()
 		{
-			// TEN9: Themes updatea
-			var node = mxUtils.load(STYLE_PATH + '/default.xml').getDocumentElement();
-			// var node = (this.themes != null) ? this.themes[this.defaultThemeName] :
-			// 	(!mxStyleRegistry.dynamicLoading) ? null :
-			// 	mxUtils.load(STYLE_PATH + '/default.xml').getDocumentElement();
+			var node = (this.themes != null) ? this.themes[this.defaultThemeName] :
+				(!mxStyleRegistry.dynamicLoading) ? null :
+				mxUtils.load(STYLE_PATH + '/default.xml').getDocumentElement();
 
 			if (node != null)
 			{
@@ -7245,7 +7241,6 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.dblClick = function(evt, cell)
 		{
-			console.log('hello');			
 			if (this.isEnabled())
 			{
 				var pt = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));

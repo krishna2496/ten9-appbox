@@ -1,6 +1,6 @@
-### Checks everything for developers and make sure VS Code checks when you open files
 dist/
 node_modules/
-src/lib/jgraph/
 **/*.min.js
 src/lib/deflate/
+src/lib/jgraph/
+src/lib/jscolor/
