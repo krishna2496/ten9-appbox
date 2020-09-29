@@ -1,67 +1,80 @@
+// TEN9: Added imports
+const {
+	mxCell,
+	mxCellEditor,
+	mxCellHighlight,
+	mxCellRenderer,
+	mxCellState,
+	mxClient,
+	mxCodec,
+	mxConnectionConstraint,
+	mxConnectionHandler,
+	mxConnector,
+	mxConstants,
+	mxConstraintHandler,
+	mxDictionary,
+	mxDragSource,
+	mxElbowEdgeHandler,
+	mxEdgeHandler,
+	mxEdgeStyle,
+	mxEllipse,
+	mxEvent,
+	mxEventObject,
+	mxGeometry,
+	mxGeometryChange,
+	mxGraph,
+	mxGraphHandler,
+	mxGraphLayout,
+	mxGraphModel,
+	mxGraphView,
+	mxGuide,
+	mxHandle,
+	mxImage,
+	mxImageShape,
+	mxLayoutManager,
+	mxLine,
+	mxObjectIdentity,
+	mxOutline,
+	mxPanningHandler,
+	mxPoint,
+	mxPolyline,
+	mxPopupMenu,
+	mxPopupMenuHandler,
+	mxRectangle,
+	mxResources,
+	mxRubberband,
+	mxSelectionCellsHandler,
+	mxShape,
+    mxStackLayout,
+	mxStencil,
+	mxStencilRegistry,
+	mxStyleRegistry,
+	mxSvgCanvas2D,
+	mxText,
+	mxUtils,
+	mxValueChange,
+	mxVertexHandler,
+} = require('mxgraph/javascript/mxClient');
+
+window.mxGraphModel = mxGraphModel;
+window.mxCell = mxCell;
+
+const Sidebar = require('./Sidebar');
+// TEN9: TODO: replace sanitizer and remove use of window here
+const sanitizer = require('../sanitizer/sanitizer.min');
+const html_sanitize = window.html_sanitize;
+
+const pako = require('../deflate/pako.min');
+const Base64 = require('../deflate/base64');
+
+const STENCIL_PATH = 'stencils';
+const STYLE_PATH = 'styles';
+
+const urlParams = {};
+
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
-const {
-	mxClient,
-	mxToolbar,
-	mxEdgeStyle,
-	mxConnectionHandler,
-	mxEllipse,
-	mxConnectionConstraint,
-	mxWindow,
-	mxObjectCodec,
-	mxGraphModel,
-	mxActor,
-	mxPopupMenu,
-	mxShape,
-	mxEventObject,
-	mxGraph,
-	mxPopupMenuHandler,
-	mxPrintPreview,
-	mxEventSource,
-	mxRectangle,
-	mxVertexHandler,
-	mxMouseEvent,
-	mxGraphView,
-	mxCodecRegistry,
-	mxImage,
-	mxGeometry,
-	mxCellState,
-	mxRubberband,
-	mxConstraintHandler,
-	mxKeyHandler,
-	mxDragSource,
-	mxUtils,
-	mxEvent,
-	mxCodec,
-	mxCell,
-	mxConstants,
-	mxPoint,
-	mxGraphHandler,
-	mxCylinder,
-	mxCellRenderer,
-	mxText,
-	mxUndoManager,
-	mxStencilRegistry,
-	mxStencil,
-	mxSvgCanvas2D,
-	mxCellHighlight,
-	mxStackLayout,
-	mxConnector,
-	mxEdgeHandler,
-	mxGuide,
-	mxCellEditor,
-	mxSelectionCellsHandler,
-	mxOutline,
-	mxPanningHandler,
-	mxResources,
-	mxLayoutManager,
-	mxDictionary,
-	mxGeometryChange,
-	mxValueChange,
-} = require('mxgraph/javascript/mxClient');
-
-const urlParams = {};
 
 // Workaround for allowing target="_blank" in HTML sanitizer
 // see https://code.google.com/p/google-caja/issues/detail?can=2&q=&colspec=ID%20Type%20Status%20Priority%20Owner%20Summary&groupby=&sort=&id=1296
@@ -6025,7 +6038,7 @@ if (typeof mxVertexHandler != 'undefined')
 			var node = (this.themes != null) ? this.themes[this.defaultThemeName] :
 				(!mxStyleRegistry.dynamicLoading) ? null :
 				mxUtils.load(STYLE_PATH + '/default.xml').getDocumentElement();
-			
+
 			if (node != null)
 			{
 				var dec = new mxCodec(node.ownerDocument);
@@ -7230,7 +7243,6 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.dblClick = function(evt, cell)
 		{
-			console.log('hello');			
 			if (this.isEnabled())
 			{
 				var pt = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
@@ -10471,8 +10483,9 @@ if (typeof mxVertexHandler != 'undefined')
 		mxEdgeHandler.prototype.fixedHandleImage = HoverIcons.prototype.fixedHandle;
 		mxEdgeHandler.prototype.labelHandleImage = HoverIcons.prototype.secondaryHandle;
 		mxOutline.prototype.sizerImage = HoverIcons.prototype.mainHandle;
-		
-		if (window.Sidebar != null)
+
+		// TEN9: Force sidebar
+		if (true || window.Sidebar != null)
 		{
 			Sidebar.prototype.triangleUp = HoverIcons.prototype.triangleUp;
 			Sidebar.prototype.triangleRight = HoverIcons.prototype.triangleRight;
@@ -11450,4 +11463,5 @@ if (typeof mxVertexHandler != 'undefined')
 	})();
 }
 
+// TEN9: Added exports
 module.exports = Graph;

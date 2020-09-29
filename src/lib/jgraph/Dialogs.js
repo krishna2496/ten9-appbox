@@ -1,6 +1,9 @@
+import { mxJSColor } from '../jscolor/jscolor';
+
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
+
 /**
  * Constructs a new open dialog.
  */
@@ -2554,4 +2557,9 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		mxEvent.removeListener(window, 'resize', resizeListener);
 		this.window.destroy();
 	}
+};
+
+module.exports = {
+	OpenDialog,
+	Dialog
 };

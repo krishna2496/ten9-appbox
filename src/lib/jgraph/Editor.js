@@ -1,64 +1,33 @@
-/**
- * Copyright (c) 2006-2012, JGraph Ltd
- */
-
+// TEN9: Added imports
 const {
 	mxClient,
-	mxToolbar,
-	mxEdgeStyle,
 	mxConnectionHandler,
-	mxEllipse,
-	mxConnectionConstraint,
-	mxWindow,
-	mxObjectCodec,
-	mxGraphModel,
-	mxActor,
-	mxPopupMenu,
-	mxShape,
 	mxEventObject,
 	mxGraph,
 	mxPopupMenuHandler,
 	mxPrintPreview,
 	mxEventSource,
 	mxRectangle,
-	mxVertexHandler,
 	mxMouseEvent,
 	mxGraphView,
-	mxCodecRegistry,
-	mxImage,
-	mxGeometry,
-	mxCellState,
-	mxRubberband,
-	mxConstraintHandler,
-	mxKeyHandler,
-	mxDragSource,
 	mxUtils,
 	mxEvent,
+	mxPolyline,
 	mxCodec,
-	mxCell,
 	mxConstants,
 	mxPoint,
+	mxPopupMenu,
 	mxGraphHandler,
-	mxCylinder,
-	mxCellRenderer,
-	mxText,
 	mxUndoManager,
-	mxStencilRegistry,
-	mxStencil,
-	mxSvgCanvas2D,
-	mxCellHighlight,
-	mxStackLayout,
-	mxConnector,
-	mxEdgeHandler,
-	mxGuide,
-	mxCellEditor,
-	mxSelectionCellsHandler,
-	mxOutline,
-	mxPanningHandler,
 	mxRectangleShape,
 } = require('mxgraph/javascript/mxClient');
 
 const Graph = require('./Graph');
+const Base64 = require('../deflate/base64');
+
+/**
+ * Copyright (c) 2006-2012, JGraph Ltd
+ */
 
 /**
  * Editor constructor executed on page load.
@@ -2390,7 +2359,6 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 						mxEvent.addListener(this.backgroundPageShape.node, 'dblclick',
 							mxUtils.bind(this, function(evt)
 							{
-								console.log('hello');
 								graph.dblClick(evt);
 							})
 						);
@@ -2821,4 +2789,9 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 
 })();
 
-module.exports = Editor;
+// TEN9: Added exports
+module.exports = {
+	Editor,
+	Dialog,
+	ErrorDialog,
+};

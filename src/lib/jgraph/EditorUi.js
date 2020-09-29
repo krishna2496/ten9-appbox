@@ -1,70 +1,40 @@
+// TEN9: Added imports
+const {
+	mxClient,
+	mxClipboard,
+	mxCodecRegistry,
+	mxConnectionHandler,
+	mxConstants,
+	mxEvent,
+	mxEventObject,
+	mxEventSource,
+	mxGraphModel,
+	mxImage,
+	mxKeyHandler,
+	mxObjectCodec,
+	mxObjectIdentity,
+	mxOutline,
+	mxPoint,
+	mxPopupMenu,
+	mxRectangle,
+	mxResources,
+	mxStackLayout,
+	mxStylesheet,
+	mxUtils,
+} = require('mxgraph/javascript/mxClient');
+
+const { Editor, Dialog, ErrorDialog } = require('./Editor');
+const Actions = require('./Actions');
+const Sidebar = require('./Sidebar');
+const Shapes = require('./Shapes');
+const urlParams = {};
+
+// TEN9: TODO: Centralize all globals
+window.mxStylesheet = mxStylesheet;
+
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
-
-
-const {
-	mxClient,
-	mxToolbar,
-	mxEdgeStyle,
-	mxConnectionHandler,
-	mxEllipse,
-	mxConnectionConstraint,
-	mxWindow,
-	mxObjectCodec,
-	mxGraphModel,
-	mxActor,
-	mxPopupMenu,
-	mxShape,
-	mxEventObject,
-	mxGraph,
-	mxPopupMenuHandler,
-	mxPrintPreview,
-	mxEventSource,
-	mxRectangle,
-	mxVertexHandler,
-	mxMouseEvent,
-	mxGraphView,
-	mxCodecRegistry,
-	mxImage,
-	mxGeometry,
-	mxCellState,
-	mxRubberband,
-	mxConstraintHandler,
-	mxKeyHandler,
-	mxDragSource,
-	mxUtils,
-	mxEvent,
-	mxCodec,
-	mxCell,
-	mxConstants,
-	mxPoint,
-	mxGraphHandler,
-	mxCylinder,
-	mxCellRenderer,
-	mxText,
-	mxUndoManager,
-	mxStencilRegistry,
-	mxStencil,
-	mxSvgCanvas2D,
-	mxCellHighlight,
-	mxStackLayout,
-	mxConnector,
-	mxEdgeHandler,
-	mxGuide,
-	mxCellEditor,
-	mxSelectionCellsHandler,
-	mxOutline,
-	mxPanningHandler,
-	mxResources,
-	mxClipboard,
-} = require('mxgraph/javascript/mxClient');
-
-const Editor = require('./Editor');
-const Actions = require('./Actions');
-
-const urlParams = {};
-
 /**
  * Constructs a new graph editor
  */
@@ -501,8 +471,8 @@ EditorUi = function(editor, container, lightbox)
 			graph.popupMenuHandler.hideMenu();
 		}));
 	
-		// TEN9: fix for this.editor
 	    // Create handler for key events
+		// TEN9: FIXED for jgraph bug (editor --> this.editor)
 		this.keyHandler = this.createKeyHandler(this.editor);
 	    
 		// Getter for key handler
@@ -3257,7 +3227,7 @@ EditorUi.prototype.updateActionStates = function()
 
 	// Updates menu states
 	   var state = graph.view.getState(graph.getSelectionCell());
-	// TEN9: Implement this.menus
+	// TEN9: FIXED to run when this.menus is null
 	if (this.menus != null) {
 		this.menus.get('navigation').setEnabled(selected || graph.view.currentRoot != null);
 	}
@@ -3276,7 +3246,7 @@ EditorUi.prototype.updateActionStates = function()
     this.actions.get('grid').setEnabled(!this.editor.chromeless || this.editor.editable);
 
 	var unlocked = graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent());
-	// TEN9: Implement this.menus
+	// TEN9: FIXED to run when this.menus is null
 	if (this.menus != null) {
 		this.menus.get('layout').setEnabled(unlocked);
 		this.menus.get('insert').setEnabled(unlocked);
@@ -3373,8 +3343,6 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 	var contLeft = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) : 0;
 	this.diagramContainer.style.left =  (contLeft + diagContOffset.x) + 'px';
 	this.diagramContainer.style.top = (tmp + diagContOffset.y) + 'px';
-	// TEN9: Add diagramContainer Height 
-	this.diagramContainer.style.height = '880px';
 	this.footerContainer.style.height = this.footerHeight + 'px';
 	this.hsplit.style.top = this.sidebarContainer.style.top;
 	this.hsplit.style.bottom = (this.footerHeight + off) + 'px';
@@ -3502,9 +3470,9 @@ EditorUi.prototype.createSidebarFooterContainer = function()
  */
 EditorUi.prototype.createUi = function()
 {
-	// TEN9: Implement this.menus
+	// TEN9: TODO: Implement this.menus
 	// Creates menubar
-	this.menubar = (this.editor.chromeless || !this.menus) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
+	this.menubar = (this.editor.chromeless || !this.menus || true) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
 	
 	if (this.menubar != null)
 	{
@@ -3529,16 +3497,15 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.menubarContainer);
 	}
 
-	// TEN9: Implement this.sidebar
 	// Creates the sidebar
-	this.sidebar = (this.editor.chromeless || true) ? null : this.createSidebar(this.sidebarContainer);
+	this.sidebar = (this.editor.chromeless) ? null : this.createSidebar(this.sidebarContainer);
 	
 	if (this.sidebar != null)
 	{
 		this.container.appendChild(this.sidebarContainer);
 	}
 	
-	// TEN9: Implement this.format
+	// TEN9: TODO: Implement this.format
 	// Creates the format sidebar
 	this.format = (this.editor.chromeless || !this.formatEnabled || true) ? null : this.createFormat(this.formatContainer);
 	
@@ -3568,7 +3535,7 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.tabContainer);
 	}
 
-    // TEN9: Implement this.format
+    // TEN9:TODO: Implement this.toolbar
 	// Creates toolbar
 	this.toolbar = (this.editor.chromeless || true) ? null : this.createToolbar(this.createDiv('geToolbar'));
 	
@@ -3629,7 +3596,7 @@ EditorUi.prototype.createToolbar = function(container)
  */
 EditorUi.prototype.createSidebar = function(container)
 {
-	return new Sidebar(this, container);
+	return new Sidebar(this, container, Dialog);
 };
 
 /**
@@ -4814,5 +4781,5 @@ EditorUi.prototype.destroy = function()
 	}
 };
 
+// TEN9: Added exports
 module.exports = EditorUi;
-// export default { EditorUi };

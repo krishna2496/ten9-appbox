@@ -4,7 +4,7 @@ module.exports = {
   lintOnSave: true,
   chainWebpack: (config) => {
     config.module
-      .rule('')
+      .rule('exports')
       .test(/mxClient\.js$/)
       .use('exports-loader')
       .loader(
@@ -15,8 +15,18 @@ module.exports = {
           'mxConstants,mxPoint,mxGraphHandler,mxCylinder,mxCellRenderer,mxEvent,mxUndoManager,mxStencilRegistry,mxStencil,' +
           'mxText,mxSvgCanvas2D,mxCellHighlight,mxStackLayout,mxConnector,mxEdgeHandler,mxGuide,mxCellEditor,' +
           'mxSelectionCellsHandler,mxOutline,mxPanningHandler,mxResources,mxLayoutManager,mxRectangleShape,mxDictionary,' +
-          'mxClipboard,mxGeometryChange,mxValueChange',
+          'mxClipboard,mxGeometryChange,mxValueChange,mxPolyline,mxImageShape,mxElbowEdgeHandler,mxObjectIdentity,' +
+          'mxStyleRegistry,mxGraphLayout,mxLine,mxHandle,mxSwimlane,mxCylinder,mxActor,mxRectangleShape,mxRhombus,mxLabel,' +
+          'mxTriangle,mxHexagon,mxCloud,mxArrow,mxRectangleShape,mxPerimeter,mxDoubleEllipse,mxArrowConnector,' +
+          'mxMarker,mxStylesheet',
       )
+      .end();
+
+    config.module
+      .rule('raw-files')
+      .test(/(default\.xml|grapheditor.txt)$/)
+      .use('raw-loader')
+      .loader('raw-loader')
       .end();
   },
 };
