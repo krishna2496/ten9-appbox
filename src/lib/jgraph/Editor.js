@@ -1,7 +1,4 @@
-/**
- * Copyright (c) 2006-2012, JGraph Ltd
- */
-
+// TEN9: Added imports
 const {
 	mxClient,
 	mxConnectionHandler,
@@ -27,6 +24,10 @@ const {
 
 const Graph = require('./Graph');
 const Base64 = require('../deflate/base64');
+
+/**
+ * Copyright (c) 2006-2012, JGraph Ltd
+ */
 
 /**
  * Editor constructor executed on page load.
@@ -2788,6 +2789,7 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 
 })();
 
+// TEN9: Added exports
 module.exports = {
 	Editor,
 	Dialog,

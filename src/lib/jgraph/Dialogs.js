@@ -1,8 +1,8 @@
+import { mxJSColor } from '../jscolor/jscolor';
+
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
-
-import { mxJSColor } from '../jscolor/jscolor';
 
 /**
  * Constructs a new open dialog.

@@ -1,7 +1,4 @@
-/**
- * Copyright (c) 2006-2012, JGraph Ltd
- */
-
+// TEN9: Added imports
 const {
 	mxClient,
 	mxClipboard,
@@ -35,6 +32,9 @@ const urlParams = {};
 // TEN9: TODO: Centralize all globals
 window.mxStylesheet = mxStylesheet;
 
+/**
+ * Copyright (c) 2006-2012, JGraph Ltd
+ */
 /**
  * Constructs a new graph editor
  */
@@ -471,8 +471,8 @@ EditorUi = function(editor, container, lightbox)
 			graph.popupMenuHandler.hideMenu();
 		}));
 	
-		// TEN9: fix for this.editor
 	    // Create handler for key events
+		// TEN9: FIXED for jgraph bug (editor --> this.editor)
 		this.keyHandler = this.createKeyHandler(this.editor);
 	    
 		// Getter for key handler
@@ -3227,7 +3227,7 @@ EditorUi.prototype.updateActionStates = function()
 
 	// Updates menu states
 	   var state = graph.view.getState(graph.getSelectionCell());
-	// TEN9: Implement this.menus
+	// TEN9: FIXED to run when this.menus is null
 	if (this.menus != null) {
 		this.menus.get('navigation').setEnabled(selected || graph.view.currentRoot != null);
 	}
@@ -3246,7 +3246,7 @@ EditorUi.prototype.updateActionStates = function()
     this.actions.get('grid').setEnabled(!this.editor.chromeless || this.editor.editable);
 
 	var unlocked = graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent());
-	// TEN9: Implement this.menus
+	// TEN9: FIXED to run when this.menus is null
 	if (this.menus != null) {
 		this.menus.get('layout').setEnabled(unlocked);
 		this.menus.get('insert').setEnabled(unlocked);
@@ -3343,7 +3343,8 @@ EditorUi.prototype.refresh = function(sizeDidChange)
 	var contLeft = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) : 0;
 	this.diagramContainer.style.left =  (contLeft + diagContOffset.x) + 'px';
 	this.diagramContainer.style.top = (tmp + diagContOffset.y) + 'px';
-	// TEN9: Add diagramContainer Height 
+	// TEN9: Added diagramContainer Height
+	// TEN9: TODO: Debug why this was needed.
 	this.diagramContainer.style.height = '880px';
 	this.footerContainer.style.height = this.footerHeight + 'px';
 	this.hsplit.style.top = this.sidebarContainer.style.top;
@@ -3472,7 +3473,7 @@ EditorUi.prototype.createSidebarFooterContainer = function()
  */
 EditorUi.prototype.createUi = function()
 {
-	// TEN9: Implement this.menus
+	// TEN9: TODO: Implement this.menus
 	// Creates menubar
 	this.menubar = (this.editor.chromeless || !this.menus || true) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
 	
@@ -3499,7 +3500,6 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.menubarContainer);
 	}
 
-	// TEN9: Implement this.sidebar
 	// Creates the sidebar
 	this.sidebar = (this.editor.chromeless) ? null : this.createSidebar(this.sidebarContainer);
 	
@@ -3508,7 +3508,7 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.sidebarContainer);
 	}
 	
-	// TEN9: Implement this.format
+	// TEN9: TODO: Implement this.format
 	// Creates the format sidebar
 	this.format = (this.editor.chromeless || !this.formatEnabled || true) ? null : this.createFormat(this.formatContainer);
 	
@@ -3538,7 +3538,7 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.tabContainer);
 	}
 
-    // TEN9: Implement this.format
+    // TEN9:TODO: Implement this.toolbar
 	// Creates toolbar
 	this.toolbar = (this.editor.chromeless || true) ? null : this.createToolbar(this.createDiv('geToolbar'));
 	
@@ -4784,5 +4784,5 @@ EditorUi.prototype.destroy = function()
 	}
 };
 
+// TEN9: Added exports
 module.exports = EditorUi;
-// export default { EditorUi };
