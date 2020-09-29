@@ -39,7 +39,7 @@ const urlParams = {};
 /**
  * Construcs a new sidebar for the given editor.
  */
-// TEN9: Importing Dialog here is a circular dependency. Pass in dialog instead
+// TEN9: Importing Dialog here is a circular dependency so we'll pass it in instead
 var Dialog = {};
 
 function Sidebar(editorUi, container, dialogCtor)
