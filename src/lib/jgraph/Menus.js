@@ -1,6 +1,32 @@
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
+// TEN9: Added imports
+const {
+	mxClient,
+	mxClipboard,
+	mxCodecRegistry,
+	mxConnectionHandler,
+	mxConstants,
+	mxEvent,
+	mxEventObject,
+	mxEventSource,
+	mxGraphModel,
+	mxImage,
+	mxKeyHandler,
+	mxObjectCodec,
+	mxObjectIdentity,
+	mxOutline,
+	mxPoint,
+	mxPopupMenu,
+	mxRectangle,
+	mxResources,
+	mxStackLayout,
+	mxStylesheet,
+	mxUtils,
+} = require('mxgraph/javascript/mxClient');
+
+const EditorUi = require('./EditorUi');
 /**
  * Constructs a new graph editor
  */
@@ -1456,7 +1482,10 @@ Menu.prototype.execute = function(menu, parent)
 /**
  * "Installs" menus in EditorUi.
  */
-EditorUi.prototype.createMenus = function()
-{
-	return new Menus(this);
-};
+// EditorUi.prototype.createMenus = function()
+// {
+// 	return new Menus(this);
+// };
+
+// TEN9: Added exports
+module.exports = Menus;

@@ -27,6 +27,10 @@ const { Editor, Dialog, ErrorDialog } = require('./Editor');
 const Actions = require('./Actions');
 const Sidebar = require('./Sidebar');
 const Shapes = require('./Shapes');
+const Format = require('./Format');
+const Toolbar = require('./Toolbar');
+const Menus = require('./Menus');
+const {ColorDialog,EditDataDialog,LinkDialog}  = require('./Dialogs');
 const urlParams = {};
 
 // TEN9: TODO: Centralize all globals
@@ -85,7 +89,7 @@ EditorUi = function(editor, container, lightbox)
     // Creates the user interface
 	this.actions = new Actions(this);
 	this.menus = this.createMenus();
-	
+	console.log('menu',this.menu);
 	if (!graph.standalone)
 	{
 		this.createDivs();
@@ -1344,7 +1348,9 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
  */
 EditorUi.prototype.createMenus = function()
 {
-	return null;
+	//return null;
+	// TEN9: Initioalize the menu
+	return new Menus(this);
 };
 
 /**
@@ -3473,7 +3479,6 @@ EditorUi.prototype.createUi = function()
 	// TEN9: TODO: Implement this.menus
 	// Creates menubar
 	this.menubar = (this.editor.chromeless || !this.menus || true) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
-	
 	if (this.menubar != null)
 	{
 		this.menubarContainer.appendChild(this.menubar.container);
@@ -3507,7 +3512,7 @@ EditorUi.prototype.createUi = function()
 	
 	// TEN9: TODO: Implement this.format
 	// Creates the format sidebar
-	this.format = (this.editor.chromeless || !this.formatEnabled || true) ? null : this.createFormat(this.formatContainer);
+	this.format = (this.editor.chromeless || !this.formatEnabled ) ? null : this.createFormat(this.formatContainer);
 	
 	if (this.format != null)
 	{
@@ -3537,7 +3542,7 @@ EditorUi.prototype.createUi = function()
 
     // TEN9:TODO: Implement this.toolbar
 	// Creates toolbar
-	this.toolbar = (this.editor.chromeless || true) ? null : this.createToolbar(this.createDiv('geToolbar'));
+	this.toolbar = (this.editor.chromeless) ? null : this.createToolbar(this.createDiv('geToolbar'));
 	
 	if (this.toolbar != null)
 	{

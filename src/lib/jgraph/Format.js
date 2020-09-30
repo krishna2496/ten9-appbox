@@ -1,6 +1,34 @@
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
+
+// TEN9: Added imports
+const {
+	mxClient,
+	mxClipboard,
+	mxCodecRegistry,
+	mxConnectionHandler,
+	mxConstants,
+	mxEvent,
+	mxEventObject,
+	mxEventSource,
+	mxGraphModel,
+	mxImage,
+	mxKeyHandler,
+	mxObjectCodec,
+	mxObjectIdentity,
+	mxOutline,
+	mxPoint,
+	mxPopupMenu,
+	mxRectangle,
+	mxResources,
+	mxStackLayout,
+	mxStylesheet,
+	mxUtils,
+} = require('mxgraph/javascript/mxClient');
+
+const {  Dialog,PageSetupDialog } = require('./Editor');
+
 Format = function(editorUi, container)
 {
 	this.editorUi = editorUi;
@@ -4665,7 +4693,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		
 		return item;
 	});
-
+	
 	var pattern = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel, 'geSprite-orthogonal', mxResources.get('pattern'), false, mxUtils.bind(this, function(menu)
 	{
 		addItem(menu, 75, 'solid', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN], [null, null]).setAttribute('title', mxResources.get('solid'));
@@ -5962,3 +5990,6 @@ DiagramFormatPanel.prototype.destroy = function()
 		this.gridEnabledListener = null;
 	}
 };
+
+// TEN9: Added exports
+module.exports = Format;

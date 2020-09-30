@@ -54,6 +54,7 @@ const {
 	mxUtils,
 	mxValueChange,
 	mxVertexHandler,
+	mxRectangleShape
 } = require('mxgraph/javascript/mxClient');
 
 window.mxGraphModel = mxGraphModel;

@@ -910,3 +910,5 @@ var mxJSColor = {
 
 
 mxJSColor.install();
+
+module.exports = {mxJSColor};

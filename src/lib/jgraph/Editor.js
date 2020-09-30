@@ -20,6 +20,7 @@ const {
 	mxGraphHandler,
 	mxUndoManager,
 	mxRectangleShape,
+	mxResources
 } = require('mxgraph/javascript/mxClient');
 
 const Graph = require('./Graph');
@@ -2794,4 +2795,5 @@ module.exports = {
 	Editor,
 	Dialog,
 	ErrorDialog,
+	PageSetupDialog
 };

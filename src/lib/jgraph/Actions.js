@@ -52,8 +52,10 @@ const {
 	mxOutline,
 	mxPanningHandler,
 	mxResources,
+	mxClipboard
 } = require('mxgraph/javascript/mxClient');
 
+const {OutlineWindow,LayersWindow,TextareaDialog}  = require('./Dialogs');
 /**
  * Copyright (c) 2006-2020, JGraph Ltd
  * Copyright (c) 2006-2020, draw.io AG

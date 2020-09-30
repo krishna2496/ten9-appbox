@@ -1,5 +1,34 @@
-import { mxJSColor } from '../jscolor/jscolor';
+const { mxJSColor } = require('../jscolor/jscolor');
+// TEN9: Added imports
+const {
+	mxClient,
+	mxClipboard,
+	mxCodecRegistry,
+	mxConnectionHandler,
+	mxConstants,
+	mxEvent,
+	mxEventObject,
+	mxEventSource,
+	mxGraphModel,
+	mxImage,
+	mxKeyHandler,
+	mxObjectCodec,
+	mxObjectIdentity,
+	mxOutline,
+	mxPoint,
+	mxPopupMenu,
+	mxRectangle,
+	mxResources,
+	mxStackLayout,
+	mxStylesheet,
+	mxUtils,
+	mxWindow,
+	mxForm
+} = require('mxgraph/javascript/mxClient');
 
+const { Dialog } = require('./Editor');
+
+const IMAGE_PATH = 'images';
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
@@ -76,7 +105,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 			input.focus();
 		}
 	};
-
+	console.log('jscolor',mxJSColor);
 	var picker = new mxJSColor.color(input);
 	picker.pickerOnfocus = false;
 	picker.showPicker();
@@ -2559,7 +2588,12 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	}
 };
 
+// TEN9: Added exports
 module.exports = {
-	OpenDialog,
-	Dialog
-};
+	OutlineWindow,
+	ColorDialog,
+	LayersWindow,
+	TextareaDialog,
+	EditDataDialog,
+	LinkDialog
+}

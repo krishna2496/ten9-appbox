@@ -1,6 +1,16 @@
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
+// TEN9: Added imports
+const {
+	mxClient,
+	mxConstants,
+	mxEvent,
+	mxPopupMenu,
+	mxResources,
+	mxUtils,
+} = require('mxgraph/javascript/mxClient');
+const EditorUi = require('./EditorUi');
 /**
  * Construcs a new toolbar for the given editor.
  */
@@ -58,20 +68,20 @@ Toolbar.prototype.init = function()
 	
 	// Takes into account initial compact mode
 	sw -= (screen.height > 740) ? 56 : 0;
-	
+
 	if (sw >= 700)
 	{
 		var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels', null, true);
 		this.addDropDownArrow(formatMenu, 'geSprite-formatpanel', 38, 50, -4, -3, 36, -8);
 		this.addSeparator();
 	}
-	
+
 	var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'viewZoom', null, true);
 	viewMenu.showDisabled = true;
 	viewMenu.style.whiteSpace = 'nowrap';
 	viewMenu.style.position = 'relative';
 	viewMenu.style.overflow = 'hidden';
-	
+
 	if (EditorUi.compactUi)
 	{
 		viewMenu.style.width = (mxClient.IS_QUIRKS) ? '58px' : '50px';
@@ -1098,3 +1108,6 @@ Toolbar.prototype.destroy = function()
 		this.gestureHandler = null;
 	}
 };
+// TEN9: Added exports
+module.exports =  Toolbar
+
