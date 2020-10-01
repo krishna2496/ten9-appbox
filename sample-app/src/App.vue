@@ -32,7 +32,9 @@ export default {
 </script>
 
 <style lang="scss">
-/* @import './styles/common.css';
-@import './styles/grapheditor.css'; */
-/* @import 'vue-graph-editor/styles'; */
+// TEN9: TODO: Add ../node_modules to sass-loader includePaths.
+// This currently isn't working for some reason with webpack.config.js
+// That might have something to do with this being a "file:" reference
+// in package.json.
+@import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css';
 </style>

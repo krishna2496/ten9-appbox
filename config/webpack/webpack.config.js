@@ -57,15 +57,15 @@ module.exports = {
         loader: 'vue-loader',
         options: {
           loaders: {
-            scss: 'vue-style-loader!css-loader!postcss-loader!sass-loader',
-            sass: 'vue-style-loader!css-loader!postcss-loader!sass-loader?indentedSyntax',
+            scss: 'vue-style-loader!css-loader!sass-loader',
+            sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
           },
           // other vue-loader options go here
         },
       },
       // Load CSS files: css-loader, then minify, then apply vue style loader.
       {
-        test: /\.css$/,
+        test: /\.scss$/,
         use: ['vue-style-loader', MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
@@ -73,13 +73,6 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
       },
-      // {
-      //   test: /\.(png|jpg|gif|svg)$/,
-      //   loader: 'file-loader',
-      //   options: {
-      //     name: '[name].[ext]',
-      //   },
-      // },
       {
         test: /node_modules\/mxgraph\/javascript\/mxClient\.js$/,
         loader: 'exports-loader',
@@ -120,20 +113,17 @@ module.exports = {
     new CaseSensitivePathsPlugin(),
 
     new MiniCssExtractPlugin({
-      filename: 'vue-graph-editor.css',
-      chunkFilename: 'vue-graph-editor.chunk.css',
+      filename: 'vue-graph-editor.min.css',
     }),
 
     // enable vue-loader to use existing loader rules for other module types
     new VueLoaderPlugin(),
 
-    // We need our own progress bar plugin since --progress only works when running from commmand line
-    new WebpackBar(),
-    // {
-    //   name: 'webpack ten9',
-    //   color: '#114D8B',
-    // }),
+    new WebpackBar({
+      name: 'webpack ten9',
+    }),
   ],
+
   optimization: {
     minimize: IS_PRODUCTION,
     minimizer: [
@@ -150,9 +140,11 @@ module.exports = {
       }),
     ],
   },
+
   performance: {
     hints: false,
   },
+
   devtool,
 };
 
@@ -163,8 +155,6 @@ if (process.env.NODE_ENV === 'production') {
         NODE_ENV: '"production"',
       },
     }),
-    // TODO: what's this do
-    new webpack.ProvidePlugin({}),
     new OptimizeCssAssetsPlugin({
       cssProcessorPluginOptions: {
         preset: ['default', { discardComments: { removeAll: true } }],
