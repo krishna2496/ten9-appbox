@@ -53,6 +53,8 @@ module.exports = {
   },
   module: {
     rules: [
+
+      // Loader for .vue files
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -63,16 +65,25 @@ module.exports = {
           },
         },
       },
-      // Load CSS files: css-loader, then minify, then apply vue style loader.
+
+      // Load SCSS files
+      //   1. Use sass-loader to compoile SCSS to CSS with options for resolving paths within dependencies
+      //   2. Use css-loader to resolve import statements within CSS and add to bundle
+      //   3. Use the MiniCssExtractPlugin's loader to separate CSS into separate files
+      //   4. Finally, apply vue-style-loader to dynamically inject CSS into document as style tags
       {
         test: /\.scss$/,
         use: ['vue-style-loader', MiniCssExtractPlugin.loader, 'css-loader'],
       },
+
+      // Run babel-loader on Javascript files to compile to compatible browser version.
       {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
       },
+
+      // Use exports-loader to add exports for mxClient.js objects since it doesn't export anything
       {
         test: /node_modules\/mxgraph\/javascript\/mxClient\.js$/,
         loader: 'exports-loader',
@@ -93,6 +104,8 @@ module.exports = {
           ],
         },
       },
+
+      // We bundle these raw files and so we don't have to download separately at runtime
       {
         test: /(default\.xml|grapheditor.txt)$/,
         loader: 'raw-loader',
@@ -104,6 +117,7 @@ module.exports = {
     // cleanup dist dir
     new CleanWebpackPlugin(),
 
+    // Process.env injections
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"',
@@ -112,6 +126,10 @@ module.exports = {
 
     new CaseSensitivePathsPlugin(),
 
+    // Copy the resources that applications will need into a public dir in our package
+    // Some are from mxGraph which expects to download files at runtime. Others are
+    // from GraphEditor (e.g. clipart images or stencils) and needn't be packaged
+    // with the main bundle.
     new CopyPlugin({
       patterns: [
         {
@@ -163,16 +181,15 @@ module.exports = {
 
 if (process.env.NODE_ENV === 'production') {
   module.exports.plugins.push(
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"',
-      },
-    }),
+
+    // Strip out comments. Stripping puts them into a separate file
     new OptimizeCssAssetsPlugin({
       cssProcessorPluginOptions: {
         preset: ['default', { discardComments: { removeAll: true } }],
       },
     }),
+
+    // Bundle report
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
       reportFilename: path.join(TEMP_PATH, 'reports/webpack-report.html'),
