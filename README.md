@@ -2,36 +2,33 @@
 
 ## Summary
 
-Take this vanilla JavaScript / HTML app https://github.com/jgraph/mxgraph/tree/master/javascript/examples/grapheditor/www and create it in Vue.js
-
-Demo: https://jgraph.github.io/mxgraph/javascript/examples/grapheditor/www/index.html
-
----
+TODO
 
 ## Project setup
-```
+
+```sh
 yarn
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
+### Compiles and watches files for development
+
+```sh
+yarn watch
 ```
 
 ### Compiles and minifies for production
-```
+
+```sh
 yarn build
 ```
 
-### Run your unit tests
-```
-yarn test:unit
-```
-
 ### Lints and fixes files
-```
+
+```sh
 yarn lint
+yarn prettier
 ```
 
 ### Customize configuration
+
 See [Configuration Reference](https://cli.vuejs.org/config/).
