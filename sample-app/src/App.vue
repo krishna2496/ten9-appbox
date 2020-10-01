@@ -16,23 +16,23 @@
 
 <template>
   <div id="app">
-    <editor-ui />
+    <graph-editor />
   </div>
 </template>
 
 <script>
-// import EditorUi from '@/components/EditorUi.vue';
-import VueGraphEditor from 'vue-graph-editor';
+import GraphEditor from 'vue-graph-editor';
 
 export default {
   name: 'App',
   components: {
-    EditorUi,
+    GraphEditor,
   },
 };
 </script>
 
 <style lang="scss">
-@import './styles/common.css';
-@import './styles/grapheditor.css';
+/* @import './styles/common.css';
+@import './styles/grapheditor.css'; */
+/* @import 'vue-graph-editor/styles'; */
 </style>
