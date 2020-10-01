@@ -47,3 +47,8 @@ export default {
   },
 };
 </script>
+
+<style lang="css">
+/* @import '../styles/common.css'; */
+@import '../styles/grapheditor.css';
+</style>

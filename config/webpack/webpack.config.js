@@ -1,21 +1,33 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
 const path = require('path');
 const webpack = require('webpack');
 
-// const WebpackBar = require('webpackbar');
-const TerserPlugin = require('terser-webpack-plugin');
-
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
+const WebpackBar = require('webpackbar');
 
 const ROOT_PATH = path.resolve(__dirname, '../..');
-const DEV_SERVER_HOST = process.env.DEV_SERVER_HOST || 'localhost';
-const devPort = 8080;
-const DEV_SERVER_PORT = parseInt(process.env.DEV_SERVER_PORT, 10) || devPort;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
-const IS_DEV_SERVER = process.env.WEBPACK_DEV_SERVER === 'true';
-const DEV_SERVER_LIVERELOAD = IS_DEV_SERVER && process.env.DEV_SERVER_LIVERELOAD !== 'false';
 const devtool = IS_PRODUCTION ? false : 'source-map';
 const TEMP_PATH = path.join(ROOT_PATH, './node_modules/.tmp');
 
@@ -34,10 +46,7 @@ module.exports = {
     symlinks: false,
     alias: {
       '@': path.resolve(ROOT_PATH, 'src'),
-      // TODO: Remove if runtime works... From Toasted
-      // vue$: 'vue/dist/vue.esm.js',
       vue$: 'vue/dist/vue.runtime.esm.js',
-      // images: path.resolve(ROOT_PATH, 'src/assets/images'),
     },
     modules: ['node_modules', path.resolve(ROOT_PATH, 'node_modules')],
   },
@@ -54,18 +63,23 @@ module.exports = {
           // other vue-loader options go here
         },
       },
+      // Load CSS files: css-loader, then minify, then apply vue style loader.
+      {
+        test: /\.css$/,
+        use: ['vue-style-loader', MiniCssExtractPlugin.loader, 'css-loader'],
+      },
       {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
       },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]?[hash]',
-        },
-      },
+      // {
+      //   test: /\.(png|jpg|gif|svg)$/,
+      //   loader: 'file-loader',
+      //   options: {
+      //     name: '[name].[ext]',
+      //   },
+      // },
       {
         test: /node_modules\/mxgraph\/javascript\/mxClient\.js$/,
         loader: 'exports-loader',
@@ -93,8 +107,32 @@ module.exports = {
     ],
   },
   plugins: [
+
+    // cleanup dist dir
+    new CleanWebpackPlugin(),
+
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"',
+      },
+    }),
+
+    new CaseSensitivePathsPlugin(),
+
+    new MiniCssExtractPlugin({
+      filename: 'vue-graph-editor.css',
+      chunkFilename: 'vue-graph-editor.chunk.css',
+    }),
+
     // enable vue-loader to use existing loader rules for other module types
     new VueLoaderPlugin(),
+
+    // We need our own progress bar plugin since --progress only works when running from commmand line
+    new WebpackBar(),
+    // {
+    //   name: 'webpack ten9',
+    //   color: '#114D8B',
+    // }),
   ],
   optimization: {
     minimize: IS_PRODUCTION,
@@ -112,25 +150,6 @@ module.exports = {
       }),
     ],
   },
-  devServer: {
-    hot: !IS_PRODUCTION && DEV_SERVER_LIVERELOAD,
-    liveReload: !IS_PRODUCTION && DEV_SERVER_LIVERELOAD,
-    open: 'Google Chrome',
-    clientLogLevel: 'warn',
-    contentBase: 'dist',
-    compress: true,
-    host: DEV_SERVER_HOST,
-    port: DEV_SERVER_PORT,
-    overlay: { warnings: false, errors: true },
-    publicPath: '/',
-    quiet: true,
-    stats: { colors: true },
-    historyApiFallback: {
-      disableDotRule: true,
-    },
-    disableHostCheck: true,
-    noInfo: false,
-  },
   performance: {
     hints: false,
   },
@@ -138,17 +157,14 @@ module.exports = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map';
-
-  // http://vue-loader.vuejs.org/en/workflow/production.html
-  module.exports.plugins = (module.exports.plugins || []).concat([
+  module.exports.plugins.push(
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"',
       },
     }),
     // TODO: what's this do
-    // new webpack.ProvidePlugin({}),
+    new webpack.ProvidePlugin({}),
     new OptimizeCssAssetsPlugin({
       cssProcessorPluginOptions: {
         preset: ['default', { discardComments: { removeAll: true } }],
@@ -162,5 +178,5 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.LoaderOptionsPlugin({
       minimize: true,
     }),
-  ]);
+  );
 }
