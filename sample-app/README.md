@@ -1,4 +1,4 @@
-# vue-diagram-editor
+# Sample Application using vue-diagram-editor
 
 ## Summary
 
@@ -9,29 +9,30 @@ Demo: https://jgraph.github.io/mxgraph/javascript/examples/grapheditor/www/index
 ---
 
 ## Project setup
-```
+
+```sh
 yarn
 ```
 
 ### Compiles and hot-reloads for development
-```
+
+```sh
 yarn serve
 ```
 
 ### Compiles and minifies for production
-```
+
+```sh
 yarn build
 ```
 
-### Run your unit tests
-```
-yarn test:unit
-```
-
 ### Lints and fixes files
-```
+
+```sh
 yarn lint
+yarn prettier
 ```
 
 ### Customize configuration
+
 See [Configuration Reference](https://cli.vuejs.org/config/).
