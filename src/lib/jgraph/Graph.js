@@ -41,6 +41,7 @@ const {
 	mxPopupMenu,
 	mxPopupMenuHandler,
 	mxRectangle,
+	mxRectangleShape,
 	mxResources,
 	mxRubberband,
 	mxSelectionCellsHandler,
