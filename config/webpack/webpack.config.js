@@ -20,6 +20,7 @@ const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -60,7 +61,6 @@ module.exports = {
             scss: 'vue-style-loader!css-loader!sass-loader',
             sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
           },
-          // other vue-loader options go here
         },
       },
       // Load CSS files: css-loader, then minify, then apply vue style loader.
@@ -111,6 +111,19 @@ module.exports = {
     }),
 
     new CaseSensitivePathsPlugin(),
+
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(ROOT_PATH, 'public'),
+          globOptions: {
+            ignore: ['.DS_Store'],
+          },
+          to: path.resolve(ROOT_PATH, 'dist/public'),
+          toType: 'dir',
+        },
+      ],
+    }),
 
     new MiniCssExtractPlugin({
       filename: 'vue-graph-editor.min.css',
@@ -164,9 +177,6 @@ if (process.env.NODE_ENV === 'production') {
       analyzerMode: 'static',
       reportFilename: path.join(TEMP_PATH, 'reports/webpack-report.html'),
       openAnalyzer: false,
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true,
     }),
   );
 }

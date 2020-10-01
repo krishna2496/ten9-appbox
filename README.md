@@ -8,6 +8,7 @@ TODO
 
 ```sh
 yarn
+yarn link
 ```
 
 ### Compiles and watches files for development

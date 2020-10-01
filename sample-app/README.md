@@ -10,6 +10,7 @@ TODO
 
 ```sh
 yarn
+yarn link vue-graph-editor
 ```
 
 ### Compiles and hot-reloads for development
