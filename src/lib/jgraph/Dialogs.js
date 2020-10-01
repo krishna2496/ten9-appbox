@@ -1,5 +1,6 @@
-const { mxJSColor } = require('../jscolor/jscolor');
 // TEN9: Added imports
+const { mxJSColor } = require('../jscolor/jscolor');
+
 const {
 	mxClient,
 	mxClipboard,
@@ -9,6 +10,7 @@ const {
 	mxEvent,
 	mxEventObject,
 	mxEventSource,
+	mxForm,
 	mxGraphModel,
 	mxImage,
 	mxKeyHandler,
@@ -23,12 +25,13 @@ const {
 	mxStylesheet,
 	mxUtils,
 	mxWindow,
-	mxForm
+	mxXmlCanvas2D
 } = require('mxgraph/javascript/mxClient');
 
-const { Dialog } = require('./Editor');
+const { Dialog, FilenameDialog } = require('./Editor');
 
 const IMAGE_PATH = 'images';
+const OPEN_FORM = 'open.html';
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
@@ -105,7 +108,6 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 			input.focus();
 		}
 	};
-	console.log('jscolor',mxJSColor);
 	var picker = new mxJSColor.color(input);
 	picker.pickerOnfocus = false;
 	picker.showPicker();
@@ -1300,7 +1302,7 @@ var EditDataDialog = function(ui, cell)
 {
 	var div = document.createElement('div');
 	var graph = ui.editor.graph;
-	
+
 	var value = graph.getModel().getValue(cell);
 	
 	// Converts the value to an XML node
@@ -1313,6 +1315,7 @@ var EditDataDialog = function(ui, cell)
 	}
 
 	// Creates the dialog contents
+	console.log('form',mxForm);
 	var form = new mxForm('properties');
 	form.table.style.width = '100%';
 
@@ -2595,5 +2598,9 @@ module.exports = {
 	LayersWindow,
 	TextareaDialog,
 	EditDataDialog,
-	LinkDialog
+	LinkDialog,
+	OpenDialog,
+	ExportDialog,
+	EditDiagramDialog,
+	AboutDialog
 }

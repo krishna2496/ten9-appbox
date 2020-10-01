@@ -4,6 +4,7 @@ const {
 	mxEdgeStyle,
 	mxConnectionHandler,
 	mxEllipse,
+	mxClipboard,
 	mxConnectionConstraint,
 	mxWindow,
 	mxObjectCodec,
@@ -52,10 +53,11 @@ const {
 	mxOutline,
 	mxPanningHandler,
 	mxResources,
-	mxClipboard
 } = require('mxgraph/javascript/mxClient');
 
-const {OutlineWindow,LayersWindow,TextareaDialog}  = require('./Dialogs');
+const { OutlineWindow, LayersWindow, TextareaDialog, OpenDialog, ExportDialog, EditDiagramDialog, AboutDialog }  = require('./Dialogs');
+const { PrintDialog}  = require('./Editor');
+const RESOURCES_PATH = 'resources';
 /**
  * Copyright (c) 2006-2020, JGraph Ltd
  * Copyright (c) 2006-2020, draw.io AG

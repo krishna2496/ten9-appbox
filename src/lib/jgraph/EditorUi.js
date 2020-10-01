@@ -23,14 +23,14 @@ const {
 	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
-const { Editor, Dialog, ErrorDialog } = require('./Editor');
+const { Editor, Dialog, ErrorDialog, FilenameDialog } = require('./Editor');
 const Actions = require('./Actions');
 const Sidebar = require('./Sidebar');
 const Shapes = require('./Shapes');
 const Format = require('./Format');
-const Toolbar = require('./Toolbar');
 const Menus = require('./Menus');
-const {ColorDialog,EditDataDialog,LinkDialog}  = require('./Dialogs');
+const Toolbar = require('./Toolbar');
+const { ColorDialog, EditDataDialog, LinkDialog,  OpenDialog}  = require('./Dialogs');
 const urlParams = {};
 
 // TEN9: TODO: Centralize all globals
@@ -89,7 +89,7 @@ EditorUi = function(editor, container, lightbox)
     // Creates the user interface
 	this.actions = new Actions(this);
 	this.menus = this.createMenus();
-	console.log('menu',this.menu);
+
 	if (!graph.standalone)
 	{
 		this.createDivs();
@@ -1348,8 +1348,8 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
  */
 EditorUi.prototype.createMenus = function()
 {
-	//return null;
-	// TEN9: Initioalize the menu
+	// return null;
+	// TEN9: initializing the menu for format editor 
 	return new Menus(this);
 };
 
@@ -3478,7 +3478,7 @@ EditorUi.prototype.createUi = function()
 {
 	// TEN9: TODO: Implement this.menus
 	// Creates menubar
-	this.menubar = (this.editor.chromeless || !this.menus || true) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
+	this.menubar = (this.editor.chromeless || !this.menus ) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
 	if (this.menubar != null)
 	{
 		this.menubarContainer.appendChild(this.menubar.container);

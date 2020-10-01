@@ -2795,5 +2795,7 @@ module.exports = {
 	Editor,
 	Dialog,
 	ErrorDialog,
-	PageSetupDialog
+	PageSetupDialog,
+	FilenameDialog,
+	PrintDialog
 };

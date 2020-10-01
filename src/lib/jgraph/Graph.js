@@ -41,6 +41,7 @@ const {
 	mxPopupMenu,
 	mxPopupMenuHandler,
 	mxRectangle,
+	mxRectangleShape,
 	mxResources,
 	mxRubberband,
 	mxSelectionCellsHandler,
@@ -54,7 +55,6 @@ const {
 	mxUtils,
 	mxValueChange,
 	mxVertexHandler,
-	mxRectangleShape
 } = require('mxgraph/javascript/mxClient');
 
 window.mxGraphModel = mxGraphModel;

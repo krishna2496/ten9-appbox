@@ -26,7 +26,7 @@ const {
 	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
-const EditorUi = require('./EditorUi');
+const {EditorUi} = require('./EditorUi');
 /**
  * Constructs a new graph editor
  */
@@ -1355,7 +1355,7 @@ Menubar.prototype.addMenu = function(label, funct, before)
 	elt.className = 'geItem';
 	mxUtils.write(elt, label);
 	this.addMenuHandler(elt, funct);
-	
+
     if (before != null)
     {
     	this.container.insertBefore(elt, before);
@@ -1482,6 +1482,7 @@ Menu.prototype.execute = function(menu, parent)
 /**
  * "Installs" menus in EditorUi.
  */
+// TEN9: Remove create Menu from here becuase we are initializing this thing from EdirotUi Itself
 // EditorUi.prototype.createMenus = function()
 // {
 // 	return new Menus(this);

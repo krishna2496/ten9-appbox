@@ -27,7 +27,7 @@ const {
 	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
-const {  Dialog,PageSetupDialog } = require('./Editor');
+const {  Dialog, PageSetupDialog } = require('./Editor');
 
 Format = function(editorUi, container)
 {
