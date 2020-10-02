@@ -30,7 +30,7 @@ const Shapes = require('./Shapes');
 const Format = require('./Format');
 const Menus = require('./Menus');
 const Toolbar = require('./Toolbar');
-const { ColorDialog, EditDataDialog, LinkDialog,  OpenDialog}  = require('./Dialogs');
+const { ColorDialog, EditDataDialog, LinkDialog, OpenDialog }  = require('./Dialogs');
 const urlParams = {};
 
 // TEN9: TODO: Centralize all globals
