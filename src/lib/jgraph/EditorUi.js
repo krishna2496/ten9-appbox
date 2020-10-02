@@ -1344,13 +1344,14 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
 };
 
 /**
- * Overridden in Menus.js
+ * // TEN9: No longer...
+ * Overriden in Menus.js
  */
 EditorUi.prototype.createMenus = function()
 {
-	// return null;
-	// TEN9: initializing the menu for format editor 
+	// TEN9: Initializing the menu here to avoid any circular dependencies
 	return new Menus(this);
+	// return null;
 };
 
 /**
