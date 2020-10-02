@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2006-2012, JGraph Ltd
- */
 // TEN9: Added imports
 const {
 	mxClient,
@@ -10,15 +7,20 @@ const {
 	mxResources,
 	mxUtils,
 } = require('mxgraph/javascript/mxClient');
-const EditorUi = require('./EditorUi');
 
 /**
- * Construcs a new toolbar for the given editor.
+ * Copyright (c) 2006-2012, JGraph Ltd
  */
-function Toolbar(editorUi, container)
+/**
+ * Constructs a new toolbar for the given editor.
+ */
+
+// TEN9: Importing EditorUi here is a circular dependency so we'll pass it in instead
+var EditorUi = {};
+
+function Toolbar(editorUi, container, editorUiCtor)
 {
-	// TEN9: make compactUi value true because it is not set over here and It is static mention in the EditorUi line number 1028
-	EditorUi.compactUi = true;
+	EditorUi = editorUiCtor;
 	this.editorUi = editorUi;
 	this.container = container;
 	this.staticElements = [];

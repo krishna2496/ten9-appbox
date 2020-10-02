@@ -1482,7 +1482,7 @@ Menu.prototype.execute = function(menu, parent)
 /**
  * "Installs" menus in EditorUi.
  */
-// TEN9: Remove create Menu from here becuase we are initializing this thing from EdirotUi Itself
+// TEN9: Remove createMenus from here because we are initializing menus from EditorUi itself
 // EditorUi.prototype.createMenus = function()
 // {
 // 	return new Menus(this);

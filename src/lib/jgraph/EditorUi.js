@@ -3477,7 +3477,6 @@ EditorUi.prototype.createSidebarFooterContainer = function()
  */
 EditorUi.prototype.createUi = function()
 {
-	// TEN9: TODO: Implement this.menus
 	// Creates menubar
 	this.menubar = (this.editor.chromeless || !this.menus ) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
 	if (this.menubar != null)
@@ -3511,7 +3510,6 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.sidebarContainer);
 	}
 	
-	// TEN9: TODO: Implement this.format
 	// Creates the format sidebar
 	this.format = (this.editor.chromeless || !this.formatEnabled ) ? null : this.createFormat(this.formatContainer);
 	
@@ -3541,7 +3539,6 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.tabContainer);
 	}
 
-    // TEN9:TODO: Implement this.toolbar
 	// Creates toolbar
 	this.toolbar = (this.editor.chromeless) ? null : this.createToolbar(this.createDiv('geToolbar'));
 	
@@ -3594,7 +3591,7 @@ EditorUi.prototype.setStatusText = function(value)
  */
 EditorUi.prototype.createToolbar = function(container)
 {
-	return new Toolbar(this, container);
+	return new Toolbar(this, container, EditorUi);
 };
 
 /**
