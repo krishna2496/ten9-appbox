@@ -1,10 +1,14 @@
-# vue-diagram-editor
+# Vue GraphEditor
 
 ## Summary
 
-TODO
+Vue GraphEditor is a diagramming plugin for VueJS. This code base contains the library code as well as a sample application demonstrating how to use it.
 
-## Project setup
+---
+
+## Library
+
+### Development setup
 
 ```sh
 yarn
@@ -23,13 +27,15 @@ yarn watch
 yarn build
 ```
 
-### Lints and fixes files
+### Lints files
 
 ```sh
 yarn lint
 yarn prettier
 ```
 
-### Customize configuration
+---
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Sample App
+
+[See the Sample App README for details](sample-app/README.md)

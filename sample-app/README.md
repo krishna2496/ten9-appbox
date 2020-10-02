@@ -1,8 +1,8 @@
-# Sample Application using vue-diagram-editor
+# Sample Application using Vue GraphEditor
 
 ## Summary
 
-TODO
+This project is a sample application using Vue GraphEditor.
 
 ---
 
@@ -31,7 +31,3 @@ yarn build
 yarn lint
 yarn prettier
 ```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
