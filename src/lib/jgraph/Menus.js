@@ -19,6 +19,7 @@ const {
 
 const { EditorUi } = require('./EditorUi');
 const { Dialog, FilenameDialog } = require('./Editor');
+const { ColorDialog } = require('./Dialogs');
 
 /**
  * Copyright (c) 2006-2012, JGraph Ltd

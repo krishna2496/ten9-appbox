@@ -14,6 +14,27 @@
  * -----
  */
 
+const path = require('path');
+const OUTPUT_DIR = 'dist';
+
 module.exports = {
-  presets: ['@babel/preset-env'],
+  publicPath: '/',
+  outputDir: OUTPUT_DIR,
+  lintOnSave: false,
+  chainWebpack: config => {
+    config
+      .plugin('copy')
+      .tap(args => {
+        args[0].push(
+          {
+            from: path.resolve(__dirname, 'node_modules/vue-graph-editor/dist/public'),
+            to: path.resolve(__dirname, OUTPUT_DIR),
+            toType: 'dir',
+            ignore: [
+              '.DS_Store',
+            ],
+          });
+        return args;
+      })
+  },
 };
