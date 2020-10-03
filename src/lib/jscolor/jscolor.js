@@ -12,26 +12,6 @@
  // TEN9: Added imports
 const {
 	mxClient,
-	mxClipboard,
-	mxCodecRegistry,
-	mxConnectionHandler,
-	mxConstants,
-	mxEvent,
-	mxEventObject,
-	mxEventSource,
-	mxGraphModel,
-	mxImage,
-	mxKeyHandler,
-	mxObjectCodec,
-	mxObjectIdentity,
-	mxOutline,
-	mxPoint,
-	mxPopupMenu,
-	mxRectangle,
-	mxResources,
-	mxStackLayout,
-	mxStylesheet,
-	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
 var mxJSColor = {

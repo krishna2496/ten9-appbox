@@ -13,8 +13,17 @@ const {
 	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
-const { OutlineWindow, LayersWindow, TextareaDialog, OpenDialog, ExportDialog, EditDiagramDialog, AboutDialog }  = require('./Dialogs');
-const { PrintDialog }  = require('./Editor');
+const {
+	AboutDialog,
+	EditDiagramDialog,
+	ExportDialog,
+	LayersWindow,
+	OpenDialog,
+	OutlineWindow,
+	TextareaDialog,
+}  = require('./Dialogs');
+
+const { FilenameDialog, PageSetupDialog, PrintDialog }  = require('./Editor');
 const RESOURCES_PATH = 'resources';
 
 /**
@@ -23,8 +32,13 @@ const RESOURCES_PATH = 'resources';
  *
  * Constructs the actions object for the given UI.
  */
-function Actions(editorUi)
+
+// TEN9: Importing ChangePageSetup here is a circular dependency so we'll pass it in instead
+var ChangePageSetup = {};
+
+function Actions(editorUi, changePageSetupClass)
 {
+	ChangePageSetup = changePageSetupClass;
 	this.editorUi = editorUi;
 	this.actions = new Object();
 	this.init();
@@ -91,7 +105,7 @@ Actions.prototype.init = function()
 		ui.showDialog(dlg.container, 620, 420, true, false);
 		dlg.init();
 	});
-	this.addAction('pageSetup...', function() { ui.showDialog(new PageSetupDialog(ui).container, 320, 220, true, true); }).isEnabled = isGraphEnabled;
+	this.addAction('pageSetup...', function() { ui.showDialog(new PageSetupDialog(ui, ChangePageSetup).container, 320, 220, true, true); }).isEnabled = isGraphEnabled;
 	this.addAction('print...', function() { ui.showDialog(new PrintDialog(ui).container, 300, 180, true, true); }, null, 'sprite-print', Editor.ctrlKey + '+P');
 	this.addAction('preview', function() { mxUtils.show(graph, null, 10, 10); });
 	

@@ -18,7 +18,8 @@ module.exports = {
           'mxClipboard,mxGeometryChange,mxValueChange,mxPolyline,mxImageShape,mxElbowEdgeHandler,mxObjectIdentity,' +
           'mxStyleRegistry,mxGraphLayout,mxLine,mxHandle,mxSwimlane,mxCylinder,mxActor,mxRectangleShape,mxRhombus,mxLabel,' +
           'mxTriangle,mxHexagon,mxCloud,mxArrow,mxRectangleShape,mxPerimeter,mxDoubleEllipse,mxArrowConnector,' +
-          'mxMarker,mxStylesheet',
+          'mxMarker,mxStylesheet,mxForm,mxCircleLayout,mxFastOrganicLayout,mxCompactTreeLayout,mxRadialTreeLayout,' +
+          'mxImageExport,mxXmlCanvas2D,mxXmlRequest,mxHierarchicalLayout,mxMorphing',
       )
       .end();
 

@@ -30,6 +30,7 @@ const {
 	mxGuide,
 	mxHandle,
 	mxImage,
+	mxImageExport,
 	mxImageShape,
 	mxLayoutManager,
 	mxLine,

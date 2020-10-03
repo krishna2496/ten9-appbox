@@ -4,33 +4,23 @@
 
 // TEN9: Added imports
 const {
+	mxCellRenderer,
 	mxClient,
-	mxClipboard,
-	mxCodecRegistry,
-	mxConnectionHandler,
 	mxConstants,
 	mxEvent,
 	mxEventObject,
-	mxEventSource,
-	mxGraphModel,
-	mxImage,
-	mxKeyHandler,
-	mxObjectCodec,
-	mxObjectIdentity,
-	mxOutline,
-	mxPoint,
-	mxPopupMenu,
-	mxRectangle,
 	mxResources,
-	mxStackLayout,
-	mxStylesheet,
 	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
 const {  Dialog, PageSetupDialog } = require('./Editor');
 
-Format = function(editorUi, container)
+// TEN9: Importing ChangePageSetup here is a circular dependency so we'll pass it in instead
+var ChangePageSetup = {};
+
+Format = function(editorUi, container, changePageSetupClass)
 {
+	ChangePageSetup = changePageSetupClass;
 	this.editorUi = editorUi;
 	this.container = container;
 };

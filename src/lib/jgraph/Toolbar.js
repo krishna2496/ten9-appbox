@@ -1,5 +1,6 @@
 // TEN9: Added imports
 const {
+	mxCellRenderer,
 	mxClient,
 	mxConstants,
 	mxEvent,
@@ -18,9 +19,9 @@ const {
 // TEN9: Importing EditorUi here is a circular dependency so we'll pass it in instead
 var EditorUi = {};
 
-function Toolbar(editorUi, container, editorUiCtor)
+function Toolbar(editorUi, container, editorUiClass)
 {
-	EditorUi = editorUiCtor;
+	EditorUi = editorUiClass;
 	this.editorUi = editorUi;
 	this.container = container;
 	this.staticElements = [];

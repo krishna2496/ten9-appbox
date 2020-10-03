@@ -8,15 +8,22 @@ const {
 	mxEventObject,
 	mxForm,
 	mxGraphModel,
+	mxImageExport,
 	mxPopupMenu,
 	mxRectangle,
 	mxResources,
 	mxUtils,
 	mxWindow,
-	mxXmlCanvas2D
+	mxXmlCanvas2D,
+	mxXmlRequest,
 } = require('mxgraph/javascript/mxClient');
 
 const { Dialog, FilenameDialog } = require('./Editor');
+
+const MAX_REQUEST_SIZE = 10485760;
+const MAX_AREA = 15000 * 15000;
+const EXPORT_URL = '/export';
+const SAVE_URL = '/save';
 
 const IMAGE_PATH = 'images';
 const OPEN_FORM = 'open.html';
@@ -1303,7 +1310,6 @@ var EditDataDialog = function(ui, cell)
 	}
 
 	// Creates the dialog contents
-	console.log('form',mxForm);
 	var form = new mxForm('properties');
 	form.table.style.width = '100%';
 

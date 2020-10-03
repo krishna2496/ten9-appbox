@@ -5,12 +5,14 @@ const {
 	mxCodecRegistry,
 	mxConnectionHandler,
 	mxConstants,
+	mxDictionary,
 	mxEvent,
 	mxEventObject,
 	mxEventSource,
 	mxGraphModel,
 	mxImage,
 	mxKeyHandler,
+	mxMorphing,
 	mxObjectCodec,
 	mxObjectIdentity,
 	mxOutline,
@@ -21,6 +23,7 @@ const {
 	mxStackLayout,
 	mxStylesheet,
 	mxUtils,
+	mxXmlRequest,
 } = require('mxgraph/javascript/mxClient');
 
 const { Editor, Dialog, ErrorDialog, FilenameDialog } = require('./Editor');
@@ -35,6 +38,7 @@ const urlParams = {};
 
 // TEN9: TODO: Centralize all globals
 window.mxStylesheet = mxStylesheet;
+const MAX_REQUEST_SIZE = 10485760;
 
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
@@ -87,7 +91,7 @@ EditorUi = function(editor, container, lightbox)
 	}
 	
     // Creates the user interface
-	this.actions = new Actions(this);
+	this.actions = new Actions(this, ChangePageSetup);
 	this.menus = this.createMenus();
 
 	if (!graph.standalone)
@@ -3607,7 +3611,7 @@ EditorUi.prototype.createSidebar = function(container)
  */
 EditorUi.prototype.createFormat = function(container)
 {
-	return new Format(this, container);
+	return new Format(this, container, ChangePageSetup);
 };
 
 /**

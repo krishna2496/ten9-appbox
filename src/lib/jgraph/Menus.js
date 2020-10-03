@@ -1,32 +1,28 @@
-/**
- * Copyright (c) 2006-2012, JGraph Ltd
- */
 // TEN9: Added imports
 const {
+	mxCircleLayout,
 	mxClient,
-	mxClipboard,
-	mxCodecRegistry,
-	mxConnectionHandler,
+	mxCompactTreeLayout,
 	mxConstants,
+	mxEdgeHandler,
 	mxEvent,
 	mxEventObject,
 	mxEventSource,
-	mxGraphModel,
-	mxImage,
-	mxKeyHandler,
-	mxObjectCodec,
-	mxObjectIdentity,
-	mxOutline,
-	mxPoint,
+	mxFastOrganicLayout,
+	mxHierarchicalLayout,
+	mxMouseEvent,
 	mxPopupMenu,
-	mxRectangle,
+	mxRadialTreeLayout,
 	mxResources,
-	mxStackLayout,
-	mxStylesheet,
 	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
-const {EditorUi} = require('./EditorUi');
+const { EditorUi } = require('./EditorUi');
+const { Dialog, FilenameDialog } = require('./Editor');
+
+/**
+ * Copyright (c) 2006-2012, JGraph Ltd
+ */
 /**
  * Constructs a new graph editor
  */
