@@ -1,5 +1,32 @@
-import { mxJSColor } from '../jscolor/jscolor';
+// TEN9: Added imports
+const { mxJSColor } = require('../jscolor/jscolor');
 
+const {
+	mxClient,
+	mxConstants,
+	mxEvent,
+	mxEventObject,
+	mxForm,
+	mxGraphModel,
+	mxImageExport,
+	mxPopupMenu,
+	mxRectangle,
+	mxResources,
+	mxUtils,
+	mxWindow,
+	mxXmlCanvas2D,
+	mxXmlRequest,
+} = require('mxgraph/javascript/mxClient');
+
+const { Dialog, FilenameDialog } = require('./Editor');
+
+const MAX_REQUEST_SIZE = 10485760;
+const MAX_AREA = 15000 * 15000;
+const EXPORT_URL = '/export';
+const SAVE_URL = '/save';
+
+const IMAGE_PATH = 'images';
+const OPEN_FORM = 'open.html';
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
@@ -76,7 +103,6 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 			input.focus();
 		}
 	};
-
 	var picker = new mxJSColor.color(input);
 	picker.pickerOnfocus = false;
 	picker.showPicker();
@@ -1271,7 +1297,7 @@ var EditDataDialog = function(ui, cell)
 {
 	var div = document.createElement('div');
 	var graph = ui.editor.graph;
-	
+
 	var value = graph.getModel().getValue(cell);
 	
 	// Converts the value to an XML node
@@ -2559,7 +2585,16 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	}
 };
 
+// TEN9: Added exports
 module.exports = {
+	OutlineWindow,
+	ColorDialog,
+	LayersWindow,
+	TextareaDialog,
+	EditDataDialog,
+	LinkDialog,
 	OpenDialog,
-	Dialog
-};
+	ExportDialog,
+	EditDiagramDialog,
+	AboutDialog
+}

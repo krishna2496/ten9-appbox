@@ -5,12 +5,14 @@ const {
 	mxCodecRegistry,
 	mxConnectionHandler,
 	mxConstants,
+	mxDictionary,
 	mxEvent,
 	mxEventObject,
 	mxEventSource,
 	mxGraphModel,
 	mxImage,
 	mxKeyHandler,
+	mxMorphing,
 	mxObjectCodec,
 	mxObjectIdentity,
 	mxOutline,
@@ -21,16 +23,22 @@ const {
 	mxStackLayout,
 	mxStylesheet,
 	mxUtils,
+	mxXmlRequest,
 } = require('mxgraph/javascript/mxClient');
 
-const { Editor, Dialog, ErrorDialog } = require('./Editor');
+const { Editor, Dialog, ErrorDialog, FilenameDialog } = require('./Editor');
 const Actions = require('./Actions');
 const Sidebar = require('./Sidebar');
 const Shapes = require('./Shapes');
+const Format = require('./Format');
+const Menus = require('./Menus');
+const Toolbar = require('./Toolbar');
+const { ColorDialog, EditDataDialog, LinkDialog, OpenDialog }  = require('./Dialogs');
 const urlParams = {};
 
 // TEN9: TODO: Centralize all globals
 window.mxStylesheet = mxStylesheet;
+const MAX_REQUEST_SIZE = 10485760;
 
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
@@ -83,9 +91,9 @@ EditorUi = function(editor, container, lightbox)
 	}
 	
     // Creates the user interface
-	this.actions = new Actions(this);
+	this.actions = new Actions(this, ChangePageSetup);
 	this.menus = this.createMenus();
-	
+
 	if (!graph.standalone)
 	{
 		this.createDivs();
@@ -1340,11 +1348,14 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
 };
 
 /**
- * Overridden in Menus.js
+ * // TEN9: No longer...
+ * Overriden in Menus.js
  */
 EditorUi.prototype.createMenus = function()
 {
-	return null;
+	// TEN9: Initializing the menu here to avoid any circular dependencies
+	return new Menus(this);
+	// return null;
 };
 
 /**
@@ -3470,10 +3481,8 @@ EditorUi.prototype.createSidebarFooterContainer = function()
  */
 EditorUi.prototype.createUi = function()
 {
-	// TEN9: TODO: Implement this.menus
 	// Creates menubar
-	this.menubar = (this.editor.chromeless || !this.menus || true) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
-	
+	this.menubar = (this.editor.chromeless || !this.menus ) ? null : this.menus.createMenubar(this.createDiv('geMenubar'));
 	if (this.menubar != null)
 	{
 		this.menubarContainer.appendChild(this.menubar.container);
@@ -3505,9 +3514,8 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.sidebarContainer);
 	}
 	
-	// TEN9: TODO: Implement this.format
 	// Creates the format sidebar
-	this.format = (this.editor.chromeless || !this.formatEnabled || true) ? null : this.createFormat(this.formatContainer);
+	this.format = (this.editor.chromeless || !this.formatEnabled ) ? null : this.createFormat(this.formatContainer);
 	
 	if (this.format != null)
 	{
@@ -3535,9 +3543,8 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.tabContainer);
 	}
 
-    // TEN9:TODO: Implement this.toolbar
 	// Creates toolbar
-	this.toolbar = (this.editor.chromeless || true) ? null : this.createToolbar(this.createDiv('geToolbar'));
+	this.toolbar = (this.editor.chromeless) ? null : this.createToolbar(this.createDiv('geToolbar'));
 	
 	if (this.toolbar != null)
 	{
@@ -3588,7 +3595,7 @@ EditorUi.prototype.setStatusText = function(value)
  */
 EditorUi.prototype.createToolbar = function(container)
 {
-	return new Toolbar(this, container);
+	return new Toolbar(this, container, EditorUi);
 };
 
 /**
@@ -3604,7 +3611,7 @@ EditorUi.prototype.createSidebar = function(container)
  */
 EditorUi.prototype.createFormat = function(container)
 {
-	return new Format(this, container);
+	return new Format(this, container, ChangePageSetup);
 };
 
 /**

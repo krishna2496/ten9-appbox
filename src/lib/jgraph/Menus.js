@@ -1,3 +1,25 @@
+// TEN9: Added imports
+const {
+	mxCircleLayout,
+	mxClient,
+	mxCompactTreeLayout,
+	mxConstants,
+	mxEdgeHandler,
+	mxEvent,
+	mxEventObject,
+	mxEventSource,
+	mxFastOrganicLayout,
+	mxHierarchicalLayout,
+	mxMouseEvent,
+	mxPopupMenu,
+	mxRadialTreeLayout,
+	mxResources,
+	mxUtils,
+} = require('mxgraph/javascript/mxClient');
+
+const { EditorUi } = require('./EditorUi');
+const { Dialog, FilenameDialog } = require('./Editor');
+
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
@@ -1329,7 +1351,7 @@ Menubar.prototype.addMenu = function(label, funct, before)
 	elt.className = 'geItem';
 	mxUtils.write(elt, label);
 	this.addMenuHandler(elt, funct);
-	
+
     if (before != null)
     {
     	this.container.insertBefore(elt, before);
@@ -1456,7 +1478,11 @@ Menu.prototype.execute = function(menu, parent)
 /**
  * "Installs" menus in EditorUi.
  */
-EditorUi.prototype.createMenus = function()
-{
-	return new Menus(this);
-};
+// TEN9: Remove createMenus from here because we are initializing menus from EditorUi itself
+// EditorUi.prototype.createMenus = function()
+// {
+// 	return new Menus(this);
+// };
+
+// TEN9: Added exports
+module.exports = Menus;

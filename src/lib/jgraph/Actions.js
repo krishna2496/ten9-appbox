@@ -1,58 +1,30 @@
 const {
-	mxClient,
-	mxToolbar,
-	mxEdgeStyle,
-	mxConnectionHandler,
-	mxEllipse,
-	mxConnectionConstraint,
-	mxWindow,
-	mxObjectCodec,
-	mxGraphModel,
-	mxActor,
-	mxPopupMenu,
-	mxShape,
-	mxEventObject,
-	mxGraph,
-	mxPopupMenuHandler,
-	mxPrintPreview,
-	mxEventSource,
-	mxRectangle,
-	mxVertexHandler,
-	mxMouseEvent,
-	mxGraphView,
-	mxCodecRegistry,
-	mxImage,
-	mxGeometry,
-	mxCellState,
-	mxRubberband,
-	mxConstraintHandler,
-	mxKeyHandler,
-	mxDragSource,
-	mxUtils,
-	mxEvent,
-	mxCodec,
 	mxCell,
+	mxClient,
+	mxClipboard,
 	mxConstants,
-	mxPoint,
-	mxGraphHandler,
-	mxCylinder,
-	mxCellRenderer,
-	mxText,
-	mxUndoManager,
-	mxStencilRegistry,
-	mxStencil,
-	mxSvgCanvas2D,
-	mxCellHighlight,
-	mxStackLayout,
-	mxConnector,
 	mxEdgeHandler,
-	mxGuide,
-	mxCellEditor,
-	mxSelectionCellsHandler,
-	mxOutline,
-	mxPanningHandler,
+	mxEvent,
+	mxEventObject,
+	mxEventSource,
+	mxGeometry,
+	mxRectangle,
 	mxResources,
+	mxUtils,
 } = require('mxgraph/javascript/mxClient');
+
+const {
+	AboutDialog,
+	EditDiagramDialog,
+	ExportDialog,
+	LayersWindow,
+	OpenDialog,
+	OutlineWindow,
+	TextareaDialog,
+}  = require('./Dialogs');
+
+const { FilenameDialog, PageSetupDialog, PrintDialog }  = require('./Editor');
+const RESOURCES_PATH = 'resources';
 
 /**
  * Copyright (c) 2006-2020, JGraph Ltd
@@ -60,8 +32,13 @@ const {
  *
  * Constructs the actions object for the given UI.
  */
-function Actions(editorUi)
+
+// TEN9: Importing ChangePageSetup here is a circular dependency so we'll pass it in instead
+var ChangePageSetup = {};
+
+function Actions(editorUi, changePageSetupClass)
 {
+	ChangePageSetup = changePageSetupClass;
 	this.editorUi = editorUi;
 	this.actions = new Object();
 	this.init();
@@ -128,7 +105,7 @@ Actions.prototype.init = function()
 		ui.showDialog(dlg.container, 620, 420, true, false);
 		dlg.init();
 	});
-	this.addAction('pageSetup...', function() { ui.showDialog(new PageSetupDialog(ui).container, 320, 220, true, true); }).isEnabled = isGraphEnabled;
+	this.addAction('pageSetup...', function() { ui.showDialog(new PageSetupDialog(ui, ChangePageSetup).container, 320, 220, true, true); }).isEnabled = isGraphEnabled;
 	this.addAction('print...', function() { ui.showDialog(new PrintDialog(ui).container, 300, 180, true, true); }, null, 'sprite-print', Editor.ctrlKey + '+P');
 	this.addAction('preview', function() { mxUtils.show(graph, null, 10, 10); });
 	

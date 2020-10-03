@@ -1,25 +1,26 @@
 // TEN9: Added imports
 const {
 	mxClient,
+	mxCodec,
 	mxConnectionHandler,
+	mxConstants,
+	mxEvent,
 	mxEventObject,
+	mxEventSource,
 	mxGraph,
+	mxGraphHandler,	
+	mxGraphView,
+	mxMouseEvent,
+	mxPoint,
+	mxPolyline,
+	mxPopupMenu,
 	mxPopupMenuHandler,
 	mxPrintPreview,
-	mxEventSource,
 	mxRectangle,
-	mxMouseEvent,
-	mxGraphView,
-	mxUtils,
-	mxEvent,
-	mxPolyline,
-	mxCodec,
-	mxConstants,
-	mxPoint,
-	mxPopupMenu,
-	mxGraphHandler,
-	mxUndoManager,
 	mxRectangleShape,
+	mxResources,
+	mxUndoManager,
+	mxUtils,
 } = require('mxgraph/javascript/mxClient');
 
 const Graph = require('./Graph');
@@ -1466,8 +1467,13 @@ PrintDialog.previewEnabled = true;
 /**
  * Constructs a new page setup dialog.
  */
-var PageSetupDialog = function(editorUi)
+
+ // TEN9: Importing ChangePageSetup here is a circular dependency so we'll pass it in instead
+var ChangePageSetup = {};
+
+var PageSetupDialog = function(editorUi, changePageSetupClass)
 {
+	ChangePageSetup = changePageSetupClass;
 	var graph = editorUi.editor.graph;
 	var row, td;
 
@@ -2794,4 +2800,7 @@ module.exports = {
 	Editor,
 	Dialog,
 	ErrorDialog,
+	PageSetupDialog,
+	FilenameDialog,
+	PrintDialog
 };

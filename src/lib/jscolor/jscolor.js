@@ -9,6 +9,10 @@
  * @link    http://jscolor.com
  */
 
+ // TEN9: Added imports
+const {
+	mxClient,
+} = require('mxgraph/javascript/mxClient');
 
 var mxJSColor = {
 
@@ -910,3 +914,6 @@ var mxJSColor = {
 
 
 mxJSColor.install();
+
+// TEN9: Added exports
+module.exports = {mxJSColor};

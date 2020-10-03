@@ -42,9 +42,9 @@ const urlParams = {};
 // TEN9: Importing Dialog here is a circular dependency so we'll pass it in instead
 var Dialog = {};
 
-function Sidebar(editorUi, container, dialogCtor)
+function Sidebar(editorUi, container, dialogClass)
 {
-	Dialog = dialogCtor;
+	Dialog = dialogClass;
 	this.editorUi = editorUi;
 	this.container = container;
 	this.palettes = new Object();
@@ -3412,7 +3412,6 @@ Sidebar.prototype.createVertexTemplateFromData = function(data, width, height, t
 	var codec = new mxCodec(doc);
 
 	var model = new mxGraphModel();
-	console.log(model);
 	codec.decode(doc.documentElement, model);
 	
 	var cells = this.graph.cloneCells(model.root.getChildAt(0).children);

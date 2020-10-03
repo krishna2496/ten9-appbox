@@ -1,5 +1,5 @@
 <template>
-  <div class="geEditor" ref="container" />
+  <div ref="container" />
 </template>
 
 <script>

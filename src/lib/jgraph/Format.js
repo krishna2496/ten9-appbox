@@ -1,8 +1,26 @@
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
-Format = function(editorUi, container)
+
+// TEN9: Added imports
+const {
+	mxCellRenderer,
+	mxClient,
+	mxConstants,
+	mxEvent,
+	mxEventObject,
+	mxResources,
+	mxUtils,
+} = require('mxgraph/javascript/mxClient');
+
+const {  Dialog, PageSetupDialog } = require('./Editor');
+
+// TEN9: Importing ChangePageSetup here is a circular dependency so we'll pass it in instead
+var ChangePageSetup = {};
+
+Format = function(editorUi, container, changePageSetupClass)
 {
+	ChangePageSetup = changePageSetupClass;
 	this.editorUi = editorUi;
 	this.container = container;
 };
@@ -4665,7 +4683,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		
 		return item;
 	});
-
+	
 	var pattern = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel, 'geSprite-orthogonal', mxResources.get('pattern'), false, mxUtils.bind(this, function(menu)
 	{
 		addItem(menu, 75, 'solid', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN], [null, null]).setAttribute('title', mxResources.get('solid'));
@@ -5962,3 +5980,6 @@ DiagramFormatPanel.prototype.destroy = function()
 		this.gridEnabledListener = null;
 	}
 };
+
+// TEN9: Added exports
+module.exports = Format;
