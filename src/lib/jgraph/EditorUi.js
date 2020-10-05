@@ -2665,6 +2665,9 @@ EditorUi.prototype.setCurrentMenu = function(menu, elt)
 {
 	this.currentMenuElt = elt;
 	this.currentMenu = menu;
+	
+	//TEN9: add menu div into class geEditor so css will apply on the menu
+	this.container.appendChild(menu.div);
 };
 
 /**
