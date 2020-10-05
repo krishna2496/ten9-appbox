@@ -15,13 +15,19 @@
 -->
 
 <template>
-  <div class="geEditor" ref="container" />
+<div>
+  <div class="text-center">
+    <button v-on:click="save" class="btn">File Save</button>
+  </div>
+  <div class="geEditor" ref="container"/>
+</div>
 </template>
 
 <script>
 import { mxResources } from 'mxgraph/javascript/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
+import{ ExportDialog } from '@/lib/jgraph/Dialogs';
 import Graph from '@/lib/jgraph/Graph';
 
 const defaultStyleXml = require('@/styles/default.xml');
@@ -45,9 +51,36 @@ export default {
     themes[Graph.prototype.defaultThemeName] = defaultStyleDoc.documentElement;
     this.editorUi = new EditorUi(new Editor(false, themes), this.$refs.container);
   },
+  methods:{
+    save()
+    {
+      this.editorUi.showDialog(new ExportDialog(this.editorUi).container, 300, 296, true, true);
+    }
+  }
 };
 </script>
 
 <style lang="scss">
 @import '../styles/grapheditor.css';
+.btn{
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    margin-top: 10px;
+}
+.text-center{
+    text-align: center!important;
+}
 </style>

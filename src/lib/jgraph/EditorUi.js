@@ -3452,6 +3452,13 @@ EditorUi.prototype.createDivs = function()
 	this.footerContainer.style.zIndex = mxPopupMenu.prototype.zIndex - 2;
 	this.hsplit.style.width = this.splitSize + 'px';
 	this.sidebarFooterContainer = this.createSidebarFooterContainer();
+
+	// TEN9: add margin top to see the buttons
+	this.menubarContainer.style.marginTop = '50px';
+	this.toolbarContainer.style.marginTop = '50px';
+	this.sidebarContainer.style.marginTop = '50px';
+	this.formatContainer.style.marginTop = '50px';
+	this.diagramContainer.style.marginTop = '50px';
 	
 	if (this.sidebarFooterContainer)
 	{
