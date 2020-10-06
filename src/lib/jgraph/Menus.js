@@ -20,6 +20,7 @@ const {
 const { EditorUi } = require('./EditorUi');
 const { Dialog, FilenameDialog } = require('./Editor');
 const { ColorDialog } = require('./Dialogs');
+const utils = require('@/lib/utils.js');
 
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
@@ -1393,7 +1394,9 @@ Menubar.prototype.addMenuHandler = function(elt, funct)
 					menu.destroy();
 				});
 
-				var offset = mxUtils.getOffset(elt);
+				// TEN9: Use updated getOffset that doesn't assume document.body as origin container
+				// var offset = mxUtils.getOffset(elt);
+				var offset = utils.getOffset(this.editorUi.container, elt);
 				menu.popup(offset.x, offset.y + elt.offsetHeight, null, evt);
 				this.editorUi.setCurrentMenu(menu, elt);
 			}

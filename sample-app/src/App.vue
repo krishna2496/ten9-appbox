@@ -37,4 +37,12 @@ export default {
 // That might have something to do with this being a "file:" reference
 // in package.json.
 @import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css';
+
+#app {
+  position: relative;
+  height: 1000px;
+  width: 1400px;
+  margin: 100px auto;
+  border: 1px solid black;
+}
 </style>

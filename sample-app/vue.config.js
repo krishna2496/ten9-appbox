@@ -22,6 +22,7 @@ module.exports = {
   outputDir: OUTPUT_DIR,
   lintOnSave: false,
   chainWebpack: config => {
+
     config
       .plugin('copy')
       .tap(args => {
@@ -35,6 +36,14 @@ module.exports = {
             ],
           });
         return args;
-      })
+      });
+
+    config.module
+      .rule('source-map-loader')
+        .enforce('pre')
+        .test(/vue-graph-editor.min\.js$/)
+        .use('source-map-loader')
+          .loader('source-map-loader')
+          .end()
   },
 };
