@@ -16,12 +16,16 @@
 
 <template>
   <div id="app">
-    <graph-editor />
+    <div class="ge-container">
+      <graph-editor />
+    </div>
   </div>
 </template>
 
 <script>
-import GraphEditor from 'vue-graph-editor';
+// Comment back in to test NPM
+// import GraphEditor from 'vue-graph-editor';
+import GraphEditor from '../../src/components/GraphEditor.vue';
 
 export default {
   name: 'App',
@@ -32,13 +36,11 @@ export default {
 </script>
 
 <style lang="scss">
-// TEN9: TODO: Add ../node_modules to sass-loader includePaths.
-// This currently isn't working for some reason with webpack.config.js
-// That might have something to do with this being a "file:" reference
-// in package.json.
-@import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css';
+// Comment back in to test NPM
+/* @import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css'; */
+@import '../../src/styles/grapheditor.css';
 
-#app {
+.ge-container {
   position: relative;
   height: 1000px;
   width: 1400px;

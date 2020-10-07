@@ -4,11 +4,7 @@
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
-    "build:dev": "vue-cli-service build --mode development",
-    "lint": "vue-cli-service lint",
-    "prettier": "./node_modules/.bin/prettier --check '**/*.{vue,js}'",
-    "serve": "vue-cli-service serve",
-    "serve:dev": "vue-cli-service serve --mode production"
+    "serve": "vue-cli-service serve"
   },
   "dependencies": {
     "core-js": "^3.6.5",
@@ -21,14 +17,21 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^6.2.0",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^6.2.2",
+    "friendly-errors-webpack-plugin": "^1.7.0",
     "node-sass": "^4.12.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.4",
     "prettier": "^1.19.1",
     "script-loader": "^0.7.2",
     "source-map-loader": "^1.1.0",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpackbar": "^4.0.0"
   }
 }
