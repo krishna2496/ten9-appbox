@@ -16,8 +16,9 @@
 
 <template>
   <div id="app">
+    <save-file v-on:fileSave="save"/>
     <div class="ge-container">
-      <graph-editor />
+      <graph-editor :isFileSave="isSave" v-on:fileSaved="save"/>
     </div>
   </div>
 </template>
@@ -26,12 +27,25 @@
 // Comment back in to test NPM
 // import GraphEditor from 'vue-graph-editor';
 import GraphEditor from '../../src/components/GraphEditor.vue';
+import SaveFile from '../../src/components/SaveFile.vue';
 
 export default {
   name: 'App',
   components: {
     GraphEditor,
+    SaveFile
   },
+  data(){
+    return{
+       isSave:false
+    } 
+  },
+  methods:{
+    save()
+    {
+     this.isSave = !this.isSave
+    }
+  }
 };
 </script>
 

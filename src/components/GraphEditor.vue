@@ -15,20 +15,17 @@
 -->
 
 <template>
-<div>
-  <div class="text-center">
-    <button v-on:click="save" class="btn">File Save</button>
-  </div>
   <div class="geEditor" ref="container"/>
-</div>
 </template>
 
 <script>
 import { mxResources } from 'mxgraph/javascript/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
-import{ ExportDialog } from '@/lib/jgraph/Dialogs';
+import{ ExportDialogXml } from '@/lib/jgraph/Dialogs';
 import Graph from '@/lib/jgraph/Graph';
+
+import SaveFile from '@/components/SaveFile';
 
 const defaultStyleXml = require('@/styles/default.xml');
 const resourcesFile = require('@/locale/grapheditor.txt');
@@ -40,7 +37,9 @@ export default {
       editorUi: null,
     };
   },
+  props:['isFileSave'],
   mounted() {
+    console.log('save =>',this.isFileSave);
     mxResources.loadDefaultBundle = false;
     mxResources.parse(resourcesFile);
 
@@ -52,9 +51,19 @@ export default {
     this.editorUi = new EditorUi(new Editor(false, themes), this.$refs.container);
   },
   methods:{
-    save()
+    saveFile()
     {
-      this.editorUi.showDialog(new ExportDialog(this.editorUi).container, 300, 296, true, true);
+      this.editorUi.showDialog(new ExportDialogXml(this.editorUi).container, 300, 296, true, true);
+    }
+  },
+  watch:{
+    isFileSave(val)
+    {
+      if(val)
+      {
+        this.saveFile()
+        this.$emit('fileSaved')
+      }  
     }
   }
 };
