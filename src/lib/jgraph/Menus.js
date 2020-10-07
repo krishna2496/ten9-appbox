@@ -1058,7 +1058,7 @@ Menus.prototype.toggleStyle = function(key, defaultValue)
  * Creates the keyboard event handler for the current graph and history.
  */
 Menus.prototype.addMenuItem = function(menu, key, parent, trigger, sprite, label)
-{
+{	
 	var action = this.editorUi.actions.get(key);
 
 	if (action != null && (menu.showDisabled || action.isEnabled()) && action.visible)
