@@ -14,17 +14,17 @@
  * -----
  */
 
-module.exports = {
-  root: true,
-  env: {
-    node: true,
-  },
-  extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/prettier'],
-  parserOptions: {
-    parser: 'babel-eslint',
-  },
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-  },
-};
+import {
+  mxPoint,
+  mxUtils,
+} from 'mxgraph/javascript/mxClient';
+
+export function getOffset(originElt, elt) {
+  const originRect = originElt.getBoundingClientRect();
+  const eltRect = elt.getBoundingClientRect();
+
+  const offsetLeft = eltRect.left - originRect.left;
+  const offsetTop = eltRect.top - originRect.top;
+
+  return new mxPoint(offsetLeft, offsetTop);
+}

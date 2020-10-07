@@ -20,6 +20,7 @@ const {
 const { EditorUi } = require('./EditorUi');
 const { Dialog, FilenameDialog } = require('./Editor');
 const { ColorDialog } = require('./Dialogs');
+const utils = require('@/lib/utils.js');
 
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
@@ -1057,7 +1058,7 @@ Menus.prototype.toggleStyle = function(key, defaultValue)
  * Creates the keyboard event handler for the current graph and history.
  */
 Menus.prototype.addMenuItem = function(menu, key, parent, trigger, sprite, label)
-{
+{	
 	var action = this.editorUi.actions.get(key);
 
 	if (action != null && (menu.showDisabled || action.isEnabled()) && action.visible)
@@ -1393,7 +1394,9 @@ Menubar.prototype.addMenuHandler = function(elt, funct)
 					menu.destroy();
 				});
 
-				var offset = mxUtils.getOffset(elt);
+				// TEN9: Use updated getOffset that doesn't assume document.body as origin container
+				// var offset = mxUtils.getOffset(elt);
+				var offset = utils.getOffset(this.editorUi.container, elt);
 				menu.popup(offset.x, offset.y + elt.offsetHeight, null, evt);
 				this.editorUi.setCurrentMenu(menu, elt);
 			}
