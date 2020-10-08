@@ -21,7 +21,7 @@ const {
 	mxResources,
 	mxUndoManager,
 	mxUtils,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const Graph = require('./Graph');
 const Base64 = require('../deflate/base64');

@@ -24,7 +24,7 @@ const {
 	mxStylesheet,
 	mxUtils,
 	mxXmlRequest,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const { Editor, Dialog, ErrorDialog, FilenameDialog } = require('./Editor');
 const Actions = require('./Actions');
@@ -3456,13 +3456,6 @@ EditorUi.prototype.createDivs = function()
 	this.footerContainer.style.zIndex = mxPopupMenu.prototype.zIndex - 2;
 	this.hsplit.style.width = this.splitSize + 'px';
 	this.sidebarFooterContainer = this.createSidebarFooterContainer();
-
-	// TEN9: add margin top to see the buttons
-	this.menubarContainer.style.marginTop = '50px';
-	this.toolbarContainer.style.marginTop = '50px';
-	this.sidebarContainer.style.marginTop = '50px';
-	this.formatContainer.style.marginTop = '50px';
-	this.diagramContainer.style.marginTop = '50px';
 	
 	if (this.sidebarFooterContainer)
 	{
@@ -3889,7 +3882,6 @@ EditorUi.prototype.openFile = function()
 	{
 		this.hideDialog(cancel);
 	}));
-
 	// Removes openFile if dialog is closed
 	this.showDialog(new OpenDialog(this).container, (Editor.useLocalStorage) ? 640 : 320,
 			(Editor.useLocalStorage) ? 480 : 220, true, true, function()

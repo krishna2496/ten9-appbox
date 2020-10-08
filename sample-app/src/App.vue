@@ -16,9 +16,12 @@
 
 <template>
   <div id="app">
-    <save-file v-on:fileSave="save"/>
+    <div class="row-btn">
+      <save-file v-on:fileSave="save"/>
+      <open-file v-on:fileContent="importXml($event)"/>
+    </div>
     <div class="ge-container">
-      <graph-editor :isFileSave="isSave" v-on:fileSaved="save"/>
+      <graph-editor :isFileSave="isSave" v-on:fileSaved="save" :importFile="xmlData"/>
     </div>
   </div>
 </template>
@@ -28,22 +31,29 @@
 // import GraphEditor from 'vue-graph-editor';
 import GraphEditor from '../../src/components/GraphEditor.vue';
 import SaveFile from '../../src/components/SaveFile.vue';
+import OpenFile from '../../src/components/OpenFile.vue';
 
 export default {
   name: 'App',
   components: {
     GraphEditor,
-    SaveFile
+    SaveFile,
+    OpenFile
   },
   data(){
     return{
-       isSave:false
+       isSave:false,
+       xmlData:''
     } 
   },
   methods:{
     save()
     {
      this.isSave = !this.isSave
+    },
+    importXml(val)
+    {
+      this.xmlData = val;
     }
   }
 };

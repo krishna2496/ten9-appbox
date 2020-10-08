@@ -33,7 +33,7 @@ const {
 	mxTriangle,
 	mxUtils,
 	mxVertexHandler,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 /**
  * Copyright (c) 2006-2015, JGraph Ltd

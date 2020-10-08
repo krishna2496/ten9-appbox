@@ -19,13 +19,15 @@
 </template>
 
 <script>
-import { mxResources } from 'mxgraph/javascript/mxClient';
+import { mxResources, mxClient } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
-import{ ExportDialogXml } from '@/lib/jgraph/Dialogs';
+import{ ExportDialogXml, importXmlFile } from '@/lib/utils';
+//import{ ExportDialog } from '@/lib/jgraph/Dialogs';
 import Graph from '@/lib/jgraph/Graph';
 
 import SaveFile from '@/components/SaveFile';
+
 
 const defaultStyleXml = require('@/styles/default.xml');
 const resourcesFile = require('@/locale/grapheditor.txt');
@@ -37,9 +39,8 @@ export default {
       editorUi: null,
     };
   },
-  props:['isFileSave'],
+  props:['isFileSave','importFile'],
   mounted() {
-    console.log('save =>',this.isFileSave);
     mxResources.loadDefaultBundle = false;
     mxResources.parse(resourcesFile);
 
@@ -49,11 +50,16 @@ export default {
     const themes = {};
     themes[Graph.prototype.defaultThemeName] = defaultStyleDoc.documentElement;
     this.editorUi = new EditorUi(new Editor(false, themes), this.$refs.container);
+    mxClient.setContainer(this.editorUi.container);
   },
   methods:{
     saveFile()
     {
-      this.editorUi.showDialog(new ExportDialogXml(this.editorUi).container, 300, 296, true, true);
+      new ExportDialogXml(this.editorUi);
+    },
+    exportXml(data)
+    {
+      new importXmlFile(this.editorUi,data);
     }
   },
   watch:{
@@ -64,6 +70,13 @@ export default {
         this.saveFile()
         this.$emit('fileSaved')
       }  
+    },
+    importFile(val)
+    {
+      if(val != '')
+      {
+        this.exportXml(val)
+      }
     }
   }
 };

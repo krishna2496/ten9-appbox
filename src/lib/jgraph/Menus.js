@@ -15,7 +15,7 @@ const {
 	mxRadialTreeLayout,
 	mxResources,
 	mxUtils,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const { EditorUi } = require('./EditorUi');
 const { Dialog, FilenameDialog } = require('./Editor');
