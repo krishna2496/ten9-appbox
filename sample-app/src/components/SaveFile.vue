@@ -1,5 +1,7 @@
 <template>
-  <button v-on:click="saveFile">Save File</button>
+  <button @click="saveFile">
+    Save File
+  </button>
 </template>
 
 <script>

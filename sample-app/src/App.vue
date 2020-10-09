@@ -17,11 +17,11 @@
 <template>
   <div id="app">
     <div class="row-btn">
-      <save-file v-on:fileSave="save" />
-      <open-file v-on:fileContent="importXml($event)" />
+      <save-file @fileSave="save" />
+      <open-file @fileContent="importXml($event)" />
     </div>
     <div class="ge-container">
-      <graph-editor v-on:fileSaved="save" ref="editor" />
+      <graph-editor ref="editor" @fileSaved="save" />
     </div>
   </div>
 </template>
@@ -58,9 +58,7 @@ export default {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      setTimeout(function() {
-        URL.revokeObjectURL(a.href);
-      }, 1500);
+      URL.revokeObjectURL(a.href);
     },
     importXml(val) {
       this.$refs.editor.loadData(val);

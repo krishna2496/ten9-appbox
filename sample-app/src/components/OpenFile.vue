@@ -1,13 +1,9 @@
 <template>
   <div class="btn-left">
-    <button v-on:click="fileUpload">Open A File</button>
-    <input
-      type="file"
-      value="Upload File"
-      ref="file"
-      v-on:change="uploadFile"
-      style="display:none;"
-    />
+    <button @click="fileUpload">
+      Open A File
+    </button>
+    <input ref="file" type="file" value="Upload File" style="display:none;" @change="uploadFile" />
   </div>
 </template>
 
@@ -18,9 +14,9 @@ export default {
       this.$refs.file.click();
     },
     uploadFile() {
-      var readXml = null;
-      var selectedFile = this.$refs.file.files[0];
-      var reader = new FileReader();
+      let readXml = null;
+      let [selectedFile] = this.$refs.file.files;
+      let reader = new FileReader();
       reader.onload = (e) => {
         readXml = e.target.result;
         this.$emit('fileContent', readXml);

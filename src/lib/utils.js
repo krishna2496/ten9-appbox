@@ -21,14 +21,13 @@ export function exportXml(editorUi) {
 }
 
 export function importXmlFile(editorUi, data) {
-  var doc = mxUtils.parseXml(data);
-  var model = new mxGraphModel();
-  var codec = new mxCodec(doc);
+  const doc = mxUtils.parseXml(data);
+  const model = new mxGraphModel();
+  const codec = new mxCodec(doc);
   codec.decode(doc.documentElement, model);
 
-  var children = model.getChildren(model.getChildAt(model.getRoot(), 0));
+  const children = model.getChildren(model.getChildAt(model.getRoot(), 0));
   editorUi.editor.graph.importCells(children);
-  //editorUi.editor.graph.setSelectionCells();//comment this line
 }
 
 export function getOffset(originElt, elt) {

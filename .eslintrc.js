@@ -14,40 +14,43 @@
  * -----
  */
 
-const allExtensions = ['.vue', '.js'];
-
 module.exports = {
   root: true,
+
   env: {
     node: true,
   },
-  // extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/prettier'],
+
   extends: [
     'plugin:vue/essential',
     'plugin:vue/recommended',
     'plugin:prettier/recommended',
     'eslint:recommended',
   ],
+
   parser: 'vue-eslint-parser',
+
   parserOptions: {
     parser: 'babel-eslint',
   },
+
   plugins: ['vue', 'prettier'],
 
-  settings: {
-    'import/extensions': allExtensions,
-    'import/resolver': {
-      node: {
-        extensions: allExtensions,
-        moduleDirectory: ['./node_modules'],
-      },
-      webpack: './config/webpack/webpack.config.app.js',
-      alias: {
-        map: [['@', './src/']],
-        extensions: allExtensions,
-      },
-    },
-  },
+  // TODO: Add import settings and rules when import order is sorted out
+  // settings: {
+  //   'import/extensions': allExtensions,
+  //   'import/resolver': {
+  //     node: {
+  //       extensions: allExtensions,
+  //       moduleDirectory: ['./node_modules'],
+  //     },
+  //     webpack: './config/webpack/webpack.config.app.js',
+  //     alias: {
+  //       map: [['@', './src/']],
+  //       extensions: ['.vue', '.js'],
+  //     },
+  //   },
+  // },
 
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -96,7 +99,6 @@ module.exports = {
     'prefer-arrow-callback': 'error',
     quotes: ['error', 'single', { avoidEscape: true }],
     semi: ['error', 'always'],
-
     camelcase: [
       'error',
       {
@@ -104,6 +106,19 @@ module.exports = {
       },
     ],
     'linebreak-style': ['error', 'unix'],
+    'vue/html-self-closing': [
+      'error',
+      {
+        html: {
+          void: 'always', // prettier requires it
+        },
+      },
+    ],
+    // TODO: Turning this off for now. Need to revisit to enforce
+    // 1 attribute per line AND have prettier work.
+    'vue/max-attributes-per-line': 'off',
+
+    // TODO: Add import rules when import order is sorted out
     // 'import/no-unresolved': 'error',
     // 'import/prefer-default-export': 'error',
     // 'import/no-cycle': 'error',
