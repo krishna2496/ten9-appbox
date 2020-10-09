@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import Init from './init';
 // Comment back in to test NPM
 // import GraphEditor from 'vue-graph-editor';
 import GraphEditor from '../../src/components/GraphEditor.vue';
