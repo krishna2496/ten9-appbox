@@ -27,6 +27,7 @@
 </template>
 
 <script>
+// eslint-disable-next-line no-unused-vars
 import Init from './init';
 // Comment back in to test NPM
 // import GraphEditor from 'vue-graph-editor';
