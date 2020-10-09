@@ -22,7 +22,7 @@
 import { mxClient, mxResources } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
-import { ExportXml, importXmlFile } from '@/lib/utils';
+import { exportXml, importXmlFile } from '@/lib/utils';
 import Graph from '@/lib/jgraph/Graph';
 
 const defaultStyleXml = require('@/styles/default.xml');
@@ -35,7 +35,6 @@ export default {
       editorUi: null,
     };
   },
-  props: ['isFileSave', 'importFile'],
   mounted() {
     mxResources.loadDefaultBundle = false;
     mxResources.parse(resourcesFile);
@@ -50,23 +49,10 @@ export default {
   },
   methods: {
     saveFile() {
-      new ExportXml(this.editorUi);
+      return exportXml(this.editorUi);
     },
-    exportXml(data) {
-      new importXmlFile(this.editorUi, data);
-    },
-  },
-  watch: {
-    isFileSave(val) {
-      if (val) {
-        this.saveFile();
-        this.$emit('fileSaved');
-      }
-    },
-    importFile(val) {
-      if (val != '') {
-        this.exportXml(val);
-      }
+    loadData(data) {
+      importXmlFile(this.editorUi, data);
     },
   },
 };

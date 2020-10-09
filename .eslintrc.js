@@ -22,11 +22,11 @@ module.exports = {
     node: true,
   },
   // extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/prettier'],
-  "extends": [
-    "plugin:vue/essential",
-    "plugin:vue/recommended",
-    "plugin:prettier/recommended",
-    "eslint:recommended",
+  extends: [
+    'plugin:vue/essential',
+    'plugin:vue/recommended',
+    'plugin:prettier/recommended',
+    'eslint:recommended',
   ],
   parser: 'vue-eslint-parser',
   parserOptions: {
@@ -43,9 +43,7 @@ module.exports = {
       },
       webpack: './config/webpack/webpack.config.app.js',
       alias: {
-        map: [
-          ['@', './src/'],
-        ],
+        map: [['@', './src/']],
         extensions: allExtensions,
       },
     },
@@ -61,7 +59,7 @@ module.exports = {
     'no-param-reassign': ['error', { props: false }],
     'no-bitwise': 'error',
     'no-process-env': 'error',
-    'no-magic-numbers': ['error', { 'ignore': [0] }],
+    'no-magic-numbers': ['error', { ignore: [0] }],
     'prefer-destructuring': 'error',
     'no-multi-assign': 'error',
     'no-underscore-dangle': ['error'],

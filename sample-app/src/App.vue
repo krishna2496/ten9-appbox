@@ -21,7 +21,7 @@
       <open-file v-on:fileContent="importXml($event)" />
     </div>
     <div class="ge-container">
-      <graph-editor :isFileSave="isSave" v-on:fileSaved="save" :importFile="xmlData" />
+      <graph-editor v-on:fileSaved="save" ref="editor" />
     </div>
   </div>
 </template>
@@ -42,18 +42,28 @@ export default {
     SaveFile,
     OpenFile,
   },
-  data() {
-    return {
-      isSave: false,
-      xmlData: '',
-    };
-  },
   methods: {
     save() {
-      this.isSave = !this.isSave;
+      let data = this.$refs.editor.saveFile();
+      let fileName = 'drawgraph.xml';
+      let fileType = '.xml';
+
+      let blob = new Blob([data], { type: fileType });
+
+      let a = document.createElement('a');
+      a.download = fileName;
+      a.href = URL.createObjectURL(blob);
+      a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() {
+        URL.revokeObjectURL(a.href);
+      }, 1500);
     },
     importXml(val) {
-      this.xmlData = val;
+      this.$refs.editor.loadData(val);
     },
   },
 };
