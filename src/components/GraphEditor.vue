@@ -19,11 +19,10 @@
 </template>
 
 <script>
-import { mxResources, mxClient } from '@/lib/jgraph/mxClient';
+import { mxClient, mxResources } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
-import{ ExportDialogXml, importXmlFile } from '@/lib/utils';
-//import{ ExportDialog } from '@/lib/jgraph/Dialogs';
+import{ ExportXml, importXmlFile } from '@/lib/utils';
 import Graph from '@/lib/jgraph/Graph';
 
 import SaveFile from '@/components/SaveFile';
@@ -55,7 +54,7 @@ export default {
   methods:{
     saveFile()
     {
-      new ExportDialogXml(this.editorUi);
+      new ExportXml(this.editorUi);
     },
     exportXml(data)
     {
@@ -84,25 +83,4 @@ export default {
 
 <style lang="scss">
 @import '../styles/grapheditor.css';
-.btn{
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: .375rem .75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border-radius: .25rem;
-    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-    margin-top: 10px;
-}
-.text-center{
-    text-align: center!important;
-}
 </style>

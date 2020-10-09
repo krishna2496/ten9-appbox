@@ -1508,7 +1508,7 @@ html td.mxWindowTitle {
 	overflow-y : hidden;
 }
 div.mxPopupMenu {
-	background-color: white !important;
+	background: white !important;
 }
 .row-btn{
 	display: flex;

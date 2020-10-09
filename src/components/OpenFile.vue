@@ -1,17 +1,17 @@
 <template>
     <div class="btn-left">
-        <button v-on:click="FileUpload">Upload A File</button>
-        <input type="file" value="Upload File" ref="file" v-on:change="UploadFile" style="display:none;">
+        <button v-on:click="fileUpload">Open A File</button>
+        <input type="file" value="Upload File" ref="file" v-on:change="uploadFile" style="display:none;">
     </div>
 </template>
 
 <script>
 export default {
     methods:{
-        FileUpload(){
+        fileUpload(){
             this.$refs.file.click();
         },
-        UploadFile()
+        uploadFile()
         {
             var readXml=null;
             var selectedFile = this.$refs.file.files[0];

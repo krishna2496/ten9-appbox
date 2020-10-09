@@ -15,15 +15,15 @@
  */
 
 import {
-  mxPoint,
-  mxUtils,
+  mxCodec,
   mxGraphModel,
-  mxCodec
+  mxPoint,
+  mxUtils 
 } from '@/lib/jgraph/mxClient';
 
 const MAX_REQUEST_SIZE = 10485760;
 
-export var ExportDialogXml = function(editorUi)
+export var ExportXml = function(editorUi)
 {
 	var graph = editorUi.editor.graph;
 	var bounds = graph.getGraphBounds();
@@ -32,8 +32,8 @@ export var ExportDialogXml = function(editorUi)
   var format = 'xml';
   var bg = graph.background;
   
-  ExportDialogXml.lastBorderValue = '';
-	ExportDialogXml.exportXmlFile(editorUi, name, format, bg, 1, 0, 100);
+  ExportXml.lastBorderValue = '';
+	ExportXml.exportXmlFile(editorUi, name, format, bg, 1, 0, 100);
 	
 	
 };
@@ -52,11 +52,11 @@ export var importXmlFile = function(editorUi,data)
 	editorUi.hideDialog();
 }
 
-ExportDialogXml.exportXmlFile = function(editorUi, name, format, bg, s, b, dpi)
+ExportXml.exportXmlFile = function(editorUi, name, format, bg, s, b, dpi)
 {	
 	if (format == 'xml')
 	{
-    	ExportDialogXml.saveLocalFileXml(editorUi, mxUtils.getXml(editorUi.editor.getGraphXml()), name, format);
+    	ExportXml.saveLocalFileXml(editorUi, mxUtils.getXml(editorUi.editor.getGraphXml()), name, format);
 	}
 	else
 	{
@@ -64,7 +64,7 @@ ExportDialogXml.exportXmlFile = function(editorUi, name, format, bg, s, b, dpi)
 	}
 };
 
-ExportDialogXml.saveLocalFileXml = function(editorUi, data, fileName, format)
+ExportXml.saveLocalFileXml = function(editorUi, data, fileName, format)
 {
 	if (data.length < MAX_REQUEST_SIZE)
 	{
