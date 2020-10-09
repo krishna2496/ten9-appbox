@@ -96,61 +96,6 @@ module.exports = {
         include: [path.resolve(ROOT_PATH, 'src')],
       },
 
-      // Use url-loader to convert images to data URIs. Use file-loader if the file is larger than 2K.
-      {
-        test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 2048,
-              esModule: false,
-              fallback: {
-                loader: 'file-loader',
-                options: {
-                  name: IS_PRODUCTION ? 'img/[name].[contenthash:8].[ext]' : 'img/[name].[ext]',
-                  esModule: false,
-                },
-              },
-            },
-          },
-        ],
-      },
-
-      // Use vue-svg-loader on inline SVGs and external SVGs.
-      // We will only run one of the rule sets depending if the SVG is inlined or external.
-      {
-        test: /\.(svg)(\?.*)?$/,
-        oneOf: [
-          // inline svgs
-          {
-            resourceQuery: /inline/,
-            use: [
-              {
-                loader: 'babel-loader',
-              },
-              {
-                loader: 'vue-svg-loader',
-              },
-            ],
-          },
-          // external svgs
-          {
-            use: [
-              {
-                loader: 'file-loader',
-                options: {
-                  name: IS_PRODUCTION
-                    ? 'assets/[name].[contenthash:8].[ext]'
-                    : 'assets/[name].[ext]',
-                  esModule: false,
-                },
-              },
-            ],
-          },
-        ],
-      },
-
       // Load CSS files: css-loader, then minify, then apply vue style loader.
       {
         test: /\.css$/,
@@ -172,32 +117,7 @@ module.exports = {
             loader: 'sass-loader',
             options: {
               sassOptions: {
-                includePaths: [
-                  path.resolve(ROOT_PATH, 'node_modules'),
-                  path.resolve(ROOT_PATH, 'node_modules/bootstrap/scss/bootstrap'),
-                  path.resolve(ROOT_PATH, 'node_modules/bootstrap/scss/functions'),
-                ],
-              },
-            },
-          },
-        ],
-      },
-
-      // Use url-loader to convert fonts to data URIs. Use file-loader if the file is larger than 2K.
-      {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 2048,
-              esModule: false,
-              fallback: {
-                loader: 'file-loader',
-                options: {
-                  name: IS_PRODUCTION ? 'fonts/[name].[contenthash:8].[ext]' : 'fonts/[name].[ext]',
-                  esModule: false,
-                },
+                includePaths: [path.resolve(ROOT_PATH, 'node_modules')],
               },
             },
           },
