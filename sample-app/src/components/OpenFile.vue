@@ -21,7 +21,6 @@ export default {
                  this.$emit('fileContent',readXml);
             }
            reader.readAsText(selectedFile);
-          
         }
     }
 }
