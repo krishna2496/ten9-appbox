@@ -7,7 +7,7 @@ const {
 	mxPopupMenu,
 	mxResources,
 	mxUtils,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const utils = require('@/lib/utils.js');
 

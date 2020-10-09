@@ -16,7 +16,7 @@ const {
 	mxWindow,
 	mxXmlCanvas2D,
 	mxXmlRequest,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const { Dialog, FilenameDialog } = require('./Editor');
 const utils = require('@/lib/utils.js');

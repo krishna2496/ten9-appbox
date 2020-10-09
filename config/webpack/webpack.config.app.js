@@ -212,7 +212,7 @@ module.exports = {
 
       // Use exports-loader to add exports for mxClient.js objects since it doesn't export anything
       {
-        test: /node_modules\/mxgraph\/javascript\/mxClient\.js$/,
+        test: /mxClient\.js$/,
         loader: 'exports-loader',
         options: {
           type: 'commonjs',

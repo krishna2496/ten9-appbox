@@ -12,7 +12,7 @@
  // TEN9: Added imports
 const {
 	mxClient,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 var mxJSColor = {
 

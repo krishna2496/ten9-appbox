@@ -11,7 +11,7 @@ const {
 	mxEventObject,
 	mxResources,
 	mxUtils,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const {  Dialog, PageSetupDialog } = require('./Editor');
 

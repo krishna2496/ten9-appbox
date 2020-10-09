@@ -56,7 +56,7 @@ const {
 	mxUtils,
 	mxValueChange,
 	mxVertexHandler,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 window.mxGraphModel = mxGraphModel;
 window.mxCell = mxCell;

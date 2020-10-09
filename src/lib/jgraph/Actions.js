@@ -11,7 +11,7 @@ const {
 	mxRectangle,
 	mxResources,
 	mxUtils,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const {
 	AboutDialog,

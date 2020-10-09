@@ -24,7 +24,7 @@ const {
 	mxStylesheet,
 	mxUtils,
 	mxXmlRequest,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const { Editor, Dialog, ErrorDialog, FilenameDialog } = require('./Editor');
 const Actions = require('./Actions');
@@ -3882,7 +3882,6 @@ EditorUi.prototype.openFile = function()
 	{
 		this.hideDialog(cancel);
 	}));
-
 	// Removes openFile if dialog is closed
 	this.showDialog(new OpenDialog(this).container, (Editor.useLocalStorage) ? 640 : 320,
 			(Editor.useLocalStorage) ? 480 : 220, true, true, function()
