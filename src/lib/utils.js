@@ -23,22 +23,12 @@ import {
 
 const MAX_REQUEST_SIZE = 10485760;
 
-export var ExportXml = function(editorUi)
+export function exportXml(editorUi)
 {
-	var graph = editorUi.editor.graph;
-	var bounds = graph.getGraphBounds();
-  var scale = graph.view.scale;
-  var name = 'example.xml';
-  var format = 'xml';
-  var bg = graph.background;
-  
-  ExportXml.lastBorderValue = '';
-	ExportXml.exportXmlFile(editorUi, name, format, bg, 1, 0, 100);
-	
-	
+	return mxUtils.getXml(editorUi.editor.getGraphXml());
 };
 
-export var importXmlFile = function(editorUi,data)
+export function importXmlFile(editorUi,data)
 {
 	var doc = mxUtils.parseXml(data);
 	var model = new mxGraphModel();
@@ -46,53 +36,9 @@ export var importXmlFile = function(editorUi,data)
 	codec.decode(doc.documentElement, model);
 	
 	var children = model.getChildren(model.getChildAt(model.getRoot(), 0));
-	editorUi.editor.graph.setSelectionCells(editorUi.editor.graph.importCells(children));
-	
-	// LATER: Why is hideDialog between begin-/endUpdate faster?
-	editorUi.hideDialog();
+	editorUi.editor.graph.importCells(children);
+	//editorUi.editor.graph.setSelectionCells();//comment this line
 }
-
-ExportXml.exportXmlFile = function(editorUi, name, format, bg, s, b, dpi)
-{	
-	if (format == 'xml')
-	{
-    	ExportXml.saveLocalFileXml(editorUi, mxUtils.getXml(editorUi.editor.getGraphXml()), name, format);
-	}
-	else
-	{
-		alert('please select XML format');
-	}
-};
-
-ExportXml.saveLocalFileXml = function(editorUi, data, fileName, format)
-{
-	if (data.length < MAX_REQUEST_SIZE)
-	{
-		editorUi.hideDialog();
-
-    var decodedString = data;
-    
-		var fileType = '.xml';
-
-		var blob = new Blob([decodedString], { type: fileType });
-
-		var a = document.createElement('a');
-		a.download = fileName;
-		a.href = URL.createObjectURL(blob);
-		a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
-		a.style.display = "none";
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500); 
-		
-	}
-	else
-	{
-		mxUtils.alert(mxResources.get('drawingTooLarge'));
-		mxUtils.popup(xml);
-	}
-};
 
 export function getOffset(originElt, elt) {
   const originRect = originElt.getBoundingClientRect();
