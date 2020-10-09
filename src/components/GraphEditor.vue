@@ -25,7 +25,6 @@ import { Editor } from '@/lib/jgraph/Editor';
 import{ ExportXml, importXmlFile } from '@/lib/utils';
 import Graph from '@/lib/jgraph/Graph';
 
-import SaveFile from '@/components/SaveFile';
 
 
 const defaultStyleXml = require('@/styles/default.xml');

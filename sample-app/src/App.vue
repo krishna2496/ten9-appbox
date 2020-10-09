@@ -30,8 +30,8 @@
 // Comment back in to test NPM
 // import GraphEditor from 'vue-graph-editor';
 import GraphEditor from '../../src/components/GraphEditor.vue';
-import SaveFile from '../../src/components/SaveFile.vue';
-import OpenFile from '../../src/components/OpenFile.vue';
+import SaveFile from './components/SaveFile.vue'
+import OpenFile from './components/OpenFile.vue';
 
 export default {
   name: 'App',
