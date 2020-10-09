@@ -48,7 +48,7 @@ module.exports = {
   devtool,
 
   entry: {
-    app: ['./sample-app/src/main.js']
+    app: ['./sample-app/src/main.js'],
   },
 
   output: {

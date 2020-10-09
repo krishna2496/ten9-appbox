@@ -1,14 +1,13 @@
 <template>
-    <button v-on:click="saveFile">Save File</button>
+  <button v-on:click="saveFile">Save File</button>
 </template>
 
 <script>
 export default {
-    methods:{
-        saveFile()
-        {
-            this.$emit('fileSave')
-        }
-    }
-}
+  methods: {
+    saveFile() {
+      this.$emit('fileSave');
+    },
+  },
+};
 </script>

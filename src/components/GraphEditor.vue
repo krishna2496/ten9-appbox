@@ -15,17 +15,15 @@
 -->
 
 <template>
-  <div class="geEditor" ref="container"/>
+  <div class="geEditor" ref="container" />
 </template>
 
 <script>
 import { mxClient, mxResources } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
-import{ ExportXml, importXmlFile } from '@/lib/utils';
+import { ExportXml, importXmlFile } from '@/lib/utils';
 import Graph from '@/lib/jgraph/Graph';
-
-
 
 const defaultStyleXml = require('@/styles/default.xml');
 const resourcesFile = require('@/locale/grapheditor.txt');
@@ -37,7 +35,7 @@ export default {
       editorUi: null,
     };
   },
-  props:['isFileSave','importFile'],
+  props: ['isFileSave', 'importFile'],
   mounted() {
     mxResources.loadDefaultBundle = false;
     mxResources.parse(resourcesFile);
@@ -50,33 +48,27 @@ export default {
     this.editorUi = new EditorUi(new Editor(false, themes), this.$refs.container);
     mxClient.setContainer(this.editorUi.container);
   },
-  methods:{
-    saveFile()
-    {
+  methods: {
+    saveFile() {
       new ExportXml(this.editorUi);
     },
-    exportXml(data)
-    {
-      new importXmlFile(this.editorUi,data);
-    }
-  },
-  watch:{
-    isFileSave(val)
-    {
-      if(val)
-      {
-        this.saveFile()
-        this.$emit('fileSaved')
-      }  
+    exportXml(data) {
+      new importXmlFile(this.editorUi, data);
     },
-    importFile(val)
-    {
-      if(val != '')
-      {
-        this.exportXml(val)
+  },
+  watch: {
+    isFileSave(val) {
+      if (val) {
+        this.saveFile();
+        this.$emit('fileSaved');
       }
-    }
-  }
+    },
+    importFile(val) {
+      if (val != '') {
+        this.exportXml(val);
+      }
+    },
+  },
 };
 </script>
 
