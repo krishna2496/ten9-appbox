@@ -16,11 +16,11 @@
 
 import { mxCodec, mxGraphModel, mxPoint, mxUtils } from '@/lib/jgraph/mxClient';
 
-export function exportXml(editorUi) {
+export function getXml(editorUi) {
   return mxUtils.getXml(editorUi.editor.getGraphXml());
 }
 
-export function importXmlFile(editorUi, data) {
+export function importXml(editorUi, data) {
   const doc = mxUtils.parseXml(data);
   const model = new mxGraphModel();
   const codec = new mxCodec(doc);

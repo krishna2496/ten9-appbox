@@ -53,7 +53,8 @@ EditorUi = function(editor, container, lightbox)
 	this.destroyFunctions = [];
 	this.editor = editor || new Editor();
 	this.container = container || document.body;
-	
+	mxClient.setDocumentContainer(this.container);
+
 	var graph = this.editor.graph;
 	graph.lightbox = lightbox;
 

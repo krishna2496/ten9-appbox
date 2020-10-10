@@ -250,15 +250,15 @@ var mxClient =
 	 */
       defaultBundles: [],
       
+	// TEN9: Add a document container to mxClient to avoid using document.body
+    documentContainer: null,
 
-    container: null,
-
-	setContainer: function(container) {
-		mxClient.container = container;
+	setDocumentContainer: function(container) {
+		mxClient.documentContainer = container;
 	},
     
-    getContainer: function() {
-		return mxClient.container || document.body;
+    getDocumentContainer: function() {
+		return mxClient.documentContainer || document.body;
 	},
 	/**
 	 * Function: isBrowserSupported
@@ -15708,8 +15708,8 @@ mxPopupMenu.prototype.createSubmenu = function(parent)
  * Shows the submenu inside the given parent row.
  */
 mxPopupMenu.prototype.showSubmenu = function(parent, row)
+
 {
-	console.log(parent);
 	if (row.div != null)
 	{
 		row.div.style.left = (parent.div.offsetLeft +
@@ -15717,12 +15717,10 @@ mxPopupMenu.prototype.showSubmenu = function(parent, row)
 		row.div.style.top = (parent.div.offsetTop+row.offsetTop) + 'px';
 		
 		// TEN9: append submenu pop to container div rather then document.body
-        
-        mxClient.getContainer().appendChild(row.div);
+        mxClient.getDocumentContainer().appendChild(row.div);
 		// document.body.appendChild(row.div);
 		// var editor = document.getElementsByClassName('geEditor');
 		// editor[0].appendChild(row.div);
-		
 		
 		// Moves the submenu to the left side if there is no space
 		var left = parseInt(row.div.offsetLeft);
@@ -15850,10 +15848,7 @@ mxPopupMenu.prototype.showMenu = function()
 	}
 	
 	// Fits the div inside the viewport
-	// TEN9: append submenu pop to container div rather then document.body
 	document.body.appendChild(this.div);
-	// var editor = document.getElementsByClassName('geEditor');
-	// editor[0].appendChild(this.div);
 	
 	mxUtils.fit(this.div);
 };

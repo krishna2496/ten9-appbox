@@ -17,11 +17,13 @@
 <template>
   <div id="app">
     <div class="row-btn">
-      <save-file @fileSave="save" />
-      <open-file @fileContent="importXml($event)" />
+      <button @click="saveFile">
+        Save File
+      </button>
+      <open-file @file-loaded="loadFileData($event)" />
     </div>
     <div class="ge-container">
-      <graph-editor ref="editor" @fileSaved="save" />
+      <graph-editor ref="editor" />
     </div>
   </div>
 </template>
@@ -32,36 +34,37 @@ import Init from './init';
 // Comment back in to test NPM
 // import GraphEditor from 'vue-graph-editor';
 import GraphEditor from '../../src/components/GraphEditor.vue';
-import SaveFile from './components/SaveFile.vue';
 import OpenFile from './components/OpenFile.vue';
 
 export default {
   name: 'App',
   components: {
     GraphEditor,
-    SaveFile,
     OpenFile,
   },
   methods: {
-    save() {
-      let data = this.$refs.editor.saveFile();
-      let fileName = 'drawgraph.xml';
-      let fileType = '.xml';
+    saveFile() {
+      const data = this.$refs.editor.getXmlData();
+      const filename = 'diagram';
+      const ext = 'draw';
 
-      let blob = new Blob([data], { type: fileType });
+      const blob = new Blob([data], { type: 'application/xml' });
 
-      let a = document.createElement('a');
-      a.download = fileName;
+      const a = document.createElement('a');
+      a.download = `${filename}.${ext}`;
       a.href = URL.createObjectURL(blob);
-      a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+      a.dataset.downloadurl = `${ext}:${a.download}:${a.href}`;
       a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
+      setTimeout(() => {
+        URL.revokeObjectURL(a.href);
+      }, 0);
     },
-    importXml(val) {
-      this.$refs.editor.loadData(val);
+
+    loadFileData(val) {
+      this.$refs.editor.loadXmlData(val);
     },
   },
 };

@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import { mxClient, mxResources } from '@/lib/jgraph/mxClient';
+import { mxResources } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
-import { exportXml, importXmlFile } from '@/lib/utils';
+import { getXml, importXml } from '@/lib/utils';
 import Graph from '@/lib/jgraph/Graph';
 
 const defaultStyleXml = require('@/styles/default.xml');
@@ -45,14 +45,13 @@ export default {
     const themes = {};
     themes[Graph.prototype.defaultThemeName] = defaultStyleDoc.documentElement;
     this.editorUi = new EditorUi(new Editor(false, themes), this.$refs.container);
-    mxClient.setContainer(this.editorUi.container);
   },
   methods: {
-    saveFile() {
-      return exportXml(this.editorUi);
+    getXmlData() {
+      return getXml(this.editorUi);
     },
-    loadData(data) {
-      importXmlFile(this.editorUi, data);
+    loadXmlData(data) {
+      importXml(this.editorUi, data);
     },
   },
 };

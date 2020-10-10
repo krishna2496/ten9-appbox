@@ -1,25 +1,25 @@
 <template>
   <div class="btn-left">
-    <button @click="fileUpload">
-      Open A File
+    <button @click="chooseFile">
+      Open File
     </button>
-    <input ref="file" type="file" value="Upload File" style="display:none;" @change="uploadFile" />
+    <input ref="file" type="file" value="Open File" style="display:none;" @change="loadFile" />
   </div>
 </template>
 
 <script>
 export default {
   methods: {
-    fileUpload() {
+    chooseFile() {
       this.$refs.file.click();
     },
-    uploadFile() {
-      let readXml = null;
+    loadFile() {
+      let fileData = null;
       let [selectedFile] = this.$refs.file.files;
       let reader = new FileReader();
       reader.onload = (e) => {
-        readXml = e.target.result;
-        this.$emit('fileContent', readXml);
+        fileData = e.target.result;
+        this.$emit('file-loaded', fileData);
       };
       reader.readAsText(selectedFile);
     },

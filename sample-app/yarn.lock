@@ -6017,11 +6017,6 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-mxgraph@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/mxgraph/-/mxgraph-4.2.0.tgz#299bb6c3e026213c0d3c70d6523b10555189d7cc"
-  integrity sha512-GU5c+6IaFH2gwM88NuUkM2zb2l5GQi4MCxyuRvxZdDzIUP/9ZpgMexxgb8T3c0w/dioael5jGbPit1QKEJIlCw==
-
 mz@^2.4.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/mz/-/mz-2.7.0.tgz#95008057a56cafadc2bc63dde7f9ff6955948e32"
@@ -8950,7 +8945,6 @@ vue-eslint-parser@^7.0.0:
   version "0.1.0"
   dependencies:
     core-js "^3.6.5"
-    mxgraph "^4.2.0"
     vue "^2.6.11"
 
 vue-hot-reload-api@^2.3.0:
