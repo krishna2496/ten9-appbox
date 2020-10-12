@@ -15,7 +15,7 @@
 -->
 
 <template>
-  <div id="app" @keydown.ctrl.83.prevent.stop="saveFile">
+  <div id="app">
     <div class="row-btn">
       <button @click="saveFile">
         Save File
@@ -43,8 +43,12 @@ export default {
     OpenFile,
   },
   methods: {
-    saveFile() {
-      const data = this.$refs.editor.getXmlData();
+    saveFile(data= '') {
+      if(data == '')
+      {
+        const data = this.$refs.editor.getXmlData();
+      }
+      
       const filename = 'diagram';
       const ext = 'draw';
 
@@ -67,6 +71,11 @@ export default {
       this.$refs.editor.loadXmlData(val);
     },
   },
+  mounted(){
+    document.addEventListener('url',(e) => {
+      this.saveFile(e.detail.url)
+    })
+  }
 };
 </script>
 
