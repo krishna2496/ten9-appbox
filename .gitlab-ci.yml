@@ -23,9 +23,12 @@ stages:
 variables:
   GIT_STRATEGY: clone
 
+include:
+  - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
+  - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
+
 before_script:
   - apk update
-  - apk --verbose --no-cache add git git-lfs curl jq openssh bash
 
 lint:
   stage: test
