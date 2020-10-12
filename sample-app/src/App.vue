@@ -15,7 +15,7 @@
 -->
 
 <template>
-  <div id="app">
+  <div id="app" @keydown.ctrl.83.prevent.stop="saveFile">
     <div class="row-btn">
       <button @click="saveFile">
         Save File
