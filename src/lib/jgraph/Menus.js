@@ -520,7 +520,7 @@ Menus.prototype.init = function()
 	{
 		this.addMenuItems(menu, ['copyConnect', 'collapseExpand', '-', 'editDiagram']);
 	})));
-	// TEN9: TODO We don't want this help menu
+	// TEN9: We don't want this help menu
 	// this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
 	// {
 	// 	this.addMenuItems(menu, ['help', '-', 'about']);
