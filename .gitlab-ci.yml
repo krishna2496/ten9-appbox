@@ -23,39 +23,48 @@ stages:
 variables:
   GIT_STRATEGY: clone
 
-workflow:
+.test-stage-rules:
   rules:
     - if: $CI_PIPELINE_SOURCE =~ /^(web|schedule|push|merge_request_event)$/
+
+.build-stage-rules:
+  rules:
+    - if: $CI_PIPELINE_SOURCE =~ /^(web|schedule|merge_request_event)$/
 
 before_script:
   - apk update
 
 lint:
   stage: test
+  extends: .test-stage-rules
   script: |
     yarn
     yarn lint
 
 prettier:
   stage: test
+  extends: .test-stage-rules
   script: |
     yarn
     yarn prettier
 
 build-npm:
   stage: build
+  extends: .build-stage-rules
   script: |
     yarn
     yarn build
 
 build-app-dev:
   stage: build
+  extends: .build-stage-rules
   script: |
     yarn
     yarn build:app:dev
 
 build-app:
   stage: build
+  extends: .build-stage-rules
   script: |
     yarn
     yarn build:app
