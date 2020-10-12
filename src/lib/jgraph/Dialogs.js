@@ -2590,14 +2590,13 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 // TEN9: Added exports
 module.exports = {
-	OutlineWindow,
 	ColorDialog,
-	LayersWindow,
-	TextareaDialog,
 	EditDataDialog,
+	EditDiagramDialog,
+	ExportDialog,
+	LayersWindow,
 	LinkDialog,
 	OpenDialog,
-	ExportDialog,
-	EditDiagramDialog,
-	AboutDialog
+	OutlineWindow,
+	TextareaDialog,
 }
