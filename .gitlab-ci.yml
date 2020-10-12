@@ -23,9 +23,9 @@ stages:
 variables:
   GIT_STRATEGY: clone
 
-include:
-  - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
-  - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE =~ /^(web|schedule|push|merge_request_event)$/
 
 before_script:
   - apk update
