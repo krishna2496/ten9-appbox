@@ -17,7 +17,7 @@ const {
 	mxStencilRegistry,
 	mxStackLayout,
 	mxUtils,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 // TEN9: TODO: Centralize all globals
 window.mxCell = mxCell;
@@ -302,7 +302,11 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel)
 					this.tooltip = document.createElement('div');
 					this.tooltip.className = 'geSidebarTooltip';
 					this.tooltip.style.zIndex = mxPopupMenu.prototype.zIndex - 1;
-					document.body.appendChild(this.tooltip);
+
+					// TEN9: add a toolip into the container instead of document.body
+					//document.body.appendChild(this.tooltip);
+					this.editorUi.container.appendChild(this.tooltip);
+					
 					
 					this.graph2 = new Graph(this.tooltip, null, null, this.editorUi.editor.graph.getStylesheet());
 					this.graph2.resetViewOnRootChange = false;

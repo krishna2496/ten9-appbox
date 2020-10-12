@@ -24,7 +24,7 @@ const {
 	mxStylesheet,
 	mxUtils,
 	mxXmlRequest,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const { Editor, Dialog, ErrorDialog, FilenameDialog } = require('./Editor');
 const Actions = require('./Actions');
@@ -53,7 +53,8 @@ EditorUi = function(editor, container, lightbox)
 	this.destroyFunctions = [];
 	this.editor = editor || new Editor();
 	this.container = container || document.body;
-	
+	mxClient.setDocumentContainer(this.container);
+
 	var graph = this.editor.graph;
 	graph.lightbox = lightbox;
 
@@ -2665,6 +2666,10 @@ EditorUi.prototype.setCurrentMenu = function(menu, elt)
 {
 	this.currentMenuElt = elt;
 	this.currentMenu = menu;
+
+	// TEN9: Remove this
+	// TEN9: add menu div into class geEditor so css will apply on the menu
+	this.container.appendChild(menu.div);
 };
 
 /**
@@ -3878,7 +3883,6 @@ EditorUi.prototype.openFile = function()
 	{
 		this.hideDialog(cancel);
 	}));
-
 	// Removes openFile if dialog is closed
 	this.showDialog(new OpenDialog(this).container, (Editor.useLocalStorage) ? 640 : 320,
 			(Editor.useLocalStorage) ? 480 : 220, true, true, function()

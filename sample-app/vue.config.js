@@ -21,20 +21,23 @@ module.exports = {
   publicPath: '/',
   outputDir: OUTPUT_DIR,
   lintOnSave: false,
-  chainWebpack: config => {
-    config
-      .plugin('copy')
-      .tap(args => {
-        args[0].push(
-          {
-            from: path.resolve(__dirname, 'node_modules/vue-graph-editor/dist/public'),
-            to: path.resolve(__dirname, OUTPUT_DIR),
-            toType: 'dir',
-            ignore: [
-              '.DS_Store',
-            ],
-          });
-        return args;
-      })
+  chainWebpack: (config) => {
+    config.plugin('copy').tap((args) => {
+      args[0].push({
+        from: path.resolve(__dirname, 'node_modules/vue-graph-editor/dist/public'),
+        to: path.resolve(__dirname, OUTPUT_DIR),
+        toType: 'dir',
+        ignore: ['.DS_Store'],
+      });
+      return args;
+    });
+
+    config.module
+      .rule('source-map-loader')
+      .enforce('pre')
+      .test(/vue-graph-editor.min\.js$/)
+      .use('source-map-loader')
+      .loader('source-map-loader')
+      .end();
   },
 };

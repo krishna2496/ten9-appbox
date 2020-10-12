@@ -7,7 +7,9 @@ const {
 	mxPopupMenu,
 	mxResources,
 	mxUtils,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
+
+const utils = require('@/lib/utils.js');
 
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
@@ -26,7 +28,7 @@ function Toolbar(editorUi, container, editorUiClass)
 	this.container = container;
 	this.staticElements = [];
 	this.init();
-	
+
 	// Global handler to hide the current menu
 	this.gestureHandler = mxUtils.bind(this, function(evt)
 	{
@@ -1066,7 +1068,9 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll)
 				menu.labels = showLabels;
 				menu.autoExpand = true;
 				
-				var offset = mxUtils.getOffset(elt);
+				// TEN9: Use updated getOffset that doesn't assume document.body as origin container
+				// var offset = mxUtils.getOffset(elt);
+				var offset = utils.getOffset(this.editorUi.container, elt);
 				menu.popup(offset.x, offset.y + elt.offsetHeight, null, evt);
 				this.editorUi.setCurrentMenu(menu, elt);
 				

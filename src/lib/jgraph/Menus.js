@@ -15,11 +15,12 @@ const {
 	mxRadialTreeLayout,
 	mxResources,
 	mxUtils,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const { EditorUi } = require('./EditorUi');
 const { Dialog, FilenameDialog } = require('./Editor');
 const { ColorDialog } = require('./Dialogs');
+const utils = require('@/lib/utils.js');
 
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
@@ -51,9 +52,11 @@ Menus.prototype.defaultFont = 'Helvetica';
 Menus.prototype.defaultFontSize = '12';
 
 /**
- * Sets the default font size.
+ * Sets the default menu items.
  */
-Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange', 'extras', 'help'];
+// TEN9: Removed help from the menu
+Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange', 'extras'];
+// Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange', 'extras', 'help'];
 
 /**
  * Adds the label menu items to the given menu and parent.
@@ -517,10 +520,11 @@ Menus.prototype.init = function()
 	{
 		this.addMenuItems(menu, ['copyConnect', 'collapseExpand', '-', 'editDiagram']);
 	})));
-	this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
-	{
-		this.addMenuItems(menu, ['help', '-', 'about']);
-	})));
+	// TEN9: We don't want this help menu
+	// this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
+	// {
+	// 	this.addMenuItems(menu, ['help', '-', 'about']);
+	// })));
 };
 
 /**
@@ -1393,7 +1397,9 @@ Menubar.prototype.addMenuHandler = function(elt, funct)
 					menu.destroy();
 				});
 
-				var offset = mxUtils.getOffset(elt);
+				// TEN9: Use updated getOffset that doesn't assume document.body as origin container
+				// var offset = mxUtils.getOffset(elt);
+				var offset = utils.getOffset(this.editorUi.container, elt);
 				menu.popup(offset.x, offset.y + elt.offsetHeight, null, evt);
 				this.editorUi.setCurrentMenu(menu, elt);
 			}

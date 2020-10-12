@@ -16,9 +16,10 @@ const {
 	mxWindow,
 	mxXmlCanvas2D,
 	mxXmlRequest,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const { Dialog, FilenameDialog } = require('./Editor');
+const utils = require('@/lib/utils.js');
 
 const MAX_REQUEST_SIZE = 10485760;
 const MAX_AREA = 15000 * 15000;
@@ -2131,7 +2132,9 @@ var LayersWindow = function(editorUi, x, y, w, h)
 				menu.destroy();
 			});
 	
-			var offset = mxUtils.getOffset(insertLink);
+			// TEN9: Use updated getOffset that doesn't assume document.body as origin container
+			// var offset = mxUtils.getOffset(insertLink);
+			var offset = utils.getOffset(editorUi.container, insertLink);
 			menu.popup(offset.x, offset.y + insertLink.offsetHeight, null, evt);
 			
 			// Allows hiding by clicking on document
@@ -2587,14 +2590,13 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 // TEN9: Added exports
 module.exports = {
-	OutlineWindow,
 	ColorDialog,
-	LayersWindow,
-	TextareaDialog,
 	EditDataDialog,
+	EditDiagramDialog,
+	ExportDialog,
+	LayersWindow,
 	LinkDialog,
 	OpenDialog,
-	ExportDialog,
-	EditDiagramDialog,
-	AboutDialog
+	OutlineWindow,
+	TextareaDialog,
 }

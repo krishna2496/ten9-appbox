@@ -15,13 +15,14 @@
 -->
 
 <template>
-  <div class="geEditor" ref="container" />
+  <div ref="container" class="geEditor" />
 </template>
 
 <script>
-import { mxResources } from 'mxgraph/javascript/mxClient';
+import { mxResources } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
+import { getXml, importXml } from '@/lib/utils';
 import Graph from '@/lib/jgraph/Graph';
 
 const defaultStyleXml = require('@/styles/default.xml');
@@ -44,6 +45,14 @@ export default {
     const themes = {};
     themes[Graph.prototype.defaultThemeName] = defaultStyleDoc.documentElement;
     this.editorUi = new EditorUi(new Editor(false, themes), this.$refs.container);
+  },
+  methods: {
+    getXmlData() {
+      return getXml(this.editorUi);
+    },
+    loadXmlData(data) {
+      importXml(this.editorUi, data);
+    },
   },
 };
 </script>

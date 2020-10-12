@@ -14,17 +14,8 @@
  * -----
  */
 
-module.exports = {
-  root: true,
-  env: {
-    node: true,
-  },
-  extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/prettier'],
-  parserOptions: {
-    parser: 'babel-eslint',
-  },
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-  },
-};
+// TEN9: Added imports
+// Set mx globals needed for the app here
+global.mxBasePath = '/.';
+const anything = 'export-anything-to-make-this-a-module';
+export default anything;

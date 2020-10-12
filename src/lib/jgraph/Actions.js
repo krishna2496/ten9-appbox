@@ -11,10 +11,9 @@ const {
 	mxRectangle,
 	mxResources,
 	mxUtils,
-} = require('mxgraph/javascript/mxClient');
+} = require('@/lib/jgraph/mxClient');
 
 const {
-	AboutDialog,
 	EditDiagramDialog,
 	ExportDialog,
 	LayersWindow,
@@ -883,33 +882,34 @@ Actions.prototype.init = function()
 	action.isEnabled = isGraphEnabled;
 	action.visible = false;
 	
-	// Help actions
-	this.addAction('help', function()
-	{
-		var ext = '';
+	// TEN9: Disable Help and About
+	// // Help actions
+	// this.addAction('help', function()
+	// {
+	// 	var ext = '';
 		
-		if (mxResources.isLanguageSupported(mxClient.language))
-		{
-			ext = '_' + mxClient.language;
-		}
+	// 	if (mxResources.isLanguageSupported(mxClient.language))
+	// 	{
+	// 		ext = '_' + mxClient.language;
+	// 	}
 		
-		graph.openLink(RESOURCES_PATH + '/help' + ext + '.html');
-	});
+	// 	graph.openLink(RESOURCES_PATH + '/help' + ext + '.html');
+	// });
 	
-	var showingAbout = false;
+	// var showingAbout = false;
 	
-	this.put('about', new Action(mxResources.get('about') + ' Graph Editor...', function()
-	{
-		if (!showingAbout)
-		{
-			ui.showDialog(new AboutDialog(ui).container, 320, 280, true, true, function()
-			{
-				showingAbout = false;
-			});
+	// this.put('about', new Action(mxResources.get('about') + ' Graph Editor...', function()
+	// {
+	// 	if (!showingAbout)
+	// 	{
+	// 		ui.showDialog(new AboutDialog(ui).container, 320, 280, true, true, function()
+	// 		{
+	// 			showingAbout = false;
+	// 		});
 			
-			showingAbout = true;
-		}
-	}));
+	// 		showingAbout = true;
+	// 	}
+	// }));
 	
 	// Font style actions
 	var toggleFontStyle = mxUtils.bind(this, function(key, style, fn, shortcut)

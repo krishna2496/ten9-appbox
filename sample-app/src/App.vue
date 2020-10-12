@@ -16,25 +16,70 @@
 
 <template>
   <div id="app">
-    <graph-editor />
+    <div class="row-btn">
+      <button @click="saveFile">
+        Save File
+      </button>
+      <open-file @file-loaded="loadFileData($event)" />
+    </div>
+    <div class="ge-container">
+      <graph-editor ref="editor" />
+    </div>
   </div>
 </template>
 
 <script>
-import GraphEditor from 'vue-graph-editor';
+// eslint-disable-next-line no-unused-vars
+import Init from './init';
+// Comment back in to test NPM
+// import GraphEditor from 'vue-graph-editor';
+import GraphEditor from '../../src/components/GraphEditor.vue';
+import OpenFile from './components/OpenFile.vue';
 
 export default {
   name: 'App',
   components: {
     GraphEditor,
+    OpenFile,
+  },
+  methods: {
+    saveFile() {
+      const data = this.$refs.editor.getXmlData();
+      const filename = 'diagram';
+      const ext = 'draw';
+
+      const blob = new Blob([data], { type: 'application/xml' });
+
+      const a = document.createElement('a');
+      a.download = `${filename}.${ext}`;
+      a.href = URL.createObjectURL(blob);
+      a.dataset.downloadurl = `${ext}:${a.download}:${a.href}`;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => {
+        URL.revokeObjectURL(a.href);
+      }, 0);
+    },
+
+    loadFileData(val) {
+      this.$refs.editor.loadXmlData(val);
+    },
   },
 };
 </script>
 
 <style lang="scss">
-// TEN9: TODO: Add ../node_modules to sass-loader includePaths.
-// This currently isn't working for some reason with webpack.config.js
-// That might have something to do with this being a "file:" reference
-// in package.json.
-@import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css';
+// Comment back in to test NPM
+/* @import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css'; */
+@import '../../src/styles/grapheditor.css';
+
+.ge-container {
+  position: relative;
+  height: 1000px;
+  width: 1400px;
+  margin: 20px auto;
+  border: 1px solid black;
+}
 </style>

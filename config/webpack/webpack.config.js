@@ -28,6 +28,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 const WebpackBar = require('webpackbar');
 
 const ROOT_PATH = path.resolve(__dirname, '../..');
+// eslint-disable-next-line no-process-env
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const devtool = IS_PRODUCTION ? false : 'source-map';
 const TEMP_PATH = path.join(ROOT_PATH, './node_modules/.tmp');
@@ -176,6 +177,7 @@ module.exports = {
   },
 };
 
+// eslint-disable-next-line no-process-env
 if (process.env.NODE_ENV === 'production') {
   module.exports.plugins.push(
     // Strip out comments. Stripping puts them into a separate file

@@ -4,4 +4,3 @@ node_modules/
 src/lib/deflate/
 src/lib/jgraph/
 src/lib/jscolor/
-sample-app/
