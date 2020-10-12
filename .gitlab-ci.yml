@@ -28,13 +28,13 @@ before_script:
   - apk --verbose --no-cache add git git-lfs curl jq openssh bash
 
 lint:
-  stage: lint
+  stage: test
   script: |
     yarn
     yarn lint
 
 prettier:
-  stage: lint
+  stage: test
   script: |
     yarn
     yarn prettier
