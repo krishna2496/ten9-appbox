@@ -15,7 +15,7 @@
 -->
 
 <template>
-  <div ref="container" class="geEditor" />
+  <div ref="container" class="geEditor" @keydown.ctrl.83.prevent.stop="saveFile" />
 </template>
 
 <script>
@@ -52,6 +52,10 @@ export default {
     },
     loadXmlData(data) {
       importXml(this.editorUi, data);
+    },
+    saveFile() {
+      let xmlData = this.getXmlData();
+      this.$emit('file-save', xmlData);
     },
   },
 };

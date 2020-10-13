@@ -23,7 +23,7 @@
       <open-file @file-loaded="loadFileData($event)" />
     </div>
     <div class="ge-container">
-      <graph-editor ref="editor" />
+      <graph-editor ref="editor" @file-save="saveXmlFile($event)" />
     </div>
   </div>
 </template>
@@ -42,17 +42,17 @@ export default {
     GraphEditor,
     OpenFile,
   },
+
   methods: {
-    saveFile(data= '') {
-      if(data == '')
-      {
-        const data = this.$refs.editor.getXmlData();
-      }
-      
+    saveFile() {
+      let xmlData = this.$refs.editor.getXmlData();
+      this.saveXmlFile(xmlData);
+    },
+    saveXmlFile(xmlData) {
       const filename = 'diagram';
       const ext = 'draw';
 
-      const blob = new Blob([data], { type: 'application/xml' });
+      const blob = new Blob([xmlData], { type: 'application/xml' });
 
       const a = document.createElement('a');
       a.download = `${filename}.${ext}`;
@@ -66,16 +66,10 @@ export default {
         URL.revokeObjectURL(a.href);
       }, 0);
     },
-
     loadFileData(val) {
       this.$refs.editor.loadXmlData(val);
     },
   },
-  mounted(){
-    document.addEventListener('url',(e) => {
-      this.saveFile(e.detail.url)
-    })
-  }
 };
 </script>
 
