@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mxResources } from '@/lib/jgraph/mxClient';
+import { mxEvent, mxResources } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
 import { getXml, importXml } from '@/lib/utils';
@@ -36,6 +36,33 @@ export default {
     };
   },
   mounted() {
+    const drag = document.querySelector('.geEditor');
+    mxEvent.addListener(drag, 'dragenter', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+    });
+    mxEvent.addListener(drag, 'dragleave', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+    });
+    mxEvent.addListener(drag, 'dragover', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+    });
+    mxEvent.addListener(drag, 'drop', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      let file = e.dataTransfer.items[0].getAsFile();
+      let fileInfo = {
+        filename: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
+      };
+      this.$emit('add-logs', fileInfo);
+    });
+
     mxResources.loadDefaultBundle = false;
     mxResources.parse(resourcesFile);
 

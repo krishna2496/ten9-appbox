@@ -16,14 +16,30 @@
 
 <template>
   <div id="app">
-    <div class="row-btn">
-      <button @click="saveFile">
-        Save File
-      </button>
-      <open-file @file-loaded="loadFileData($event)" />
-    </div>
-    <div class="ge-container">
-      <graph-editor ref="editor" @file-save="saveXmlFile($event)" />
+    <div class="row">
+      <div class="col-md-2">
+        <b-list-group>
+          <template v-for="(list, index) in lists">
+            <b-list-group-item :key="index">
+              filename :- {{ list.filename }} <br />
+              size :- {{ list.size }} <br />
+              type :- {{ list.type }} <br />
+              lastModified :- {{ list.lastModified }}
+            </b-list-group-item>
+          </template>
+        </b-list-group>
+      </div>
+      <div class="col-md-8">
+        <div class="row-btn">
+          <button @click="saveFile">
+            Save File
+          </button>
+          <open-file @file-loaded="loadFileData($event)" />
+        </div>
+        <div class="ge-container">
+          <graph-editor ref="editor" @file-save="saveXmlFile($event)" @add-logs="addLog($event)" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -42,7 +58,11 @@ export default {
     GraphEditor,
     OpenFile,
   },
-
+  data() {
+    return {
+      lists: [],
+    };
+  },
   methods: {
     saveFile() {
       let xmlData = this.$refs.editor.getXmlData();
@@ -69,6 +89,9 @@ export default {
     loadFileData(val) {
       this.$refs.editor.loadXmlData(val);
     },
+    addLog(val) {
+      this.lists.push(val);
+    },
   },
 };
 </script>
@@ -77,6 +100,8 @@ export default {
 // Comment back in to test NPM
 /* @import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css'; */
 @import '../../src/styles/grapheditor.css';
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap-vue/src/index.scss';
 
 .ge-container {
   position: relative;
