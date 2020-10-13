@@ -21,6 +21,9 @@ export function getXml(editorUi) {
 }
 
 export function importXml(editorUi, data) {
+  editorUi.editor.graph.removeCells(
+    editorUi.editor.graph.getChildVertices(editorUi.editor.graph.getDefaultParent()),
+  );
   const doc = mxUtils.parseXml(data);
   const model = new mxGraphModel();
   const codec = new mxCodec(doc);
