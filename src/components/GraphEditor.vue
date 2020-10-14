@@ -14,10 +14,6 @@
 * -----
 -->
 
-<template>
-  <div ref="container" class="geEditor" @keydown.ctrl.83.prevent.stop="saveFile" />
-</template>
-
 <script>
 import { mxResources } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
@@ -60,6 +56,10 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div ref="container" class="geEditor" @keydown.ctrl.83.prevent.stop="saveFile" />
+</template>
 
 <style lang="scss">
 @import '../styles/grapheditor.css';

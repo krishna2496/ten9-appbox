@@ -14,20 +14,6 @@
 * -----
 -->
 
-<template>
-  <div id="app">
-    <div class="row-btn">
-      <button @click="saveFile">
-        Save File
-      </button>
-      <open-file @file-loaded="loadFileData($event)" />
-    </div>
-    <div class="ge-container">
-      <graph-editor ref="editor" @file-save="saveXmlFile($event)" />
-    </div>
-  </div>
-</template>
-
 <script>
 // eslint-disable-next-line no-unused-vars
 import Init from './init';
@@ -72,6 +58,20 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div id="app">
+    <div class="row-btn">
+      <button @click="saveFile">
+        Save File
+      </button>
+      <open-file @file-loaded="loadFileData($event)" />
+    </div>
+    <div class="ge-container">
+      <graph-editor ref="editor" @file-save="saveXmlFile($event)" />
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
 // Comment back in to test NPM
