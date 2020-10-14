@@ -13,6 +13,7 @@
     "watch": "cross-env NODE_ENV=development webpack --config ./config/webpack/webpack.config.js --watch"
   },
   "dependencies": {
+    "bootstrap-vue": "^2.17.3",
     "core-js": "^3.6.5",
     "vue": "^2.6.11"
   },

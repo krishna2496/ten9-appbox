@@ -110,7 +110,6 @@ Actions.prototype.init = function () {
 		}
 	}, null, 'sprite-copy', Editor.ctrlKey + '+C');
 	this.addAction('paste', function () {
-
 		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())) {
 			mxClipboard.paste(graph);
 		}
@@ -947,10 +946,10 @@ Actions.prototype.init = function () {
 
 			var dlg = new TextareaDialog(this.editorUi, mxResources.get('editStyle') + ':',
 				model.getStyle(cells[0]) || '', function (newValue) {
-					if (newValue != null) {
-						graph.setCellStyle(mxUtils.trim(newValue), cells);
-					}
-				}, null, null, 400, 220);
+				if (newValue != null) {
+					graph.setCellStyle(mxUtils.trim(newValue), cells);
+				}
+			}, null, null, 400, 220);
 			this.editorUi.showDialog(dlg.container, 420, 300, true, true);
 			dlg.init();
 		}

@@ -14,40 +14,6 @@
 * -----
 -->
 
-<template>
-  <div id="app">
-    <div class="row">
-      <div class="col-md-2">
-        <b-list-group>
-          <template v-for="(log, index) in logs">
-            <b-list-group-item :key="index">
-              filename :- {{ log.filename }} <br />
-              size :- {{ log.size }} <br />
-              type :- {{ log.type }} <br />
-              lastModified :- {{ log.lastModified }}
-            </b-list-group-item>
-          </template>
-        </b-list-group>
-      </div>
-      <div class="col-md-8">
-        <div class="row-btn">
-          <button @click="saveFile">
-            Save File
-          </button>
-          <open-file @file-loaded="loadFileData($event)" />
-        </div>
-        <div class="ge-container">
-          <graph-editor
-            ref="editor"
-            @file-save="saveXmlFile($event)"
-            @file-dropped="addLog($event)"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
 // eslint-disable-next-line no-unused-vars
 import Init from './init';
@@ -100,12 +66,46 @@ export default {
 };
 </script>
 
+<template>
+  <div id="app">
+    <div class="row">
+      <div class="col-md-2">
+        <b-list-group>
+          <template v-for="(log, index) in logs">
+            <b-list-group-item :key="index">
+              filename :- {{ log.filename }} <br />
+              size :- {{ log.size }} <br />
+              type :- {{ log.type }} <br />
+              lastModified :- {{ log.lastModified }}
+            </b-list-group-item>
+          </template>
+        </b-list-group>
+      </div>
+      <div class="col-md-8">
+        <div class="row-btn">
+          <button @click="saveFile">
+            Save File
+          </button>
+          <open-file @file-loaded="loadFileData($event)" />
+        </div>
+        <div class="ge-container">
+          <graph-editor
+            ref="editor"
+            @file-save="saveXmlFile($event)"
+            @file-dropped="addLog($event)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style lang="scss">
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap-vue/src/index.scss';
 // Comment back in to test NPM
 /* @import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css'; */
 @import '../../src/styles/grapheditor.css';
-@import 'node_modules/bootstrap/scss/bootstrap';
-@import 'node_modules/bootstrap-vue/src/index.scss';
 
 .ge-container {
   position: relative;
