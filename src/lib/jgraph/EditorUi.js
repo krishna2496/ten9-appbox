@@ -3970,7 +3970,6 @@ EditorUi.prototype.createKeyHandler = function (editor) {
 		keyHandler.bindAction(48, true, 'customZoom'); // Ctrl+0
 		keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
 		keyHandler.bindAction(82, true, 'clearDefaultStyle', true); // Ctrl+Shift+R
-		keyHandler.bindAction(83, true, 'crtlSave'); // Ctrl+S
 		keyHandler.bindAction(83, true, 'saveAs', true); // Ctrl+Shift+S
 		keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
 		keyHandler.bindAction(65, true, 'selectNone', true); // Ctrl+A
