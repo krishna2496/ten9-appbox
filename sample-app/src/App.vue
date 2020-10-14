@@ -19,12 +19,12 @@
     <div class="row">
       <div class="col-md-2">
         <b-list-group>
-          <template v-for="(list, index) in lists">
+          <template v-for="(log, index) in logs">
             <b-list-group-item :key="index">
-              filename :- {{ list.filename }} <br />
-              size :- {{ list.size }} <br />
-              type :- {{ list.type }} <br />
-              lastModified :- {{ list.lastModified }}
+              filename :- {{ log.filename }} <br />
+              size :- {{ log.size }} <br />
+              type :- {{ log.type }} <br />
+              lastModified :- {{ log.lastModified }}
             </b-list-group-item>
           </template>
         </b-list-group>
@@ -37,7 +37,11 @@
           <open-file @file-loaded="loadFileData($event)" />
         </div>
         <div class="ge-container">
-          <graph-editor ref="editor" @file-save="saveXmlFile($event)" @add-logs="addLog($event)" />
+          <graph-editor
+            ref="editor"
+            @file-save="saveXmlFile($event)"
+            @file-dropped="addLog($event)"
+          />
         </div>
       </div>
     </div>
@@ -60,12 +64,12 @@ export default {
   },
   data() {
     return {
-      lists: [],
+      logs: [],
     };
   },
   methods: {
     saveFile() {
-      let xmlData = this.$refs.editor.getXmlData();
+      const xmlData = this.$refs.editor.getXmlData();
       this.saveXmlFile(xmlData);
     },
     saveXmlFile(xmlData) {
@@ -90,7 +94,7 @@ export default {
       this.$refs.editor.loadXmlData(val);
     },
     addLog(val) {
-      this.lists.push(val);
+      this.logs.push(val);
     },
   },
 };

@@ -53,14 +53,16 @@ export default {
       e.stopPropagation();
       e.preventDefault();
 
-      let file = e.dataTransfer.items[0].getAsFile();
-      let fileInfo = {
-        filename: file.name,
-        size: file.size,
-        type: file.type,
-        lastModified: file.lastModified,
-      };
-      this.$emit('add-logs', fileInfo);
+      for (let i = 0; i < e.dataTransfer.items.length; i++) {
+        let file = e.dataTransfer.items[i].getAsFile();
+        let fileInfo = {
+          filename: file.name,
+          size: file.size,
+          type: file.type,
+          lastModified: file.lastModified,
+        };
+        this.$emit('file-dropped', fileInfo);
+      }
     });
 
     mxResources.loadDefaultBundle = false;
