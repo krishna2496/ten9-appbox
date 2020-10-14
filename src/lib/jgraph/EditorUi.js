@@ -3985,7 +3985,8 @@ EditorUi.prototype.createKeyHandler = function (editor) {
 		keyHandler.bindAction(89, true, 'autosize', true); // Ctrl+Shift+Y
 		keyHandler.bindAction(88, true, 'cut'); // Ctrl+X
 		keyHandler.bindAction(67, true, 'copy'); // Ctrl+C
-		keyHandler.bindAction(86, true, 'paste'); // Ctrl+V
+		// TEN9: To disable default grapheditor Ctrl+v behaviour
+		//keyHandler.bindAction(86, true, 'paste'); // Ctrl+V
 		keyHandler.bindAction(71, true, 'group'); // Ctrl+G
 		keyHandler.bindAction(77, true, 'editData'); // Ctrl+M
 		keyHandler.bindAction(71, true, 'grid', true); // Ctrl+Shift+G

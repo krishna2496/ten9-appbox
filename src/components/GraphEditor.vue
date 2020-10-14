@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mxEvent, mxResources } from '@/lib/jgraph/mxClient';
+import { mxConstants, mxEvent, mxEventObject, mxResources } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
 import { getXml, importXml } from '@/lib/utils';
@@ -62,8 +62,76 @@ export default {
           lastModified: file.lastModified,
         };
         this.$emit('file-dropped', fileInfo);
+
+        // add image to graph
+        const w = 200;
+        const h = 200;
+        const newValue =
+          'https://static.scientificamerican.com/sciam/cache/file/4E0744CD-793A-4EF8-B550B54F7F2C4406_source.jpg';
+        let cells = this.editorUi.editor.graph.getSelectionCells();
+
+        if (newValue != null && (newValue.length > 0 || cells.length > 0)) {
+          let select = null;
+
+          this.editorUi.editor.graph.getModel().beginUpdate();
+          try {
+            // Inserts new cell if no cell is selected
+            if (cells.length == 0) {
+              const pt = this.editorUi.editor.graph.getFreeInsertPoint();
+              cells = [
+                this.editorUi.editor.graph.insertVertex(
+                  this.editorUi.editor.graph.getDefaultParent(),
+                  null,
+                  '',
+                  pt.x,
+                  pt.y,
+                  w,
+                  h,
+                  'shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;',
+                ),
+              ];
+              select = cells;
+              this.editorUi.editor.graph.fireEvent(
+                new mxEventObject('cellsInserted', 'cells', select),
+              );
+            }
+
+            this.editorUi.editor.graph.setCellStyles(
+              mxConstants.STYLE_IMAGE,
+              newValue.length > 0 ? newValue : null,
+              cells,
+            );
+
+            // Sets shape only if not already shape with image (label or image)
+            const style = this.editorUi.editor.graph.getCurrentCellStyle(cells[0]);
+
+            if (
+              style[mxConstants.STYLE_SHAPE] != 'image' &&
+              style[mxConstants.STYLE_SHAPE] != 'label'
+            ) {
+              this.editorUi.editor.graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
+            } else if (newValue.length == 0) {
+              this.editorUi.editor.graph.setCellStyles(mxConstants.STYLE_SHAPE, null, cells);
+            }
+          } finally {
+            this.editorUi.editor.graph.getModel().endUpdate();
+          }
+
+          if (select != null) {
+            this.editorUi.editor.graph.setSelectionCells(select);
+            this.editorUi.editor.graph.scrollCellToVisible(select[0]);
+          }
+        }
       }
     });
+
+    // TEN9: add our own ctrl+v event listner
+    drag.onpaste = (e) => {
+      //check the event logs for temporary purpose
+      console.log(e.clipboardData.getData('text/plain'));
+      const action = this.editorUi.actions.get('paste');
+      action.funct(null);
+    };
 
     mxResources.loadDefaultBundle = false;
     mxResources.parse(resourcesFile);
