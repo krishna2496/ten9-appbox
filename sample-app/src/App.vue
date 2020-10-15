@@ -72,7 +72,7 @@ export default {
       <div class="col-md-2">
         <b-list-group class="cutom-list-group">
           <template v-for="(log, index) in logs">
-            <table class="custom-table">
+            <table :key="index" class="custom-table">
               <tr>
                 <td colspan="2">
                   <b class="text-center custom-header"> {{ log.title }} </b>
