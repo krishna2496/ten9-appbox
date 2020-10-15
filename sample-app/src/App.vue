@@ -18,14 +18,46 @@
   <div id="app">
     <div class="row">
       <div class="col-md-2">
-        <b-list-group>
+        <b-list-group class="cutom-list-group">
           <template v-for="(log, index) in logs">
-            <b-list-group-item :key="index">
+            <table class="custom-table">
+              <tr>
+                <td colspan="2">
+                  <b class="text-center custom-header"> File Droped </b>
+                </td>
+              </tr>
+              <tr>
+                <td><b>File Name</b></td>
+                <td class="table-details">
+                  {{ log.filename }}
+                </td>
+              </tr>
+              <tr>
+                <td><b>size</b></td>
+                <td class="table-details">
+                  {{ log.size }}
+                </td>
+              </tr>
+              <tr>
+                <td><b>type</b></td>
+                <td class="table-details">
+                  {{ log.type }}
+                </td>
+              </tr>
+              <tr>
+                <td><b>lastModified</b></td>
+                <td class="table-details">
+                  {{ log.lastModified }}
+                </td>
+              </tr>
+            </table>
+
+            <!-- <b-list-group-item :key="index">
               filename :- {{ log.filename }} <br />
               size :- {{ log.size }} <br />
               type :- {{ log.type }} <br />
               lastModified :- {{ log.lastModified }}
-            </b-list-group-item>
+            </b-list-group-item> -->
           </template>
         </b-list-group>
       </div>
@@ -39,7 +71,7 @@
         <div class="ge-container">
           <graph-editor
             ref="editor"
-            @file-save="saveXmlFile($event)"
+            @file-saved="saveXmlFile($event)"
             @file-dropped="addLog($event)"
           />
         </div>
@@ -103,9 +135,9 @@ export default {
 <style lang="scss">
 // Comment back in to test NPM
 /* @import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css'; */
-@import '../../src/styles/grapheditor.css';
 @import 'node_modules/bootstrap/scss/bootstrap';
 @import 'node_modules/bootstrap-vue/src/index.scss';
+@import '../../src/styles/grapheditor.css';
 
 .ge-container {
   position: relative;

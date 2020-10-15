@@ -64,73 +64,27 @@ export default {
         this.$emit('file-dropped', fileInfo);
 
         // add image to graph
-        const w = 200;
-        const h = 200;
-        const newValue =
+        const url =
           'https://static.scientificamerican.com/sciam/cache/file/4E0744CD-793A-4EF8-B550B54F7F2C4406_source.jpg';
-        let cells = this.editorUi.editor.graph.getSelectionCells();
-
-        if (newValue != null && (newValue.length > 0 || cells.length > 0)) {
-          let select = null;
-
-          this.editorUi.editor.graph.getModel().beginUpdate();
-          try {
-            // Inserts new cell if no cell is selected
-            if (cells.length == 0) {
-              const pt = this.editorUi.editor.graph.getFreeInsertPoint();
-              cells = [
-                this.editorUi.editor.graph.insertVertex(
-                  this.editorUi.editor.graph.getDefaultParent(),
-                  null,
-                  '',
-                  pt.x,
-                  pt.y,
-                  w,
-                  h,
-                  'shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;',
-                ),
-              ];
-              select = cells;
-              this.editorUi.editor.graph.fireEvent(
-                new mxEventObject('cellsInserted', 'cells', select),
-              );
-            }
-
-            this.editorUi.editor.graph.setCellStyles(
-              mxConstants.STYLE_IMAGE,
-              newValue.length > 0 ? newValue : null,
-              cells,
-            );
-
-            // Sets shape only if not already shape with image (label or image)
-            const style = this.editorUi.editor.graph.getCurrentCellStyle(cells[0]);
-
-            if (
-              style[mxConstants.STYLE_SHAPE] != 'image' &&
-              style[mxConstants.STYLE_SHAPE] != 'label'
-            ) {
-              this.editorUi.editor.graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
-            } else if (newValue.length == 0) {
-              this.editorUi.editor.graph.setCellStyles(mxConstants.STYLE_SHAPE, null, cells);
-            }
-          } finally {
-            this.editorUi.editor.graph.getModel().endUpdate();
-          }
-
-          if (select != null) {
-            this.editorUi.editor.graph.setSelectionCells(select);
-            this.editorUi.editor.graph.scrollCellToVisible(select[0]);
-          }
-        }
+        this.insertImage(url);
       }
     });
 
     // TEN9: add our own ctrl+v event listner
     drag.onpaste = (e) => {
       //check the event logs for temporary purpose
+      debugger;
       console.log(e.clipboardData.getData('text/plain'));
       const action = this.editorUi.actions.get('paste');
       action.funct(null);
+    };
+
+    drag.oncopy = (e) => {
+      //check the event logs for temporary purpose
+      debugger;
+      console.log(e.clipboardData.getData('text/plain'));
+      // const action = this.editorUi.actions.get('paste');
+      // action.funct(null);
     };
 
     mxResources.loadDefaultBundle = false;
@@ -152,7 +106,69 @@ export default {
     },
     saveFile() {
       let xmlData = this.getXmlData();
-      this.$emit('file-save', xmlData);
+      this.$emit('file-saved', xmlData);
+    },
+    insertImage(url) {
+      let cells = this.editorUi.editor.graph.getSelectionCells();
+      const w = 200;
+      const h = 200;
+
+      let select = null;
+
+      this.editorUi.editor.graph.getModel().beginUpdate();
+
+      let cellEditorStartEditing = this.editorUi.editor.graph.cellEditor.startEditing;
+
+      this.editorUi.editor.graph.cellEditor.startEditing = () => {
+        cellEditorStartEditing.apply(this, arguments);
+        this.editorUi.updatePasteActionStates();
+      };
+
+      try {
+        // Inserts new cell if no cell is selected
+        if (cells.length == 0) {
+          const pt = this.editorUi.editor.graph.getFreeInsertPoint();
+          cells = [
+            this.editorUi.editor.graph.insertVertex(
+              this.editorUi.editor.graph.getDefaultParent(),
+              null,
+              '',
+              pt.x,
+              pt.y,
+              w,
+              h,
+              'shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;',
+            ),
+          ];
+          select = cells;
+          this.editorUi.editor.graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
+        }
+
+        this.editorUi.editor.graph.setCellStyles(
+          mxConstants.STYLE_IMAGE,
+          url.length > 0 ? url : null,
+          cells,
+        );
+
+        // Sets shape only if not already shape with image (label or image)
+        const style = this.editorUi.editor.graph.getCurrentCellStyle(cells[0]);
+
+        if (
+          style[mxConstants.STYLE_SHAPE] != 'image' &&
+          style[mxConstants.STYLE_SHAPE] != 'label'
+        ) {
+          this.editorUi.editor.graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
+        } else if (url.length == 0) {
+          this.editorUi.editor.graph.setCellStyles(mxConstants.STYLE_SHAPE, null, cells);
+        }
+      } finally {
+        this.editorUi.editor.graph.getModel().endUpdate();
+      }
+
+      if (select != null) {
+        this.editorUi.editor.graph.setSelectionCells(select);
+        this.editorUi.editor.graph.scrollCellToVisible(select[0]);
+      }
     },
   },
 };
