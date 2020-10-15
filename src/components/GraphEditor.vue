@@ -15,7 +15,7 @@
 -->
 
 <script>
-import { mxConstants, mxEvent, mxEventObject, mxResources } from '@/lib/jgraph/mxClient';
+import { mxConstants, mxEvent, mxEventObject, mxResources, mxUtils } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
 import { getXml, importXml } from '@/lib/utils';
@@ -70,9 +70,52 @@ export default {
     // TEN9: add our own ctrl+v event listner
     drag.onpaste = (e) => {
       //check the event logs for temporary purpose
-      console.log(e.clipboardData.getData('text/plain'));
-      const action = this.editorUi.actions.get('paste');
-      action.funct(null);
+      // debugger;
+      console.log(e);
+      if (e.clipboardData.files.length > 0) {
+        console.log(e.clipboardData.files[0].name);
+        for (let i = 0; i < e.clipboardData.files.length; i++) {
+          let file = e.clipboardData.files[i];
+          let fileInfo = {
+            title: 'File Paste',
+            filename: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified,
+          };
+          this.$emit('file-dropped', fileInfo);
+        }
+      } else {
+        console.log(e.clipboardData.getData('Text'));
+        const action = this.editorUi.actions.get('paste');
+        action.funct(null);
+      }
+    };
+
+    // TEN9: add our own ctrl+c event listner for temporary purpose
+    drag.oncopy = (e) => {
+      console.log(e);
+      //mxClipboard.copy(this.editorUi.editor.graph);
+      let cells = mxUtils.sortCells(
+        this.editorUi.editor.graph.model.getTopmostCells(
+          this.editorUi.editor.graph.getSelectionCells(),
+        ),
+      );
+      let xmlData = mxUtils.getXml(this.editorUi.editor.graph.encodeCells(cells));
+      let textArea = document.createElement('textarea');
+      textArea.value = xmlData;
+
+      document.body.appendChild(textArea);
+      textArea.style.display = 'none';
+      textArea.focus();
+      textArea.select();
+
+      try {
+        document.execCommand('copy');
+      } catch (err) {
+        alert('Fallback: Oops, unable to copy', err);
+      }
+      console.log(xmlData);
     };
 
     mxResources.loadDefaultBundle = false;
