@@ -14,10 +14,6 @@
 * -----
 -->
 
-<template>
-  <div ref="container" class="geEditor" @keydown.ctrl.83.prevent.stop="saveFile" />
-</template>
-
 <script>
 import { mxConstants, mxEvent, mxEventObject, mxResources } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
@@ -56,6 +52,7 @@ export default {
       for (let i = 0; i < e.dataTransfer.items.length; i++) {
         let file = e.dataTransfer.items[i].getAsFile();
         let fileInfo = {
+          title: 'File Droped',
           filename: file.name,
           size: file.size,
           type: file.type,
@@ -73,18 +70,9 @@ export default {
     // TEN9: add our own ctrl+v event listner
     drag.onpaste = (e) => {
       //check the event logs for temporary purpose
-      debugger;
       console.log(e.clipboardData.getData('text/plain'));
       const action = this.editorUi.actions.get('paste');
       action.funct(null);
-    };
-
-    drag.oncopy = (e) => {
-      //check the event logs for temporary purpose
-      debugger;
-      console.log(e.clipboardData.getData('text/plain'));
-      // const action = this.editorUi.actions.get('paste');
-      // action.funct(null);
     };
 
     mxResources.loadDefaultBundle = false;
@@ -173,6 +161,10 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div ref="container" class="geEditor" @keydown.ctrl.83.prevent.stop="saveFile" />
+</template>
 
 <style lang="scss">
 @import '../styles/grapheditor.css';
