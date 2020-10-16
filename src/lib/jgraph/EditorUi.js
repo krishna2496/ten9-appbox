@@ -1162,9 +1162,12 @@ EditorUi.prototype.updatePasteActionStates = function () {
 	var paste = this.actions.get('paste');
 	var pasteHere = this.actions.get('pasteHere');
 
-	paste.setEnabled(this.editor.graph.cellEditor.isContentEditing() || (!mxClipboard.isEmpty() &&
-		graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())));
-	pasteHere.setEnabled(paste.isEnabled());
+	// TEN9: as we disable the paste of mxgraph we have make paste available for any action
+	// paste.setEnabled(this.editor.graph.cellEditor.isContentEditing() || (!mxClipboard.isEmpty() &&
+	// 	graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())));
+	// pasteHere.setEnabled(paste.isEnabled());
+	paste.setEnabled(true);
+	pasteHere.setEnabled(true);
 };
 
 /**
@@ -1193,6 +1196,21 @@ EditorUi.prototype.initClipboard = function () {
 			document.execCommand('copy', false, null);
 		}
 		else {
+
+			// TEN9 :add cell to default clipboard
+			let textArea = document.createElement('textarea');
+			textArea.value = 'cell';
+
+			document.body.appendChild(textArea);
+
+			textArea.focus();
+			textArea.select();
+			try {
+				document.execCommand('copy');
+				textArea.style.display = 'none';
+			} catch (err) {
+				console.log('Fallback: Oops, unable to copy', err);
+			}
 			result = result || graph.getSelectionCells();
 			result = graph.getExportableCells(graph.model.getTopmostCells(result));
 
@@ -3970,6 +3988,8 @@ EditorUi.prototype.createKeyHandler = function (editor) {
 		keyHandler.bindAction(48, true, 'customZoom'); // Ctrl+0
 		keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
 		keyHandler.bindAction(82, true, 'clearDefaultStyle', true); // Ctrl+Shift+R
+		// TEN9 :to disable default grapheditor crtl+s behaviour
+		//keyHandler.bindAction(83, true, 'save'); // Ctrl+S
 		keyHandler.bindAction(83, true, 'saveAs', true); // Ctrl+Shift+S
 		keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
 		keyHandler.bindAction(65, true, 'selectNone', true); // Ctrl+A
@@ -3985,7 +4005,7 @@ EditorUi.prototype.createKeyHandler = function (editor) {
 		keyHandler.bindAction(89, true, 'autosize', true); // Ctrl+Shift+Y
 		keyHandler.bindAction(88, true, 'cut'); // Ctrl+X
 		// TEN9: To disable default grapheditor Ctrl+C & Ctrl+v behaviour
-		//keyHandler.bindAction(67, true, 'copy'); // Ctrl+C
+		keyHandler.bindAction(67, true, 'copy'); // Ctrl+C
 		//keyHandler.bindAction(86, true, 'paste'); // Ctrl+V
 		keyHandler.bindAction(71, true, 'group'); // Ctrl+G
 		keyHandler.bindAction(77, true, 'editData'); // Ctrl+M

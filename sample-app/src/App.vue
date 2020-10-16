@@ -59,8 +59,22 @@ export default {
     loadFileData(val) {
       this.$refs.editor.loadXmlData(val);
     },
-    addLog(val) {
+    addLog(val, title) {
+      val.title = title;
+      val.lastModified = this.getDate(val.lastModified);
+
       this.logs.push(val);
+      // add image to graph
+      const url =
+        'https://static.scientificamerican.com/sciam/cache/file/4E0744CD-793A-4EF8-B550B54F7F2C4406_source.jpg';
+      this.$refs.editor.insertImage(url);
+    },
+    getDate(timestamp) {
+      const monthIcrement = 1;
+      let todate = new Date(timestamp).getDate();
+      let tomonth = new Date(timestamp).getMonth() + monthIcrement;
+      let toyear = new Date(timestamp).getFullYear();
+      return tomonth + '/' + todate + '/' + toyear;
     },
   },
 };
@@ -70,34 +84,42 @@ export default {
   <div id="app">
     <div class="row">
       <div class="col-md-2">
-        <b-list-group class="cutom-list-group">
+        <b-list-group id="scroll" class="custom-list-group">
           <template v-for="(log, index) in logs">
             <table :key="index" class="custom-table">
               <tr>
-                <td colspan="2">
+                <td colspan="2" class="custom-header-background">
                   <b class="text-center custom-header"> {{ log.title }} </b>
                 </td>
               </tr>
               <tr>
-                <td><b>File Name</b></td>
+                <td class="table-details">
+                  <b>File Name</b>
+                </td>
                 <td class="table-details">
                   {{ log.filename }}
                 </td>
               </tr>
               <tr>
-                <td><b>size</b></td>
+                <td class="table-details">
+                  <b>size</b>
+                </td>
                 <td class="table-details">
                   {{ log.size }}
                 </td>
               </tr>
               <tr>
-                <td><b>type</b></td>
+                <td class="table-details">
+                  <b>type</b>
+                </td>
                 <td class="table-details">
                   {{ log.type }}
                 </td>
               </tr>
               <tr>
-                <td><b>lastModified</b></td>
+                <td class="table-details">
+                  <b>Modified</b>
+                </td>
                 <td class="table-details">
                   {{ log.lastModified }}
                 </td>
@@ -117,7 +139,8 @@ export default {
           <graph-editor
             ref="editor"
             @file-saved="saveXmlFile($event)"
-            @file-dropped="addLog($event)"
+            @file-dropped="addLog($event, 'File Dropped')"
+            @file-pasted="addLog($event, 'File Pasted')"
           />
         </div>
       </div>

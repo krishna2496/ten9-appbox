@@ -15,7 +15,7 @@
 -->
 
 <script>
-import { mxConstants, mxEvent, mxEventObject, mxResources, mxUtils } from '@/lib/jgraph/mxClient';
+import { mxConstants, mxEvent, mxEventObject, mxResources } from '@/lib/jgraph/mxClient';
 import EditorUi from '@/lib/jgraph/EditorUi';
 import { Editor } from '@/lib/jgraph/Editor';
 import { getXml, importXml } from '@/lib/utils';
@@ -52,70 +52,34 @@ export default {
       for (let i = 0; i < e.dataTransfer.items.length; i++) {
         let file = e.dataTransfer.items[i].getAsFile();
         let fileInfo = {
-          title: 'File Droped',
           filename: file.name,
           size: file.size,
           type: file.type,
           lastModified: file.lastModified,
         };
         this.$emit('file-dropped', fileInfo);
-
-        // add image to graph
-        const url =
-          'https://static.scientificamerican.com/sciam/cache/file/4E0744CD-793A-4EF8-B550B54F7F2C4406_source.jpg';
-        this.insertImage(url);
       }
     });
 
     // TEN9: add our own ctrl+v event listner
     drag.onpaste = (e) => {
-      //check the event logs for temporary purpose
-      // debugger;
-      console.log(e);
+      //check if default clipboard have files or not
       if (e.clipboardData.files.length > 0) {
-        console.log(e.clipboardData.files[0].name);
         for (let i = 0; i < e.clipboardData.files.length; i++) {
           let file = e.clipboardData.files[i];
           let fileInfo = {
-            title: 'File Paste',
             filename: file.name,
             size: file.size,
             type: file.type,
             lastModified: file.lastModified,
           };
-          this.$emit('file-dropped', fileInfo);
+          this.$emit('file-pasted', fileInfo);
         }
       } else {
-        console.log(e.clipboardData.getData('Text'));
-        const action = this.editorUi.actions.get('paste');
-        action.funct(null);
+        //if default clipboard doesn't have file then if act as normal paste
+        let action = this.editorUi.actions.get('paste');
+        action.funct();
       }
-    };
-
-    // TEN9: add our own ctrl+c event listner for temporary purpose
-    drag.oncopy = (e) => {
-      console.log(e);
-      //mxClipboard.copy(this.editorUi.editor.graph);
-      let cells = mxUtils.sortCells(
-        this.editorUi.editor.graph.model.getTopmostCells(
-          this.editorUi.editor.graph.getSelectionCells(),
-        ),
-      );
-      let xmlData = mxUtils.getXml(this.editorUi.editor.graph.encodeCells(cells));
-      let textArea = document.createElement('textarea');
-      textArea.value = xmlData;
-
-      document.body.appendChild(textArea);
-      textArea.style.display = 'none';
-      textArea.focus();
-      textArea.select();
-
-      try {
-        document.execCommand('copy');
-      } catch (err) {
-        alert('Fallback: Oops, unable to copy', err);
-      }
-      console.log(xmlData);
     };
 
     mxResources.loadDefaultBundle = false;
@@ -140,24 +104,23 @@ export default {
       this.$emit('file-saved', xmlData);
     },
     insertImage(url) {
-      let cells = this.editorUi.editor.graph.getSelectionCells();
-      const w = 200;
-      const h = 200;
+      let cells = [];
 
-      let select = null;
+      this.loadImage(url).then((result) => {
+        let { w, h } = result;
+        let select = null;
 
-      this.editorUi.editor.graph.getModel().beginUpdate();
+        this.editorUi.editor.graph.getModel().beginUpdate();
 
-      let cellEditorStartEditing = this.editorUi.editor.graph.cellEditor.startEditing;
+        let cellEditorStartEditing = this.editorUi.editor.graph.cellEditor.startEditing;
 
-      this.editorUi.editor.graph.cellEditor.startEditing = () => {
-        cellEditorStartEditing.apply(this, arguments);
-        this.editorUi.updatePasteActionStates();
-      };
+        this.editorUi.editor.graph.cellEditor.startEditing = () => {
+          cellEditorStartEditing.apply(this, arguments);
+          this.editorUi.updatePasteActionStates();
+        };
 
-      try {
-        // Inserts new cell if no cell is selected
-        if (cells.length == 0) {
+        try {
+          // Inserts new cell if no cell is selected
           const pt = this.editorUi.editor.graph.getFreeInsertPoint();
           cells = [
             this.editorUi.editor.graph.insertVertex(
@@ -173,33 +136,49 @@ export default {
           ];
           select = cells;
           this.editorUi.editor.graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
+
+          this.editorUi.editor.graph.setCellStyles(
+            mxConstants.STYLE_IMAGE,
+            url.length > 0 ? url : null,
+            cells,
+          );
+
+          // Sets shape only if not already shape with image (label or image)
+          const style = this.editorUi.editor.graph.getCurrentCellStyle(cells[0]);
+
+          if (
+            style[mxConstants.STYLE_SHAPE] != 'image' &&
+            style[mxConstants.STYLE_SHAPE] != 'label'
+          ) {
+            this.editorUi.editor.graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
+          } else if (url.length === 0) {
+            this.editorUi.editor.graph.setCellStyles(mxConstants.STYLE_SHAPE, null, cells);
+          }
+        } finally {
+          this.editorUi.editor.graph.getModel().endUpdate();
         }
 
-        this.editorUi.editor.graph.setCellStyles(
-          mxConstants.STYLE_IMAGE,
-          url.length > 0 ? url : null,
-          cells,
-        );
-
-        // Sets shape only if not already shape with image (label or image)
-        const style = this.editorUi.editor.graph.getCurrentCellStyle(cells[0]);
-
-        if (
-          style[mxConstants.STYLE_SHAPE] != 'image' &&
-          style[mxConstants.STYLE_SHAPE] != 'label'
-        ) {
-          this.editorUi.editor.graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
-        } else if (url.length == 0) {
-          this.editorUi.editor.graph.setCellStyles(mxConstants.STYLE_SHAPE, null, cells);
+        if (select != null) {
+          this.editorUi.editor.graph.setSelectionCells(select);
+          this.editorUi.editor.graph.scrollCellToVisible(select[0]);
         }
-      } finally {
-        this.editorUi.editor.graph.getModel().endUpdate();
-      }
 
-      if (select != null) {
-        this.editorUi.editor.graph.setSelectionCells(select);
-        this.editorUi.editor.graph.scrollCellToVisible(select[0]);
-      }
+        let scroll = document.getElementById('scroll');
+        scroll.scrollTop = scroll.scrollHeight - scroll.clientHeight;
+      });
+    },
+    loadImage(url) {
+      /*
+       * We are going to return a Promise which, when we .then
+       * will give us an Image that should be fully loaded
+       */
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.addEventListener('load', () => {
+          resolve({ w: image.width, h: image.height });
+        });
+        image.src = url;
+      });
     },
   },
 };

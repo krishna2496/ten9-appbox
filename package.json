@@ -15,8 +15,7 @@
   "dependencies": {
     "bootstrap-vue": "^2.17.3",
     "core-js": "^3.6.5",
-    "vue": "^2.6.11",
-    "bootstrap-vue": "^2.17.3"
+    "vue": "^2.6.11"
   },
   "main": "./dist/vue-graph-editor.min.js",
   "devDependencies": {
