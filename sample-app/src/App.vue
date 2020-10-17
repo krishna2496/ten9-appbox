@@ -15,10 +15,6 @@
 -->
 
 <script>
-// eslint-disable-next-line no-unused-vars
-import Init from './init';
-// Comment back in to test NPM
-// import GraphEditor from 'vue-graph-editor';
 import GraphEditor from '../../src/components/GraphEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 
@@ -28,10 +24,14 @@ export default {
     GraphEditor,
     OpenFile,
   },
-
+  data() {
+    return {
+      logs: [],
+    };
+  },
   methods: {
     saveFile() {
-      let xmlData = this.$refs.editor.getXmlData();
+      const xmlData = this.$refs.editor.getXmlData();
       this.saveXmlFile(xmlData);
     },
     saveXmlFile(xmlData) {
@@ -55,27 +55,100 @@ export default {
     loadFileData(val) {
       this.$refs.editor.loadXmlData(val);
     },
+    addLog(event, title) {
+      event.title = title;
+      event.lastModified = new Date(event.lastModified).toLocaleString();
+      this.logs.push(event);
+    },
+    insertDummyImage() {
+      // add a dummy image to graph to emulate what will happen in production app
+      const url =
+        'https://static.scientificamerican.com/sciam/cache/file/4E0744CD-793A-4EF8-B550B54F7F2C4406_source.jpg';
+      this.$refs.editor.insertImage(url);
+    },
+    onFileDropped(event) {
+      this.addLog(event, 'File Dropped');
+      this.insertDummyImage();
+    },
+    onImagePasted(event) {
+      this.addLog(event, 'Image Pasted');
+      this.insertDummyImage();
+    },
   },
 };
 </script>
 
 <template>
   <div id="app">
-    <div class="row-btn">
-      <button @click="saveFile">
-        Save File
-      </button>
-      <open-file @file-loaded="loadFileData($event)" />
-    </div>
-    <div class="ge-container">
-      <graph-editor ref="editor" @file-save="saveXmlFile($event)" />
+    <div class="row">
+      <div class="col-md-2">
+        <b-list-group id="scroll" class="custom-list-group">
+          <template v-for="(log, index) in logs">
+            <table :key="index" class="custom-table">
+              <tr>
+                <td colspan="2" class="custom-header-background">
+                  <b class="text-center custom-header"> {{ log.title }} </b>
+                </td>
+              </tr>
+              <tr>
+                <td class="table-details">
+                  <b>Filename</b>
+                </td>
+                <td class="table-details">
+                  {{ log.filename }}
+                </td>
+              </tr>
+              <tr>
+                <td class="table-details">
+                  <b>Size</b>
+                </td>
+                <td class="table-details">
+                  {{ log.size }}
+                </td>
+              </tr>
+              <tr>
+                <td class="table-details">
+                  <b>Type</b>
+                </td>
+                <td class="table-details">
+                  {{ log.type }}
+                </td>
+              </tr>
+              <tr>
+                <td class="table-details">
+                  <b>Modified</b>
+                </td>
+                <td class="table-details">
+                  {{ log.lastModified }}
+                </td>
+              </tr>
+            </table>
+          </template>
+        </b-list-group>
+      </div>
+      <div class="col-md-8">
+        <div class="row-btn">
+          <button @click="saveFile">
+            Save File
+          </button>
+          <open-file @file-loaded="loadFileData($event)" />
+        </div>
+        <div class="ge-container">
+          <graph-editor
+            ref="editor"
+            @file-saved="saveXmlFile($event)"
+            @file-dropped="onFileDropped($event)"
+            @image-pasted="onImagePasted($event)"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss">
-// Comment back in to test NPM
-/* @import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css'; */
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap-vue/src/index.scss';
 @import '../../src/styles/grapheditor.css';
 
 .ge-container {
