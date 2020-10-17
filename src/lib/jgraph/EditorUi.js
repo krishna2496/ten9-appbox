@@ -3988,8 +3988,7 @@ EditorUi.prototype.createKeyHandler = function (editor) {
 		keyHandler.bindAction(48, true, 'customZoom'); // Ctrl+0
 		keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
 		keyHandler.bindAction(82, true, 'clearDefaultStyle', true); // Ctrl+Shift+R
-		// TEN9 :to disable default grapheditor crtl+s behaviour
-		//keyHandler.bindAction(83, true, 'save'); // Ctrl+S
+		keyHandler.bindAction(83, true, 'save'); // Ctrl+S
 		keyHandler.bindAction(83, true, 'saveAs', true); // Ctrl+Shift+S
 		keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
 		keyHandler.bindAction(65, true, 'selectNone', true); // Ctrl+A
@@ -4000,7 +3999,7 @@ EditorUi.prototype.createKeyHandler = function (editor) {
 		keyHandler.bindAction(66, true, 'toBack', true); // Ctrl+Shift+B
 		keyHandler.bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
 		keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D
-		keyHandler.bindAction(68, true, 'setAsDefaultStyle', true); // Ctrl+Shift+D   
+		keyHandler.bindAction(68, true, 'setAsDefaultStyle', true); // Ctrl+Shift+D
 		keyHandler.bindAction(90, true, 'undo'); // Ctrl+Z
 		keyHandler.bindAction(89, true, 'autosize', true); // Ctrl+Shift+Y
 		keyHandler.bindAction(88, true, 'cut'); // Ctrl+X
