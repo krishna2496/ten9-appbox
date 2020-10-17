@@ -15,10 +15,6 @@
 -->
 
 <script>
-// eslint-disable-next-line no-unused-vars
-import Init from './init';
-// Comment back in to test NPM
-// import GraphEditor from 'vue-graph-editor';
 import GraphEditor from '../../src/components/GraphEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 
@@ -59,22 +55,24 @@ export default {
     loadFileData(val) {
       this.$refs.editor.loadXmlData(val);
     },
-    addLog(val, title) {
-      val.title = title;
-      val.lastModified = this.getDate(val.lastModified);
-
-      this.logs.push(val);
-      // add image to graph
+    addLog(event, title) {
+      event.title = title;
+      event.lastModified = new Date(event.lastModified).toLocaleString();
+      this.logs.push(event);
+    },
+    insertDummyImage() {
+      // add a dummy image to graph to emulate what will happen in production app
       const url =
         'https://static.scientificamerican.com/sciam/cache/file/4E0744CD-793A-4EF8-B550B54F7F2C4406_source.jpg';
       this.$refs.editor.insertImage(url);
     },
-    getDate(timestamp) {
-      const monthIcrement = 1;
-      let todate = new Date(timestamp).getDate();
-      let tomonth = new Date(timestamp).getMonth() + monthIcrement;
-      let toyear = new Date(timestamp).getFullYear();
-      return tomonth + '/' + todate + '/' + toyear;
+    onFileDropped(event) {
+      this.addLog(event, 'File Dropped');
+      this.insertDummyImage();
+    },
+    onImagePasted(event) {
+      this.addLog(event, 'Image Pasted');
+      this.insertDummyImage();
     },
   },
 };
@@ -94,7 +92,7 @@ export default {
               </tr>
               <tr>
                 <td class="table-details">
-                  <b>File Name</b>
+                  <b>Filename</b>
                 </td>
                 <td class="table-details">
                   {{ log.filename }}
@@ -102,7 +100,7 @@ export default {
               </tr>
               <tr>
                 <td class="table-details">
-                  <b>size</b>
+                  <b>Size</b>
                 </td>
                 <td class="table-details">
                   {{ log.size }}
@@ -110,7 +108,7 @@ export default {
               </tr>
               <tr>
                 <td class="table-details">
-                  <b>type</b>
+                  <b>Type</b>
                 </td>
                 <td class="table-details">
                   {{ log.type }}
@@ -139,8 +137,8 @@ export default {
           <graph-editor
             ref="editor"
             @file-saved="saveXmlFile($event)"
-            @file-dropped="addLog($event, 'File Dropped')"
-            @file-pasted="addLog($event, 'File Pasted')"
+            @file-dropped="onFileDropped($event)"
+            @image-pasted="onImagePasted($event)"
           />
         </div>
       </div>
@@ -151,8 +149,6 @@ export default {
 <style lang="scss">
 @import 'node_modules/bootstrap/scss/bootstrap';
 @import 'node_modules/bootstrap-vue/src/index.scss';
-// Comment back in to test NPM
-/* @import '../node_modules/vue-graph-editor/dist/vue-graph-editor.min.css'; */
 @import '../../src/styles/grapheditor.css';
 
 .ge-container {

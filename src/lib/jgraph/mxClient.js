@@ -477,7 +477,9 @@ if (typeof(mxBasePath) != 'undefined' && mxBasePath.length > 0)
 }
 else
 {
-	mxClient.basePath = '.';
+	// TEN9: Default to root so that XML requests don't just tack to end 
+	// of whatever location is in the URL window.
+	mxClient.basePath = '/.';
 }
 
 /**
