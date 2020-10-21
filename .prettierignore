@@ -2,5 +2,5 @@ dist/
 node_modules/
 **/*.min.js
 src/graph_editor/lib/deflate/
-src/graph_editor/lib/jgraph/
+# src/graph_editor/lib/jgraph/
 src/graph_editor/lib/jscolor/
