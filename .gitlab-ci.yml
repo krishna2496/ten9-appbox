@@ -48,23 +48,9 @@ prettier:
     yarn
     yarn prettier
 
-build-npm:
+build:
   stage: build
   extends: .build-stage-rules
   script: |
     yarn
     yarn build
-
-build-app-dev:
-  stage: build
-  extends: .build-stage-rules
-  script: |
-    yarn
-    yarn build:app:dev
-
-build-app:
-  stage: build
-  extends: .build-stage-rules
-  script: |
-    yarn
-    yarn build:app

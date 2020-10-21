@@ -1,6 +1,6 @@
 dist/
 node_modules/
 **/*.min.js
-src/lib/deflate/
-src/lib/jgraph/
-src/lib/jscolor/
+src/graph_editor/lib/deflate/
+src/graph_editor/lib/jgraph/
+src/graph_editor/lib/jscolor/
