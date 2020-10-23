@@ -2836,7 +2836,8 @@ var mxUtils = {
           elem.nodeName == 'BR' ||
           elem.innerHTML == '\n' ||
           ((elts.length == 1 || i == 0) &&
-            elem.nodeName == 'DIV' && elem.innerHTML.toLowerCase() == '<br>')
+            elem.nodeName == 'DIV' &&
+            elem.innerHTML.toLowerCase() == '<br>')
         ) {
           ret.push('\n');
         } else {
@@ -44015,7 +44016,7 @@ mxCellEditor.prototype.installListeners = function(elt) {
       if (
         this.clearOnChange &&
         elt.innerHTML == this.getEmptyLabelText() &&
-        (!mxClient.IS_FF || (evt.keyCode != 8 /* Backspace */ && evt.keyCode != 46) /* Delete */)
+        (!mxClient.IS_FF || (evt.keyCode != 8 /* Backspace */ && evt.keyCode != 46)) /* Delete */
       ) {
         this.clearOnChange = false;
         elt.innerHTML = '';
@@ -47057,10 +47058,12 @@ var mxEdgeStyle = {
 
         var inHozChan =
           currentTerm != null &&
-          currentHint.y >= currentTerm.y && currentHint.y <= currentTerm.y + currentTerm.height;
+          currentHint.y >= currentTerm.y &&
+          currentHint.y <= currentTerm.y + currentTerm.height;
         var inVertChan =
           currentTerm != null &&
-          currentHint.x >= currentTerm.x && currentHint.x <= currentTerm.x + currentTerm.width;
+          currentHint.x >= currentTerm.x &&
+          currentHint.x <= currentTerm.x + currentTerm.width;
 
         hozChan = fixedHozAlign || (currentPt == null && inHozChan);
         vertChan = fixedVertAlign || (currentPt == null && inVertChan);
@@ -52889,7 +52892,7 @@ mxGraph.prototype.processChange = function(change) {
     if (
       change instanceof mxTerminalChange ||
       (change.previous == null && change.geometry != null) ||
-        (change.previous != null && !change.previous.equals(change.geometry))
+      (change.previous != null && !change.previous.equals(change.geometry))
     ) {
       this.view.invalidate(change.cell);
     }
@@ -65975,7 +65978,7 @@ mxGraphHandler.prototype.isPropagateSelectionCell = function(cell, immediate, me
         (!this.graph.isSiblingSelected(cell) &&
           !this.graph.isCellSelected(cell) &&
           !this.graph.isSwimlane(parent)) ||
-          this.graph.isCellSelected(parent)) &&
+        this.graph.isCellSelected(parent)) &&
       (this.graph.isToggleEvent(me.getEvent()) || !this.graph.isCellSelected(parent))
     );
   }
@@ -70412,7 +70415,8 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
         if (
           source.geometry != null &&
           source.geometry.relative &&
-          target.geometry != null && target.geometry.relative
+          target.geometry != null &&
+          target.geometry.relative
         ) {
           parent = model.getParent(parent);
         }
@@ -74513,7 +74517,7 @@ mxEdgeHandler.prototype.createMarker = function() {
         this.graph.hitsSwimlaneContent(cell, self.currentPoint.x, self.currentPoint.y)) ||
       !self.isConnectableCell(cell) ||
       cell == self.state.cell ||
-        (cell != null && !self.graph.connectableEdges && model.isEdge(cell)) ||
+      (cell != null && !self.graph.connectableEdges && model.isEdge(cell)) ||
       model.isAncestor(self.state.cell, cell)
     ) {
       cell = null;

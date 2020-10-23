@@ -75,7 +75,6 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
-    // TODO: Check Event type
     function onFileDropped(event: EventFileInfo) {
       const fileLogEvent: FileLogEvent = {
         title: 'File Dropped',
@@ -85,7 +84,6 @@ export default defineComponent({
       insertDummyImage();
     }
 
-    // TODO: Check Event type
     function onImagePasted(event: EventFileInfo) {
       const fileLogEvent: FileLogEvent = {
         title: 'Image Pasted',

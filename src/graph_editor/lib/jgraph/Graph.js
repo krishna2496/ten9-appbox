@@ -6105,7 +6105,8 @@ if (typeof mxVertexHandler != 'undefined') {
               index = cells.length - 1;
             } else if (
               (isNext && cell == null && cells.length > 0) ||
-              (index != null && isNext && cells.length > index) || (!isNext && index > 0)
+              (index != null && isNext && cells.length > index) ||
+              (!isNext && index > 0)
             ) {
               return;
             }
@@ -6937,10 +6938,10 @@ if (typeof mxVertexHandler != 'undefined') {
             this.firstClickSource == src &&
             (state == null ||
               state.text == null ||
-                state.text.node == null ||
-                state.text.boundingBox == null ||
-                (!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
-                  !mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))) &&
+              state.text.node == null ||
+              state.text.boundingBox == null ||
+              (!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
+                !mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))) &&
             ((state == null && !this.isCellLocked(this.getDefaultParent())) ||
               (state != null && !this.isCellLocked(state.cell))) &&
             (state != null ||
@@ -7250,11 +7251,11 @@ if (typeof mxVertexHandler != 'undefined') {
           if (
             linkNode == null &&
             Math.abs(this.scrollLeft - graph.container.scrollLeft) < tol &&
-              Math.abs(this.scrollTop - graph.container.scrollTop) < tol &&
-              (me.sourceState == null || !me.isSource(me.sourceState.control)) &&
-              (((mxEvent.isLeftMouseButton(evt) || mxEvent.isMiddleMouseButton(evt)) &&
-                !mxEvent.isPopupTrigger(evt)) ||
-                mxEvent.isTouchEvent(evt))
+            Math.abs(this.scrollTop - graph.container.scrollTop) < tol &&
+            (me.sourceState == null || !me.isSource(me.sourceState.control)) &&
+            (((mxEvent.isLeftMouseButton(evt) || mxEvent.isMiddleMouseButton(evt)) &&
+              !mxEvent.isPopupTrigger(evt)) ||
+              mxEvent.isTouchEvent(evt))
           ) {
             if (this.currentLink != null) {
               var blank = graph.isBlankLink(this.currentLink);
@@ -7276,9 +7277,9 @@ if (typeof mxVertexHandler != 'undefined') {
               onClick != null &&
               !me.isConsumed() &&
               Math.abs(this.scrollLeft - graph.container.scrollLeft) < tol &&
-                Math.abs(this.scrollTop - graph.container.scrollTop) < tol &&
+              Math.abs(this.scrollTop - graph.container.scrollTop) < tol &&
               Math.abs(this.startX - me.getGraphX()) < tol &&
-                Math.abs(this.startY - me.getGraphY()) < tol
+              Math.abs(this.startY - me.getGraphY()) < tol
             ) {
               onClick(me.getEvent());
             }
@@ -9091,7 +9092,8 @@ if (typeof mxVertexHandler != 'undefined') {
 
       if (
         (color == null || color == mxConstants.NONE) &&
-        state.cell.geometry != null && state.cell.geometry.width > 0 &&
+        state.cell.geometry != null &&
+        state.cell.geometry.width > 0 &&
         (mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION, 0) != 0 ||
           mxUtils.getValue(state.style, mxConstants.STYLE_HORIZONTAL, 1) == 0)
       ) {
@@ -10744,7 +10746,7 @@ if (typeof mxVertexHandler != 'undefined') {
         this.rotationShape.node.style.display =
           this.moveHandles == null &&
           this.graph.getSelectionCount() == 1 &&
-            (this.index == null || this.index == mxEvent.ROTATION_HANDLE)
+          (this.index == null || this.index == mxEvent.ROTATION_HANDLE)
             ? ''
             : 'none';
       }

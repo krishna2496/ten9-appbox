@@ -1283,9 +1283,9 @@ EditorUi.prototype.updatePasteActionStates = function() {
   var paste = this.actions.get('paste');
   var pasteHere = this.actions.get('pasteHere');
 
-	// TEN9: as we disable the paste of mxgraph we have make paste available for any action
-	paste.setEnabled(true);
-	pasteHere.setEnabled(true);  
+  // TEN9: as we disable the paste of mxgraph we have make paste available for any action
+  paste.setEnabled(true);
+  pasteHere.setEnabled(true);
 
   // paste.setEnabled(
   //   this.editor.graph.cellEditor.isContentEditing() ||
@@ -1986,7 +1986,7 @@ EditorUi.prototype.initCanvas = function() {
               Math.abs(this.scrollLeft - graph.container.scrollLeft) < tol &&
               Math.abs(this.scrollTop - graph.container.scrollTop) < tol &&
               Math.abs(this.startX - me.getGraphX()) < tol &&
-                Math.abs(this.startY - me.getGraphY()) < tol
+              Math.abs(this.startY - me.getGraphY()) < tol
             ) {
               if (parseFloat(ui.chromelessToolbar.style.opacity || 0) > 0) {
                 fadeOut();
@@ -4118,10 +4118,10 @@ EditorUi.prototype.createKeyHandler = function(editor) {
           evt.keyCode != 188 &&
           evt.keyCode != 190 &&
           evt.keyCode != 85)) &&
-        ((evt.keyCode != 66 && evt.keyCode != 73) ||
-          !this.isControlDown(evt) ||
-          (this.graph.cellEditor.isContentEditing() && !mxClient.IS_FF && !mxClient.IS_SF)) &&
-        isEventIgnored.apply(this, arguments)
+      ((evt.keyCode != 66 && evt.keyCode != 73) ||
+        !this.isControlDown(evt) ||
+        (this.graph.cellEditor.isContentEditing() && !mxClient.IS_FF && !mxClient.IS_SF)) &&
+      isEventIgnored.apply(this, arguments)
     );
   };
 
