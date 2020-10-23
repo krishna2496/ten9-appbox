@@ -15,15 +15,14 @@
 -->
 
 <script lang="ts">
-import GraphEditor from './graph_editor/components/GraphEditor.vue';
+import GraphEditor, { EventFileInfo } from './graph_editor/components/GraphEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 
 import { defineComponent, ref } from '@vue/composition-api';
 
-// interface LogEvent extends Event {
-//   title?: string;
-//   lastModifiedString?: Date;
-// }
+interface FileLogEvent extends EventFileInfo {
+  title: string;
+}
 
 export default defineComponent({
   name: 'App',
@@ -65,13 +64,8 @@ export default defineComponent({
       editor.value.loadXmlData(xmlData);
     }
 
-    function addLog(event: Event, title: string) {
-      console.log(`addLog: ${title}`);
-      console.log(`addLog: Event: ${event}`);
-      // let logEvent: LogEvent = event;
-      // logEvent.title = title;
-      // logEvent.lastModifiedString = new Date(event.lastModified).toLocaleString();
-      // logs.value.push(event);
+    function addLog(fileLogEvent: FileLogEvent) {
+      logs.value.push(fileLogEvent);
     }
 
     function insertDummyImage() {
@@ -81,13 +75,23 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
-    function onFileDropped(event: DragEvent) {
-      addLog(event, 'File Dropped');
+    // TODO: Check Event type
+    function onFileDropped(event: EventFileInfo) {
+      const fileLogEvent: FileLogEvent = {
+        title: 'File Dropped',
+        ...event,
+      };
+      addLog(fileLogEvent);
       insertDummyImage();
     }
 
-    function onImagePasted(event: ClipboardEvent) {
-      addLog(event, 'Image Pasted');
+    // TODO: Check Event type
+    function onImagePasted(event: EventFileInfo) {
+      const fileLogEvent: FileLogEvent = {
+        title: 'Image Pasted',
+        ...event,
+      };
+      addLog(fileLogEvent);
       insertDummyImage();
     }
 
@@ -134,7 +138,7 @@ export default defineComponent({
               td.table-details
                 b Modified
               td.table-details
-                | {{ log.lastModified }}
+                | {{ new Date(log.lastModified).toLocaleString() }}
     .col-md-8
       .row-btn
         button(@click='saveFile')
@@ -154,5 +158,11 @@ export default defineComponent({
   width: 1400px;
   margin: 20px auto;
   border: 1px solid black;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit !important;
 }
 </style>

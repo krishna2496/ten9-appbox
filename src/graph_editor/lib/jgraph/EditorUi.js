@@ -1283,13 +1283,17 @@ EditorUi.prototype.updatePasteActionStates = function() {
   var paste = this.actions.get('paste');
   var pasteHere = this.actions.get('pasteHere');
 
-  paste.setEnabled(
-    this.editor.graph.cellEditor.isContentEditing() ||
-      (!mxClipboard.isEmpty() &&
-        graph.isEnabled() &&
-        !graph.isCellLocked(graph.getDefaultParent())),
-  );
-  pasteHere.setEnabled(paste.isEnabled());
+	// TEN9: as we disable the paste of mxgraph we have make paste available for any action
+	paste.setEnabled(true);
+	pasteHere.setEnabled(true);  
+
+  // paste.setEnabled(
+  //   this.editor.graph.cellEditor.isContentEditing() ||
+  //     (!mxClipboard.isEmpty() &&
+  //       graph.isEnabled() &&
+  //       !graph.isCellLocked(graph.getDefaultParent())),
+  // );
+  // pasteHere.setEnabled(paste.isEnabled());
 };
 
 /**
@@ -4440,8 +4444,9 @@ EditorUi.prototype.createKeyHandler = function(editor) {
     keyHandler.bindAction(90, true, 'undo'); // Ctrl+Z
     keyHandler.bindAction(89, true, 'autosize', true); // Ctrl+Shift+Y
     keyHandler.bindAction(88, true, 'cut'); // Ctrl+X
+    // TEN9: To disable default grapheditor Ctrl+C & Ctrl+v behaviour
     keyHandler.bindAction(67, true, 'copy'); // Ctrl+C
-    keyHandler.bindAction(86, true, 'paste'); // Ctrl+V
+    // keyHandler.bindAction(86, true, 'paste'); // Ctrl+V
     keyHandler.bindAction(71, true, 'group'); // Ctrl+G
     keyHandler.bindAction(77, true, 'editData'); // Ctrl+M
     keyHandler.bindAction(71, true, 'grid', true); // Ctrl+Shift+G

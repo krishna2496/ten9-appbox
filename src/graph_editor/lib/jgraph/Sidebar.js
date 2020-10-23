@@ -363,7 +363,7 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel) {
           this.tooltip.style.zIndex = mxPopupMenu.prototype.zIndex - 1;
 
           // TEN9: add a toolip into the container instead of document.body
-          //document.body.appendChild(this.tooltip);
+          // document.body.appendChild(this.tooltip);
           this.editorUi.container.appendChild(this.tooltip);
 
           this.graph2 = new Graph(
