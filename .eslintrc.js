@@ -14,43 +14,66 @@
  * -----
  */
 
+const jsExtensions = ['.vue', '.js', '.jsx'];
+const tsExtensions = ['.ts', '.tsx'];
+const allExtensions = jsExtensions.concat(tsExtensions);
+
 module.exports = {
   root: true,
 
   env: {
+    es6: true,
     node: true,
   },
 
   extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended', // Disable rules that are incompatible with or better handled by TypeScript
+    'plugin:@typescript-eslint/recommended', // The intention is that you can use all the configs together, as they build upon one-another:
+    'plugin:@typescript-eslint/recommended-requiring-type-checking', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    'plugin:json/recommended',
     'plugin:vue/essential',
     'plugin:vue/recommended',
     'plugin:prettier/recommended',
-    'eslint:recommended',
+    'prettier',
+    'prettier/standard',
+    'prettier/@typescript-eslint',
+    'prettier/vue',
+    '@vue/typescript/recommended',
+    '@vue/prettier',
+    '@vue/prettier/@typescript-eslint',
   ],
 
   parser: 'vue-eslint-parser',
 
   parserOptions: {
-    parser: 'babel-eslint',
+    ecmaFeatures: { jsx: true },
+    ecmaVersion: 2018,
+    extraFileExtensions: ['.vue'],
+    parser: '@typescript-eslint/parser',
+    project: './tsconfig.json',
+    sourceType: 'module',
+    tsconfigRootDir: __dirname,
   },
 
-  plugins: ['vue', 'prettier'],
+  plugins: ['pug', 'vue', 'prettier', '@typescript-eslint'],
 
   // TODO: Add import settings and rules when import order is sorted out
-  // settings: {
-  //   'import/extensions': allExtensions,
-  //   'import/resolver': {
-  //     node: {
-  //       extensions: allExtensions,
-  //       moduleDirectory: ['./node_modules'],
-  //     },
-  //     webpack: './config/webpack/webpack.config.app.js',
-  //     alias: {
-  //       map: [['@', './src/']],
-  //       extensions: ['.vue', '.js'],
-  //     },
-  //   },
-  // },
+  settings: {
+    'import/extensions': allExtensions,
+    'import/resolver': {
+      node: {
+        extensions: allExtensions,
+        moduleDirectory: ['./node_modules'],
+      },
+      webpack: './config/webpack/webpack.config.js',
+      alias: {
+        map: [['@', './src/']],
+        extensions: allExtensions,
+      },
+    },
+    'import/parsers': { '@typescript-eslint/parser': tsExtensions },
+  },
 
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -62,16 +85,20 @@ module.exports = {
     'no-param-reassign': ['error', { props: false }],
     'no-bitwise': 'error',
     'no-process-env': 'error',
-    'no-magic-numbers': ['error', { ignore: [0] }],
+    'no-magic-numbers': 'off', // note you must disable the base rule as it can report incorrect errors
+    '@typescript-eslint/no-magic-numbers': [
+      'warn',
+      {
+        ignore: [0, 1, 2],
+        ignoreArrayIndexes: true,
+        ignoreNumericLiteralTypes: true,
+        ignoreEnums: true,
+        ignoreReadonlyClassProperties: true,
+      },
+    ],
     'prefer-destructuring': 'error',
     'no-multi-assign': 'error',
     'no-underscore-dangle': ['error'],
-    camelcase: [
-      'error',
-      {
-        properties: 'always',
-      },
-    ],
     'max-classes-per-file': ['error'],
     'guard-for-in': 'error',
     'global-require': 'error',
@@ -80,10 +107,37 @@ module.exports = {
     'no-restricted-globals': 'error',
     'no-restricted-syntax': 'error',
     'object-curly-newline': 'error',
-    'no-unused-vars': 'error',
+
+    '@typescript-eslint/restrict-template-expressions': 'off',
+    '@typescript-eslint/prefer-string-starts-ends-with': 'error',
+    '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/no-require-imports': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/interface-name-prefix': 'off',
+    '@typescript-eslint/no-unsafe-member-access': 'off',
+    '@typescript-eslint/no-unsafe-call': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/no-unsafe-return': 'off',
+    '@typescript-eslint/no-floating-promises': 'off',
+    '@typescript-eslint/unbound-method': 'off',
+    '@typescript-eslint/await-thenable': 'error',
+    '@typescript-eslint/explicit-member-accessibility': ['error', { accessibility: 'no-public' }],
+    'no-unused-vars': 'off', // note you must disable the base rule as it can report incorrect errors
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        ignoreRestSiblings: true,
+        argsIgnorePattern: '^_',
+      },
+    ],
     curly: ['error', 'multi-line'],
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
-    'no-shadow': 'error',
+    'no-shadow': 'off', // note you must disable the base rule as it can report incorrect errors
+    '@typescript-eslint/no-shadow': [
+      'error',
+      { allow: ['req', 'res', 'err'], ignoreFunctionTypeParameterNameValueShadow: true },
+    ],
     'no-var': ['error'],
     'class-methods-use-this': ['error'],
     'comma-dangle': [
@@ -99,6 +153,13 @@ module.exports = {
     'prefer-arrow-callback': 'error',
     quotes: ['error', 'single', { avoidEscape: true }],
     semi: ['error', 'always'],
+    '@typescript-eslint/ban-ts-comment': 'error',
+    '@typescript-eslint/no-empty-interface': [
+      'error',
+      {
+        allowSingleExtends: true,
+      },
+    ],
     camelcase: [
       'error',
       {

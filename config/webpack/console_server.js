@@ -14,7 +14,7 @@
  * -----
  */
 
-const webpackConfig = require('./webpack.config.app');
+const webpackConfig = require('./webpack.config');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const portfinder = require('portfinder');
