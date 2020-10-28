@@ -1940,6 +1940,6 @@ Action.prototype.isSelected = function() {
   return this.selectedCallback();
 };
 
-module.exports ={
+module.exports = {
   Actions,
 };
