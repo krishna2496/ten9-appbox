@@ -147,20 +147,5 @@ export default defineComponent({
 </template>
 
 <style lang="scss">
-@import 'node_modules/bootstrap/scss/bootstrap';
-@import 'node_modules/bootstrap-vue/src/index.scss';
-
-.ge-container {
-  position: relative;
-  height: 1000px;
-  width: 1400px;
-  margin: 20px auto;
-  border: 1px solid black;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: inherit !important;
-}
+@import './styles/app.scss';
 </style>

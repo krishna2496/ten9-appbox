@@ -1,0 +1,67 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap-vue/src/index.scss';
+
+.ge-container {
+  // TODO Part 2
+  position: relative;
+  width: 100%;
+  height: 800px;
+  margin: 20px auto;
+  border: 1px solid black;
+}
+
+.row-btn{
+  display: flex;
+  justify-content: center;
+}
+.btn-left{
+  margin-left: 10px;
+}
+
+/* // TEN9: Adding custom styles */
+
+.custom-table tr td{
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+}
+.custom-table .table-details{
+  font-size: 12px;
+}
+.custom-list-group {
+  height: 100vh;
+  overflow-y: scroll;
+  padding: 10px;
+}
+.custom-header{
+  display: flex;
+  justify-content: center;
+  font-size: 14px;
+}
+#app .row{
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+.custom-header-background {
+  background:lightGray;
+}
+
+a {
+  color: black !important;
+  text-decoration: none !important;
+}
