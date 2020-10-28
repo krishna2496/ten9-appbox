@@ -416,7 +416,8 @@ Format.prototype.refresh = function() {
   div.style.cursor = 'default';
 
   var label = document.createElement('div');
-  label.className = 'geFormatSection';
+  // TEN9: Added geFormatSectionHeader to pickup proper styling
+  label.className = 'geFormatSection geFormatSectionHeader';
   label.style.textAlign = 'center';
   label.style.fontWeight = 'bold';
   label.style.paddingTop = '8px';
@@ -792,7 +793,8 @@ BaseFormatPanel.prototype.createPanel = function() {
  */
 BaseFormatPanel.prototype.createTitle = function(title) {
   var div = document.createElement('div');
-  div.style.padding = '0px 0px 6px 0px';
+  // TEN9: Remove padding as we account for it in stylesheet
+  // div.style.padding = '0px 0px 6px 0px';
   div.style.whiteSpace = 'nowrap';
   div.style.overflow = 'hidden';
   div.style.width = '200px';
@@ -919,7 +921,8 @@ BaseFormatPanel.prototype.createStepper = function(
  */
 BaseFormatPanel.prototype.createOption = function(label, isCheckedFn, setCheckedFn, listener, fn) {
   var div = document.createElement('div');
-  div.style.padding = '6px 0px 1px 0px';
+  // TEN9: Remove padding as we account for it in stylesheet
+  // div.style.padding = '6px 0px 1px 0px';
   div.style.whiteSpace = 'nowrap';
   div.style.overflow = 'hidden';
   div.style.width = '200px';
@@ -1089,7 +1092,8 @@ BaseFormatPanel.prototype.createColorOption = function(
   hideCheckbox,
 ) {
   var div = document.createElement('div');
-  div.style.padding = '6px 0px 1px 0px';
+  // TEN9: Remove padding as we account for it in stylesheet
+  // div.style.padding = '6px 0px 1px 0px';
   div.style.whiteSpace = 'nowrap';
   div.style.overflow = 'hidden';
   div.style.width = '200px';

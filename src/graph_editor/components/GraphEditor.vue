@@ -33,6 +33,8 @@ const {
 const defaultStyleXml = require('../styles/default.xml');
 const resourcesFile = require('../locale/en.txt');
 
+import '../styles/grapheditor.scss';
+
 export interface EventFileInfo {
   filename: string;
   size: number;
@@ -239,7 +241,3 @@ export default defineComponent({
 <template lang="pug">
 .geEditor(ref='container', @keydown.ctrl.83.prevent.stop='saveFile')
 </template>
-
-<style lang="scss">
-@import '../styles/grapheditor.css';
-</style>
