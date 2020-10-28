@@ -17,7 +17,7 @@
 <script lang="ts">
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createEditor } from '../lib/jgraph/Editor';
-import Graph from '../lib/jgraph/Graph';
+import { Graph } from '../lib/jgraph/Graph';
 import { defineComponent, ref, onMounted } from '@vue/composition-api';
 
 const {

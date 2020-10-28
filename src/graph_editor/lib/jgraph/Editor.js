@@ -23,7 +23,7 @@ const {
   mxUtils,
 } = require('./mxClient.js');
 
-const Graph = require('./Graph');
+const { Graph } = require('./Graph');
 const Base64 = require('../deflate/base64');
 
 function createEditor(themes) {
@@ -270,6 +270,25 @@ Editor.backLargeImage =
  */
 Editor.fullscreenLargeImage =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAllBMVEUAAAD////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AJcWoAAAAMXRSTlMA+wIFxPWPCIb446tnUxmsoIykgxTe29jQnpKBe2MNsZhVTR/KyLuWbFhEPjUq7L9z+bQj+gAAAWxJREFUOMttk4l2gkAMRTODCO4FtQgIbnWpS9v8/881iZFh8R51NO8GJ+gAjMN8zuTRFSw04cIOHQcqFHH6oaQFGxf0jeBjEgB8Y52TpW9Ag4zB5QICWOtHrgwGuFZBcw+gPP0MFS7+iiD5inOmDIQS9sZgTwUzwEzyxhxHVEEU7NdDUXsqUPtqjIgR2IZSCT4upzSeIeOdcMHnfDsx3giPoezfU6MrQGB5//SckLEG2xYscK4GfnUFqaix39zrwooaOD/cXoYuvHKQIc7pzd3HVPusp6t2FAW/RmjMonbl8vwHDeZo/GkleJC7e+p5XA/rAq1X/V10wKag04rBpa2/d0LL4OYYceOEtsG5jyMntI1wS+N1BGcQBl/CoLoPOl9ABrW/BP53e1bwSJHHlkIVchJwmHwyyfJ4kIvEnKtwkxNSEct83KSChT7WiWgDZ3ccZ0BM4tloJow2YUAtifNT3njnyD+y/pMsnP4DN3Y4yl1Gyk0AAAAASUVORK5CYII=';
+
+/**
+ * All fill styles supported by rough.js.
+ */
+Editor.roughFillStyles = [
+  { val: 'auto', dispName: 'Auto' },
+  { val: 'hachure', dispName: 'Hachure' },
+  { val: 'solid', dispName: 'Solid' },
+  { val: 'zigzag', dispName: 'ZigZag' },
+  { val: 'cross-hatch', dispName: 'Cross Hatch' },
+  { val: 'dots', dispName: 'Dots' },
+  { val: 'dashed', dispName: 'Dashed' },
+  { val: 'zigzag-line', dispName: 'ZigZag Line' },
+];
+
+/**
+ * Graph themes for the format panel.
+ */
+Editor.themes = null;
 
 /**
  * Specifies the image URL to be used for the transparent background.
@@ -1870,9 +1889,9 @@ PageSetupDialog.getFormats = function() {
     { key: 'a7', title: 'A7 (74 mm x 105 mm)', format: new mxRectangle(0, 0, 291, 413) },
     { key: 'b4', title: 'B4 (250 mm x 353 mm)', format: new mxRectangle(0, 0, 980, 1390) },
     { key: 'b5', title: 'B5 (176 mm x 250 mm)', format: new mxRectangle(0, 0, 690, 980) },
-    { key: '16-9', title: '16:9 (1600 x 900)', format: new mxRectangle(0, 0, 1600, 900) },
-    { key: '16-10', title: '16:10 (1920 x 1200)', format: new mxRectangle(0, 0, 1920, 1200) },
-    { key: '4-3', title: '4:3 (1600 x 1200)', format: new mxRectangle(0, 0, 1600, 1200) },
+    { key: '16-9', title: '16:9 (1600 x 900)', format: new mxRectangle(0, 0, 900, 1600) },
+    { key: '16-10', title: '16:10 (1920 x 1200)', format: new mxRectangle(0, 0, 1200, 1920) },
+    { key: '4-3', title: '4:3 (1600 x 1200)', format: new mxRectangle(0, 0, 1200, 1600) },
     { key: 'custom', title: mxResources.get('custom'), format: null },
   ];
 };
@@ -2510,7 +2529,9 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types) {
     mxGraphHandler.prototype.shouldRemoveCellsFromParent;
   mxGraphHandler.prototype.shouldRemoveCellsFromParent = function(parent, cells, evt) {
     for (var i = 0; i < cells.length; i++) {
-      if (this.graph.getModel().isVertex(cells[i])) {
+      if (this.graph.isTableCell(cells[i]) || this.graph.isTableRow(cells[i])) {
+        return false;
+      } else if (this.graph.getModel().isVertex(cells[i])) {
         var geo = this.graph.getCellGeometry(cells[i]);
 
         if (geo != null && geo.relative) {
@@ -2617,14 +2638,14 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types) {
     var parent = this.graph.model.getParent(cell);
 
     if (immediate) {
-      var geo = this.graph.getCellGeometry(cell);
+      var geo = this.graph.model.isEdge(cell) ? null : this.graph.getCellGeometry(cell);
 
-      return (
-        !this.graph.model.isEdge(cell) &&
+      result =
         !this.graph.model.isEdge(parent) &&
         !this.graph.isSiblingSelected(cell) &&
-        (geo == null || geo.relative || !this.graph.isContainer(parent) || this.graph.isPart(cell))
-      );
+        ((geo != null && geo.relative) ||
+          !this.graph.isContainer(parent) ||
+          this.graph.isPart(cell));
     } else {
       result = mxGraphHandlerIsPropagateSelectionCell.apply(this, arguments);
 

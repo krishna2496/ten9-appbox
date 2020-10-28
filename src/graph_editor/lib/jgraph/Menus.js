@@ -50,7 +50,7 @@ Menus.prototype.defaultFont = 'Helvetica';
 Menus.prototype.defaultFontSize = '12';
 
 /**
- * Sets the default menu items.
+ * Sets the default font size.
  */
 // TEN9: Removed help from the menu
 Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange', 'extras'];
@@ -1142,9 +1142,9 @@ Menus.prototype.createStyleChangeFunction = function(keys, values) {
 
         // Updates autosize after font changes
         if (keys[i] == mxConstants.STYLE_FONTFAMILY) {
-          for (var i = 0; i < cells.length; i++) {
-            if (graph.model.getChildCount(cells[i]) == 0) {
-              graph.autoSizeCell(cells[i], false);
+          for (var j = 0; j < cells.length; j++) {
+            if (graph.model.getChildCount(cells[j]) == 0) {
+              graph.autoSizeCell(cells[j], false);
             }
           }
         }
@@ -1692,4 +1692,6 @@ Menu.prototype.execute = function(menu, parent) {
 // };
 
 // TEN9: Added exports
-module.exports = Menus;
+module.exports = {
+  Menus,
+};

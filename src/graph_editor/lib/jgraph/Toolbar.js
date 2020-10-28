@@ -80,6 +80,7 @@ Toolbar.prototype.staticElements = null;
  */
 Toolbar.prototype.init = function() {
   var sw = screen.width;
+
   // Takes into account initial compact mode
   sw -= screen.height > 740 ? 56 : 0;
 
@@ -376,7 +377,7 @@ Toolbar.prototype.addTableDropDown = function() {
   // KNOWN: All table stuff does not work with undo/redo
   // KNOWN: Lost focus after click on submenu with text (not icon) in quirks and IE8. This is because the TD seems
   // to catch the focus on click in these browsers. NOTE: Workaround in mxPopupMenu for icon items (without text).
-  var elt = this.addMenuFunction(
+  var menuElt = this.addMenuFunction(
     'geIcon geSprite geSprite-table',
     mxResources.get('table'),
     false,
@@ -387,7 +388,7 @@ Toolbar.prototype.addTableDropDown = function() {
       if (!graph.isTableCell(cell) && !graph.isTableRow(cell) && !graph.isTable(cell)) {
         this.editorUi.menus.addInsertTableCellItem(menu);
       } else {
-        elt = menu.addItem(
+        var elt = menu.addItem(
           '',
           null,
           mxUtils.bind(this, function() {
@@ -482,30 +483,32 @@ Toolbar.prototype.addTableDropDown = function() {
     }),
   );
 
-  elt.style.position = 'relative';
-  elt.style.whiteSpace = 'nowrap';
-  elt.style.overflow = 'hidden';
-  elt.innerHTML =
+  menuElt.style.position = 'relative';
+  menuElt.style.whiteSpace = 'nowrap';
+  menuElt.style.overflow = 'hidden';
+  menuElt.innerHTML =
     '<div class="geSprite geSprite-table" style="margin-left:-2px;"></div>' +
     this.dropdownImageHtml;
-  elt.style.width = mxClient.IS_QUIRKS ? '50px' : '30px';
+  menuElt.style.width = mxClient.IS_QUIRKS ? '50px' : '30px';
 
   // Fix for item size in kennedy theme
   if (EditorUi.compactUi) {
-    elt.getElementsByTagName('img')[0].style.left = '22px';
-    elt.getElementsByTagName('img')[0].style.top = '5px';
+    menuElt.getElementsByTagName('img')[0].style.left = '22px';
+    menuElt.getElementsByTagName('img')[0].style.top = '5px';
   }
 
   // Connects to insert menu enabled state
   var menu = this.editorUi.menus.get('insert');
 
-  if (menu != null) {
+  // Workaround for possible not a function
+  // when extending HTML objects
+  if (menu != null && typeof menuElt.setEnabled === 'function') {
     menu.addListener('stateChanged', function() {
-      elt.setEnabled(menu.enabled);
+      menuElt.setEnabled(menu.enabled);
     });
   }
 
-  return elt;
+  return menuElt;
 };
 
 /**
@@ -570,7 +573,7 @@ Toolbar.prototype.setFontSize = function(value) {
   if (this.sizeMenu != null) {
     this.sizeMenu.innerHTML =
       '<div style="width:24px;overflow:hidden;display:inline-block;">' +
-      value +
+      mxUtils.htmlEntities(value) +
       '</div>' +
       this.dropdownImageHtml;
   }
@@ -1184,7 +1187,9 @@ Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name, c, showAl
     showAll,
   );
 
-  if (!ignoreState) {
+  // Workaround for possible not a function
+  // when extending HTML objects
+  if (!ignoreState && typeof elt.setEnabled === 'function') {
     menu.addListener('stateChanged', function() {
       elt.setEnabled(menu.enabled);
     });
@@ -1273,7 +1278,9 @@ Toolbar.prototype.addItem = function(sprite, key, c, ignoreDisabled) {
 
     elt = this.addButton(sprite, tooltip, action.funct, c);
 
-    if (!ignoreDisabled) {
+    // Workaround for possible not a function
+    // when extending HTML objects
+    if (!ignoreDisabled && typeof elt.setEnabled === 'function') {
       elt.setEnabled(action.enabled);
 
       action.addListener('stateChanged', function() {
@@ -1457,4 +1464,6 @@ Toolbar.prototype.destroy = function() {
   }
 };
 // TEN9: Added exports
-module.exports = Toolbar;
+module.exports = {
+  Toolbar,
+};
