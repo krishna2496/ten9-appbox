@@ -94,6 +94,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn) {
       input.focus();
     }
   };
+
   var picker = new mxJSColor.color(input);
   picker.pickerOnfocus = false;
   picker.showPicker();
@@ -1084,7 +1085,11 @@ var ExportDialog = function(editorUi) {
       borderInput.removeAttribute('disabled');
     }
 
-    if (imageFormatSelect.value === 'png' || imageFormatSelect.value === 'svg') {
+    if (
+      imageFormatSelect.value === 'png' ||
+      imageFormatSelect.value === 'svg' ||
+      imageFormatSelect.value === 'pdf'
+    ) {
       transparentCheckbox.removeAttribute('disabled');
     } else {
       transparentCheckbox.setAttribute('disabled', 'disabled');
@@ -1182,7 +1187,10 @@ var ExportDialog = function(editorUi) {
         var bg = graph.background;
         var dpi = Math.max(1, parseInt(customDpi.value));
 
-        if ((format == 'svg' || format == 'png') && transparentCheckbox.checked) {
+        if (
+          (format == 'svg' || format == 'png' || format == 'pdf') &&
+          transparentCheckbox.checked
+        ) {
           bg = null;
         } else if (bg == null || bg == mxConstants.NONE) {
           bg = '#ffffff';
@@ -1340,6 +1348,18 @@ var EditDataDialog = function(ui, cell) {
     value = obj;
   }
 
+  var meta = {};
+
+  try {
+    var temp = mxUtils.getValue(ui.editor.graph.getCurrentCellStyle(cell), 'metaData', null);
+
+    if (temp != null) {
+      meta = JSON.parse(temp);
+    }
+  } catch (e) {
+    // ignore
+  }
+
   // Creates the dialog contents
   var form = new mxForm('properties');
   form.table.style.width = '100%';
@@ -1415,6 +1435,10 @@ var EditDataDialog = function(ui, cell) {
     }
 
     addRemoveButton(texts[index], name);
+
+    if (meta[name] != null && meta[name].editable == false) {
+      texts[index].setAttribute('disabled', 'disabled');
+    }
   };
 
   var temp = [];
@@ -2073,25 +2097,10 @@ var LayersWindow = function(editorUi, x, y, w, h) {
             })(graph.model.getChildAt(graph.model.root, i));
           }
         }),
+        offset.x,
+        offset.y + insertLink.offsetHeight,
+        evt,
       );
-      menu.div.className += ' geMenubarMenu';
-      menu.smartSeparators = true;
-      menu.showDisabled = true;
-      menu.autoExpand = true;
-
-      // Disables autoexpand and destroys menu when hidden
-      menu.hideMenu = mxUtils.bind(this, function() {
-        mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
-        menu.destroy();
-      });
-
-      // TEN9: Use updated getOffset that doesn't assume document.body as origin container
-      // var offset = mxUtils.getOffset(insertLink);
-      var offset = graphUtils.getOffset(editorUi.container, insertLink);
-      menu.popup(offset.x, offset.y + insertLink.offsetHeight, null, evt);
-
-      // Allows hiding by clicking on document
-      editorUi.setCurrentMenu(menu);
     }
   });
 
@@ -2402,7 +2411,6 @@ var LayersWindow = function(editorUi, x, y, w, h) {
           if (graph.isEnabled()) {
             graph.setDefaultParent(defaultParent);
             graph.view.setCurrentRoot(null);
-            refresh();
           }
         });
       }
@@ -2433,9 +2441,8 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   }
 
   refresh();
-  graph.model.addListener(mxEvent.CHANGE, function() {
-    refresh();
-  });
+  graph.model.addListener(mxEvent.CHANGE, refresh);
+  graph.addListener('defaultParentChanged', refresh);
 
   graph.selectionModel.addListener(mxEvent.CHANGE, function() {
     if (graph.isSelectionEmpty()) {
