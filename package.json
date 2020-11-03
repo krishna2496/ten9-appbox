@@ -7,7 +7,7 @@
     "lint": "./node_modules/.bin/eslint --color --max-warnings 0 '**/*.{vue,js}' --cache --cache-location ./.lintcache/eslintcache/",
     "prettier": "./node_modules/.bin/prettier --check '**/*.{vue,js}'",
     "serve": "serve -s -p 8080 dist",
-    "start": "NODE_OPTIONS=--max_old_space_size=4096 NODE_ENV=development node ./config/webpack/console_server.js"
+    "start": "cross-env NODE_OPTIONS=--max_old_space_size=4096 NODE_ENV=development node ./config/webpack/console_server.js"
   },
   "dependencies": {
     "@vue/composition-api": "^1.0.0-beta.17",
