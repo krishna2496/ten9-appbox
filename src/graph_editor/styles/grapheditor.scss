@@ -191,7 +191,8 @@ button {
     }
 		float: left;
 		// TEN9: padding added
-		width: 24px !important;
+		// TEN9: To improve line dropdown
+		//width: 24px !important;
 		height: 24px !important;
 		padding: 0px 2px 4px 2px !important;
 		margin: 2px;
@@ -738,7 +739,9 @@ html {
 	table.mxPopupMenu {
 		border-collapse: collapse;
     margin: 0px;
-    background: #fff !important;
+		background: #fff !important;
+		// TEN9: to improve line dropdown
+		width:95px;
 	}
 	td.mxPopupMenuItem {
 		padding: 3px 0px 3px 25px;

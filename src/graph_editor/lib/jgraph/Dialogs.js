@@ -63,6 +63,8 @@ var ColorDialog = function(editorUi, color, apply, cancelFn) {
   var input = document.createElement('input');
   input.style.marginBottom = '10px';
   input.style.width = '216px';
+  // TEN9: add margin top for color-picker textbox
+  input.style.marginTop = '10px';
 
   // Required for picker to render in IE
   if (mxClient.IS_IE) {

@@ -280,6 +280,7 @@ sidebarTooltip=Click to expand. Drag and drop shapes into the diagram. Shift+cli
 simple=Simple
 simpleArrow=Simple Arrow
 size=Size
+sketch=Sketch
 solid=Solid
 sourceSpacing=Source Spacing
 south=South

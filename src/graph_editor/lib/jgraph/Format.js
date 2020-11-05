@@ -926,8 +926,9 @@ BaseFormatPanel.prototype.createOption = function(label, isCheckedFn, setChecked
   div.style.whiteSpace = 'nowrap';
   div.style.overflow = 'hidden';
   div.style.width = '200px';
-  div.style.height = mxClient.IS_QUIRKS ? '27px' : '18px';
-
+  // TEN9: Add space between 2 checkbox in format panel
+  //div.style.height = mxClient.IS_QUIRKS ? '27px' : '18px';
+  div.style.height = mxClient.IS_QUIRKS ? '27px' : '25px';
   var cb = document.createElement('input');
   cb.setAttribute('type', 'checkbox');
   cb.style.margin = '0px 6px 0px 0px';
@@ -1097,7 +1098,9 @@ BaseFormatPanel.prototype.createColorOption = function(
   div.style.whiteSpace = 'nowrap';
   div.style.overflow = 'hidden';
   div.style.width = '200px';
-  div.style.height = mxClient.IS_QUIRKS ? '27px' : '18px';
+  // TEN9: Add space between 2 checkbox in format panel
+  //div.style.height = mxClient.IS_QUIRKS ? '27px' : '18px';
+  div.style.height = mxClient.IS_QUIRKS ? '27px' : '25px';
 
   var cb = document.createElement('input');
   cb.setAttribute('type', 'checkbox');
@@ -1294,6 +1297,11 @@ BaseFormatPanel.prototype.addArrow = function(elt, height) {
   arrow.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
   arrow.style.padding = '6px';
   arrow.style.paddingRight = '4px';
+  // TEN9: Make font dropdown proper
+  arrow.style.wdith = '72px';
+  arrow.style.paddingTop = '4px';
+  arrow.style.position = 'absolute';
+  arrow.style.right = '0';
 
   var m = 10 - height;
 
@@ -1305,7 +1313,8 @@ BaseFormatPanel.prototype.addArrow = function(elt, height) {
     arrow.style.marginTop = '-2px';
   }
 
-  arrow.style.height = height + 'px';
+  // TEN9: Make font dropdown proper
+  //arrow.style.height = height + 'px';
   arrow.style.borderLeft = '1px solid #a0a0a0';
   arrow.innerHTML =
     '<img border="0" src="' +
@@ -1318,9 +1327,11 @@ BaseFormatPanel.prototype.addArrow = function(elt, height) {
   var symbol = elt.getElementsByTagName('div')[0];
 
   if (symbol != null) {
+    symbol.style.width = '95px';
     symbol.style.paddingRight = '6px';
     symbol.style.marginLeft = '4px';
-    symbol.style.marginTop = '-1px';
+    //
+    symbol.style.marginTop = '10px';
     symbol.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
     mxUtils.setOpacity(symbol, 60);
   }
@@ -1331,6 +1342,10 @@ BaseFormatPanel.prototype.addArrow = function(elt, height) {
   elt.style.backgroundImage = 'none';
   elt.style.width = 'auto';
   elt.className += ' geColorBtn';
+  
+  // TEN9: Make font dropdown proper
+  elt.style.position = 'relative'
+  
   mxUtils.setPrefixedStyle(elt.style, 'borderRadius', '3px');
 
   elt.appendChild(arrow);
@@ -3605,7 +3620,9 @@ TextFormatPanel.prototype.addFont = function(container) {
   container.appendChild(colorPanel);
 
   var extraPanel = this.createPanel();
-  extraPanel.style.paddingTop = '2px';
+  // TEN9: Add padding for checkbox padding
+  //extraPanel.style.paddingTop = '2px';
+  extraPanel.style.paddingTop = '10px';
   extraPanel.style.paddingBottom = '4px';
 
   // LATER: Fix toggle using '' instead of 'null'
@@ -5021,6 +5038,8 @@ StyleFormatPanel.prototype.addStroke = function(container) {
     pat.style.borderBottom = '1px ' + cssName + ' ' + this.defaultStrokeColor;
     pat.style.paddingTop = '6px';
 
+    // TEN9: to improve line dropdown
+    //width = width + 15;
     item.firstChild.firstChild.style.padding = '0px 4px 0px 4px';
     item.firstChild.firstChild.style.width = width + 'px';
     item.firstChild.firstChild.appendChild(pat);
@@ -6110,14 +6129,16 @@ StyleFormatPanel.prototype.addStroke = function(container) {
 
   var symbol = this.addArrow(pattern, 9);
   symbol.className = 'geIcon';
-  symbol.style.width = 'auto';
+  // TEN9: to improve line dropdown
+  symbol.style.width = '100px';
 
   var altSymbol = this.addArrow(altPattern, 9);
   altSymbol.className = 'geIcon';
   altSymbol.style.width = '22px';
 
   var solid = document.createElement('div');
-  solid.style.width = '85px';
+  // TEN9: to improve line dropdown
+  solid.style.width = '72px';
   solid.style.height = '1px';
   solid.style.borderBottom = '1px solid ' + this.defaultStrokeColor;
   solid.style.marginBottom = '9px';
@@ -6600,6 +6621,8 @@ StyleFormatPanel.prototype.addEffects = function(div) {
   table.style.width = '100%';
   table.style.fontWeight = 'bold';
   table.style.paddingRight = '20px';
+  // TEN9: Add space between 2 checkbox in format panel
+  table.style.marginTop = '10px';
   var tbody = document.createElement('tbody');
   var row = document.createElement('tr');
   row.style.padding = '0px';

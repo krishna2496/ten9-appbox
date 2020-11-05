@@ -109,6 +109,8 @@ Toolbar.prototype.init = function() {
   viewMenu.style.whiteSpace = 'nowrap';
   viewMenu.style.position = 'relative';
   viewMenu.style.overflow = 'hidden';
+  // TEN9: Move Zoom scale button in center
+  viewMenu.style.marginTop = '-1px';
 
   if (EditorUi.compactUi) {
     viewMenu.style.width = mxClient.IS_QUIRKS ? '58px' : '50px';
