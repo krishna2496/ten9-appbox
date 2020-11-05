@@ -1342,10 +1342,10 @@ BaseFormatPanel.prototype.addArrow = function(elt, height) {
   elt.style.backgroundImage = 'none';
   elt.style.width = 'auto';
   elt.className += ' geColorBtn';
-  
+
   // TEN9: Make font dropdown proper
-  elt.style.position = 'relative'
-  
+  elt.style.position = 'relative';
+
   mxUtils.setPrefixedStyle(elt.style, 'borderRadius', '3px');
 
   elt.appendChild(arrow);
