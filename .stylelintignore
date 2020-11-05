@@ -18,33 +18,5 @@
 .lintcache
 # ten9-webapp tree
 .gitlab
-build
-coverage
-docs
-doc
 dist
 public
-reports
-src/components/emoji/core/utils/**
-scripts
-tests/testdata
-## Project engine files
-.eslintignore
-.gitattributes
-.gitignore
-.gitlab-ci.yml
-.jsbeautifyrc
-.markdownlintignore
-.nvmrc
-.prettierignore
-## Specific Files
-TEN9_VERSION
-*.ico
-*.log
-*.lock
-*.svg
-## Apps
-### ten9 Spreadsheet
-src/components/apps/spreadsheet/x_data_spreadsheet
-### ten9 Draw
-src/components/apps/draw/graph_editor/styles
