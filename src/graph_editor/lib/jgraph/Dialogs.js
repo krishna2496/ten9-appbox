@@ -1974,7 +1974,9 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   div.style.marginBottom = '10px';
   div.style.overflow = 'auto';
 
-  var tbarHeight = !EditorUi.compactUi ? '30px' : '26px';
+  //var tbarHeight = !EditorUi.compactUi ? '30px' : '26px';
+  // TEN9: Adjust layer dailog footer height
+  var tbarHeight = '30px';
 
   var listDiv = document.createElement('div');
   listDiv.style.backgroundColor =
@@ -1984,7 +1986,8 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   listDiv.style.left = '0px';
   listDiv.style.right = '0px';
   listDiv.style.top = '0px';
-  listDiv.style.bottom = parseInt(tbarHeight) + 7 + 'px';
+  // TEN9: Adjust layer dailog footer height
+  //listDiv.style.bottom = parseInt(tbarHeight) + 7 + 'px';
   div.appendChild(listDiv);
 
   var dragSource = null;
@@ -2212,7 +2215,9 @@ var LayersWindow = function(editorUi, x, y, w, h) {
       ldiv.style.overflow = 'hidden';
       ldiv.style.position = 'relative';
       ldiv.style.padding = '4px';
-      ldiv.style.height = '22px';
+      // TEN9: Increase height for Layers dialog
+      //ldiv.style.height = '22px'
+      ldiv.style.height = '32px';
       ldiv.style.display = 'block';
       ldiv.style.backgroundColor =
         Dialog.backdropColor == 'white' ? 'whiteSmoke' : Dialog.backdropColor;

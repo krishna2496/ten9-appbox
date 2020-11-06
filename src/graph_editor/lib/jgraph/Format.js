@@ -1298,8 +1298,9 @@ BaseFormatPanel.prototype.addArrow = function(elt, height) {
   arrow.style.padding = '6px';
   arrow.style.paddingRight = '4px';
   // TEN9: Make font dropdown proper
-  arrow.style.wdith = '72px';
   arrow.style.paddingTop = '4px';
+  arrow.style.paddingBottom = '0px';
+  arrow.style.wdith = '72px';
   arrow.style.position = 'absolute';
   arrow.style.right = '0';
 
@@ -1330,7 +1331,7 @@ BaseFormatPanel.prototype.addArrow = function(elt, height) {
     symbol.style.width = '95px';
     symbol.style.paddingRight = '6px';
     symbol.style.marginLeft = '4px';
-    //
+
     symbol.style.marginTop = '10px';
     symbol.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
     mxUtils.setOpacity(symbol, 60);
@@ -5038,8 +5039,6 @@ StyleFormatPanel.prototype.addStroke = function(container) {
     pat.style.borderBottom = '1px ' + cssName + ' ' + this.defaultStrokeColor;
     pat.style.paddingTop = '6px';
 
-    // TEN9: to improve line dropdown
-    //width = width + 15;
     item.firstChild.firstChild.style.padding = '0px 4px 0px 4px';
     item.firstChild.firstChild.style.width = width + 'px';
     item.firstChild.firstChild.appendChild(pat);
@@ -5285,7 +5284,9 @@ StyleFormatPanel.prototype.addStroke = function(container) {
 
   if (!mxClient.IS_QUIRKS) {
     input.style.position = 'absolute';
-    input.style.height = '15px';
+    // TEN9: Increase Height of the Line Weight text box
+    //input.style.height = '15px';
+    input.style.height = '25px';
     input.style.left = '141px';
     stepper.style.left = '190px';
 

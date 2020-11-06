@@ -101,6 +101,8 @@ button {
     -o-transition: all 0.1s ease-in-out;
     -ms-transition: all 0.1s ease-in-out;
     transition: all 0.1s ease-in-out;
+    // TEN9: margin for space drag
+    margin-left: 5px !important;
   }
 
   a {
@@ -186,6 +188,8 @@ button {
 
 .geBackgroundPage {
   box-shadow: 0 0 2px 1px #d1d1d1;
+  left: 500px !important;
+  width: 440px !important;
 }
 
 .geToolbarContainer {
@@ -220,7 +224,8 @@ button {
 
     float: left;
     // TEN9: padding added
-    width: 24px !important;
+    // TEN9: Increase the width of all button to show drop down icon
+    //width: 24px !important;
     height: 24px !important;
     padding: 0 2px 4px !important;
     margin: 2px;
@@ -1211,6 +1216,8 @@ html {
 
 .geSprite-formatpanel {
   background-position: 0 -3738px;
+  // TEN9: margin for space drag
+  margin-left: -1px !important;
 }
 
 .geSprite-connection {
@@ -2258,7 +2265,9 @@ div.mxPopupMenu {
 .btn-left {
   margin-left: 10px;
 }
-
+input {
+  border-radius: 0px !important;
+}
 @media print {
   div.geNoPrint {
     display: none !important;
