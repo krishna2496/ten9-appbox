@@ -2265,9 +2265,11 @@ div.mxPopupMenu {
 .btn-left {
   margin-left: 10px;
 }
+
 input {
-  border-radius: 0px !important;
+  border-radius: 0.1px !important;
 }
+
 @media print {
   div.geNoPrint {
     display: none !important;
