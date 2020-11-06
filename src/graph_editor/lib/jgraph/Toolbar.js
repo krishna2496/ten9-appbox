@@ -138,7 +138,9 @@ Toolbar.prototype.init = function() {
 
     if (EditorUi.compactUi) {
       viewMenu.getElementsByTagName('img')[0].style.right = '1px';
-      viewMenu.getElementsByTagName('img')[0].style.top = '5px';
+      // TEN9: Zoom scale button on Toolbar is off center
+      //viewMenu.getElementsByTagName('img')[0].style.top = '5px';
+      viewMenu.getElementsByTagName('img')[0].style.top = '7px';
     }
   });
 
@@ -491,7 +493,7 @@ Toolbar.prototype.addTableDropDown = function() {
   menuElt.innerHTML =
     '<div class="geSprite geSprite-table" style="margin-left:-2px;"></div>' +
     this.dropdownImageHtml;
-  menuElt.style.width = mxClient.IS_QUIRKS ? '50px' : '30px';
+  menuElt.style.width = mxClient.IS_QUIRKS ? '50px' : '40px';
 
   // Fix for item size in kennedy theme
   if (EditorUi.compactUi) {
