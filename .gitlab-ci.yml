@@ -48,6 +48,13 @@ prettier:
     yarn
     yarn prettier
 
+stylelint:
+  stage: test
+  extends: .test-stage-rules
+  script: |
+    yarn
+    yarn stylelint
+
 build:
   stage: build
   extends: .build-stage-rules
