@@ -1525,7 +1525,9 @@ BaseFormatPanel.prototype.styleButtons = function(elts) {
     elts[i].style.paddingTop = '3px';
     elts[i].style.paddingRight = '1px';
     elts[i].style.margin = '1px';
-    elts[i].style.width = '24px';
+    // TEN9: Make width adjustment of format panel button
+    //elts[i].style.width = '24px';
+    elts[i].style.width = '26px';
     elts[i].style.height = '20px';
     elts[i].className += ' geColorBtn';
   }
@@ -3299,7 +3301,9 @@ TextFormatPanel.prototype.addFont = function(container) {
   }
 
   input.style.width = '40px';
-  input.style.height = mxClient.IS_QUIRKS ? '21px' : '17px';
+  // TEN9: Make Text panel heigth adjustment
+  //input.style.height = mxClient.IS_QUIRKS ? '21px' : '17px';
+  input.style.height = '20px';
   stylePanel2.appendChild(input);
 
   // Workaround for font size 4 if no text is selected is update font size below

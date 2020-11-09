@@ -137,7 +137,7 @@ export default defineComponent({
                 b Modified
               td.table-details
                 | {{ new Date(log.lastModified).toLocaleString() }}
-    .col-md-8
+    .col-md-10
       .row-btn
         button(@click='saveFile')
           | Save File
