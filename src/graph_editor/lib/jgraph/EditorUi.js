@@ -4977,8 +4977,9 @@ EditorUi.prototype.destroy = function() {
   }
 };
 
-require('../diagramly/Pages.js');
 require('../diagramly/EditorUi.js');
+require('../diagramly/Pages.js');
+require('../diagramly/App.js');
 // TEN9: Added exports
 module.exports = {
   createEditorUi,
