@@ -793,8 +793,7 @@ BaseFormatPanel.prototype.createPanel = function() {
  */
 BaseFormatPanel.prototype.createTitle = function(title) {
   var div = document.createElement('div');
-  // TEN9: Remove padding as we account for it in stylesheet
-  // div.style.padding = '0px 0px 6px 0px';
+  div.style.padding = '0px 0px 6px 0px';
   div.style.whiteSpace = 'nowrap';
   div.style.overflow = 'hidden';
   div.style.width = '200px';

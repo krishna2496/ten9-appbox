@@ -164,6 +164,8 @@ button {
   position: absolute;
   cursor: default;
   background: #fbfbfb;
+  // TEN9: make sidebar scrollable
+  overflow-y: scroll;
 
   .geToolbarContainer {
     background: transparent;
@@ -252,7 +254,8 @@ button {
     margin: 2px;
     border: 1px solid transparent;
     cursor: pointer;
-    opacity: 0.6;
+    // TEN9: Show menu name bold
+    //opacity: 0.6;
     _filter: alpha(opacity=60);
   }
 
@@ -1213,7 +1216,8 @@ html {
 }
 
 .geSprite-formatpanel {
-  background-position: 0 -3738px;
+  // TEN9: Change background position for proper formatpanel icon to show
+  background-position: 0 -3736px;
   // TEN9: margin for space drag
   margin-left: -1px !important;
 }
