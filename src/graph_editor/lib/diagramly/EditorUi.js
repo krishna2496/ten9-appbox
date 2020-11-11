@@ -2552,7 +2552,6 @@ const STYLE_PATH = 'styles';
 	 */
 	EditorUi.prototype.fileLoaded = function(file, noDialogs)
 	{
-		debugger
 		var oldFile = this.getCurrentFile();
 		this.fileLoadedError = null;
 		this.setCurrentFile(null);

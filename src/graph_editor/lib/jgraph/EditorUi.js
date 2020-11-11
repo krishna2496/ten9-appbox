@@ -4977,7 +4977,9 @@ EditorUi.prototype.destroy = function() {
   }
 };
 
+require('../diagramly/LocalFile.js');
 require('../diagramly/EditorUi.js');
+require('../diagramly/Editor.js');
 require('../diagramly/Pages.js');
 require('../diagramly/App.js');
 // TEN9: Added exports

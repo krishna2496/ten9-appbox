@@ -33,11 +33,11 @@ const {
   mxPopupMenu,
   mxRectangle,
   mxResources,
-	mxSettings,
   mxUtils,
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
 
+const { mxSettings } = require('./Settings.js');
 const urlParams = {};
 const isLocalStorage = false;
 
@@ -3219,7 +3219,6 @@ App.prototype.loadDraft = function(xml, success)
  */
 App.prototype.checkDrafts = function()
 {
-	debugger;
 	try
 	{
 		// Triggers storage event for other windows to mark active drafts
@@ -4465,7 +4464,7 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 						error(e);
 					}
 				}), this.createFileSystemOptions(title));
-			}
+				}
 			else
 			{
 				complete();
@@ -6922,5 +6921,6 @@ Editor.prototype.resetGraph = function()
 	editorResetGraph.apply(this, arguments);
 	
 	// Overrides default with persisted value
-	//this.graph.pageFormat = mxSettings.getPageFormat();
+	this.graph.pageFormat = mxSettings.getPageFormat();
 };
+App.main();
