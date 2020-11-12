@@ -2262,6 +2262,8 @@ var LayersWindow = function(editorUi, x, y, w, h) {
       });
 
       var btn = document.createElement('img');
+      // TEN9: Set vertical-align explicitly to insulate from app/bootstrap defaults
+      btn.style.verticalAlign = 'top';
       btn.setAttribute('draggable', 'false');
       btn.setAttribute('align', 'top');
       btn.setAttribute('border', '0');
