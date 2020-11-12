@@ -18,7 +18,8 @@
 import GraphEditor, { EventFileInfo } from './graph_editor/components/GraphEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent, ref, onMounted, onBeforeUnmount } from '@vue/composition-api';
+import { debounce } from 'lodash';
 
 interface FileLogEvent extends EventFileInfo {
   title: string;
@@ -35,6 +36,29 @@ export default defineComponent({
     const logs = ref([]);
 
     const editor = ref(null);
+
+    function updateAppHeight() {
+      const container = document.getElementById('container');
+      const rect = container.getBoundingClientRect();
+      const contentPadding = 20;
+      const bottomMargin = 5;
+      const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
+      container.style.height = `${newHeight}px`;
+    }
+
+    const debounceTime = 100;
+    const onResize = debounce(() => {
+      updateAppHeight();
+    }, debounceTime);
+
+    onMounted(() => {
+      updateAppHeight();
+      window.addEventListener('resize', onResize);
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('resize', onResize);
+    });
 
     function saveXmlFile(xmlData: string) {
       const filename = 'diagram';
@@ -137,12 +161,12 @@ export default defineComponent({
                 b Modified
               td.table-details
                 | {{ new Date(log.lastModified).toLocaleString() }}
-    .col-md-8
+    .col-md-10
       .row-btn
         button(@click='saveFile')
           | Save File
         open-file(@file-loaded='loadFileData($event)')
-      .ge-container
+      .ge-container#container
         graph-editor(ref='editor' @file-saved='saveXmlFile($event)' @file-dropped='onFileDropped($event)' @image-pasted='onImagePasted($event)')
 </template>
 

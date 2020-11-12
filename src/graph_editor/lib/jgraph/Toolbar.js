@@ -109,9 +109,13 @@ Toolbar.prototype.init = function() {
   viewMenu.style.whiteSpace = 'nowrap';
   viewMenu.style.position = 'relative';
   viewMenu.style.overflow = 'hidden';
+  // TEN9: Move Zoom scale button in center
+  viewMenu.style.marginTop = '1px';
 
   if (EditorUi.compactUi) {
-    viewMenu.style.width = mxClient.IS_QUIRKS ? '58px' : '50px';
+    // TEN9: Make Zoom scale button width large to show in center
+    // viewMenu.style.width = mxClient.IS_QUIRKS ? '58px' : '50px';
+    viewMenu.style.width = '65px';
   } else {
     viewMenu.style.width = mxClient.IS_QUIRKS ? '62px' : '36px';
   }
@@ -136,7 +140,9 @@ Toolbar.prototype.init = function() {
 
     if (EditorUi.compactUi) {
       viewMenu.getElementsByTagName('img')[0].style.right = '1px';
-      viewMenu.getElementsByTagName('img')[0].style.top = '5px';
+      // TEN9: Zoom scale button on Toolbar is off center
+      // viewMenu.getElementsByTagName('img')[0].style.top = '5px';
+      viewMenu.getElementsByTagName('img')[0].style.top = '6px';
     }
   });
 
@@ -364,7 +370,9 @@ Toolbar.prototype.init = function() {
     null,
     true,
   );
-  this.addDropDownArrow(insertMenu, 'geSprite-plus', 38, 48, -4, -3, 36, -8);
+  // TEN9: Set height of plus icon
+  // this.addDropDownArrow(insertMenu, 'geSprite-plus', 38, 48, -4, -3, 36, -8);
+  this.addDropDownArrow(insertMenu, 'geSprite-plus', 38, 48, -4, 0, 36, -8);
   this.addTableDropDown();
 };
 
@@ -489,7 +497,8 @@ Toolbar.prototype.addTableDropDown = function() {
   menuElt.innerHTML =
     '<div class="geSprite geSprite-table" style="margin-left:-2px;"></div>' +
     this.dropdownImageHtml;
-  menuElt.style.width = mxClient.IS_QUIRKS ? '50px' : '30px';
+  // TEN9: Add 10px additional width from 30px to 40px
+  menuElt.style.width = mxClient.IS_QUIRKS ? '50px' : '40px';
 
   // Fix for item size in kennedy theme
   if (EditorUi.compactUi) {
@@ -549,7 +558,9 @@ Toolbar.prototype.addDropDownArrow = function(
   if (EditorUi.compactUi) {
     menu.getElementsByTagName('img')[0].style.left = '24px';
     menu.getElementsByTagName('img')[0].style.top = '5px';
-    menu.style.width = mxClient.IS_QUIRKS ? width + 'px' : width - 10 + 'px';
+    // TEN9: Increase the width of all button to show drop down icon
+    // menu.style.width = mxClient.IS_QUIRKS ? width + 'px' : width - 10 + 'px';
+    menu.style.width = width + 'px';
   }
 };
 
