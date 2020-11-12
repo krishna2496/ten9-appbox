@@ -35,7 +35,7 @@ const OPEN_FORM = 'open.html';
 /**
  * Constructs a new open dialog.
  */
-var OpenDialog = function() {
+var OpenDialog = function () {
   var iframe = document.createElement('iframe');
   iframe.style.backgroundColor = 'transparent';
   iframe.allowTransparency = 'true';
@@ -57,7 +57,7 @@ var OpenDialog = function() {
 /**
  * Constructs a new color dialog.
  */
-var ColorDialog = function(editorUi, color, apply, cancelFn) {
+var ColorDialog = function (editorUi, color, apply, cancelFn) {
   this.editorUi = editorUi;
 
   var input = document.createElement('input');
@@ -91,7 +91,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn) {
     }
   }
 
-  this.init = function() {
+  this.init = function () {
     if (!mxClient.IS_TOUCH) {
       input.focus();
     }
@@ -138,7 +138,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn) {
       var tr = document.createElement('tr');
 
       for (var i = 0; i < rowLength; i++) {
-        (function(clr) {
+        (function (clr) {
           var td = document.createElement('td');
           td.style.border = '1px solid black';
           td.style.padding = '0px';
@@ -160,7 +160,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn) {
           if (clr != null) {
             td.style.cursor = 'pointer';
 
-            mxEvent.addListener(td, 'click', function() {
+            mxEvent.addListener(td, 'click', function () {
               if (clr == 'none') {
                 picker.fromString('ffffff');
                 input.value = 'none';
@@ -191,7 +191,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn) {
 
       tr.appendChild(td);
 
-      mxEvent.addListener(td, 'click', function() {
+      mxEvent.addListener(td, 'click', function () {
         ColorDialog.resetRecentColors();
         table.parentNode.replaceChild(createRecentColorTable(), table);
       });
@@ -220,7 +220,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn) {
   buttons.style.textAlign = 'right';
   buttons.style.whiteSpace = 'nowrap';
 
-  var cancelBtn = mxUtils.button(mxResources.get('cancel'), function() {
+  var cancelBtn = mxUtils.button(mxResources.get('cancel'), function () {
     editorUi.hideDialog();
 
     if (cancelFn != null) {
@@ -256,7 +256,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn) {
 
   // LATER: Only fires if input if focused, should always
   // fire if this dialog is showing.
-  mxEvent.addListener(div, 'keydown', function(e) {
+  mxEvent.addListener(div, 'keydown', function (e) {
     if (e.keyCode == 27) {
       editorUi.hideDialog();
 
@@ -430,8 +430,8 @@ ColorDialog.prototype.defaultColors = [
 /**
  * Creates function to apply value
  */
-ColorDialog.prototype.createApplyFunction = function() {
-  return mxUtils.bind(this, function(color) {
+ColorDialog.prototype.createApplyFunction = function () {
+  return mxUtils.bind(this, function (color) {
     var graph = this.editorUi.editor.graph;
 
     graph.getModel().beginUpdate();
@@ -462,7 +462,7 @@ ColorDialog.recentColors = [];
 /**
  * Adds recent color for later use.
  */
-ColorDialog.addRecentColor = function(color, max) {
+ColorDialog.addRecentColor = function (color, max) {
   if (color != null) {
     mxUtils.remove(color, ColorDialog.recentColors);
     ColorDialog.recentColors.splice(0, 0, color);
@@ -476,14 +476,14 @@ ColorDialog.addRecentColor = function(color, max) {
 /**
  * Adds recent color for later use.
  */
-ColorDialog.resetRecentColors = function() {
+ColorDialog.resetRecentColors = function () {
   ColorDialog.recentColors = [];
 };
 
 /**
  * Constructs a new about dialog.
  */
-var AboutDialog = function(editorUi) {
+var AboutDialog = function (editorUi) {
   var div = document.createElement('div');
   div.setAttribute('align', 'center');
   var h3 = document.createElement('h3');
@@ -505,7 +505,7 @@ var AboutDialog = function(editorUi) {
   div.appendChild(link);
   mxUtils.br(div);
   mxUtils.br(div);
-  var closeBtn = mxUtils.button(mxResources.get('close'), function() {
+  var closeBtn = mxUtils.button(mxResources.get('close'), function () {
     editorUi.hideDialog();
   });
   closeBtn.className = 'geBtn gePrimaryBtn';
@@ -517,7 +517,7 @@ var AboutDialog = function(editorUi) {
 /**
  * Constructs a new textarea dialog.
  */
-var TextareaDialog = function(
+var TextareaDialog = function (
   editorUi,
   title,
   url,
@@ -572,7 +572,7 @@ var TextareaDialog = function(
 
   this.textarea = nameInput;
 
-  this.init = function() {
+  this.init = function () {
     nameInput.focus();
     nameInput.scrollTop = 0;
   };
@@ -589,7 +589,7 @@ var TextareaDialog = function(
   td.setAttribute('align', 'right');
 
   if (helpLink != null) {
-    var helpBtn = mxUtils.button(mxResources.get('help'), function() {
+    var helpBtn = mxUtils.button(mxResources.get('help'), function () {
       editorUi.editor.graph.openLink(helpLink);
     });
     helpBtn.className = 'geBtn';
@@ -599,8 +599,8 @@ var TextareaDialog = function(
 
   if (customButtons != null) {
     for (var i = 0; i < customButtons.length; i++) {
-      (function(label, fn) {
-        var customBtn = mxUtils.button(label, function(e) {
+      (function (label, fn) {
+        var customBtn = mxUtils.button(label, function (e) {
           fn(e, nameInput);
         });
         customBtn.className = 'geBtn';
@@ -610,7 +610,7 @@ var TextareaDialog = function(
     }
   }
 
-  var cancelBtn = mxUtils.button(cancelTitle || mxResources.get('cancel'), function() {
+  var cancelBtn = mxUtils.button(cancelTitle || mxResources.get('cancel'), function () {
     editorUi.hideDialog();
 
     if (cancelFn != null) {
@@ -628,7 +628,7 @@ var TextareaDialog = function(
   }
 
   if (fn != null) {
-    var genericBtn = mxUtils.button(applyTitle || mxResources.get('apply'), function() {
+    var genericBtn = mxUtils.button(applyTitle || mxResources.get('apply'), function () {
       if (!noHide) {
         editorUi.hideDialog();
       }
@@ -653,7 +653,7 @@ var TextareaDialog = function(
 /**
  * Constructs a new edit file dialog.
  */
-var EditDiagramDialog = function(editorUi) {
+var EditDiagramDialog = function (editorUi) {
   var div = document.createElement('div');
   div.style.textAlign = 'right';
   var textarea = document.createElement('textarea');
@@ -671,7 +671,7 @@ var EditDiagramDialog = function(editorUi) {
   textarea.value = mxUtils.getPrettyXml(editorUi.editor.getGraphXml());
   div.appendChild(textarea);
 
-  this.init = function() {
+  this.init = function () {
     textarea.focus();
   };
 
@@ -685,7 +685,7 @@ var EditDiagramDialog = function(editorUi) {
         var file = evt.dataTransfer.files[0];
         var reader = new FileReader();
 
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           textarea.value = e.target.result;
         };
 
@@ -705,7 +705,7 @@ var EditDiagramDialog = function(editorUi) {
     textarea.addEventListener('drop', handleDrop, false);
   }
 
-  var cancelBtn = mxUtils.button(mxResources.get('cancel'), function() {
+  var cancelBtn = mxUtils.button(mxResources.get('cancel'), function () {
     editorUi.hideDialog();
   });
   cancelBtn.className = 'geBtn';
@@ -742,7 +742,7 @@ var EditDiagramDialog = function(editorUi) {
 
   div.appendChild(select);
 
-  var okBtn = mxUtils.button(mxResources.get('ok'), function() {
+  var okBtn = mxUtils.button(mxResources.get('ok'), function () {
     // Removes all illegal control characters before parsing
     var data = Graph.zapGremlins(mxUtils.trim(textarea.value));
     var error = null;
@@ -803,7 +803,7 @@ EditDiagramDialog.showNewWindowOption = true;
 /**
  * Constructs a new export dialog.
  */
-var ExportDialog = function(editorUi) {
+var ExportDialog = function (editorUi) {
   var graph = editorUi.editor.graph;
   var bounds = graph.getGraphBounds();
   var scale = graph.view.scale;
@@ -989,7 +989,7 @@ var ExportDialog = function(editorUi) {
 
   var zoomUserChanged = false;
 
-  mxEvent.addListener(dpiSelect, 'change', function() {
+  mxEvent.addListener(dpiSelect, 'change', function () {
     if (this.value == 'custom') {
       this.style.display = 'none';
       customDpi.style.display = '';
@@ -1003,7 +1003,7 @@ var ExportDialog = function(editorUi) {
     }
   });
 
-  mxEvent.addListener(customDpi, 'change', function() {
+  mxEvent.addListener(customDpi, 'change', function () {
     var dpi = parseInt(customDpi.value);
 
     if (isNaN(dpi) || dpi <= 0) {
@@ -1123,7 +1123,7 @@ var ExportDialog = function(editorUi) {
     }
   }
 
-  mxEvent.addListener(zoomInput, 'change', function() {
+  mxEvent.addListener(zoomInput, 'change', function () {
     zoomUserChanged = true;
     var s = Math.max(0, parseFloat(zoomInput.value) || 100) / 100;
     zoomInput.value = parseFloat((s * 100).toFixed(2));
@@ -1140,7 +1140,7 @@ var ExportDialog = function(editorUi) {
     checkValues();
   });
 
-  mxEvent.addListener(widthInput, 'change', function() {
+  mxEvent.addListener(widthInput, 'change', function () {
     var s = parseInt(widthInput.value) / width;
 
     if (s > 0) {
@@ -1155,7 +1155,7 @@ var ExportDialog = function(editorUi) {
     checkValues();
   });
 
-  mxEvent.addListener(heightInput, 'change', function() {
+  mxEvent.addListener(heightInput, 'change', function () {
     var s = parseInt(heightInput.value) / height;
 
     if (s > 0) {
@@ -1178,7 +1178,7 @@ var ExportDialog = function(editorUi) {
 
   var saveBtn = mxUtils.button(
     mxResources.get('export'),
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       if (parseInt(zoomInput.value) <= 0) {
         mxUtils.alert(mxResources.get('drawingEmpty'));
       } else {
@@ -1205,7 +1205,7 @@ var ExportDialog = function(editorUi) {
   );
   saveBtn.className = 'geBtn gePrimaryBtn';
 
-  var cancelBtn = mxUtils.button(mxResources.get('cancel'), function() {
+  var cancelBtn = mxUtils.button(mxResources.get('cancel'), function () {
     editorUi.hideDialog();
   });
   cancelBtn.className = 'geBtn';
@@ -1245,7 +1245,7 @@ ExportDialog.showXmlOption = true;
  * parameter and value to be used in the request in the form
  * key=value, where value should be URL encoded.
  */
-ExportDialog.exportFile = function(editorUi, name, format, bg, s, b, dpi) {
+ExportDialog.exportFile = function (editorUi, name, format, bg, s, b, dpi) {
   var graph = editorUi.editor.graph;
 
   if (format == 'xml') {
@@ -1314,7 +1314,7 @@ ExportDialog.exportFile = function(editorUi, name, format, bg, s, b, dpi) {
  * parameter and value to be used in the request in the form
  * key=value, where value should be URL encoded.
  */
-ExportDialog.saveLocalFile = function(editorUi, data, filename, format) {
+ExportDialog.saveLocalFile = function (editorUi, data, filename, format) {
   if (data.length < MAX_REQUEST_SIZE) {
     editorUi.hideDialog();
     var req = new mxXmlRequest(
@@ -1336,7 +1336,7 @@ ExportDialog.saveLocalFile = function(editorUi, data, filename, format) {
 /**
  * Constructs a new metadata dialog.
  */
-var EditDataDialog = function(ui, cell) {
+var EditDataDialog = function (ui, cell) {
   var div = document.createElement('div');
   var graph = ui.editor.graph;
 
@@ -1376,7 +1376,7 @@ var EditDataDialog = function(ui, cell) {
       ? EditDataDialog.getDisplayIdForCell(ui, cell)
       : null;
 
-  var addRemoveButton = function(text, name) {
+  var addRemoveButton = function (text, name) {
     var wrapper = document.createElement('div');
     wrapper.style.position = 'relative';
     wrapper.style.paddingRight = '20px';
@@ -1400,8 +1400,8 @@ var EditDataDialog = function(ui, cell) {
     removeAttr.style.cursor = 'pointer';
     removeAttr.appendChild(img);
 
-    var removeAttrFn = (function(name) {
-      return function() {
+    var removeAttrFn = (function (name) {
+      return function () {
         var count = 0;
 
         for (var j = 0; j < names.length; j++) {
@@ -1427,7 +1427,7 @@ var EditDataDialog = function(ui, cell) {
     parent.appendChild(wrapper);
   };
 
-  var addTextArea = function(index, name, value) {
+  var addTextArea = function (index, name, value) {
     names[index] = name;
     texts[index] = form.addTextarea(names[count] + ':', value, 2);
     texts[index].style.width = '100%';
@@ -1453,7 +1453,7 @@ var EditDataDialog = function(ui, cell) {
   }
 
   // Sorts by name
-  temp.sort(function(a, b) {
+  temp.sort(function (a, b) {
     if (a.name < b.name) {
       return -1;
     } else if (a.name > b.name) {
@@ -1502,7 +1502,7 @@ var EditDataDialog = function(ui, cell) {
   top.appendChild(newProp);
   div.appendChild(top);
 
-  var addBtn = mxUtils.button(mxResources.get('addProperty'), function() {
+  var addBtn = mxUtils.button(mxResources.get('addProperty'), function () {
     var name = nameInput.value;
 
     // Avoid ':' in attribute names which seems to be valid in Chrome
@@ -1541,7 +1541,7 @@ var EditDataDialog = function(ui, cell) {
     }
   });
 
-  this.init = function() {
+  this.init = function () {
     if (texts.length > 0) {
       texts[0].focus();
     } else {
@@ -1559,13 +1559,13 @@ var EditDataDialog = function(ui, cell) {
   addBtn.className = 'geBtn';
   newProp.appendChild(addBtn);
 
-  var cancelBtn = mxUtils.button(mxResources.get('cancel'), function() {
+  var cancelBtn = mxUtils.button(mxResources.get('cancel'), function () {
     ui.hideDialog.apply(ui, arguments);
   });
 
   cancelBtn.className = 'geBtn';
 
-  var applyBtn = mxUtils.button(mxResources.get('apply'), function() {
+  var applyBtn = mxUtils.button(mxResources.get('apply'), function () {
     try {
       ui.hideDialog.apply(ui, arguments);
 
@@ -1625,7 +1625,7 @@ var EditDataDialog = function(ui, cell) {
       input.defaultChecked = true;
     }
 
-    mxEvent.addListener(input, 'click', function() {
+    mxEvent.addListener(input, 'click', function () {
       if (value.getAttribute('placeholders') == '1') {
         value.removeAttribute('placeholders');
       } else {
@@ -1675,7 +1675,7 @@ var EditDataDialog = function(ui, cell) {
 /**
  * Optional help link.
  */
-EditDataDialog.getDisplayIdForCell = function(ui, cell) {
+EditDataDialog.getDisplayIdForCell = function (ui, cell) {
   var id = null;
 
   if (ui.editor.graph.getModel().getParent(cell) != null) {
@@ -1693,7 +1693,7 @@ EditDataDialog.placeholderHelpLink = null;
 /**
  * Constructs a new link dialog.
  */
-var LinkDialog = function(editorUi, initialValue, btnLabel, fn) {
+var LinkDialog = function (editorUi, initialValue, btnLabel, fn) {
   var div = document.createElement('div');
   mxUtils.write(div, mxResources.get('editLink') + ':');
 
@@ -1735,7 +1735,7 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn) {
   // Needed to block event transparency in IE
   cross.style.background = 'url(' + IMAGE_PATH + '/transparent.gif)';
 
-  mxEvent.addListener(cross, 'click', function() {
+  mxEvent.addListener(cross, 'click', function () {
     linkInput.value = '';
     linkInput.focus();
   });
@@ -1744,7 +1744,7 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn) {
   inner.appendChild(cross);
   div.appendChild(inner);
 
-  this.init = function() {
+  this.init = function () {
     linkInput.focus();
 
     if (mxClient.IS_GC || mxClient.IS_FF || document.documentMode >= 5 || mxClient.IS_QUIRKS) {
@@ -1758,14 +1758,14 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn) {
   btns.style.marginTop = '18px';
   btns.style.textAlign = 'right';
 
-  mxEvent.addListener(linkInput, 'keypress', function(e) {
+  mxEvent.addListener(linkInput, 'keypress', function (e) {
     if (e.keyCode == 13) {
       editorUi.hideDialog();
       fn(linkInput.value);
     }
   });
 
-  var cancelBtn = mxUtils.button(mxResources.get('cancel'), function() {
+  var cancelBtn = mxUtils.button(mxResources.get('cancel'), function () {
     editorUi.hideDialog();
   });
   cancelBtn.className = 'geBtn';
@@ -1774,7 +1774,7 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn) {
     btns.appendChild(cancelBtn);
   }
 
-  var mainBtn = mxUtils.button(btnLabel, function() {
+  var mainBtn = mxUtils.button(btnLabel, function () {
     editorUi.hideDialog();
     fn(linkInput.value);
   });
@@ -1793,7 +1793,7 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn) {
 /**
  *
  */
-var OutlineWindow = function(editorUi, x, y, w, h) {
+var OutlineWindow = function (editorUi, x, y, w, h) {
   var graph = editorUi.editor.graph;
 
   var div = document.createElement('div');
@@ -1811,7 +1811,7 @@ var OutlineWindow = function(editorUi, x, y, w, h) {
   this.window.setClosable(true);
   this.window.setVisible(true);
 
-  this.window.setLocation = function(x, y) {
+  this.window.setLocation = function (x, y) {
     var iw = window.innerWidth || document.body.clientWidth || document.documentElement.clientWidth;
     var ih =
       window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight;
@@ -1824,7 +1824,7 @@ var OutlineWindow = function(editorUi, x, y, w, h) {
     }
   };
 
-  var resizeListener = mxUtils.bind(this, function() {
+  var resizeListener = mxUtils.bind(this, function () {
     var x = this.window.getX();
     var y = this.window.getY();
 
@@ -1835,7 +1835,7 @@ var OutlineWindow = function(editorUi, x, y, w, h) {
 
   var outline = editorUi.createOutline(this.window);
 
-  this.destroy = function() {
+  this.destroy = function () {
     mxEvent.removeListener(window, 'resize', resizeListener);
     this.window.destroy();
     outline.destroy();
@@ -1843,7 +1843,7 @@ var OutlineWindow = function(editorUi, x, y, w, h) {
 
   this.window.addListener(
     mxEvent.RESIZE,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       outline.update(false);
       outline.outline.sizeDidChange();
     }),
@@ -1851,7 +1851,7 @@ var OutlineWindow = function(editorUi, x, y, w, h) {
 
   this.window.addListener(
     mxEvent.SHOW,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       this.window.fit();
       outline.suspended = false;
       outline.outline.refresh();
@@ -1861,14 +1861,14 @@ var OutlineWindow = function(editorUi, x, y, w, h) {
 
   this.window.addListener(
     mxEvent.HIDE,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       outline.suspended = true;
     }),
   );
 
   this.window.addListener(
     mxEvent.NORMALIZE,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       outline.suspended = false;
       outline.update();
     }),
@@ -1876,13 +1876,13 @@ var OutlineWindow = function(editorUi, x, y, w, h) {
 
   this.window.addListener(
     mxEvent.MINIMIZE,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       outline.suspended = true;
     }),
   );
 
   var outlineCreateGraph = outline.createGraph;
-  outline.createGraph = function(container) {
+  outline.createGraph = function (container) {
     var g = outlineCreateGraph.apply(this, arguments);
     g.gridEnabled = false;
     g.pageScale = graph.pageScale;
@@ -1927,7 +1927,7 @@ var OutlineWindow = function(editorUi, x, y, w, h) {
   editorUi.addListener('pageFormatChanged', update);
   editorUi.addListener('backgroundColorChanged', update);
   editorUi.addListener('backgroundImageChanged', update);
-  editorUi.addListener('pageViewChanged', function() {
+  editorUi.addListener('pageViewChanged', function () {
     update();
     outline.update(true);
   });
@@ -1936,7 +1936,7 @@ var OutlineWindow = function(editorUi, x, y, w, h) {
     var zoomInAction = editorUi.actions.get('zoomIn');
     var zoomOutAction = editorUi.actions.get('zoomOut');
 
-    mxEvent.addMouseWheelListener(function(evt, up) {
+    mxEvent.addMouseWheelListener(function (evt, up) {
       var outlineWheel = false;
       var source = mxEvent.getSource(evt);
 
@@ -1963,7 +1963,7 @@ var OutlineWindow = function(editorUi, x, y, w, h) {
 /**
  *
  */
-var LayersWindow = function(editorUi, x, y, w, h) {
+var LayersWindow = function (editorUi, x, y, w, h) {
   var graph = editorUi.editor.graph;
 
   var div = document.createElement('div');
@@ -1993,7 +1993,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   var dragSource = null;
   var dropIndex = null;
 
-  mxEvent.addListener(div, 'dragover', function(evt) {
+  mxEvent.addListener(div, 'dragover', function (evt) {
     evt.dataTransfer.dropEffect = 'move';
     dropIndex = 0;
     evt.stopPropagation();
@@ -2001,7 +2001,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   });
 
   // Workaround for "no element found" error in FF
-  mxEvent.addListener(div, 'drop', function(evt) {
+  mxEvent.addListener(div, 'drop', function (evt) {
     evt.stopPropagation();
     evt.preventDefault();
   });
@@ -2041,7 +2041,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   removeLink.innerHTML =
     '<div class="geSprite geSprite-delete" style="display:inline-block;"></div>';
 
-  mxEvent.addListener(removeLink, 'click', function(evt) {
+  mxEvent.addListener(removeLink, 'click', function (evt) {
     if (graph.isEnabled()) {
       graph.model.beginUpdate();
       try {
@@ -2076,18 +2076,18 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   insertLink.innerHTML =
     '<div class="geSprite geSprite-insert" style="display:inline-block;"></div>';
 
-  mxEvent.addListener(insertLink, 'click', function(evt) {
+  mxEvent.addListener(insertLink, 'click', function (evt) {
     if (graph.isEnabled() && !graph.isSelectionEmpty()) {
       editorUi.editor.graph.popupMenuHandler.hideMenu();
 
       var menu = new mxPopupMenu(
-        mxUtils.bind(this, function(menu, parent) {
+        mxUtils.bind(this, function (menu, parent) {
           for (var i = layerCount - 1; i >= 0; i--) {
-            mxUtils.bind(this, function(child) {
+            mxUtils.bind(this, function (child) {
               var item = menu.addItem(
                 graph.convertValueToString(child) || mxResources.get('background'),
                 null,
-                mxUtils.bind(this, function() {
+                mxUtils.bind(this, function () {
                   graph.moveCells(graph.getSelectionCells(), 0, 0, false, child);
                 }),
                 parent,
@@ -2115,7 +2115,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   dataLink.innerHTML = '<div class="geSprite geSprite-dots" style="display:inline-block;"></div>';
   dataLink.setAttribute('title', mxResources.get('rename'));
 
-  mxEvent.addListener(dataLink, 'click', function(evt) {
+  mxEvent.addListener(dataLink, 'click', function (evt) {
     if (graph.isEnabled()) {
       editorUi.showDataDialog(selectionLayer);
     }
@@ -2136,7 +2136,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
         editorUi,
         label || mxResources.get('background'),
         mxResources.get('rename'),
-        mxUtils.bind(this, function(newValue) {
+        mxUtils.bind(this, function (newValue) {
           if (newValue != null) {
             graph.cellLabelChanged(layer, newValue);
           }
@@ -2152,7 +2152,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   duplicateLink.innerHTML =
     '<div class="geSprite geSprite-duplicate" style="display:inline-block;"></div>';
 
-  mxEvent.addListener(duplicateLink, 'click', function(evt) {
+  mxEvent.addListener(duplicateLink, 'click', function (evt) {
     if (graph.isEnabled()) {
       var newCell = null;
       graph.model.beginUpdate();
@@ -2182,7 +2182,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   addLink.innerHTML = '<div class="geSprite geSprite-plus" style="display:inline-block;"></div>';
   addLink.setAttribute('title', mxResources.get('addLayer'));
 
-  mxEvent.addListener(addLink, 'click', function(evt) {
+  mxEvent.addListener(addLink, 'click', function (evt) {
     if (graph.isEnabled()) {
       graph.model.beginUpdate();
 
@@ -2233,14 +2233,14 @@ var LayersWindow = function(editorUi, x, y, w, h) {
       left.style.textOverflow = 'ellipsis';
       left.style.overflow = 'hidden';
 
-      mxEvent.addListener(ldiv, 'dragover', function(evt) {
+      mxEvent.addListener(ldiv, 'dragover', function (evt) {
         evt.dataTransfer.dropEffect = 'move';
         dropIndex = index;
         evt.stopPropagation();
         evt.preventDefault();
       });
 
-      mxEvent.addListener(ldiv, 'dragstart', function(evt) {
+      mxEvent.addListener(ldiv, 'dragstart', function (evt) {
         dragSource = ldiv;
 
         // Workaround for no DnD on DIV in FF
@@ -2250,7 +2250,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
         }
       });
 
-      mxEvent.addListener(ldiv, 'dragend', function(evt) {
+      mxEvent.addListener(ldiv, 'dragend', function (evt) {
         if (dragSource != null && dropIndex != null) {
           graph.addCell(child, graph.model.root, dropIndex);
         }
@@ -2282,7 +2282,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
         btn.style.cursor = 'pointer';
       }
 
-      mxEvent.addListener(btn, 'click', function(evt) {
+      mxEvent.addListener(btn, 'click', function (evt) {
         if (graph.isEnabled()) {
           var value = null;
 
@@ -2320,7 +2320,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
         inp.defaultChecked = true;
       }
 
-      mxEvent.addListener(inp, 'click', function(evt) {
+      mxEvent.addListener(inp, 'click', function (evt) {
         graph.model.setVisible(child, !graph.model.isVisible(child));
         mxEvent.consume(evt);
       });
@@ -2360,7 +2360,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
             img2.style.marginTop = '-1px';
             right.appendChild(img2);
 
-            mxEvent.addListener(img2, 'click', function(evt) {
+            mxEvent.addListener(img2, 'click', function (evt) {
               if (graph.isEnabled()) {
                 graph.addCell(child, graph.model.root, index - 1);
               }
@@ -2384,7 +2384,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
             img1.style.marginTop = '-1px';
             right.appendChild(img1);
 
-            mxEvent.addListener(img1, 'click', function(evt) {
+            mxEvent.addListener(img1, 'click', function (evt) {
               if (graph.isEnabled()) {
                 graph.addCell(child, graph.model.root, index + 1);
               }
@@ -2402,7 +2402,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
         }
       }
 
-      mxEvent.addListener(ldiv, 'dblclick', function(evt) {
+      mxEvent.addListener(ldiv, 'dblclick', function (evt) {
         var nodeName = mxEvent.getSource(evt).nodeName;
 
         if (nodeName != 'INPUT' && nodeName != 'IMG') {
@@ -2416,7 +2416,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
         ldiv.style.fontWeight = graph.isEnabled() ? 'bold' : '';
         selectionLayer = child;
       } else {
-        mxEvent.addListener(ldiv, 'click', function(evt) {
+        mxEvent.addListener(ldiv, 'click', function (evt) {
           if (graph.isEnabled()) {
             graph.setDefaultParent(defaultParent);
             graph.view.setCurrentRoot(null);
@@ -2429,7 +2429,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
 
     // Cannot be moved or deleted
     for (var i = layerCount - 1; i >= 0; i--) {
-      mxUtils.bind(this, function(child) {
+      mxUtils.bind(this, function (child) {
         addLayer(
           i,
           graph.convertValueToString(child) || mxResources.get('background'),
@@ -2453,7 +2453,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   graph.model.addListener(mxEvent.CHANGE, refresh);
   graph.addListener('defaultParentChanged', refresh);
 
-  graph.selectionModel.addListener(mxEvent.CHANGE, function() {
+  graph.selectionModel.addListener(mxEvent.CHANGE, function () {
     if (graph.isSelectionEmpty()) {
       insertLink.className = 'geButton mxDisabled';
     } else {
@@ -2469,13 +2469,13 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   this.window.setClosable(true);
   this.window.setVisible(true);
 
-  this.init = function() {
+  this.init = function () {
     listDiv.scrollTop = listDiv.scrollHeight - listDiv.clientHeight;
   };
 
   this.window.addListener(
     mxEvent.SHOW,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       this.window.fit();
     }),
   );
@@ -2483,7 +2483,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
   // Make refresh available via instance
   this.refreshLayers = refresh;
 
-  this.window.setLocation = function(x, y) {
+  this.window.setLocation = function (x, y) {
     var iw = window.innerWidth || document.body.clientWidth || document.documentElement.clientWidth;
     var ih =
       window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight;
@@ -2496,7 +2496,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
     }
   };
 
-  var resizeListener = mxUtils.bind(this, function() {
+  var resizeListener = mxUtils.bind(this, function () {
     var x = this.window.getX();
     var y = this.window.getY();
 
@@ -2505,7 +2505,7 @@ var LayersWindow = function(editorUi, x, y, w, h) {
 
   mxEvent.addListener(window, 'resize', resizeListener);
 
-  this.destroy = function() {
+  this.destroy = function () {
     mxEvent.removeListener(window, 'resize', resizeListener);
     this.window.destroy();
   };

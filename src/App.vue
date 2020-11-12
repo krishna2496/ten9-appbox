@@ -92,6 +92,10 @@ export default defineComponent({
       logs.value.push(fileLogEvent);
     }
 
+    function getDateString(value: number): string {
+      return new Date(value).toLocaleString();
+    }
+
     function insertDummyImage() {
       // add a dummy image to graph to emulate what will happen in production app
       const url =
@@ -121,6 +125,7 @@ export default defineComponent({
       addLog,
       editor,
       insertDummyImage,
+      getDateString,
       loadFileData,
       logs,
       onFileDropped,
@@ -140,7 +145,7 @@ export default defineComponent({
           table.custom-table(:key='index')
             tr
               td.custom-header-background(colspan='2')
-                b.text-center.custom-header  {{ log.title }}
+                b.text-center.custom-header {{ log.title }}
             tr
               td.table-details
                 b Filename
@@ -160,14 +165,19 @@ export default defineComponent({
               td.table-details
                 b Modified
               td.table-details
-                | {{ new Date(log.lastModified).toLocaleString() }}
+                | {{ getDateString(log.lastModified) }}
     .col-md-10
       .row-btn
         button(@click='saveFile')
           | Save File
         open-file(@file-loaded='loadFileData($event)')
-      .ge-container#container
-        graph-editor(ref='editor' @file-saved='saveXmlFile($event)' @file-dropped='onFileDropped($event)' @image-pasted='onImagePasted($event)')
+      #container.ge-container
+        graph-editor(
+          ref='editor',
+          @file-saved='saveXmlFile($event)',
+          @file-dropped='onFileDropped($event)',
+          @image-pasted='onImagePasted($event)'
+        )
 </template>
 
 <style lang="scss">
