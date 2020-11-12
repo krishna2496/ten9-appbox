@@ -225,7 +225,7 @@ button {
     float: left;
     // TEN9: padding added
     // TEN9: Increase the width of all button to show drop down icon
-    //width: 24px !important;
+    // width: 24px !important;
     height: 24px !important;
     padding: 0 2px 4px !important;
     margin: 2px;
@@ -248,14 +248,14 @@ button {
     float: left;
     // TEN9: padding added
     // TEN9: To improve line dropdown
-    //width: 24px !important;
+    // width: 24px !important;
     height: 24px !important;
     padding: 0 2px 4px !important;
     margin: 2px;
     border: 1px solid transparent;
     cursor: pointer;
     // TEN9: Show menu name bold
-    //opacity: 0.6;
+    // opacity: 0.6;
     _filter: alpha(opacity=60);
   }
 
@@ -2268,6 +2268,7 @@ div.mxPopupMenu {
   margin-left: 10px;
 }
 
+// TEN9: Add radius
 input {
   border-radius: 0.1px !important;
 }

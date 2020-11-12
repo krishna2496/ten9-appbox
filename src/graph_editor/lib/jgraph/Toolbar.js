@@ -114,7 +114,7 @@ Toolbar.prototype.init = function() {
 
   if (EditorUi.compactUi) {
     // TEN9: Make Zoom scale button width large to show in center
-    //viewMenu.style.width = mxClient.IS_QUIRKS ? '58px' : '50px';
+    // viewMenu.style.width = mxClient.IS_QUIRKS ? '58px' : '50px';
     viewMenu.style.width = '65px';
   } else {
     viewMenu.style.width = mxClient.IS_QUIRKS ? '62px' : '36px';
@@ -141,7 +141,7 @@ Toolbar.prototype.init = function() {
     if (EditorUi.compactUi) {
       viewMenu.getElementsByTagName('img')[0].style.right = '1px';
       // TEN9: Zoom scale button on Toolbar is off center
-      //viewMenu.getElementsByTagName('img')[0].style.top = '5px';
+      // viewMenu.getElementsByTagName('img')[0].style.top = '5px';
       viewMenu.getElementsByTagName('img')[0].style.top = '6px';
     }
   });
@@ -497,6 +497,7 @@ Toolbar.prototype.addTableDropDown = function() {
   menuElt.innerHTML =
     '<div class="geSprite geSprite-table" style="margin-left:-2px;"></div>' +
     this.dropdownImageHtml;
+  // TEN9: Add 10px additional width from 30px to 40px
   menuElt.style.width = mxClient.IS_QUIRKS ? '50px' : '40px';
 
   // Fix for item size in kennedy theme
@@ -558,7 +559,7 @@ Toolbar.prototype.addDropDownArrow = function(
     menu.getElementsByTagName('img')[0].style.left = '24px';
     menu.getElementsByTagName('img')[0].style.top = '5px';
     // TEN9: Increase the width of all button to show drop down icon
-    //menu.style.width = mxClient.IS_QUIRKS ? width + 'px' : width - 10 + 'px';
+    // menu.style.width = mxClient.IS_QUIRKS ? width + 'px' : width - 10 + 'px';
     menu.style.width = width + 'px';
   }
 };

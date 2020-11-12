@@ -20,6 +20,7 @@ import OpenFile from './components/OpenFile.vue';
 
 import { defineComponent, ref, onMounted, onBeforeUnmount } from '@vue/composition-api';
 import { debounce } from 'lodash';
+
 interface FileLogEvent extends EventFileInfo {
   title: string;
 }
