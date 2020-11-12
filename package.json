@@ -6,7 +6,7 @@
     "build": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.js",
     "lint": "./node_modules/.bin/eslint --color --max-warnings 0 \"**/*.{vue,js,ts}\" --cache --cache-location ./.lintcache/eslintcache/",
     "lint:all": "yarn prettier && yarn stylelint && yarn lint",
-    "prettier": "./node_modules/.bin/prettier --max-warnings 0 --check \"**/*.{vue,js,ts}\"",
+    "prettier": "./node_modules/.bin/prettier --check \"**/*.{vue,js,ts}\"",
     "serve": "serve -s -p 8080 dist",
     "start": "cross-env NODE_OPTIONS=--max_old_space_size=4096 NODE_ENV=development node ./config/webpack/console_server.js",
     "stylelint": "./node_modules/.bin/stylelint --color --max-warnings 0 --config \"stylelint.config.js\" \"src/**/*.scss\" \"src/**/*.css\" \"src/**/*.sass\" --cache true --cache-location ./.lintcache/stylelintcache/"
