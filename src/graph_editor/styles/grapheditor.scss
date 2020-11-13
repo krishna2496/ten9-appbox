@@ -392,7 +392,6 @@ button {
   display: block;
   width: 100%;
   padding: 0 2px;
-  vertical-align: middle;
 
   a.geStatus {
     color: #888;
@@ -1614,7 +1613,6 @@ table.mxPopupMenu {
   float: left;
   border: 1px solid #ccc;
   background-color: #fff;
-  display: inline-block;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -1626,7 +1624,6 @@ table.mxPopupMenu {
   float: right;
   border: 1px solid #ccc;
   background-color: #fff;
-  display: inline-block;
   overflow-x: hidden;
   overflow-y: auto;
   position: relative;

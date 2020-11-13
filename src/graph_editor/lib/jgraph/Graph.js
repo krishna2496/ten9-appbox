@@ -180,8 +180,9 @@ mxGraph.prototype.pageScale = 1;
   try {
     if (navigator != null && navigator.language != null) {
       var lang = navigator.language.toLowerCase();
+      // TEN9: Adding en as valid language for LETTER
       mxGraph.prototype.pageFormat =
-        lang === 'en-us' || lang === 'en-ca' || lang === 'es-mx'
+        lang === 'en' || lang === 'en-us' || lang === 'en-ca' || lang === 'es-mx'
           ? mxConstants.PAGE_FORMAT_LETTER_PORTRAIT
           : mxConstants.PAGE_FORMAT_A4_PORTRAIT;
     }
@@ -10449,6 +10450,7 @@ if (typeof mxVertexHandler != 'undefined') {
     mxEdgeHandler.prototype.labelHandleImage = HoverIcons.prototype.secondaryHandle;
     mxOutline.prototype.sizerImage = HoverIcons.prototype.mainHandle;
 
+    // TEN9: Force sidebar
     if (true || window.Sidebar != null) {
       Sidebar.prototype.triangleUp = HoverIcons.prototype.triangleUp;
       Sidebar.prototype.triangleRight = HoverIcons.prototype.triangleRight;
