@@ -5297,7 +5297,9 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
     altInput.style.position = 'absolute';
     altInput.style.left = '141px';
-    altInput.style.height = '15px';
+    // TEN9: increase textbox height for line fromat
+    //altInput.style.height = '15px';
+    altInput.style.height = '24px';
     altStepper.style.left = '190px';
   } else {
     input.style.height = '17px';
@@ -6140,7 +6142,7 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   var altSymbol = this.addArrow(altPattern, 9);
   altSymbol.className = 'geIcon';
-  altSymbol.style.width = '22px';
+  altSymbol.style.width = '47px';
 
   var solid = document.createElement('div');
   // TEN9: to improve line dropdown (was 85px)

@@ -44,6 +44,17 @@ export default defineComponent({
       const bottomMargin = 5;
       const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
       container.style.height = `${newHeight}px`;
+      const paddings = 72;
+
+      const sidebar = document.getElementById('sidebar');
+      const contaierHeight = newHeight - paddings;
+      sidebar.style.height = `${contaierHeight}px`;
+
+      const daigram = document.getElementById('daigram');
+      daigram.style.height = `${contaierHeight}px`;
+
+      const format = document.getElementById('format');
+      format.style.height = `${contaierHeight}px`;
     }
 
     const debounceTime = 100;

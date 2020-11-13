@@ -2284,6 +2284,18 @@ input {
   border-radius: 0.1px !important;
 }
 
+// TEN9: set width for line shpape format panel dropdown
+.geSprite.geSprite-connection {
+  width: 47px !important;
+  margin-top: 1px !important;
+}
+.geSprite.geSprite-straight {
+  width: 47px !important;
+  margin-top: 1px !important;
+}
+.geSprite.geSprite-noarrow {
+  width: 47px !important;
+}
 @media print {
   div.geNoPrint {
     display: none !important;
