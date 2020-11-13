@@ -37,7 +37,7 @@ var mxJSColor = {
 	getDir : function() {
 		if(!mxJSColor.dir) {
 			var detected = mxJSColor.detectDir();
-			mxJSColor.dir = detected!==false ? detected : 'jscolor/';
+			mxJSColor.dir = detected!==false ? detected : '/jscolor/';
 		}
 		return mxJSColor.dir;
 	},

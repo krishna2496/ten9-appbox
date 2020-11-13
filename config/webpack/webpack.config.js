@@ -307,19 +307,6 @@ module.exports = {
 
 if (IS_PRODUCTION) {
   module.exports.plugins.push(
-    new webpack.HashedModuleIdsPlugin({
-      hashDigest: 'hex',
-    }),
-    new webpack.NamedChunksPlugin((chunk) => {
-      if (chunk.name) {
-        return chunk.name;
-      }
-      // TODO
-      // eslint-disable-next-line
-      const hash = require('hash-sum');
-      const joinedHash = hash(Array.from(chunk.modulesIterable, (m) => m.id).join('_'));
-      return `chunk-${joinedHash}`;
-    }),
     new OptimizeCssAssetsPlugin({
       cssProcessorPluginOptions: {
         preset: ['default', { discardComments: { removeAll: true } }],
