@@ -24,7 +24,8 @@ const {
   mxEventSource,
 	mxGraphModel,
   mxImage,
-  mxKeyHandler,
+	mxKeyHandler,
+	mxLanguage,
   mxMorphing,
   mxObjectCodec,
   mxObjectIdentity,
@@ -40,6 +41,7 @@ const {
 const { mxSettings } = require('./Settings.js');
 const urlParams = {};
 const isLocalStorage = false;
+const RESOURCE_BASE = '../../../../public/resources/dia';
 
 App = function(editor, container, lightbox)
 {

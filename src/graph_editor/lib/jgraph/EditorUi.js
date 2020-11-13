@@ -3211,7 +3211,8 @@ ChangeGridColor.prototype.execute = function() {
 /**
  * Change types
  */
-function ChangePageSetup(ui, color, image, format, pageScale) {
+
+var ChangePageSetup = function (ui, color, image, format, pageScale) {
   this.ui = ui;
   this.color = color;
   this.previousColor = color;
@@ -3273,30 +3274,31 @@ ChangePageSetup.prototype.execute = function() {
 };
 
 // Registers codec for ChangePageSetup
-(function() {
-  var codec = new mxObjectCodec(new ChangePageSetup(), [
-    'ui',
-    'previousColor',
-    'previousImage',
-    'previousFormat',
-    'previousPageScale',
-  ]);
+// TEN9: for add more sheets
+// (function() {
+//   var codec = new mxObjectCodec(new ChangePageSetup(), [
+//     'ui',
+//     'previousColor',
+//     'previousImage',
+//     'previousFormat',
+//     'previousPageScale',
+//   ]);
 
-  codec.afterDecode = function(dec, node, obj) {
-    obj.previousColor = obj.color;
-    obj.previousImage = obj.image;
-    obj.previousFormat = obj.format;
-    obj.previousPageScale = obj.pageScale;
+//   codec.afterDecode = function(dec, node, obj) {
+//     obj.previousColor = obj.color;
+//     obj.previousImage = obj.image;
+//     obj.previousFormat = obj.format;
+//     obj.previousPageScale = obj.pageScale;
 
-    if (obj.foldingEnabled != null) {
-      obj.foldingEnabled = !obj.foldingEnabled;
-    }
+//     if (obj.foldingEnabled != null) {
+//       obj.foldingEnabled = !obj.foldingEnabled;
+//     }
 
-    return obj;
-  };
+//     return obj;
+//   };
 
-  mxCodecRegistry.register(codec);
-})();
+//   mxCodecRegistry.register(codec);
+// })();
 
 /**
  * Loads the stylesheet for this graph.
@@ -4976,6 +4978,65 @@ EditorUi.prototype.destroy = function() {
     }
   }
 };
+// TEN9: for add more sheets
+// Execute fit page on page setup changes
+    var changePageSetupExecute = ChangePageSetup.execute();
+    ChangePageSetup.execute = function()
+    {
+        if (this.page == null)
+        {
+            this.page = this.ui.currentPage;
+        }
+
+        // Workaround for redo existing change with different current page
+        if (this.page != this.ui.currentPage)
+        {
+            if (this.page.viewState != null)
+            {
+                if (!this.ignoreColor)
+                {
+                    this.page.viewState.background = this.color;
+                }
+                
+                if (!this.ignoreImage)
+                {
+                    this.page.viewState.backgroundImage = this.image;
+                }
+
+                if (this.format != null)
+                {
+                    this.page.viewState.pageFormat = this.format;
+                }
+                
+                if (this.mathEnabled != null)
+                {
+                    this.page.viewState.mathEnabled = this.mathEnabled;
+                }
+                
+                if (this.shadowVisible != null)
+            	{
+            		this.page.viewState.shadowVisible = this.shadowVisible;
+            	}
+            }   
+        }
+        else
+        {
+            changePageSetupExecute.apply(this, arguments);
+            
+            if (this.mathEnabled != null && this.mathEnabled != this.ui.isMathEnabled())
+            {
+                this.ui.setMathEnabled(this.mathEnabled);
+                this.mathEnabled = !this.mathEnabled;
+            }
+
+            if (this.shadowVisible != null && this.shadowVisible != this.ui.editor.graph.shadowVisible)
+            {
+            	this.ui.editor.graph.setShadowVisible(this.shadowVisible);
+                this.shadowVisible = !this.shadowVisible;
+            }
+        }
+    };
+    
 
 require('../diagramly/LocalFile.js');
 require('../diagramly/EditorUi.js');
