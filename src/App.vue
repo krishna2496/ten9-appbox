@@ -51,17 +51,6 @@ export default defineComponent({
       const bottomMargin = 5;
       const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
       container.style.height = `${newHeight}px`;
-      const paddings = 72;
-
-      const sidebar = document.getElementById('sidebar');
-      const containerHeight = newHeight - paddings;
-      sidebar.style.height = `${containerHeight}px`;
-
-      const diagram = document.getElementById('diagram');
-      diagram.style.height = `${containerHeight}px`;
-
-      const format = document.getElementById('format');
-      format.style.height = `${containerHeight}px`;
     }
 
     const debounceTime = 100;

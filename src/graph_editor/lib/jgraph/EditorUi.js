@@ -1009,7 +1009,9 @@ EditorUi.prototype.toolbarHeight = 38;
 /**
  * Specifies the height of the footer. Default is 28.
  */
-EditorUi.prototype.footerHeight = 28;
+// TEN9: Disabling footer for now by setting height to 0
+// EditorUi.prototype.footerHeight = 28;
+EditorUi.prototype.footerHeight = 0;
 
 /**
  * Specifies the height of the optional sidebarFooterContainer. Default is 34.
@@ -3696,9 +3698,9 @@ EditorUi.prototype.createTabContainer = function () {
 EditorUi.prototype.createDivs = function () {
   this.menubarContainer = this.createDiv('geMenubarContainer');
   this.toolbarContainer = this.createDiv('geToolbarContainer');
-  this.sidebarContainer = this.createDiv('geSidebarContainer', 'sidebar');
-  this.formatContainer = this.createDiv('geSidebarContainer geFormatContainer', 'format');
-  this.diagramContainer = this.createDiv('geDiagramContainer', 'diagram');
+  this.sidebarContainer = this.createDiv('geSidebarContainer');
+  this.formatContainer = this.createDiv('geSidebarContainer geFormatContainer');
+  this.diagramContainer = this.createDiv('geDiagramContainer');
   this.footerContainer = this.createDiv('geFooterContainer');
   this.hsplit = this.createDiv('geHsplit');
   this.hsplit.setAttribute('title', mxResources.get('collapseExpand'));
@@ -3880,14 +3882,9 @@ EditorUi.prototype.createFooter = function () {
 /**
  * Creates the actual toolbar for the toolbar container.
  */
-EditorUi.prototype.createDiv = function (classname, id = '') {
+EditorUi.prototype.createDiv = function (classname) {
   var elt = document.createElement('div');
   elt.className = classname;
-
-  // TEN9: adding Id into div for custom modification
-  if (id != '') {
-    elt.id = id;
-  }
   return elt;
 };
 

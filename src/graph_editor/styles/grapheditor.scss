@@ -304,7 +304,6 @@ button {
   cursor: default;
   background: #e5e5e5;
   border-top: 1px solid #c0c0c0;
-  height: 1px !important;
 
   a {
     display: inline-block;
@@ -2265,15 +2264,6 @@ table.mxPopupMenu {
 
 div.mxPopupMenu {
   background: white !important;
-}
-
-.row-btn {
-  display: flex;
-  justify-content: center;
-}
-
-.btn-left {
-  margin-left: 10px;
 }
 
 // TEN9: Add radius
