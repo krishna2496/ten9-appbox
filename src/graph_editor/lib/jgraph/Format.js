@@ -6142,6 +6142,8 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   var altSymbol = this.addArrow(altPattern, 9);
   altSymbol.className = 'geIcon';
+  // TEN9: Widening the arrow box here
+  // altSymbol.style.width = '22px';
   altSymbol.style.width = '47px';
 
   var solid = document.createElement('div');
