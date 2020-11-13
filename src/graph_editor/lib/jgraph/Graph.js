@@ -182,8 +182,8 @@ mxGraph.prototype.pageScale = 1;
       var lang = navigator.language.toLowerCase();
       // TEN9: Adding en as valid language for LETTER
       mxGraph.prototype.pageFormat =
-      lang === 'en' || lang === 'en-us' || lang === 'en-ca' || lang === 'es-mx'
-      ? mxConstants.PAGE_FORMAT_LETTER_PORTRAIT
+        lang === 'en' || lang === 'en-us' || lang === 'en-ca' || lang === 'es-mx'
+          ? mxConstants.PAGE_FORMAT_LETTER_PORTRAIT
           : mxConstants.PAGE_FORMAT_A4_PORTRAIT;
     }
   } catch (e) {

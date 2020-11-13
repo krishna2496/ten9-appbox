@@ -5002,7 +5002,6 @@ EditorUi.prototype.destroy = function () {
   }
 };
 
-
 // TEN9: Brought over from diagramly for native paste handler support
 EditorUi.prototype.copyCells = function (elt, removeCells) {
   var graph = this.editor.graph;

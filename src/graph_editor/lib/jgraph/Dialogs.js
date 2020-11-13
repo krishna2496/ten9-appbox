@@ -735,8 +735,8 @@ var EditDiagramDialog = function (editorUi) {
   select.style.width = '180px';
   select.className = 'geBtn';
 
-    // TEN9: Hide this button since we don't need any other options
-    select.style.display = 'none';
+  // TEN9: Hide this button since we don't need any other options
+  select.style.display = 'none';
 
   if (editorUi.editor.graph.isEnabled()) {
     var replaceOption = document.createElement('option');
