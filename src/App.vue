@@ -15,11 +15,18 @@
 -->
 
 <script lang="ts">
-import GraphEditor, { EventFileInfo } from './graph_editor/components/GraphEditor.vue';
+import GraphEditor from './graph_editor/components/GraphEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 
 import { defineComponent, ref, onMounted, onBeforeUnmount } from '@vue/composition-api';
 import { debounce } from 'lodash';
+
+interface EventFileInfo {
+  filename?: string;
+  size?: number;
+  type?: string;
+  lastModified?: number;
+}
 
 interface FileLogEvent extends EventFileInfo {
   title: string;
@@ -62,49 +69,8 @@ export default defineComponent({
       updateAppHeight();
     }, debounceTime);
 
-    onMounted(() => {
-      updateAppHeight();
-      window.addEventListener('resize', onResize);
-    });
-
-    onBeforeUnmount(() => {
-      window.removeEventListener('resize', onResize);
-    });
-
-    function saveXmlFile(xmlData: string) {
-      const filename = 'diagram';
-      const ext = 'draw';
-
-      const blob = new Blob([xmlData], { type: 'application/xml' });
-
-      const a = document.createElement('a');
-      a.download = `${filename}.${ext}`;
-      a.href = URL.createObjectURL(blob);
-      a.dataset.downloadurl = `${ext}:${a.download}:${a.href}`;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => {
-        URL.revokeObjectURL(a.href);
-      }, 0);
-    }
-
-    function saveFile() {
-      const xmlData = editor.value.getXmlData();
-      saveXmlFile(xmlData);
-    }
-
-    function loadFileData(xmlData: string) {
-      editor.value.loadXmlData(xmlData);
-    }
-
     function addLog(fileLogEvent: FileLogEvent) {
       logs.value.push(fileLogEvent);
-    }
-
-    function getDateString(value: number): string {
-      return new Date(value).toLocaleString();
     }
 
     function insertDummyImage() {
@@ -132,6 +98,119 @@ export default defineComponent({
       insertDummyImage();
     }
 
+    function saveXmlFile(xmlData: string) {
+      const filename = 'diagram';
+      const ext = 'draw';
+
+      const blob = new Blob([xmlData], { type: 'application/xml' });
+
+      const a = document.createElement('a');
+      a.download = `${filename}.${ext}`;
+      a.href = URL.createObjectURL(blob);
+      a.dataset.downloadurl = `${ext}:${a.download}:${a.href}`;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => {
+        URL.revokeObjectURL(a.href);
+      }, 0);
+    }
+
+    function saveFile() {
+      const xmlData = editor.value.getXmlData();
+      saveXmlFile(xmlData);
+    }
+
+    function onKeydown(event: KeyboardEvent) {
+      if (event.key === 's' && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        saveFile();
+      }
+    }
+
+    onMounted(() => {
+      updateAppHeight();
+      window.addEventListener('resize', onResize);
+      document.addEventListener('keydown', onKeydown);
+
+      const drag: HTMLElement = document.querySelector('.geEditor');
+
+      drag.addEventListener('dragenter', (e: DragEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      drag.addEventListener('dragleave', (e: DragEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      drag.addEventListener('dragover', (e: DragEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      drag.addEventListener('drop', (e: DragEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        for (let i = 0; i < e.dataTransfer.items.length; i++) {
+          const file = e.dataTransfer.items[i].getAsFile();
+          const fileInfo: EventFileInfo = {
+            filename: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified,
+          };
+          onFileDropped(fileInfo);
+        }
+      });
+
+      // TEN9: add our own ctrl+v event listener
+      drag.onpaste = (e) => {
+        // check if default clipboard have files or not
+        if (e.clipboardData.files.length > 0) {
+          for (let i = 0; i < e.clipboardData.files.length; i++) {
+            const file = e.clipboardData.files[i];
+            const fileInfo = {
+              filename: file.name,
+              size: file.size,
+              type: file.type,
+              lastModified: file.lastModified,
+            };
+            onImagePasted(fileInfo);
+          }
+        } else {
+          // if default clipboard doesn't have file then if act as normal paste
+          const action = editor.value.editorUi.actions.get('paste');
+          action.funct();
+        }
+      };
+    });
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('resize', onResize);
+    });
+
+    function onGraphChanged() {
+      const xmlData = editor.value.getXmlData();
+      const fileLogEvent: FileLogEvent = {
+        title: 'Graph Changed',
+        size: xmlData.length,
+        lastModified: Date.now(),
+      };
+      addLog(fileLogEvent);
+    }
+
+    function loadFileData(xmlData: string) {
+      editor.value.loadXmlData(xmlData);
+    }
+
+    function getDateString(value: number): string {
+      return new Date(value).toLocaleString();
+    }
+
     return {
       addLog,
       editor,
@@ -139,8 +218,7 @@ export default defineComponent({
       getDateString,
       loadFileData,
       logs,
-      onFileDropped,
-      onImagePasted,
+      onGraphChanged,
       saveFile,
     };
   },
@@ -157,22 +235,22 @@ export default defineComponent({
             tr
               td.custom-header-background(colspan='2')
                 b.text-center.custom-header {{ log.title }}
-            tr
+            tr(v-if='log.filename')
               td.table-details
                 b Filename
               td.table-details
                 | {{ log.filename }}
-            tr
+            tr(v-if='log.size')
               td.table-details
                 b Size
               td.table-details
                 | {{ log.size }}
-            tr
+            tr(v-if='log.type')
               td.table-details
                 b Type
               td.table-details
                 | {{ log.type }}
-            tr
+            tr(v-if='log.lastModified')
               td.table-details
                 b Modified
               td.table-details
@@ -183,12 +261,7 @@ export default defineComponent({
           | Save File
         open-file(@file-loaded='loadFileData($event)')
       #container.ge-container
-        graph-editor(
-          ref='editor',
-          @file-saved='saveXmlFile($event)',
-          @file-dropped='onFileDropped($event)',
-          @image-pasted='onImagePasted($event)'
-        )
+        graph-editor(ref='editor', @graph-changed='onGraphChanged')
 </template>
 
 <style lang="scss">

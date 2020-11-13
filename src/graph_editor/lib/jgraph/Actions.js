@@ -1,3 +1,19 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
 const {
   mxCell,
   mxClient,
@@ -21,6 +37,8 @@ const {
   OutlineWindow,
   TextareaDialog,
 } = require('./Dialogs');
+
+const { copyTextToClipboard } = require('./graph_utils');
 
 const { FilenameDialog, PageSetupDialog, PrintDialog } = require('./Editor');
 const RESOURCES_PATH = 'resources';
@@ -115,7 +133,7 @@ Actions.prototype.init = function () {
     var dlg = new EditDiagramDialog(ui);
     ui.showDialog(dlg.container, 620, 420, true, false);
     dlg.init();
-  });
+  }).isEnabled = isGraphEnabled; // TEN9: Enabled when graph is enabled
   this.addAction('pageSetup...', function () {
     ui.showDialog(new PageSetupDialog(ui, ChangePageSetup).container, 320, 220, true, true);
   }).isEnabled = isGraphEnabled;
@@ -165,6 +183,8 @@ Actions.prototype.init = function () {
     function () {
       try {
         mxClipboard.copy(graph);
+        const xml = ui.copyCells(ui.textInputForNativeClipboard);
+        copyTextToClipboard(xml);
       } catch (e) {
         ui.handleError(e);
       }
@@ -650,60 +670,67 @@ Actions.prototype.init = function () {
       }
     }),
   ).isEnabled = isGraphEnabled;
+
+  // TEN9: Broke out insertLink function for reusability and add special attributes to control display
+  function insertLink(link, docs) {
+    link = mxUtils.trim(link);
+
+    if (link.length > 0) {
+      var icon = null;
+      var title = graph.getLinkTitle(link);
+
+      if (docs != null && docs.length > 0) {
+        icon = docs[0].iconUrl;
+        title = docs[0].name || docs[0].type;
+        if (!docs[0].noTitleCase) {
+          title = title.charAt(0).toUpperCase() + title.substring(1);
+        }
+
+        if (!docs[0].noTruncateTitle && title.length > 30) {
+          title = title.substring(0, 30) + '...';
+        }
+      }
+
+      var pt = graph.getFreeInsertPoint();
+      var linkCell = new mxCell(
+        title,
+        new mxGeometry(pt.x, pt.y, 100, 40),
+        'fontColor=#0000EE;fontStyle=4;rounded=1;overflow=hidden;' +
+          (icon != null
+            ? 'shape=label;imageWidth=16;imageHeight=16;spacingLeft=26;align=left;image=' + icon
+            : 'spacing=10;'),
+      );
+      linkCell.vertex = true;
+
+      graph.setLinkForCell(linkCell, link);
+      graph.cellSizeUpdated(linkCell, true);
+
+      graph.getModel().beginUpdate();
+      try {
+        linkCell = graph.addCell(linkCell);
+        graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [linkCell]));
+      } finally {
+        graph.getModel().endUpdate();
+      }
+
+      graph.setSelectionCell(linkCell);
+      graph.scrollCellToVisible(graph.getSelectionCell());
+    }
+  }
+
+  // TEN9: Broke out insertLink function for reusability
+  this.addAction('insertLinkNoDialog', insertLink);
+
+  // TEN9: Broke out insertLink function for reusability
   this.put(
     'insertLink',
     new Action(mxResources.get('link') + '...', function () {
       if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())) {
-        ui.showLinkDialog('', mxResources.get('insert'), function (link, docs) {
-          link = mxUtils.trim(link);
-
-          if (link.length > 0) {
-            var icon = null;
-            var title = graph.getLinkTitle(link);
-
-            if (docs != null && docs.length > 0) {
-              icon = docs[0].iconUrl;
-              title = docs[0].name || docs[0].type;
-              title = title.charAt(0).toUpperCase() + title.substring(1);
-
-              if (title.length > 30) {
-                title = title.substring(0, 30) + '...';
-              }
-            }
-
-            var linkCell = new mxCell(
-              title,
-              new mxGeometry(0, 0, 100, 40),
-              'fontColor=#0000EE;fontStyle=4;rounded=1;overflow=hidden;' +
-                (icon != null
-                  ? 'shape=label;imageWidth=16;imageHeight=16;spacingLeft=26;align=left;image=' +
-                    icon
-                  : 'spacing=10;'),
-            );
-            linkCell.vertex = true;
-
-            var pt = graph.getCenterInsertPoint(graph.getBoundingBoxFromGeometry([linkCell], true));
-            linkCell.geometry.x = pt.x;
-            linkCell.geometry.y = pt.y;
-
-            graph.setLinkForCell(linkCell, link);
-            graph.cellSizeUpdated(linkCell, true);
-
-            graph.getModel().beginUpdate();
-            try {
-              linkCell = graph.addCell(linkCell);
-              graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [linkCell]));
-            } finally {
-              graph.getModel().endUpdate();
-            }
-
-            graph.setSelectionCell(linkCell);
-            graph.scrollCellToVisible(graph.getSelectionCell());
-          }
-        });
+        ui.showLinkDialog('', mxResources.get('insert'), insertLink);
       }
     }),
   ).isEnabled = isGraphEnabled;
+
   this.addAction(
     'link...',
     mxUtils.bind(this, function () {

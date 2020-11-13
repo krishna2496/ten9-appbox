@@ -74,10 +74,8 @@ export function copyTextToClipboard(text) {
 
   try {
     var successful = document.execCommand('copy');
-    // var msg = successful ? 'successful' : 'unsuccessful';
-    // console.log('Copying text command was ' + msg);
   } catch (err) {
-    // console.log('Oops, unable to copy');
+    // do nothing
   }
 
   document.body.removeChild(textArea);
