@@ -5297,8 +5297,8 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
     altInput.style.position = 'absolute';
     altInput.style.left = '141px';
-    // TEN9: increase textbox height for line fromat
-    //altInput.style.height = '15px';
+    // TEN9: increase textbox height for line format
+    // altInput.style.height = '15px';
     altInput.style.height = '24px';
     altStepper.style.left = '190px';
   } else {

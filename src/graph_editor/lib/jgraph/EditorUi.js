@@ -3676,7 +3676,7 @@ EditorUi.prototype.createDivs = function () {
   this.toolbarContainer = this.createDiv('geToolbarContainer');
   this.sidebarContainer = this.createDiv('geSidebarContainer', 'sidebar');
   this.formatContainer = this.createDiv('geSidebarContainer geFormatContainer', 'format');
-  this.diagramContainer = this.createDiv('geDiagramContainer', 'daigram');
+  this.diagramContainer = this.createDiv('geDiagramContainer', 'diagram');
   this.footerContainer = this.createDiv('geFooterContainer');
   this.hsplit = this.createDiv('geHsplit');
   this.hsplit.setAttribute('title', mxResources.get('collapseExpand'));
