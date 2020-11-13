@@ -3929,8 +3929,9 @@ Sidebar.prototype.createThumb = function (
 
   node.style.position = 'relative';
   node.style.overflow = 'hidden';
-  node.style.left = this.thumbBorder + 'px';
-  node.style.top = this.thumbBorder + 'px';
+  // TEN9: Use default to keep this centered
+  // node.style.left = this.thumbBorder + 'px';
+  // node.style.top = this.thumbBorder + 'px';
   node.style.width = width + 'px';
   node.style.height = height + 'px';
   node.style.visibility = '';

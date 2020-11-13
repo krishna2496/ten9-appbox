@@ -1,5 +1,17 @@
 /**
- * Copyright (c) 2006-2012, JGraph Ltd
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
  */
 
 // TEN9: Added imports
@@ -17,6 +29,10 @@ const { Dialog, PageSetupDialog } = require('./Editor');
 
 // TEN9: Importing ChangePageSetup here is a circular dependency so we'll pass it in instead
 var ChangePageSetup = {};
+
+/**
+ * Copyright (c) 2006-2012, JGraph Ltd
+ */
 
 Format = function (editorUi, container, changePageSetupClass) {
   ChangePageSetup = changePageSetupClass;
@@ -1296,6 +1312,7 @@ BaseFormatPanel.prototype.addArrow = function (elt, height) {
   arrow.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
   arrow.style.padding = '6px';
   arrow.style.paddingRight = '4px';
+
   // TEN9: Make font dropdown proper
   arrow.style.paddingTop = '4px';
   arrow.style.paddingBottom = '0px';
@@ -1334,6 +1351,8 @@ BaseFormatPanel.prototype.addArrow = function (elt, height) {
 
     // TEN9: Updated from -1px to 10px
     symbol.style.marginTop = '10px';
+    // symbol.style.marginTop = '-1px';
+
     symbol.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
     mxUtils.setOpacity(symbol, 60);
   }
@@ -6135,7 +6154,7 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   var symbol = this.addArrow(pattern, 9);
   symbol.className = 'geIcon';
-  // TEN9: to improve line dropdown (was auto)
+  // TEN9: to improve line dropdown (was auto and 84 before that)
   symbol.style.width = '100px';
 
   var altSymbol = this.addArrow(altPattern, 9);

@@ -1,3 +1,19 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
 // TEN9: Added imports
 const { mxJSColor } = require('../jscolor/jscolor');
 
@@ -63,6 +79,7 @@ var ColorDialog = function (editorUi, color, apply, cancelFn) {
   var input = document.createElement('input');
   input.style.marginBottom = '10px';
   input.style.width = '216px';
+
   // TEN9: add margin top for color-picker textbox
   input.style.marginTop = '10px';
 
@@ -717,6 +734,9 @@ var EditDiagramDialog = function (editorUi) {
   var select = document.createElement('select');
   select.style.width = '180px';
   select.className = 'geBtn';
+
+    // TEN9: Hide this button since we don't need any other options
+    select.style.display = 'none';
 
   if (editorUi.editor.graph.isEnabled()) {
     var replaceOption = document.createElement('option');
@@ -1986,7 +2006,7 @@ var LayersWindow = function (editorUi, x, y, w, h) {
   listDiv.style.left = '0px';
   listDiv.style.right = '0px';
   listDiv.style.top = '0px';
-  // TEN9: Adjust layer dailog footer height
+  // TEN9: Adjust layer dialog footer height
   // listDiv.style.bottom = parseInt(tbarHeight) + 7 + 'px';
   div.appendChild(listDiv);
 
@@ -2102,10 +2122,31 @@ var LayersWindow = function (editorUi, x, y, w, h) {
             })(graph.model.getChildAt(graph.model.root, i));
           }
         }),
+        // TEN9: TODO: These 3 lines are new from drawio's mxgraph
         offset.x,
         offset.y + insertLink.offsetHeight,
         evt,
       );
+      // TEN9: TODO : Check Insert Link Menu positioning
+      //       The rest of this function is from original/TEN9 updated
+      menu.div.className += ' geMenubarMenu';
+      menu.smartSeparators = true;
+      menu.showDisabled = true;
+      menu.autoExpand = true;
+
+      // Disables autoexpand and destroys menu when hidden
+      menu.hideMenu = mxUtils.bind(this, function () {
+        mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
+        menu.destroy();
+      });
+
+      // TEN9: Use updated getOffset that doesn't assume document.body as origin container
+      // var offset = mxUtils.getOffset(insertLink);
+      var offset = graphUtils.getOffset(editorUi.container, insertLink);
+      menu.popup(offset.x, offset.y + insertLink.offsetHeight, null, evt);
+
+      // Allows hiding by clicking on document
+      editorUi.setCurrentMenu(menu);
     }
   });
 
