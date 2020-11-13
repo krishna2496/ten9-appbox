@@ -47,14 +47,14 @@ export default defineComponent({
       const paddings = 72;
 
       const sidebar = document.getElementById('sidebar');
-      const contaierHeight = newHeight - paddings;
-      sidebar.style.height = `${contaierHeight}px`;
+      const containerHeight = newHeight - paddings;
+      sidebar.style.height = `${containerHeight}px`;
 
-      const daigram = document.getElementById('daigram');
-      daigram.style.height = `${contaierHeight}px`;
+      const diagram = document.getElementById('diagram');
+      diagram.style.height = `${containerHeight}px`;
 
       const format = document.getElementById('format');
-      format.style.height = `${contaierHeight}px`;
+      format.style.height = `${containerHeight}px`;
     }
 
     const debounceTime = 100;
