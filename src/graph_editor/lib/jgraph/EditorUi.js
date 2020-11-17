@@ -2502,6 +2502,7 @@ EditorUi.prototype.initCanvas = function () {
             }
 
             var sp = new mxPoint(graph.container.scrollLeft, graph.container.scrollTop);
+            // TEN9: Calculate offset from ui container instead of assuming body
             var offset = graphUtils.getOffset(ui.container, graph.container);
             var prev = graph.view.scale;
             var dx = 0;
@@ -5101,7 +5102,7 @@ EditorUi.prototype.loadImage = function (uri, onload, onerror) {
 /**
  * Handling drag and drop and import.
  */
-
+// TEN9: Added param dontImportIntoDefaultLayer to assist when loading entire new file
 /**
  * Imports the given XML into the existing diagram.
  */
@@ -5175,6 +5176,7 @@ EditorUi.prototype.importXml = function (
         }
 
         if (node != null && node.nodeName === 'mxGraphModel') {
+          // TEN9: Added param dontImportIntoDefaultLayer to assist when loading entire new file
           cells = graph.importGraphModel(node, dx, dy, crop, dontImportIntoDefaultLayer);
 
           if (cells != null) {

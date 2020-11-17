@@ -1331,6 +1331,7 @@ BaseFormatPanel.prototype.addArrow = function (elt, height) {
   // TEN9: Updates for arrow dropdown
   // arrow.style.height = height + 'px';
   arrow.style.borderLeft = '1px solid #a0a0a0';
+  // TEN9: Add explicit vertical-align:baseline to avoid default img style from bootstrap
   arrow.innerHTML =
     '<img border="0" src="' +
     (mxClient.IS_SVG
@@ -6148,8 +6149,10 @@ StyleFormatPanel.prototype.addStroke = function (container) {
   this.addArrow(edgeShape, 8);
   this.addArrow(edgeStyle);
   const lineStartSymbol = this.addArrow(lineStart);
+  // TEN9: Set margin for proper alignment
   lineStartSymbol.style.marginRight = '6px';
   const lineEndSymbol = this.addArrow(lineEnd);
+  // TEN9: Set margin for proper alignment
   lineEndSymbol.style.marginRight = '6px';
 
   var symbol = this.addArrow(pattern, 9);

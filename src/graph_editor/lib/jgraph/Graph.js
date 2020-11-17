@@ -6299,6 +6299,7 @@ if (typeof mxVertexHandler != 'undefined') {
       return cellMapping;
     };
 
+    // TEN9: Added dontImportIntoDefaultLayer param to be used when loading an entire file
     /**
      *
      */
@@ -6335,6 +6336,7 @@ if (typeof mxVertexHandler != 'undefined') {
         try {
           // Merges into unlocked current layer if one layer is pasted
           if (
+            // TEN9: Added dontImportIntoDefaultLayer param to be used when loading an entire file
             !dontImportIntoDefaultLayer &&
             layers.length == 1 &&
             !this.isCellLocked(this.getDefaultParent())
