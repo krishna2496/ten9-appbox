@@ -6302,7 +6302,13 @@ if (typeof mxVertexHandler != 'undefined') {
     /**
      *
      */
-    Graph.prototype.importGraphModel = function (node, dx, dy, crop) {
+    Graph.prototype.importGraphModel = function (
+      node,
+      dx = null,
+      dy = null,
+      crop = false,
+      dontImportIntoDefaultLayer = false,
+    ) {
       dx = dx != null ? dx : 0;
       dy = dy != null ? dy : 0;
 
@@ -6328,7 +6334,11 @@ if (typeof mxVertexHandler != 'undefined') {
         this.model.beginUpdate();
         try {
           // Merges into unlocked current layer if one layer is pasted
-          if (layers.length == 1 && !this.isCellLocked(this.getDefaultParent())) {
+          if (
+            !dontImportIntoDefaultLayer &&
+            layers.length == 1 &&
+            !this.isCellLocked(this.getDefaultParent())
+          ) {
             var children = tempModel.getChildren(layers[0]);
 
             if (children != null) {

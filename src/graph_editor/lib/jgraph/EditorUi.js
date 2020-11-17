@@ -50,6 +50,8 @@ const { Format } = require('./Format.js');
 const { Menus } = require('./Menus.js');
 const { Toolbar } = require('./Toolbar.js');
 const { ColorDialog, EditDataDialog, LinkDialog, OpenDialog } = require('./Dialogs.js');
+const graphUtils = require('./graph_utils.js');
+
 const urlParams = {};
 
 // TEN9: TODO: Centralize all globals
@@ -1009,7 +1011,9 @@ EditorUi.prototype.toolbarHeight = 38;
 /**
  * Specifies the height of the footer. Default is 28.
  */
-EditorUi.prototype.footerHeight = 28;
+// TEN9: Disabling footer for now by setting height to 0
+// EditorUi.prototype.footerHeight = 28;
+EditorUi.prototype.footerHeight = 0;
 
 /**
  * Specifies the height of the optional sidebarFooterContainer. Default is 34.
@@ -2498,7 +2502,7 @@ EditorUi.prototype.initCanvas = function () {
             }
 
             var sp = new mxPoint(graph.container.scrollLeft, graph.container.scrollTop);
-            var offset = mxUtils.getOffset(graph.container);
+            var offset = graphUtils.getOffset(ui.container, graph.container);
             var prev = graph.view.scale;
             var dx = 0;
             var dy = 0;
@@ -3883,7 +3887,6 @@ EditorUi.prototype.createFooter = function () {
 EditorUi.prototype.createDiv = function (classname) {
   var elt = document.createElement('div');
   elt.className = classname;
-
   return elt;
 };
 
@@ -5102,7 +5105,14 @@ EditorUi.prototype.loadImage = function (uri, onload, onerror) {
 /**
  * Imports the given XML into the existing diagram.
  */
-EditorUi.prototype.importXml = function (xml, dx, dy, crop, noErrorHandling) {
+EditorUi.prototype.importXml = function (
+  xml,
+  dx,
+  dy,
+  crop,
+  noErrorHandling,
+  dontImportIntoDefaultLayer = false,
+) {
   dx = dx != null ? dx : 0;
   dy = dy != null ? dy : 0;
   var cells = [];
@@ -5165,7 +5175,7 @@ EditorUi.prototype.importXml = function (xml, dx, dy, crop, noErrorHandling) {
         }
 
         if (node != null && node.nodeName === 'mxGraphModel') {
-          cells = graph.importGraphModel(node, dx, dy, crop);
+          cells = graph.importGraphModel(node, dx, dy, crop, dontImportIntoDefaultLayer);
 
           if (cells != null) {
             for (var i = 0; i < cells.length; i++) {

@@ -1313,11 +1313,9 @@ BaseFormatPanel.prototype.addArrow = function (elt, height) {
   arrow.style.padding = '6px';
   arrow.style.paddingRight = '4px';
 
-  // TEN9: Make font dropdown proper
+  // TEN9: Updates for arrow dropdown
   arrow.style.paddingTop = '4px';
   arrow.style.paddingBottom = '0px';
-  arrow.style.wdith = '72px';
-  arrow.style.position = 'absolute';
   arrow.style.right = '0';
 
   var m = 10 - height;
@@ -1330,7 +1328,7 @@ BaseFormatPanel.prototype.addArrow = function (elt, height) {
     arrow.style.marginTop = '-2px';
   }
 
-  // TEN9: Make font dropdown proper
+  // TEN9: Updates for arrow dropdown
   // arrow.style.height = height + 'px';
   arrow.style.borderLeft = '1px solid #a0a0a0';
   arrow.innerHTML =
@@ -1338,20 +1336,15 @@ BaseFormatPanel.prototype.addArrow = function (elt, height) {
     (mxClient.IS_SVG
       ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHBJREFUeNpidHB2ZyAGsACxDRBPIKCuA6TwCBB/h2rABu4A8SYmKCcXiP/iUFgAxL9gCi8A8SwsirZCMQMTkmANEH9E4v+CmsaArvAdyNFI/FlQ92EoBIE+qCRIUz168DBgsU4OqhinQpgHMABAgAEALY4XLIsJ20oAAAAASUVORK5CYII='
       : IMAGE_PATH + '/dropdown.png') +
-    '" style="margin-bottom:4px;">';
+    '" style="margin-bottom:4px;vertical-align:baseline">';
   mxUtils.setOpacity(arrow, 70);
 
   var symbol = elt.getElementsByTagName('div')[0];
 
   if (symbol != null) {
-    // TEN9: Adding width
-    symbol.style.width = '95px';
     symbol.style.paddingRight = '6px';
     symbol.style.marginLeft = '4px';
-
-    // TEN9: Updated from -1px to 10px
-    symbol.style.marginTop = '10px';
-    // symbol.style.marginTop = '-1px';
+    symbol.style.marginTop = '-1px';
 
     symbol.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
     mxUtils.setOpacity(symbol, 60);
@@ -5231,6 +5224,9 @@ StyleFormatPanel.prototype.addStroke = function (container) {
         [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN],
         ['1', '1 4'],
       ).setAttribute('title', mxResources.get('dotted') + ' (3)');
+
+      // TEN9: Set width
+      menu.table.style.width = '47px';
     }),
   );
 
@@ -5316,7 +5312,9 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
     altInput.style.position = 'absolute';
     altInput.style.left = '141px';
-    altInput.style.height = '15px';
+    // TEN9: increase textbox height for line format
+    // altInput.style.height = '15px';
+    altInput.style.height = '24px';
     altStepper.style.left = '190px';
   } else {
     input.style.height = '17px';
@@ -6149,8 +6147,10 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   this.addArrow(edgeShape, 8);
   this.addArrow(edgeStyle);
-  this.addArrow(lineStart);
-  this.addArrow(lineEnd);
+  const lineStartSymbol = this.addArrow(lineStart);
+  lineStartSymbol.style.marginRight = '6px';
+  const lineEndSymbol = this.addArrow(lineEnd);
+  lineEndSymbol.style.marginRight = '6px';
 
   var symbol = this.addArrow(pattern, 9);
   symbol.className = 'geIcon';
@@ -6159,11 +6159,9 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   var altSymbol = this.addArrow(altPattern, 9);
   altSymbol.className = 'geIcon';
-  altSymbol.style.width = '22px';
 
   var solid = document.createElement('div');
-  // TEN9: to improve line dropdown (was 85px)
-  solid.style.width = '72px';
+  solid.style.width = '85px';
   solid.style.height = '1px';
   solid.style.borderBottom = '1px solid ' + this.defaultStrokeColor;
   solid.style.marginBottom = '9px';
