@@ -50,6 +50,8 @@ const { Format } = require('./Format.js');
 const { Menus } = require('./Menus.js');
 const { Toolbar } = require('./Toolbar.js');
 const { ColorDialog, EditDataDialog, LinkDialog, OpenDialog } = require('./Dialogs.js');
+const graphUtils = require('./graph_utils.js');
+
 const urlParams = {};
 
 // TEN9: TODO: Centralize all globals
@@ -2500,7 +2502,7 @@ EditorUi.prototype.initCanvas = function () {
             }
 
             var sp = new mxPoint(graph.container.scrollLeft, graph.container.scrollTop);
-            var offset = mxUtils.getOffset(graph.container);
+            var offset = graphUtils.getOffset(ui.container, graph.container);
             var prev = graph.view.scale;
             var dx = 0;
             var dy = 0;
