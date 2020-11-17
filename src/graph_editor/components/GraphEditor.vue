@@ -18,7 +18,7 @@
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
-import { defineComponent, ref, onMounted } from '@vue/composition-api';
+import { defineComponent, ref, onMounted, watch } from '@vue/composition-api';
 
 const {
   mxClipboard,
@@ -48,7 +48,11 @@ import '../styles/grapheditor.scss';
 export default defineComponent({
   name: 'GraphEditor',
 
-  setup(_props, ctx) {
+  props: {
+    previewMode: Boolean,
+  },
+
+  setup(props, ctx) {
     const container = ref(null);
 
     const editorUi = ref(null);
@@ -256,6 +260,32 @@ export default defineComponent({
       docs.push({ name: url, noTitleCase: true, noTruncateTitle: true });
       action.funct(url, docs);
     }
+
+    watch(
+      () => props.previewMode,
+      (val) => {
+        const formatPanel = editorUi.value.actions.get('formatPanel');
+        formatPanel.funct();
+
+        graph.value.setEnabled(!val);
+
+        const sidebarPanel = editorUi.value.actions.get('sidebarPanel');
+        sidebarPanel.funct(val);
+
+        graph.value.popupMenuHandler.hideMenu();
+        graph.value.tooltipHandler.hideTooltip();
+
+        const undo = editorUi.value.actions.get('undo');
+        const redo = editorUi.value.actions.get('redo');
+        if (val) {
+          undo.setEnabled(false);
+          redo.setEnabled(false);
+        } else {
+          undo.setEnabled(true);
+          redo.setEnabled(true);
+        }
+      },
+    );
 
     return {
       container,

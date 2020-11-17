@@ -87,6 +87,7 @@ distribute=Distribute
 divider=Divider
 documentProperties=Document Properties
 dotted=Dotted
+doubleClickTooltip=Doubleclick to insert text
 dpi=DPI
 drawing=Drawing{1}
 drawingEmpty=Drawing is empty

@@ -44,6 +44,8 @@ export default defineComponent({
 
     const editor = ref(null);
 
+    const previewMode = ref(false);
+
     function updateAppHeight() {
       const container = document.getElementById('container');
       const rect = container.getBoundingClientRect();
@@ -144,36 +146,40 @@ export default defineComponent({
         e.stopPropagation();
         e.preventDefault();
 
-        for (let i = 0; i < e.dataTransfer.items.length; i++) {
-          const file = e.dataTransfer.items[i].getAsFile();
-          const fileInfo: EventFileInfo = {
-            filename: file.name,
-            size: file.size,
-            type: file.type,
-            lastModified: file.lastModified,
-          };
-          onFileDropped(fileInfo);
-        }
-      });
-
-      // TEN9: add our own ctrl+v event listener
-      drag.onpaste = (e) => {
-        // check if default clipboard have files or not
-        if (e.clipboardData.files.length > 0) {
-          for (let i = 0; i < e.clipboardData.files.length; i++) {
-            const file = e.clipboardData.files[i];
-            const fileInfo = {
+        if (!previewMode.value) {
+          for (let i = 0; i < e.dataTransfer.items.length; i++) {
+            const file = e.dataTransfer.items[i].getAsFile();
+            const fileInfo: EventFileInfo = {
               filename: file.name,
               size: file.size,
               type: file.type,
               lastModified: file.lastModified,
             };
-            onImagePasted(fileInfo);
+            onFileDropped(fileInfo);
           }
-        } else {
-          // if default clipboard doesn't have file then if act as normal paste
-          const action = editor.value.editorUi.actions.get('paste');
-          action.funct();
+        }
+      });
+
+      // TEN9: add our own ctrl+v event listener
+      drag.onpaste = (e) => {
+        if (!previewMode.value) {
+          // check if default clipboard have files or not
+          if (e.clipboardData.files.length > 0) {
+            for (let i = 0; i < e.clipboardData.files.length; i++) {
+              const file = e.clipboardData.files[i];
+              const fileInfo = {
+                filename: file.name,
+                size: file.size,
+                type: file.type,
+                lastModified: file.lastModified,
+              };
+              onImagePasted(fileInfo);
+            }
+          } else {
+            // if default clipboard doesn't have file then if act as normal paste
+            const action = editor.value.editorUi.actions.get('paste');
+            action.funct();
+          }
         }
       };
     });
@@ -200,6 +206,10 @@ export default defineComponent({
       return new Date(value).toLocaleString();
     }
 
+    function previewChanged() {
+      previewMode.value = !previewMode.value;
+    }
+
     return {
       addLog,
       editor,
@@ -209,6 +219,8 @@ export default defineComponent({
       logs,
       onGraphChanged,
       saveFile,
+      previewMode,
+      previewChanged,
     };
   },
 });
@@ -249,8 +261,15 @@ export default defineComponent({
         button(@click='saveFile')
           | Save File
         open-file(@file-loaded='loadFileData')
+        input#preview.mt-1(
+          type='checkbox',
+          name='preview',
+          value='preview',
+          @change='previewChanged'
+        )
+        label.ml-1(for='preview') Preview Mode
       #container.ge-container
-        graph-editor(ref='editor', @graph-changed='onGraphChanged')
+        graph-editor(ref='editor', @graph-changed='onGraphChanged', :preview-mode='previewMode')
 </template>
 
 <style lang="scss">

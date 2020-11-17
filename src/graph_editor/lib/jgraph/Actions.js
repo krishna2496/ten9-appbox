@@ -1843,6 +1843,22 @@ Actions.prototype.init = function () {
       return ui.formatWidth > 0;
     }),
   );
+  // TEN9: add sidevar toggle
+  action = this.addAction(
+    'sidebarPanel',
+    mxUtils.bind(this, function (val) {
+      ui.toggleSidebarPanel(val);
+    }),
+    null,
+    null,
+    Editor.ctrlKey + '+Shift+S',
+  );
+  // action.setToggleAction(true);
+  // action.setSelectedCallback(
+  //   mxUtils.bind(this, function () {
+  //     return ui.sidebar.container.style.width != '0px';
+  //   }),
+  // );
   action = this.addAction(
     'outline',
     mxUtils.bind(this, function () {

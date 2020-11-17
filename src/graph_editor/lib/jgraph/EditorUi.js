@@ -2792,6 +2792,19 @@ EditorUi.prototype.toggleFormatPanel = function (visible) {
   }
 };
 
+// TEN9: Add sidebar toggle function
+EditorUi.prototype.toggleSidebarPanel = function (visible) {
+  if (visible) {
+    this.sidebar.container.style.width = '0px';
+    this.hsplit.style.display = 'none';
+    this.diagramContainer.style.left = '0px';
+  } else {
+    this.sidebar.container.style.width = '212px';
+    this.hsplit.style.display = 'block';
+    this.diagramContainer.style.left = '224px';
+  }
+};
+
 /**
  * Adds support for placeholders in labels.
  */
