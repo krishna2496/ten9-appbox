@@ -5103,7 +5103,7 @@ EditorUi.prototype.loadImage = function (uri, onload, onerror) {
 /**
  * Imports the given XML into the existing diagram.
  */
-EditorUi.prototype.importXml = function (xml, dx, dy, crop, noErrorHandling, replaceLayers) {
+EditorUi.prototype.importXml = function (xml, dx, dy, crop, noErrorHandling, dontImportIntoDefaultLayer=false) {
   dx = dx != null ? dx : 0;
   dy = dy != null ? dy : 0;
   var cells = [];
@@ -5166,7 +5166,7 @@ EditorUi.prototype.importXml = function (xml, dx, dy, crop, noErrorHandling, rep
         }
 
         if (node != null && node.nodeName === 'mxGraphModel') {
-          cells = graph.importGraphModel(node, dx, dy, crop, true);
+          cells = graph.importGraphModel(node, dx, dy, crop, dontImportIntoDefaultLayer);
 
           if (cells != null) {
             for (var i = 0; i < cells.length; i++) {
