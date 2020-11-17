@@ -77202,7 +77202,9 @@ mxKeyHandler.prototype.bindControlShiftKey = function (code, funct) {
  * evt - Key event whose control key pressed state should be returned.
  */
 mxKeyHandler.prototype.isControlDown = function (evt) {
-  return mxEvent.isControlDown(evt);
+  // TEN9: Use metaKey on Mac for control events too.
+  // return mxEvent.isControlDown(evt);
+  return mxEvent.isControlDown(evt) || (mxClient.IS_MAC && evt.metaKey);
 };
 
 /**
