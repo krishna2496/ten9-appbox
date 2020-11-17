@@ -94,22 +94,10 @@ export default defineComponent({
     }
 
     function loadXmlData(data: string) {
-      // Clear the graph before importing new cells
-      const parent = graph.value.getDefaultParent();
-      const cells = graph.value.getChildVertices(parent);
-      graph.value.removeCells(cells);
-
-      const doc = mxUtils.parseXml(data);
-      const model = new mxGraphModel();
-      const codec = new mxCodec(doc);
-      codec.decode(doc.documentElement, model);
-
-      const children = model.getChildren(model.getChildAt(model.getRoot(), 0));
-      if (children) {
-        graph.value.importCells(children);
-        // graph.value.zoomTo(1);
-        // editorUi.value.resetScrollbars();
-      }
+      // Clear the graph's default layer before importing a new file
+      const layers = graph.value.model.getChildCells(graph.value.model.getRoot());
+      graph.value.removeCells(layers);
+      editorUi.value.importXml(data, null, null, false, false, true);
     }
 
     function pasteShapes(doc: XMLDocument) {

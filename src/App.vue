@@ -248,7 +248,7 @@ export default defineComponent({
       .row-btn
         button(@click='saveFile')
           | Save File
-        open-file(@file-loaded='loadFileData($event)')
+        open-file(@file-loaded='loadFileData')
       #container.ge-container
         graph-editor(ref='editor', @graph-changed='onGraphChanged')
 </template>
