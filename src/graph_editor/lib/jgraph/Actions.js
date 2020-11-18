@@ -203,7 +203,7 @@ Actions.prototype.init = function () {
     false,
     'sprite-paste',
     Editor.ctrlKey + '+V',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction('pasteHere', function (evt) {
     if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())) {
       graph.getModel().beginUpdate();
@@ -386,7 +386,7 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+Shift+I',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction(
     'selectEdges',
     function () {
@@ -395,7 +395,7 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+Shift+E',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction(
     'selectAll',
     function () {
@@ -404,7 +404,7 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+A',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction(
     'selectNone',
     function () {
@@ -413,7 +413,7 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+Shift+A',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction(
     'lockUnlock',
     function () {
@@ -596,7 +596,7 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+M',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction(
     'editTooltip...',
     function () {
@@ -1821,13 +1821,14 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+Shift+L',
-  );
-  action.setToggleAction(true);
-  action.setSelectedCallback(
-    mxUtils.bind(this, function () {
-      return this.layersWindow != null && this.layersWindow.window.isVisible();
-    }),
-  );
+  ).isEnabled = isGraphEnabled;
+  // TEN9: add isGraphEnabled property
+  //action.setToggleAction(true);
+  // action.setSelectedCallback(
+  //   mxUtils.bind(this, function () {
+  //     return this.layersWindow != null && this.layersWindow.window.isVisible();
+  //   }),
+  // );
   action = this.addAction(
     'formatPanel',
     mxUtils.bind(this, function () {
@@ -1836,13 +1837,14 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+Shift+P',
-  );
-  action.setToggleAction(true);
-  action.setSelectedCallback(
-    mxUtils.bind(this, function () {
-      return ui.formatWidth > 0;
-    }),
-  );
+  ).isEnabled = isGraphEnabled;
+  // TEN9: add isGraphEnabled property
+  // action.setToggleAction(true);
+  // action.setSelectedCallback(
+  //   mxUtils.bind(this, function () {
+  //     return ui.formatWidth > 0;
+  //   }),
+  // );
   // TEN9: add sidebar toggle
   action = this.addAction(
     'sidebarPanel',

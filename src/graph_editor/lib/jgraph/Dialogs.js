@@ -2503,13 +2503,14 @@ var LayersWindow = function (editorUi, x, y, w, h) {
   });
 
   this.window = new mxWindow(mxResources.get('layers'), div, x, y, w, h, true, true);
+
   this.window.minimumSize = new mxRectangle(0, 0, 120, 120);
   this.window.destroyOnClose = false;
   this.window.setMaximizable(false);
   this.window.setResizable(true);
   this.window.setClosable(true);
   this.window.setVisible(true);
-
+  this.window.div.id = 'layer';
   this.init = function () {
     listDiv.scrollTop = listDiv.scrollHeight - listDiv.clientHeight;
   };

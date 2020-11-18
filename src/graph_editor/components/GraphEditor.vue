@@ -279,7 +279,7 @@ export default defineComponent({
     watch(
       () => props.previewMode,
       (val) => {
-        const graphEnabled: boolean = !val;
+        const graphEnabled = !val;
 
         const formatPanel = editorUi.value.actions.get('formatPanel');
         formatPanel.funct();
@@ -294,13 +294,20 @@ export default defineComponent({
 
         const undo = editorUi.value.actions.get('undo');
         const redo = editorUi.value.actions.get('redo');
+
         if (!graphEnabled) {
+          const layerWindow = document.getElementById('layer');
+          if (layerWindow != null) {
+            layerWindow.style.display = 'none';
+          }
+
           undo.setEnabled(false);
           redo.setEnabled(false);
         } else {
           undo.setEnabled(true);
           redo.setEnabled(true);
         }
+        editorUi.value.resetScrollbars();
       },
     );
 
