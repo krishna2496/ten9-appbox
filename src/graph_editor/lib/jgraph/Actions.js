@@ -1843,7 +1843,7 @@ Actions.prototype.init = function () {
       return ui.formatWidth > 0;
     }),
   );
-  // TEN9: add sidevar toggle
+  // TEN9: add sidebar toggle
   action = this.addAction(
     'sidebarPanel',
     mxUtils.bind(this, function (val) {
@@ -1851,7 +1851,7 @@ Actions.prototype.init = function () {
     }),
     null,
     null,
-    Editor.ctrlKey + '+Shift+S',
+    null,
   );
   // action.setToggleAction(true);
   // action.setSelectedCallback(

@@ -264,20 +264,22 @@ export default defineComponent({
     watch(
       () => props.previewMode,
       (val) => {
+        const graphEnabled: boolean = !val;
+
         const formatPanel = editorUi.value.actions.get('formatPanel');
         formatPanel.funct();
 
-        graph.value.setEnabled(!val);
+        graph.value.setEnabled(graphEnabled);
 
         const sidebarPanel = editorUi.value.actions.get('sidebarPanel');
-        sidebarPanel.funct(val);
+        sidebarPanel.funct(!graphEnabled);
 
         graph.value.popupMenuHandler.hideMenu();
         graph.value.tooltipHandler.hideTooltip();
 
         const undo = editorUi.value.actions.get('undo');
         const redo = editorUi.value.actions.get('redo');
-        if (val) {
+        if (!graphEnabled) {
           undo.setEnabled(false);
           redo.setEnabled(false);
         } else {

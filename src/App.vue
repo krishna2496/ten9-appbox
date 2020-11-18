@@ -206,7 +206,7 @@ export default defineComponent({
       return new Date(value).toLocaleString();
     }
 
-    function previewChanged() {
+    function onPreviewModeChanged() {
       previewMode.value = !previewMode.value;
     }
 
@@ -220,7 +220,7 @@ export default defineComponent({
       onGraphChanged,
       saveFile,
       previewMode,
-      previewChanged,
+      onPreviewModeChanged,
     };
   },
 });
@@ -265,7 +265,7 @@ export default defineComponent({
           type='checkbox',
           name='preview',
           value='preview',
-          @change='previewChanged'
+          @change='onPreviewModeChanged'
         )
         label.ml-1(for='preview') Preview Mode
       #container.ge-container

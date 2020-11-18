@@ -380,7 +380,7 @@ Toolbar.prototype.init = function () {
   this.addSeparator();
   var insertMenu = this.addMenu(
     '',
-    mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')',
+    mxResources.get('insert'),
     true,
     'insert',
     null,
@@ -1275,7 +1275,6 @@ Toolbar.prototype.addSeparator = function (c) {
  */
 Toolbar.prototype.addItems = function (keys, c, ignoreDisabled) {
   var items = [];
-  console.log('keys ', keys);
   for (var i = 0; i < keys.length; i++) {
     var key = keys[i];
 
