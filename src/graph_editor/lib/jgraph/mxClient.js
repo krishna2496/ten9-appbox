@@ -1,4 +1,20 @@
 /**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+/**
  * Copyright (c) 2006-2017, JGraph Ltd
  * Copyright (c) 2006-2017, Gaudenz Alder
  */
@@ -77202,7 +77218,9 @@ mxKeyHandler.prototype.bindControlShiftKey = function (code, funct) {
  * evt - Key event whose control key pressed state should be returned.
  */
 mxKeyHandler.prototype.isControlDown = function (evt) {
-  return mxEvent.isControlDown(evt);
+  // TEN9: Use metaKey on Mac for control events too.
+  // return mxEvent.isControlDown(evt);
+  return mxEvent.isControlDown(evt) || (mxClient.IS_MAC && evt.metaKey);
 };
 
 /**

@@ -5871,7 +5871,10 @@ EditorUi.prototype.installNativeClipboardHandler = function () {
         mxUtils.bind(this, function () {
           if (
             restoreFocus &&
-            (keyCode == 224 /* FF */ || keyCode == 17 /* Control */ || keyCode == 91) /* Meta */
+            (keyCode == 224 /* FF */ ||
+              keyCode == 17 /* Control */ ||
+              keyCode == 91 /* Left Meta */ ||
+              keyCode == 93) /* Right Meta */
           ) {
             restoreFocus = false;
 
