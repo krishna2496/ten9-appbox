@@ -91,6 +91,15 @@ export default defineComponent({
       graph.value.model.addListener(mxEvent.CHANGE, () => {
         ctx.emit('graph-changed');
       });
+
+      ctx.root.$nextTick(() => {
+        // Toggle the format panel to workaround a graph
+        // initialization issue.  Doing this avoids a bug
+        // where the view jumps after adding first shape.
+        const formatPanel = editorUi.value.actions.get('formatPanel');
+        formatPanel.funct(); // toggle
+        formatPanel.funct(); // toggle back
+      });
     });
 
     function getXmlData(): string {
@@ -101,7 +110,13 @@ export default defineComponent({
       // Clear the graph's default layer before importing a new file
       const layers = graph.value.model.getChildCells(graph.value.model.getRoot());
       graph.value.removeCells(layers);
+
+      // Import the XML data
       editorUi.value.importXml(data, null, null, false, false, true);
+
+      // Reset the view after loading a file
+      graph.value.zoomTo(1);
+      editorUi.value.resetScrollbars();
     }
 
     function pasteShapes(doc: XMLDocument) {
