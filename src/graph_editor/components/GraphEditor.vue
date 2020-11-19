@@ -281,8 +281,8 @@ export default defineComponent({
       (val) => {
         const graphEnabled = !val;
 
-        const formatPanel = editorUi.value.actions.get('formatPanel');
-        formatPanel.funct(graphEnabled);
+        const formatPanel = editorUi.value.actions.get('previewFormatPanel');
+        formatPanel.funct(!graphEnabled);
 
         graph.value.setEnabled(graphEnabled);
 
@@ -298,6 +298,7 @@ export default defineComponent({
             layerWindow.style.display = 'none';
           }
         }
+        editorUi.value.toolbar.setEnabled(graphEnabled);
 
         const undo = editorUi.value.actions.get('undo');
         undo.setEnabled(graphEnabled);

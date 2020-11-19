@@ -2805,6 +2805,18 @@ EditorUi.prototype.toggleSidebarPanel = function (visible) {
   }
 };
 
+EditorUi.prototype.previewToggleFormatPanel = function (visible) {
+  if (visible) {
+    this.formatContainer.style.width = '0px';
+    this.formatContainer.style.display = 'none';
+    this.diagramContainer.style.right = '0px';
+  } else {
+    this.formatContainer.style.width = '240px';
+    this.formatContainer.style.display = 'block';
+    this.diagramContainer.style.right = '240px';
+  }
+};
+
 /**
  * Adds support for placeholders in labels.
  */

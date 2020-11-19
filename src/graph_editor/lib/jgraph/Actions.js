@@ -1845,6 +1845,16 @@ Actions.prototype.init = function () {
   //     return ui.formatWidth > 0;
   //   }),
   // );
+  // TEN9: add format toggle for format panel
+  action = this.addAction(
+    'previewFormatPanel',
+    mxUtils.bind(this, function (val) {
+      ui.previewToggleFormatPanel(val);
+    }),
+    null,
+    null,
+    null,
+  );
   // TEN9: add sidebar toggle
   action = this.addAction(
     'sidebarPanel',
