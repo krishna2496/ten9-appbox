@@ -292,22 +292,20 @@ export default defineComponent({
         graph.value.popupMenuHandler.hideMenu();
         graph.value.tooltipHandler.hideTooltip();
 
-        const undo = editorUi.value.actions.get('undo');
-        const redo = editorUi.value.actions.get('redo');
-
         if (!graphEnabled) {
           const layerWindow = document.getElementById('layer');
           if (layerWindow != null) {
             layerWindow.style.display = 'none';
           }
-
-          undo.setEnabled(false);
-          redo.setEnabled(false);
-        } else {
-          undo.setEnabled(true);
-          redo.setEnabled(true);
         }
-        editorUi.value.resetScrollbars();
+
+        const undo = editorUi.value.actions.get('undo');
+        undo.setEnabled(graphEnabled);
+
+        const redo = editorUi.value.actions.get('redo');
+        redo.setEnabled(graphEnabled);
+
+        editorUi.value.resetHorizontalScrollbar();
       },
     );
 
