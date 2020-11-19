@@ -282,7 +282,7 @@ export default defineComponent({
         const graphEnabled = !val;
 
         const formatPanel = editorUi.value.actions.get('formatPanel');
-        formatPanel.funct();
+        formatPanel.funct(graphEnabled);
 
         graph.value.setEnabled(graphEnabled);
 

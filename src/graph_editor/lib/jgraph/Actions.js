@@ -1831,8 +1831,8 @@ Actions.prototype.init = function () {
   // );
   action = this.addAction(
     'formatPanel',
-    mxUtils.bind(this, function () {
-      ui.toggleFormatPanel();
+    mxUtils.bind(this, function (val) {
+      ui.toggleFormatPanel(val);
     }),
     null,
     null,
