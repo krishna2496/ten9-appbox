@@ -146,40 +146,46 @@ export default defineComponent({
         e.stopPropagation();
         e.preventDefault();
 
+        // Don't allow drops in Preview Mode
+        if (previewMode.value) {
+          return;
+        }
+
+        for (let i = 0; i < e.dataTransfer.items.length; i++) {
+          const file = e.dataTransfer.items[i].getAsFile();
+          const fileInfo: EventFileInfo = {
+            filename: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified,
+          };
+          onFileDropped(fileInfo);
+        }
+      });
+
+      // Add our own ctrl+v event listener
+      drag.onpaste = (e) => {
+        // Don't allow pasting files in Preview Mode
         if (!previewMode.value) {
-          for (let i = 0; i < e.dataTransfer.items.length; i++) {
-            const file = e.dataTransfer.items[i].getAsFile();
-            const fileInfo: EventFileInfo = {
+          return;
+        }
+
+        // check if default clipboard have files or not
+        if (e.clipboardData.files.length > 0) {
+          for (let i = 0; i < e.clipboardData.files.length; i++) {
+            const file = e.clipboardData.files[i];
+            const fileInfo = {
               filename: file.name,
               size: file.size,
               type: file.type,
               lastModified: file.lastModified,
             };
-            onFileDropped(fileInfo);
+            onImagePasted(fileInfo);
           }
-        }
-      });
-
-      // TEN9: add our own ctrl+v event listener
-      drag.onpaste = (e) => {
-        if (!previewMode.value) {
-          // check if default clipboard have files or not
-          if (e.clipboardData.files.length > 0) {
-            for (let i = 0; i < e.clipboardData.files.length; i++) {
-              const file = e.clipboardData.files[i];
-              const fileInfo = {
-                filename: file.name,
-                size: file.size,
-                type: file.type,
-                lastModified: file.lastModified,
-              };
-              onImagePasted(fileInfo);
-            }
-          } else {
-            // if default clipboard doesn't have file then if act as normal paste
-            const action = editor.value.editorUi.actions.get('paste');
-            action.funct();
-          }
+        } else {
+          // if default clipboard doesn't have file then if act as normal paste
+          const action = editor.value.editorUi.actions.get('paste');
+          action.funct();
         }
       };
     });
