@@ -224,9 +224,9 @@ export default defineComponent({
       loadFileData,
       logs,
       onGraphChanged,
-      saveFile,
-      previewMode,
       onPreviewModeChanged,
+      previewMode,
+      saveFile,
     };
   },
 });
