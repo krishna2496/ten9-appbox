@@ -253,6 +253,10 @@ Toolbar.prototype.init = function () {
             )
             .setAttribute('title', mxResources.get('simpleArrow'));
         }),
+        // TEN9: add id for managing the toolbar buttons
+        undefined,
+        undefined,
+        'toolbar-connection-button',
       );
 
       this.addDropDownArrow(this.edgeShapeMenu, 'geSprite-connection', 44, 50, 0, 0, 22, -4);
@@ -372,6 +376,10 @@ Toolbar.prototype.init = function () {
           )
           .setAttribute('title', mxResources.get('entityRelation'));
       }),
+      // TEN9: add id for managing the toolbar buttons
+      undefined,
+      undefined,
+      'toolbar-waypoints-button',
     );
 
     this.addDropDownArrow(this.edgeStyleMenu, 'geSprite-orthogonal', 44, 50, 0, 0, 22, -4);
@@ -380,11 +388,14 @@ Toolbar.prototype.init = function () {
   this.addSeparator();
   var insertMenu = this.addMenu(
     '',
-    mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')',
+    mxResources.get('insert'),
     true,
     'insert',
     null,
     true,
+    // TEN9: add id for managing the toolbar buttons
+    undefined,
+    'toolbar-insert-button',
   );
   // TEN9: Set height of plus icon
   // this.addDropDownArrow(insertMenu, 'geSprite-plus', 38, 48, -4, -3, 36, -8);
@@ -505,6 +516,10 @@ Toolbar.prototype.addTableDropDown = function () {
         elt.setAttribute('title', mxResources.get('deleteRow'));
       }
     }),
+    // TEN9: add id for managing the toolbar buttons
+    undefined,
+    undefined,
+    'toolbar-table-button',
   );
 
   menuElt.style.position = 'relative';
@@ -1201,7 +1216,16 @@ Toolbar.prototype.hideMenu = function () {
 /**
  * Adds a label to the toolbar.
  */
-Toolbar.prototype.addMenu = function (label, tooltip, showLabels, name, c, showAll, ignoreState) {
+Toolbar.prototype.addMenu = function (
+  label,
+  tooltip,
+  showLabels,
+  name,
+  c,
+  showAll,
+  ignoreState,
+  id,
+) {
   var menu = this.editorUi.menus.get(name);
   var elt = this.addMenuFunction(
     label,
@@ -1212,6 +1236,7 @@ Toolbar.prototype.addMenu = function (label, tooltip, showLabels, name, c, showA
     },
     c,
     showAll,
+    id,
   );
 
   // Workaround for possible not a function
@@ -1228,7 +1253,8 @@ Toolbar.prototype.addMenu = function (label, tooltip, showLabels, name, c, showA
 /**
  * Adds a label to the toolbar.
  */
-Toolbar.prototype.addMenuFunction = function (label, tooltip, showLabels, funct, c, showAll) {
+Toolbar.prototype.addMenuFunction = function (label, tooltip, showLabels, funct, c, showAll, id) {
+  // TEN9: add id for managing the toolbar buttons
   return this.addMenuFunctionInContainer(
     c != null ? c : this.container,
     label,
@@ -1236,6 +1262,7 @@ Toolbar.prototype.addMenuFunction = function (label, tooltip, showLabels, funct,
     showLabels,
     funct,
     showAll,
+    id,
   );
 };
 
@@ -1249,8 +1276,13 @@ Toolbar.prototype.addMenuFunctionInContainer = function (
   showLabels,
   funct,
   showAll,
+  id,
 ) {
   var elt = showLabels ? this.createLabel(label) : this.createButton(label);
+  // TEN9: add id for managing the toolbar buttons
+  if (id) {
+    elt.id = id;
+  }
   this.initElement(elt, tooltip);
   this.addMenuHandler(elt, showLabels, funct, showAll);
   container.appendChild(elt);
@@ -1275,7 +1307,6 @@ Toolbar.prototype.addSeparator = function (c) {
  */
 Toolbar.prototype.addItems = function (keys, c, ignoreDisabled) {
   var items = [];
-
   for (var i = 0; i < keys.length; i++) {
     var key = keys[i];
 
@@ -1488,6 +1519,28 @@ Toolbar.prototype.destroy = function () {
   if (this.gestureHandler != null) {
     mxEvent.removeGestureListeners(document, this.gestureHandler);
     this.gestureHandler = null;
+  }
+};
+
+Toolbar.prototype.setEnabled = function (enabled) {
+  const connection = document.getElementById('toolbar-connection-button');
+  if (connection) {
+    connection.setEnabled(enabled);
+  }
+
+  const waypoints = document.getElementById('toolbar-waypoints-button');
+  if (waypoints) {
+    waypoints.setEnabled(enabled);
+  }
+
+  const insert = document.getElementById('toolbar-insert-button');
+  if (insert) {
+    insert.setEnabled(enabled);
+  }
+
+  const table = document.getElementById('toolbar-table-button');
+  if (table) {
+    table.setEnabled(enabled);
   }
 };
 // TEN9: Added exports

@@ -2792,6 +2792,19 @@ EditorUi.prototype.toggleFormatPanel = function (visible) {
   }
 };
 
+// TEN9: Add sidebar toggle function
+EditorUi.prototype.toggleSidebarPanel = function (visible) {
+  if (visible) {
+    this.sidebar.container.style.width = '0px';
+    this.hsplit.style.display = 'none';
+    this.diagramContainer.style.left = '0px';
+  } else {
+    this.sidebar.container.style.width = '212px';
+    this.hsplit.style.display = 'block';
+    this.diagramContainer.style.left = '224px';
+  }
+};
+
 /**
  * Adds support for placeholders in labels.
  */
@@ -3088,6 +3101,64 @@ EditorUi.prototype.hasScrollbars = function () {
   return this.editor.graph.scrollbars;
 };
 
+// TEN9: Added to help reset horizontal view
+/**
+ * Resets the state of the horizontal scrollbar.
+ */
+EditorUi.prototype.resetHorizontalScrollbar = function () {
+  var graph = this.editor.graph;
+
+  if (!this.editor.extendCanvas) {
+    graph.container.scrollLeft = 0;
+
+    if (!mxUtils.hasScrollbars(graph.container)) {
+      graph.view.setTranslate(0, 0);
+    }
+  } else if (!this.editor.isChromelessView()) {
+    if (mxUtils.hasScrollbars(graph.container)) {
+      if (graph.pageVisible) {
+        var pad = graph.getPagePadding();
+        graph.container.scrollLeft =
+          Math.floor(
+            Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2),
+          ) - 1;
+
+        // Scrolls graph to visible area
+        var bounds = graph.getGraphBounds();
+
+        if (bounds.width > 0) {
+          if (bounds.x > graph.container.scrollLeft + graph.container.clientWidth * 0.9) {
+            graph.container.scrollLeft = Math.min(
+              bounds.x + bounds.width - graph.container.clientWidth,
+              bounds.x - 10,
+            );
+          }
+        }
+      } else {
+        var bounds = graph.getGraphBounds();
+        var width = Math.max(bounds.width, graph.scrollTileSize.width * graph.view.scale);
+        graph.container.scrollLeft = Math.floor(
+          Math.max(0, bounds.x - Math.max(0, (graph.container.clientWidth - width) / 2)),
+        );
+      }
+    } else {
+      var b = mxRectangle.fromRectangle(
+        graph.pageVisible ? graph.view.getBackgroundPageBounds() : graph.getGraphBounds(),
+      );
+      var tr = graph.view.translate;
+      var s = graph.view.scale;
+      b.x = b.x / s - tr.x;
+      b.width /= s;
+
+      graph.view.setTranslate(
+        Math.floor(Math.max(0, (graph.container.clientWidth - b.width) / 2) - b.x + 2),
+        0,
+      );
+    }
+  }
+};
+
+// TEN9: TODO: Use incorporate resetHorizontalScrollbar back into here
 /**
  * Resets the state of the scrollbars.
  */

@@ -1980,9 +1980,6 @@ var OutlineWindow = function (editorUi, x, y, w, h) {
   }
 };
 
-/**
- *
- */
 var LayersWindow = function (editorUi, x, y, w, h) {
   var graph = editorUi.editor.graph;
 
@@ -2007,7 +2004,7 @@ var LayersWindow = function (editorUi, x, y, w, h) {
   listDiv.style.right = '0px';
   listDiv.style.top = '0px';
   // TEN9: Adjust layer dialog footer height
-  // listDiv.style.bottom = parseInt(tbarHeight) + 7 + 'px';
+  // listDiv.style.bottom = (parseInt(tbarHeight) + 7) + 'px';
   div.appendChild(listDiv);
 
   var dragSource = null;
@@ -2092,15 +2089,17 @@ var LayersWindow = function (editorUi, x, y, w, h) {
   ldiv.appendChild(removeLink);
 
   var insertLink = link.cloneNode();
-  insertLink.setAttribute('title', mxUtils.trim(mxResources.get('moveSelectionTo', [''])));
+  insertLink.setAttribute('title', mxUtils.trim(mxResources.get('moveSelectionTo', ['...'])));
   insertLink.innerHTML =
     '<div class="geSprite geSprite-insert" style="display:inline-block;"></div>';
 
   mxEvent.addListener(insertLink, 'click', function (evt) {
     if (graph.isEnabled() && !graph.isSelectionEmpty()) {
-      editorUi.editor.graph.popupMenuHandler.hideMenu();
+      // TEN9: Don't assume body for offset calc
+      // var offset = mxUtils.getOffset(insertLink);
+      var offset = graphUtils.getOffset(editorUi.container, insertLink);
 
-      var menu = new mxPopupMenu(
+      editorUi.showPopupMenu(
         mxUtils.bind(this, function (menu, parent) {
           for (var i = layerCount - 1; i >= 0; i--) {
             mxUtils.bind(this, function (child) {
@@ -2122,31 +2121,10 @@ var LayersWindow = function (editorUi, x, y, w, h) {
             })(graph.model.getChildAt(graph.model.root, i));
           }
         }),
-        // TEN9: TODO: These 3 lines are new from drawio's mxgraph
         offset.x,
         offset.y + insertLink.offsetHeight,
         evt,
       );
-      // TEN9: TODO : Check Insert Link Menu positioning
-      //       The rest of this function is from original/TEN9 updated
-      menu.div.className += ' geMenubarMenu';
-      menu.smartSeparators = true;
-      menu.showDisabled = true;
-      menu.autoExpand = true;
-
-      // Disables autoexpand and destroys menu when hidden
-      menu.hideMenu = mxUtils.bind(this, function () {
-        mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
-        menu.destroy();
-      });
-
-      // TEN9: Use updated getOffset that doesn't assume document.body as origin container
-      // var offset = mxUtils.getOffset(insertLink);
-      var offset = graphUtils.getOffset(editorUi.container, insertLink);
-      menu.popup(offset.x, offset.y + insertLink.offsetHeight, null, evt);
-
-      // Allows hiding by clicking on document
-      editorUi.setCurrentMenu(menu);
     }
   });
 
@@ -2509,6 +2487,8 @@ var LayersWindow = function (editorUi, x, y, w, h) {
   this.window.setResizable(true);
   this.window.setClosable(true);
   this.window.setVisible(true);
+  // TEN9: add id to manage the dialog toggle on preview mode
+  this.window.div.id = 'layers-window';
 
   this.init = function () {
     listDiv.scrollTop = listDiv.scrollHeight - listDiv.clientHeight;

@@ -620,7 +620,7 @@ Menus.prototype.init = function () {
         );
       }),
     ),
-  );
+  ).isEnabled = isGraphEnabled;
   this.put(
     'navigation',
     new Menu(
@@ -661,7 +661,7 @@ Menus.prototype.init = function () {
         this.addMenuItems(menu, ['insertLink', 'insertImage'], parent);
       }),
     ),
-  );
+  ).isEnabled = isGraphEnabled;
   this.put(
     'view',
     new Menu(

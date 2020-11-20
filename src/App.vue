@@ -44,6 +44,8 @@ export default defineComponent({
 
     const editor = ref(null);
 
+    const previewMode = ref(false);
+
     function updateAppHeight() {
       const container = document.getElementById('container');
       const rect = container.getBoundingClientRect();
@@ -144,6 +146,11 @@ export default defineComponent({
         e.stopPropagation();
         e.preventDefault();
 
+        // Don't allow drops in Preview Mode
+        if (previewMode.value) {
+          return;
+        }
+
         for (let i = 0; i < e.dataTransfer.items.length; i++) {
           const file = e.dataTransfer.items[i].getAsFile();
           const fileInfo: EventFileInfo = {
@@ -156,8 +163,13 @@ export default defineComponent({
         }
       });
 
-      // TEN9: add our own ctrl+v event listener
+      // Add our own ctrl+v event listener
       drag.onpaste = (e) => {
+        // Don't allow pasting files in Preview Mode
+        if (!previewMode.value) {
+          return;
+        }
+
         // check if default clipboard have files or not
         if (e.clipboardData.files.length > 0) {
           for (let i = 0; i < e.clipboardData.files.length; i++) {
@@ -200,6 +212,10 @@ export default defineComponent({
       return new Date(value).toLocaleString();
     }
 
+    function onPreviewModeChanged() {
+      previewMode.value = !previewMode.value;
+    }
+
     return {
       addLog,
       editor,
@@ -208,6 +224,8 @@ export default defineComponent({
       loadFileData,
       logs,
       onGraphChanged,
+      onPreviewModeChanged,
+      previewMode,
       saveFile,
     };
   },
@@ -249,8 +267,15 @@ export default defineComponent({
         button(@click='saveFile')
           | Save File
         open-file(@file-loaded='loadFileData')
+        input#preview.mt-1(
+          type='checkbox',
+          name='preview',
+          value='preview',
+          @change='onPreviewModeChanged'
+        )
+        label.ml-1(for='preview') Preview Mode
       #container.ge-container
-        graph-editor(ref='editor', @graph-changed='onGraphChanged')
+        graph-editor(ref='editor', @graph-changed='onGraphChanged', :preview-mode='previewMode')
 </template>
 
 <style lang="scss">

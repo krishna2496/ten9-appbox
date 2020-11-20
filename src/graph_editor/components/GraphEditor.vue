@@ -18,7 +18,7 @@
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
-import { defineComponent, ref, onMounted } from '@vue/composition-api';
+import { defineComponent, ref, onMounted, watch } from '@vue/composition-api';
 
 const {
   mxClipboard,
@@ -48,7 +48,11 @@ import '../styles/grapheditor.scss';
 export default defineComponent({
   name: 'GraphEditor',
 
-  setup(_props, ctx) {
+  props: {
+    previewMode: Boolean,
+  },
+
+  setup(props, ctx) {
     const container = ref(null);
 
     const editorUi = ref(null);
@@ -271,6 +275,41 @@ export default defineComponent({
       docs.push({ name: url, noTitleCase: true, noTruncateTitle: true });
       action.funct(url, docs);
     }
+
+    watch(
+      () => props.previewMode,
+      (val) => {
+        const graphEnabled = !val;
+
+        // Set the graph enabled state before anything else
+        graph.value.setEnabled(graphEnabled);
+
+        const formatPanel = editorUi.value.actions.get('formatPanel');
+        formatPanel.funct(graphEnabled);
+
+        const sidebarPanel = editorUi.value.actions.get('sidebarPanel');
+        sidebarPanel.funct(!graphEnabled);
+
+        graph.value.popupMenuHandler.hideMenu();
+        graph.value.tooltipHandler.hideTooltip();
+
+        if (!graphEnabled) {
+          const layerWindow = document.getElementById('layers-window');
+          if (layerWindow != null) {
+            layerWindow.style.display = 'none';
+          }
+        }
+        editorUi.value.toolbar.setEnabled(graphEnabled);
+
+        const undo = editorUi.value.actions.get('undo');
+        undo.setEnabled(graphEnabled);
+
+        const redo = editorUi.value.actions.get('redo');
+        redo.setEnabled(graphEnabled);
+
+        editorUi.value.resetHorizontalScrollbar();
+      },
+    );
 
     return {
       container,

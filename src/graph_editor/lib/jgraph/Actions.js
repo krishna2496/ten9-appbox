@@ -203,7 +203,7 @@ Actions.prototype.init = function () {
     false,
     'sprite-paste',
     Editor.ctrlKey + '+V',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction('pasteHere', function (evt) {
     if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())) {
       graph.getModel().beginUpdate();
@@ -386,7 +386,7 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+Shift+I',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction(
     'selectEdges',
     function () {
@@ -395,7 +395,7 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+Shift+E',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction(
     'selectAll',
     function () {
@@ -404,7 +404,7 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+A',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction(
     'selectNone',
     function () {
@@ -413,7 +413,7 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+Shift+A',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction(
     'lockUnlock',
     function () {
@@ -596,7 +596,7 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+M',
-  );
+  ).isEnabled = isGraphEnabled;
   this.addAction(
     'editTooltip...',
     function () {
@@ -1139,7 +1139,8 @@ Actions.prototype.init = function () {
     return graph.isGridEnabled();
   });
   action.setEnabled(false);
-
+  // TEN9: Hide grid item if graph is disabled
+  action.isEnabled = isGraphEnabled;
   action = this.addAction('guides', function () {
     graph.graphHandler.guidesEnabled = !graph.graphHandler.guidesEnabled;
     ui.fireEvent(new mxEventObject('guidesEnabledChanged'));
@@ -1149,7 +1150,8 @@ Actions.prototype.init = function () {
     return graph.graphHandler.guidesEnabled;
   });
   action.setEnabled(false);
-
+  // TEN9: Hide guides item if graph is disabled
+  action.isEnabled = isGraphEnabled;
   action = this.addAction('tooltips', function () {
     graph.tooltipHandler.setEnabled(!graph.tooltipHandler.isEnabled());
   });
@@ -1157,7 +1159,8 @@ Actions.prototype.init = function () {
   action.setSelectedCallback(function () {
     return graph.tooltipHandler.isEnabled();
   });
-
+  // TEN9: Hide tooltips item if graph is disabled
+  action.isEnabled = isGraphEnabled;
   action = this.addAction('collapseExpand', function () {
     var change = new ChangePageSetup(ui);
     change.ignoreColor = true;
@@ -1202,6 +1205,8 @@ Actions.prototype.init = function () {
   action.setSelectedCallback(function () {
     return graph.connectionArrowsEnabled;
   });
+  // TEN9: Hide connection arrows item if graph is disabled
+  action.isEnabled = isGraphEnabled;
   action = this.addAction(
     'connectionPoints',
     function () {
@@ -1216,6 +1221,8 @@ Actions.prototype.init = function () {
   action.setSelectedCallback(function () {
     return graph.connectionHandler.isEnabled();
   });
+  // TEN9: Hide connection points item if graph is disabled
+  action.isEnabled = isGraphEnabled;
   action = this.addAction('copyConnect', function () {
     graph.connectionHandler.setCreateTarget(!graph.connectionHandler.isCreateTarget());
     ui.fireEvent(new mxEventObject('copyConnectChanged'));
@@ -1822,27 +1829,44 @@ Actions.prototype.init = function () {
     null,
     Editor.ctrlKey + '+Shift+L',
   );
+  // TEN9: add isGraphEnabled property
+  action.isEnabled = isGraphEnabled;
   action.setToggleAction(true);
   action.setSelectedCallback(
     mxUtils.bind(this, function () {
       return this.layersWindow != null && this.layersWindow.window.isVisible();
     }),
   );
+
   action = this.addAction(
     'formatPanel',
-    mxUtils.bind(this, function () {
-      ui.toggleFormatPanel();
+    mxUtils.bind(this, function (val) {
+      ui.toggleFormatPanel(val);
     }),
     null,
     null,
     Editor.ctrlKey + '+Shift+P',
   );
+  // TEN9: add isGraphEnabled property
+  action.isEnabled = isGraphEnabled; // TEN9: add isGraphEnabled property
   action.setToggleAction(true);
   action.setSelectedCallback(
     mxUtils.bind(this, function () {
       return ui.formatWidth > 0;
     }),
   );
+
+  // TEN9: add sidebar toggle
+  action = this.addAction(
+    'sidebarPanel',
+    mxUtils.bind(this, function (val) {
+      ui.toggleSidebarPanel(val);
+    }),
+    null,
+    null,
+    null,
+  );
+
   action = this.addAction(
     'outline',
     mxUtils.bind(this, function () {
