@@ -42,6 +42,7 @@ const { mxSettings } = require('./Settings.js');
 const urlParams = {};
 const isLocalStorage = false;
 const RESOURCE_BASE = '../../../../public/resources/dia';
+var uiTheme = 'atlas';
 
 App = function(editor, container, lightbox)
 {
@@ -1012,7 +1013,7 @@ App.main = function(callback, createUi)
 		// be used if we know that all keys are defined in the language specific file)
 		mxResources.loadDefaultBundle = false;
 		doLoad(mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) ||
-			mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage));
+			mxResources.getSpecialBundle(RESOURCE_BASE, 'en-us'));
 	};
 
 	// Sends load event if configuration is requested and waits for configure message
@@ -1933,7 +1934,7 @@ App.prototype.getEditBlankXml = function()
 App.prototype.updateActionStates = function()
 {
 	EditorUi.prototype.updateActionStates.apply(this, arguments);
-
+	debugger
 	this.actions.get('revisionHistory').setEnabled(this.isRevisionHistoryEnabled());
 };
 
