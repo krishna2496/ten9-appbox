@@ -1139,7 +1139,8 @@ Actions.prototype.init = function () {
     return graph.isGridEnabled();
   });
   action.setEnabled(false);
-
+  // TEN9: add grid menu into isGraphEnabled property
+  action.isEnabled = isGraphEnabled;
   action = this.addAction('guides', function () {
     graph.graphHandler.guidesEnabled = !graph.graphHandler.guidesEnabled;
     ui.fireEvent(new mxEventObject('guidesEnabledChanged'));
@@ -1149,7 +1150,8 @@ Actions.prototype.init = function () {
     return graph.graphHandler.guidesEnabled;
   });
   action.setEnabled(false);
-
+  // TEN9: add guides menu into isGraphEnabled property
+  action.isEnabled = isGraphEnabled;
   action = this.addAction('tooltips', function () {
     graph.tooltipHandler.setEnabled(!graph.tooltipHandler.isEnabled());
   });
@@ -1157,7 +1159,7 @@ Actions.prototype.init = function () {
   action.setSelectedCallback(function () {
     return graph.tooltipHandler.isEnabled();
   });
-
+  action.isEnabled = isGraphEnabled;
   action = this.addAction('collapseExpand', function () {
     var change = new ChangePageSetup(ui);
     change.ignoreColor = true;
@@ -1202,6 +1204,8 @@ Actions.prototype.init = function () {
   action.setSelectedCallback(function () {
     return graph.connectionArrowsEnabled;
   });
+  // TEN9: add connectionArrows menu into isGraphEnabled property
+  action.isEnabled = isGraphEnabled;
   action = this.addAction(
     'connectionPoints',
     function () {
@@ -1216,6 +1220,8 @@ Actions.prototype.init = function () {
   action.setSelectedCallback(function () {
     return graph.connectionHandler.isEnabled();
   });
+  // TEN9: add connectionPoints menu into isGraphEnabled property
+  action.isEnabled = isGraphEnabled;
   action = this.addAction('copyConnect', function () {
     graph.connectionHandler.setCreateTarget(!graph.connectionHandler.isCreateTarget());
     ui.fireEvent(new mxEventObject('copyConnectChanged'));

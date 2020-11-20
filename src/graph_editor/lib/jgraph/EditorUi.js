@@ -2806,14 +2806,17 @@ EditorUi.prototype.toggleSidebarPanel = function (visible) {
 };
 
 EditorUi.prototype.previewToggleFormatPanel = function (visible) {
+  console.log('vis', visible);
   if (visible) {
     this.formatContainer.style.width = '0px';
     this.formatContainer.style.display = 'none';
     this.diagramContainer.style.right = '0px';
+    this.formatWidth = 0;
   } else {
     this.formatContainer.style.width = '240px';
     this.formatContainer.style.display = 'block';
     this.diagramContainer.style.right = '240px';
+    this.formatWidth = 240;
   }
 };
 
