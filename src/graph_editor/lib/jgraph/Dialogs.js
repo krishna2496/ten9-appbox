@@ -2125,27 +2125,6 @@ var LayersWindow = function (editorUi, x, y, w, h) {
         offset.y + insertLink.offsetHeight,
         evt,
       );
-
-      // // TEN9: TODO : Check Insert Link Menu positioning
-      // //       The rest of this function is from original/TEN9 updated
-      // menu.div.className += ' geMenubarMenu';
-      // menu.smartSeparators = true;
-      // menu.showDisabled = true;
-      // menu.autoExpand = true;
-
-      // // Disables autoexpand and destroys menu when hidden
-      // menu.hideMenu = mxUtils.bind(this, function () {
-      //   mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
-      //   menu.destroy();
-      // });
-
-      // // TEN9: Use updated getOffset that doesn't assume document.body as origin container
-      // // var offset = mxUtils.getOffset(insertLink);
-      // var offset = graphUtils.getOffset(editorUi.container, insertLink);
-      // menu.popup(offset.x, offset.y + insertLink.offsetHeight, null, evt);
-
-      // // Allows hiding by clicking on document
-      // editorUi.setCurrentMenu(menu);
     }
   });
 
