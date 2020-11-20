@@ -1139,7 +1139,7 @@ Actions.prototype.init = function () {
     return graph.isGridEnabled();
   });
   action.setEnabled(false);
-  // TEN9: add grid menu into isGraphEnabled property
+  // TEN9: Hide grid item if graph is disabled
   action.isEnabled = isGraphEnabled;
   action = this.addAction('guides', function () {
     graph.graphHandler.guidesEnabled = !graph.graphHandler.guidesEnabled;
@@ -1150,7 +1150,7 @@ Actions.prototype.init = function () {
     return graph.graphHandler.guidesEnabled;
   });
   action.setEnabled(false);
-  // TEN9: add guides menu into isGraphEnabled property
+  // TEN9: Hide guides item if graph is disabled
   action.isEnabled = isGraphEnabled;
   action = this.addAction('tooltips', function () {
     graph.tooltipHandler.setEnabled(!graph.tooltipHandler.isEnabled());
@@ -1159,6 +1159,7 @@ Actions.prototype.init = function () {
   action.setSelectedCallback(function () {
     return graph.tooltipHandler.isEnabled();
   });
+  // TEN9: Hide tooltips item if graph is disabled
   action.isEnabled = isGraphEnabled;
   action = this.addAction('collapseExpand', function () {
     var change = new ChangePageSetup(ui);
@@ -1204,7 +1205,7 @@ Actions.prototype.init = function () {
   action.setSelectedCallback(function () {
     return graph.connectionArrowsEnabled;
   });
-  // TEN9: add connectionArrows menu into isGraphEnabled property
+  // TEN9: Hide connection arrows item if graph is disabled
   action.isEnabled = isGraphEnabled;
   action = this.addAction(
     'connectionPoints',
@@ -1220,7 +1221,7 @@ Actions.prototype.init = function () {
   action.setSelectedCallback(function () {
     return graph.connectionHandler.isEnabled();
   });
-  // TEN9: add connectionPoints menu into isGraphEnabled property
+  // TEN9: Hide connection points item if graph is disabled
   action.isEnabled = isGraphEnabled;
   action = this.addAction('copyConnect', function () {
     graph.connectionHandler.setCreateTarget(!graph.connectionHandler.isCreateTarget());
@@ -1851,16 +1852,6 @@ Actions.prototype.init = function () {
   //     return ui.formatWidth > 0;
   //   }),
   // );
-  // TEN9: add format toggle for format panel
-  action = this.addAction(
-    'previewFormatPanel',
-    mxUtils.bind(this, function (val) {
-      ui.previewToggleFormatPanel(val);
-    }),
-    null,
-    null,
-    null,
-  );
   // TEN9: add sidebar toggle
   action = this.addAction(
     'sidebarPanel',

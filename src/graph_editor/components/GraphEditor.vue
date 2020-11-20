@@ -281,10 +281,11 @@ export default defineComponent({
       (val) => {
         const graphEnabled = !val;
 
-        const formatPanel = editorUi.value.actions.get('previewFormatPanel');
-        formatPanel.funct(!graphEnabled);
-
+        // Set the graph enabled state before anything else
         graph.value.setEnabled(graphEnabled);
+
+        const formatPanel = editorUi.value.actions.get('formatPanel');
+        formatPanel.funct(graphEnabled);
 
         const sidebarPanel = editorUi.value.actions.get('sidebarPanel');
         sidebarPanel.funct(!graphEnabled);
@@ -293,7 +294,7 @@ export default defineComponent({
         graph.value.tooltipHandler.hideTooltip();
 
         if (!graphEnabled) {
-          const layerWindow = document.getElementById('layer');
+          const layerWindow = document.getElementById('layers-window');
           if (layerWindow != null) {
             layerWindow.style.display = 'none';
           }
