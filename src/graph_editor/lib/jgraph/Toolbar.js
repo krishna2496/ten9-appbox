@@ -1524,13 +1524,24 @@ Toolbar.prototype.destroy = function () {
 
 Toolbar.prototype.setEnabled = function (enabled) {
   const connection = document.getElementById('toolbar-connection-button');
+  if (connection) {
+    connection.setEnabled(enabled);
+  }
+
   const waypoints = document.getElementById('toolbar-waypoints-button');
+  if (waypoints) {
+    waypoints.setEnabled(enabled);
+  }
+
   const insert = document.getElementById('toolbar-insert-button');
+  if (insert) {
+    insert.setEnabled(enabled);
+  }
+
   const table = document.getElementById('toolbar-table-button');
-  connection.setEnabled(enabled);
-  waypoints.setEnabled(enabled);
-  insert.setEnabled(enabled);
-  table.setEnabled(enabled);
+  if (table) {
+    table.setEnabled(enabled);
+  }
 };
 // TEN9: Added exports
 module.exports = {
