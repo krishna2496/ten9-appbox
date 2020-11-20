@@ -1828,14 +1828,16 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+Shift+L',
-  ).isEnabled = isGraphEnabled;
+  );
   // TEN9: add isGraphEnabled property
-  //action.setToggleAction(true);
-  // action.setSelectedCallback(
-  //   mxUtils.bind(this, function () {
-  //     return this.layersWindow != null && this.layersWindow.window.isVisible();
-  //   }),
-  // );
+  action.isEnabled = isGraphEnabled;
+  action.setToggleAction(true);
+  action.setSelectedCallback(
+    mxUtils.bind(this, function () {
+      return this.layersWindow != null && this.layersWindow.window.isVisible();
+    }),
+  );
+
   action = this.addAction(
     'formatPanel',
     mxUtils.bind(this, function (val) {
@@ -1844,14 +1846,16 @@ Actions.prototype.init = function () {
     null,
     null,
     Editor.ctrlKey + '+Shift+P',
-  ).isEnabled = isGraphEnabled;
+  );
   // TEN9: add isGraphEnabled property
-  // action.setToggleAction(true);
-  // action.setSelectedCallback(
-  //   mxUtils.bind(this, function () {
-  //     return ui.formatWidth > 0;
-  //   }),
-  // );
+  action.isEnabled = isGraphEnabled; // TEN9: add isGraphEnabled property
+  action.setToggleAction(true);
+  action.setSelectedCallback(
+    mxUtils.bind(this, function () {
+      return ui.formatWidth > 0;
+    }),
+  );
+
   // TEN9: add sidebar toggle
   action = this.addAction(
     'sidebarPanel',
@@ -1862,12 +1866,7 @@ Actions.prototype.init = function () {
     null,
     null,
   );
-  // action.setToggleAction(true);
-  // action.setSelectedCallback(
-  //   mxUtils.bind(this, function () {
-  //     return ui.sidebar.container.style.width != '0px';
-  //   }),
-  // );
+
   action = this.addAction(
     'outline',
     mxUtils.bind(this, function () {
