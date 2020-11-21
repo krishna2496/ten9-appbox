@@ -1071,6 +1071,7 @@ Actions.prototype.init = function () {
       }
     }),
   );
+
   this.put(
     'customZoom',
     new Action(
@@ -1097,7 +1098,7 @@ Actions.prototype.init = function () {
       Editor.ctrlKey + '+0',
     ),
   );
-  this.addAction(
+  action = this.addAction(
     'pageScale...',
     mxUtils.bind(this, function () {
       var dlg = new FilenameDialog(
@@ -1121,6 +1122,8 @@ Actions.prototype.init = function () {
       dlg.init();
     }),
   );
+  // TEN9: Add isEnabled to show/hide when graph is enabled/disabled
+  action.isEnabled = isGraphEnabled;
 
   // Option actions
   var action = null;
@@ -1187,6 +1190,7 @@ Actions.prototype.init = function () {
       ui.setPageVisible(!graph.pageVisible);
     }),
   );
+  action.isEnabled = isGraphEnabled;
   action.setToggleAction(true);
   action.setSelectedCallback(function () {
     return graph.pageVisible;
@@ -1866,6 +1870,7 @@ Actions.prototype.init = function () {
     null,
     null,
   );
+  action.setToggleAction(true);
 
   action = this.addAction(
     'outline',

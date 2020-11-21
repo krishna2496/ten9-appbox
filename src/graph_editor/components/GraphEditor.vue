@@ -75,6 +75,36 @@ export default defineComponent({
       });
     }
 
+    function setGraphEnabled(enabled: boolean) {
+      // Set the graph enabled state before anything else
+      graph.value.setEnabled(enabled);
+
+      const formatPanel = editorUi.value.actions.get('formatPanel');
+      formatPanel.funct(enabled);
+
+      const sidebarPanel = editorUi.value.actions.get('sidebarPanel');
+      sidebarPanel.funct(enabled);
+
+      graph.value.popupMenuHandler.hideMenu();
+      graph.value.tooltipHandler.hideTooltip();
+
+      if (!enabled) {
+        const layerWindow = document.getElementById('layers-window');
+        if (layerWindow != null) {
+          layerWindow.style.display = 'none';
+        }
+      }
+      editorUi.value.toolbar.setEnabled(enabled);
+
+      const undo = editorUi.value.actions.get('undo');
+      undo.setEnabled(enabled);
+
+      const redo = editorUi.value.actions.get('redo');
+      redo.setEnabled(enabled);
+
+      editorUi.value.resetHorizontalScrollbar();
+    }
+
     onMounted(() => {
       mxResources.loadDefaultBundle = false;
       mxResources.parse(resourcesFile);
@@ -93,12 +123,7 @@ export default defineComponent({
       });
 
       ctx.root.$nextTick(() => {
-        // Toggle the format panel to workaround a graph
-        // initialization issue.  Doing this avoids a bug
-        // where the view jumps after adding first shape.
-        const formatPanel = editorUi.value.actions.get('formatPanel');
-        formatPanel.funct(); // toggle
-        formatPanel.funct(); // toggle back
+        setGraphEnabled(!props.previewMode);
       });
     });
 
@@ -279,35 +304,7 @@ export default defineComponent({
     watch(
       () => props.previewMode,
       (val) => {
-        const graphEnabled = !val;
-
-        // Set the graph enabled state before anything else
-        graph.value.setEnabled(graphEnabled);
-
-        const formatPanel = editorUi.value.actions.get('formatPanel');
-        formatPanel.funct(graphEnabled);
-
-        const sidebarPanel = editorUi.value.actions.get('sidebarPanel');
-        sidebarPanel.funct(!graphEnabled);
-
-        graph.value.popupMenuHandler.hideMenu();
-        graph.value.tooltipHandler.hideTooltip();
-
-        if (!graphEnabled) {
-          const layerWindow = document.getElementById('layers-window');
-          if (layerWindow != null) {
-            layerWindow.style.display = 'none';
-          }
-        }
-        editorUi.value.toolbar.setEnabled(graphEnabled);
-
-        const undo = editorUi.value.actions.get('undo');
-        undo.setEnabled(graphEnabled);
-
-        const redo = editorUi.value.actions.get('redo');
-        redo.setEnabled(graphEnabled);
-
-        editorUi.value.resetHorizontalScrollbar();
+        setGraphEnabled(!val);
       },
     );
 
