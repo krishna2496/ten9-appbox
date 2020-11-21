@@ -2794,7 +2794,7 @@ EditorUi.prototype.toggleFormatPanel = function (visible) {
 
 // TEN9: Add sidebar toggle function
 EditorUi.prototype.toggleSidebarPanel = function (visible) {
-  if (visible) {
+  if (!visible) {
     this.sidebar.container.style.width = '0px';
     this.hsplit.style.display = 'none';
     this.diagramContainer.style.left = '0px';
