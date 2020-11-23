@@ -1694,4 +1694,5 @@ Menu.prototype.execute = function(menu, parent) {
 // TEN9: Added exports
 module.exports = {
   Menus,
+  Menu,
 };

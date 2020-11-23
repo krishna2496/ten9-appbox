@@ -13,6 +13,7 @@
     "@vue/composition-api": "^1.0.0-beta.17",
     "bootstrap-vue": "^2.17.3",
     "core-js": "^3.6.5",
+    "node-sass": "4.14.1",
     "vue": "^2.6.11"
   },
   "devDependencies": {
@@ -54,7 +55,6 @@
     "html-webpack-plugin": "^4.5.0",
     "mini-css-extract-plugin": "^0.11.2",
     "mxgraph-type-definitions": "^1.0.4",
-    "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "portfinder": "^1.0.28",
     "prettier": "^1.19.1",

@@ -28,6 +28,8 @@ const {
   mxUtils,
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
+const { Action } = require('../jgraph/Actions.js');
+const { Menu } = require('../jgraph/Menus.js');
 
 const urlParams = {};
 const isLocalStorage = false;

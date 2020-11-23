@@ -22,10 +22,10 @@ const {
   mxEvent,
   mxEventObject,
   mxEventSource,
-	mxGraphModel,
+  mxGraph,
   mxImage,
-	mxKeyHandler,
-	mxLanguage,
+  mxKeyHandler,
+  mxLanguage,
   mxMorphing,
   mxObjectCodec,
   mxObjectIdentity,
@@ -41,6 +41,7 @@ const {
 const { mxSettings } = require('./Settings.js');
 const urlParams = {};
 const isLocalStorage = false;
+var IMAGE_PATH = '../../../../public/images';
 const RESOURCE_BASE = '../../../../public/resources/dia';
 var uiTheme = 'atlas';
 
@@ -1324,36 +1325,38 @@ App.prototype.init = function()
 	/**
 	 * Creates github client.
 	 */
-	this.gitHub = (!mxClient.IS_IE || document.documentMode == 10 ||
-			mxClient.IS_IE11 || mxClient.IS_EDGE) &&
-			(urlParams['gh'] != '0' && (urlParams['embed'] != '1' ||
-			urlParams['gh'] == '1')) ? new GitHubClient(this) : null;
+	// TEN9
+	// this.gitHub = (!mxClient.IS_IE || document.documentMode == 10 ||
+	// 		mxClient.IS_IE11 || mxClient.IS_EDGE) &&
+	// 		(urlParams['gh'] != '0' && (urlParams['embed'] != '1' ||
+	// 		urlParams['gh'] == '1')) ? new GitHubClient(this) : null;
 	
-	if (this.gitHub != null)
-	{
-		this.gitHub.addListener('userChanged', mxUtils.bind(this, function()
-		{
-			this.updateUserElement();
-			this.restoreLibraries();
-		}))
-	}
+	// if (this.gitHub != null)
+	// {
+	// 	this.gitHub.addListener('userChanged', mxUtils.bind(this, function()
+	// 	{
+	// 		this.updateUserElement();
+	// 		this.restoreLibraries();
+	// 	}))
+	// }
 	
 	/**
 	 * Creates gitlab client.
 	 */
-	this.gitLab = (!mxClient.IS_IE || document.documentMode == 10 ||
-		mxClient.IS_IE11 || mxClient.IS_EDGE) &&
-		(urlParams['gl'] != '0' && (urlParams['embed'] != '1' ||
-		urlParams['gl'] == '1')) ? new GitLabClient(this) : null;
+	// TEN9
+	// this.gitLab = (!mxClient.IS_IE || document.documentMode == 10 ||
+	// 	mxClient.IS_IE11 || mxClient.IS_EDGE) &&
+	// 	(urlParams['gl'] != '0' && (urlParams['embed'] != '1' ||
+	// 	urlParams['gl'] == '1')) ? new GitLabClient(this) : null;
 
-	if (this.gitLab != null)
-	{
-		this.gitLab.addListener('userChanged', mxUtils.bind(this, function()
-		{
-			this.updateUserElement();
-			this.restoreLibraries();
-		}));
-	}
+	// if (this.gitLab != null)
+	// {
+	// 	this.gitLab.addListener('userChanged', mxUtils.bind(this, function()
+	// 	{
+	// 		this.updateUserElement();
+	// 		this.restoreLibraries();
+	// 	}));
+	// }
 
 	/**
 	 * Lazy-loading for individual backends
@@ -1934,7 +1937,6 @@ App.prototype.getEditBlankXml = function()
 App.prototype.updateActionStates = function()
 {
 	EditorUi.prototype.updateActionStates.apply(this, arguments);
-	debugger
 	this.actions.get('revisionHistory').setEnabled(this.isRevisionHistoryEnabled());
 };
 
@@ -2624,8 +2626,9 @@ App.prototype.load = function()
 	// Checks if we're running in embedded mode
 	if (urlParams['embed'] != '1')
 	{
-		if (this.spinner.spin(document.body, mxResources.get('starting')))
-		{
+		// TEN9
+		// if (this.spinner.spin(document.body, mxResources.get('starting')))
+		// {
 			try
 			{
 				this.stateArg = (urlParams['state'] != null && this.drive != null) ? JSON.parse(decodeURIComponent(urlParams['state'])) : null;
@@ -2670,7 +2673,7 @@ App.prototype.load = function()
 					}));
 				}
 			}
-		}
+		//}
 	}
 	else
 	{
@@ -2799,7 +2802,8 @@ App.prototype.start = function()
 	}
 	
 	this.restoreLibraries();
-	this.spinner.stop();
+	// TEN9
+	//this.spinner.stop();
 
 	try
 	{
@@ -3384,14 +3388,15 @@ App.prototype.showSplash = function(force)
 	{
 		var rowLimit = (serviceCount == 4) ? 2 : 3;
 		
-		var dlg = new StorageDialog(this, mxUtils.bind(this, function()
-		{
-			this.hideDialog();
-			showSecondDialog();
-		}), rowLimit);
+		// TEN9
+		// var dlg = new StorageDialog(this, mxUtils.bind(this, function()
+		// {
+		// 	this.hideDialog();
+		// 	showSecondDialog();
+		// }), rowLimit);
 		
-		this.showDialog(dlg.container, (rowLimit < 3) ? 200 : 300,
-			((serviceCount > 3) ? 320 : 210), true, false);
+		// this.showDialog(dlg.container, (rowLimit < 3) ? 200 : 300,
+		// 	((serviceCount > 3) ? 320 : 210), true, false);
 	}
 	else if (urlParams['create'] == null)
 	{
