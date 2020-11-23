@@ -29,13 +29,15 @@ const { Dialog, PageSetupDialog } = require('./Editor');
 
 // TEN9: Importing ChangePageSetup here is a circular dependency so we'll pass it in instead
 var ChangePageSetup = {};
+var ChangeGridColor = {};
 
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
 
-Format = function (editorUi, container, changePageSetupClass) {
+Format = function (editorUi, container, changePageSetupClass, changeGridColorClass) {
   ChangePageSetup = changePageSetupClass;
+  ChangeGridColor = changeGridColorClass;
   this.editorUi = editorUi;
   this.container = container;
 };

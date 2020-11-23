@@ -2487,8 +2487,6 @@ var LayersWindow = function (editorUi, x, y, w, h) {
   this.window.setResizable(true);
   this.window.setClosable(true);
   this.window.setVisible(true);
-  // TEN9: add id to manage the dialog toggle on preview mode
-  this.window.div.id = 'layers-window';
 
   this.init = function () {
     listDiv.scrollTop = listDiv.scrollHeight - listDiv.clientHeight;
