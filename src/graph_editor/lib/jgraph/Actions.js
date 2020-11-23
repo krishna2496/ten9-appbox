@@ -245,7 +245,25 @@ Actions.prototype.init = function () {
       }
     }
   });
+  // TEN9: Add copyStyle and copy paste in format panel
+  var currentStyle = null;
 
+  this.addAction('copyStyle', function()
+		{
+			if (graph.isEnabled() && !graph.isSelectionEmpty())
+			{
+				currentStyle = graph.copyStyle(graph.getSelectionCell())
+			}
+		}, null, null, Editor.ctrlKey + '+Shift+C');
+
+		this.addAction('pasteStyle', function()
+		{
+			if (graph.isEnabled() && !graph.isSelectionEmpty() && currentStyle != null)
+			{
+				graph.pasteStyle(currentStyle, graph.getSelectionCells())
+			}
+    }, null, null, Editor.ctrlKey + '+Shift+V');
+    // 
   this.addAction(
     'copySize',
     function (evt) {
