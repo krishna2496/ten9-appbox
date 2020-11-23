@@ -18,7 +18,8 @@
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
-import { defineComponent, ref, onMounted, watch } from '@vue/composition-api';
+
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api';
 
 const {
   mxClipboard,
@@ -75,6 +76,18 @@ export default defineComponent({
       });
     }
 
+    function closeOpenWindows() {
+      const { actions } = editorUi.value;
+
+      if (actions.layersWindow?.window.isVisible()) {
+        actions.layersWindow.window.setVisible(false);
+      }
+
+      if (actions.outlineWindow?.window.isVisible()) {
+        actions.outlineWindow.window.setVisible(false);
+      }
+    }
+
     function setGraphEnabled(enabled: boolean) {
       // Set the graph enabled state before anything else
       graph.value.setEnabled(enabled);
@@ -89,11 +102,9 @@ export default defineComponent({
       graph.value.tooltipHandler.hideTooltip();
 
       if (!enabled) {
-        const layerWindow = document.getElementById('layers-window');
-        if (layerWindow != null) {
-          layerWindow.style.display = 'none';
-        }
+        closeOpenWindows();
       }
+
       editorUi.value.toolbar.setEnabled(enabled);
 
       const undo = editorUi.value.actions.get('undo');
@@ -125,6 +136,10 @@ export default defineComponent({
       ctx.root.$nextTick(() => {
         setGraphEnabled(!props.previewMode);
       });
+    });
+
+    onBeforeUnmount(() => {
+      closeOpenWindows();
     });
 
     function getXmlData(): string {

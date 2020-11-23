@@ -1921,6 +1921,8 @@ Actions.prototype.init = function () {
     Editor.ctrlKey + '+Shift+O',
   );
 
+  // TEN9: add isGraphEnabled property
+  action.isEnabled = isGraphEnabled;
   action.setToggleAction(true);
   action.setSelectedCallback(
     mxUtils.bind(this, function () {

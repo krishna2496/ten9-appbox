@@ -3943,7 +3943,7 @@ EditorUi.prototype.createSidebar = function (container) {
  */
 EditorUi.prototype.createFormat = function (container) {
   // TEN9: To avoid import cycles
-  return new Format(this, container, ChangePageSetup);
+  return new Format(this, container, ChangePageSetup, ChangeGridColor);
 };
 
 /**
