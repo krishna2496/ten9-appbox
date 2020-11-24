@@ -43,9 +43,8 @@ export default defineComponent({
     GraphEditor: HTMLDivElement,
   },
 
-  setup(props, ctx) {
-    console.log('1 ', ctx);
-    console.log('2 ', props);
+  setup(_props,ctx) {
+
     const logs = ref([]);
 
     const editor = ref(null);
