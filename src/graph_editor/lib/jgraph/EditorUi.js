@@ -2796,11 +2796,13 @@ EditorUi.prototype.toggleFormatPanel = function (visible) {
 EditorUi.prototype.toggleSidebarPanel = function (visible) {
   if (!visible) {
     this.sidebar.container.style.width = '0px';
+    this.sidebar.container.style.display = 'none';
     this.hsplit.style.display = 'none';
     this.diagramContainer.style.left = '0px';
   } else {
     this.sidebar.container.style.width = '212px';
     this.hsplit.style.display = 'block';
+    this.sidebar.container.style.display = 'block';
     this.diagramContainer.style.left = '224px';
   }
 };
