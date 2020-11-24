@@ -1158,6 +1158,9 @@ Actions.prototype.init = function () {
     function () {
       graph.setGridEnabled(!graph.isGridEnabled());
       ui.fireEvent(new mxEventObject('gridEnabledChanged'));
+      // TEN9: Add custom graph change event for logs
+      const graphChanged = new Event('graphChanged');
+      document.dispatchEvent(graphChanged);
     },
     null,
     null,
@@ -1173,6 +1176,9 @@ Actions.prototype.init = function () {
   action = this.addAction('guides', function () {
     graph.graphHandler.guidesEnabled = !graph.graphHandler.guidesEnabled;
     ui.fireEvent(new mxEventObject('guidesEnabledChanged'));
+    // TEN9: Add custom graph change event for logs
+    const graphChanged = new Event('graphChanged');
+    document.dispatchEvent(graphChanged);
   });
   action.setToggleAction(true);
   action.setSelectedCallback(function () {
@@ -1183,6 +1189,9 @@ Actions.prototype.init = function () {
   action.isEnabled = isGraphEnabled;
   action = this.addAction('tooltips', function () {
     graph.tooltipHandler.setEnabled(!graph.tooltipHandler.isEnabled());
+    // TEN9: Add custom graph change event for logs
+    const graphChanged = new Event('graphChanged');
+    document.dispatchEvent(graphChanged);
   });
   action.setToggleAction(true);
   action.setSelectedCallback(function () {

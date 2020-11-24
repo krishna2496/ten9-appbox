@@ -120,6 +120,16 @@ export default defineComponent({
       }
     }
 
+    function onGraphChanged() {
+      const xmlData = editor.value.getXmlData();
+      const fileLogEvent: FileLogEvent = {
+        title: 'Graph Changed',
+        size: xmlData.length,
+        lastModified: Date.now(),
+      };
+      addLog(fileLogEvent);
+    }
+
     onMounted(() => {
       updateAppHeight();
       window.addEventListener('resize', onResize);
@@ -188,21 +198,15 @@ export default defineComponent({
           action.funct();
         }
       };
+
+      document.addEventListener('graphChanged', () => {
+        onGraphChanged();
+      });
     });
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
     });
-
-    function onGraphChanged() {
-      const xmlData = editor.value.getXmlData();
-      const fileLogEvent: FileLogEvent = {
-        title: 'Graph Changed',
-        size: xmlData.length,
-        lastModified: Date.now(),
-      };
-      addLog(fileLogEvent);
-    }
 
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
