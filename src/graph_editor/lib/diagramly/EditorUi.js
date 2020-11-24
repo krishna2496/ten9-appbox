@@ -16461,7 +16461,7 @@ EditorUi.initMinimalTheme = function()
 (function()
 {
 	var initialized = false;
-	
+	var uiTheme = 'atlas'
 	// ChromeApp has async local storage
 	if (uiTheme == 'min' && !initialized && !mxClient.IS_CHROMEAPP)
 	{
