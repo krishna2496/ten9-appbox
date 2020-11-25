@@ -43,7 +43,7 @@ export default defineComponent({
     GraphEditor: HTMLDivElement,
   },
 
-  setup(_props, ctx) {
+  setup() {
     const logs = ref([]);
 
     const editor = ref(null);
@@ -57,10 +57,6 @@ export default defineComponent({
       const bottomMargin = 5;
       const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
       container.style.height = `${newHeight}px`;
-
-      if (previewMode.value) {
-        ctx['refs'].editor.setGraphEnabled(!previewMode.value);
-      }
     }
 
     const debounceTime = 100;

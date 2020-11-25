@@ -1047,6 +1047,9 @@ EditorUi.prototype.lightboxVerticalDivider = 4;
  */
 EditorUi.prototype.hsplitClickEnabled = false;
 
+// TEN9: Add Preview Mode to check the diagram position
+EditorUi.prototype.previewMode = false;
+
 /**
  * Installs the listeners to update the action states.
  */
@@ -2794,6 +2797,7 @@ EditorUi.prototype.toggleFormatPanel = function (visible) {
 
 // TEN9: Add sidebar toggle function
 EditorUi.prototype.toggleSidebarPanel = function (visible) {
+  this.previewMode = visible;
   if (!visible) {
     this.sidebar.container.style.width = '0px';
     this.sidebar.container.style.display = 'none';
@@ -3698,7 +3702,12 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
 
   var diagContOffset = this.getDiagramContainerOffset();
   var contLeft = this.hsplit.parentNode != null ? effHsplitPosition + this.splitSize : 0;
-  this.diagramContainer.style.left = contLeft + diagContOffset.x + 'px';
+
+  // TEN9: check if preview mode is on then don't change the diagramContainer position
+  if (this.previewMode) {
+    this.diagramContainer.style.left = contLeft + diagContOffset.x + 'px';
+  }
+
   this.diagramContainer.style.top = tmp + diagContOffset.y + 'px';
   this.footerContainer.style.height = this.footerHeight + 'px';
   this.hsplit.style.top = this.sidebarContainer.style.top;
