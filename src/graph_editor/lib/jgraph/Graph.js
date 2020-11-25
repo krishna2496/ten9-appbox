@@ -3745,7 +3745,7 @@ Graph.prototype.zoom = function (factor, center) {
 
   mxGraph.prototype.zoom.apply(this, arguments);
 
-  // TEN9: Add custom graph change event for logs
+  // TEN9: Add custom graph change event
   const graphChanged = new Event('graphChanged');
   document.dispatchEvent(graphChanged);
 };

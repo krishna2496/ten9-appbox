@@ -1158,7 +1158,7 @@ Actions.prototype.init = function () {
     function () {
       graph.setGridEnabled(!graph.isGridEnabled());
       ui.fireEvent(new mxEventObject('gridEnabledChanged'));
-      // TEN9: Add custom graph change event for logs
+      // TEN9: Add custom graph change event
       const graphChanged = new Event('graphChanged');
       document.dispatchEvent(graphChanged);
     },
@@ -1176,7 +1176,7 @@ Actions.prototype.init = function () {
   action = this.addAction('guides', function () {
     graph.graphHandler.guidesEnabled = !graph.graphHandler.guidesEnabled;
     ui.fireEvent(new mxEventObject('guidesEnabledChanged'));
-    // TEN9: Add custom graph change event for logs
+    // TEN9: Add custom graph change event
     const graphChanged = new Event('graphChanged');
     document.dispatchEvent(graphChanged);
   });
@@ -1189,7 +1189,7 @@ Actions.prototype.init = function () {
   action.isEnabled = isGraphEnabled;
   action = this.addAction('tooltips', function () {
     graph.tooltipHandler.setEnabled(!graph.tooltipHandler.isEnabled());
-    // TEN9: Add custom graph change event for logs
+    // TEN9: Add custom graph change event
     const graphChanged = new Event('graphChanged');
     document.dispatchEvent(graphChanged);
   });
@@ -1223,7 +1223,7 @@ Actions.prototype.init = function () {
     'pageView',
     mxUtils.bind(this, function () {
       ui.setPageVisible(!graph.pageVisible);
-      // TEN9: Add custom graph change event for logs
+      // TEN9: Add custom graph change event
       const graphChanged = new Event('graphChanged');
       document.dispatchEvent(graphChanged);
     }),
