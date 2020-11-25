@@ -1223,6 +1223,9 @@ Actions.prototype.init = function () {
     'pageView',
     mxUtils.bind(this, function () {
       ui.setPageVisible(!graph.pageVisible);
+      // TEN9: Add custom graph change event for logs
+      const graphChanged = new Event('graphChanged');
+      document.dispatchEvent(graphChanged);
     }),
   );
   action.isEnabled = isGraphEnabled;
