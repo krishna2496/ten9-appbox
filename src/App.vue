@@ -198,10 +198,6 @@ export default defineComponent({
           action.funct();
         }
       };
-
-      document.addEventListener('graphChanged', () => {
-        onGraphChanged();
-      });
     });
 
     onBeforeUnmount(() => {

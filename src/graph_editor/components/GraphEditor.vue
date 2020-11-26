@@ -136,6 +136,10 @@ export default defineComponent({
       ctx.root.$nextTick(() => {
         setGraphEnabled(!props.previewMode);
       });
+
+      document.addEventListener('graphChanged', () => {
+        ctx.emit('graph-changed');
+      });
     });
 
     onBeforeUnmount(() => {

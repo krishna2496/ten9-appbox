@@ -2683,6 +2683,9 @@ Graph.prototype.isLabelMovable = function (cell) {
 Graph.prototype.setGridSize = function (value) {
   this.gridSize = value;
   this.fireEvent(new mxEventObject('gridSizeChanged'));
+  // TEN9: Add custom graph change event
+  const graphChanged = new Event('graphChanged');
+  document.dispatchEvent(graphChanged);
 };
 
 /**
