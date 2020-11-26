@@ -152,7 +152,10 @@ export default defineComponent({
       graph.value.removeCells(layers);
 
       // Import the XML data
-      editorUi.value.importXml(data, null, null, false, false, true);
+      let doc = mxUtils.parseXml(data);
+      editor.value.setGraphXml(doc.documentElement);
+      editor.value.setModified(false);
+      editor.value.undoManager.clear();
 
       // Reset the view after loading a file
       graph.value.zoomTo(1);
