@@ -39,10 +39,6 @@ export default defineComponent({
     OpenFile,
   },
 
-  $refs: {
-    GraphEditor: HTMLDivElement,
-  },
-
   setup() {
     const logs = ref([]);
 

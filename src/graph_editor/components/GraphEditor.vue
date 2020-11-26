@@ -95,8 +95,7 @@ export default defineComponent({
       const formatPanel = editorUi.value.actions.get('formatPanel');
       formatPanel.funct(enabled);
 
-      const sidebarPanel = editorUi.value.actions.get('sidebarPanel');
-      sidebarPanel.funct(enabled);
+      editorUi.value.setPreviewMode(enabled);
 
       graph.value.popupMenuHandler.hideMenu();
       graph.value.tooltipHandler.hideTooltip();

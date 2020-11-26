@@ -1050,6 +1050,12 @@ EditorUi.prototype.hsplitClickEnabled = false;
 // TEN9: Add Preview Mode to check the diagram position
 EditorUi.prototype.previewMode = false;
 
+// TEN9: Add Preview Mode enable/disable function
+EditorUi.prototype.setPreviewMode = function (enabled) {
+  this.previewMode = enabled;
+  this.toggleSidebarPanel(enabled);
+};
+
 /**
  * Installs the listeners to update the action states.
  */

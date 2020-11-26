@@ -1886,18 +1886,6 @@ Actions.prototype.init = function () {
     }),
   );
 
-  // TEN9: add sidebar toggle
-  action = this.addAction(
-    'sidebarPanel',
-    mxUtils.bind(this, function (val) {
-      ui.toggleSidebarPanel(val);
-    }),
-    null,
-    null,
-    null,
-  );
-  action.setToggleAction(true);
-
   action = this.addAction(
     'outline',
     mxUtils.bind(this, function () {
