@@ -46,6 +46,8 @@ const { Editor, Dialog, ErrorDialog, FilenameDialog } = require('./Editor.js');
 const { Actions } = require('./Actions.js');
 const { Sidebar } = require('./Sidebar.js');
 require('./Shapes.js');
+require('../diagramly/sidebar/Sidebar.js');
+require('../diagramly/sidebar/Sidebar-Shapes.js');
 const { Format } = require('./Format.js');
 const { Menus } = require('./Menus.js');
 const { Toolbar } = require('./Toolbar.js');
@@ -1018,7 +1020,8 @@ EditorUi.prototype.footerHeight = 0;
 /**
  * Specifies the height of the optional sidebarFooterContainer. Default is 34.
  */
-EditorUi.prototype.sidebarFooterHeight = 34;
+// TEN9: Set to 38 like draw.io
+EditorUi.prototype.sidebarFooterHeight = 38;
 
 /**
  * Specifies the position of the horizontal split bar. Default is 240 or 118 for
@@ -2811,8 +2814,8 @@ EditorUi.prototype.toggleSidebarPanel = function (visible) {
     this.diagramContainer.style.left = '0px';
   } else {
     this.sidebar.container.style.width = '212px';
-    this.hsplit.style.display = 'block';
     this.sidebar.container.style.display = 'block';
+    this.hsplit.style.display = 'block';
     this.diagramContainer.style.left = '224px';
   }
 };
@@ -3699,6 +3702,10 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
     this.sidebarFooterContainer.style.bottom = bottom + 'px';
   }
 
+  // this.sidebarContainer.style.height = this.diagramContainer.clientHeight - (this.diagramContainer.offsetHeight - this.diagramContainer.clientHeight) - this.sidebarFooterHeight + 'px';
+  this.sidebarContainer.style.height =
+    this.diagramContainer.offsetHeight - this.sidebarFooterHeight + 'px';
+
   var fw = this.format != null ? this.formatWidth : 0;
   this.sidebarContainer.style.top = tmp + 'px';
   this.sidebarContainer.style.width = effHsplitPosition + 'px';
@@ -3826,11 +3833,48 @@ EditorUi.prototype.createDivs = function () {
   }
 };
 
+// TEN9: Bring in sidebar footer
 /**
- * Hook for sidebar footer container. This implementation returns null.
+ * Hook for sidebar footer container.
  */
 EditorUi.prototype.createSidebarFooterContainer = function () {
-  return null;
+  // TEN9: add add more shaep div in footer
+  //return null;
+  var div = this.createDiv('geSidebarContainer geSidebarFooter');
+  div.style.position = 'absolute';
+  div.style.overflow = 'hidden';
+
+  var elt2 = document.createElement('a');
+  elt2.className = 'geTitle';
+  elt2.style.color = '#DF6C0C';
+  elt2.style.fontWeight = 'bold';
+  elt2.style.height = '100%';
+  elt2.style.paddingTop = '9px';
+  elt2.innerHTML = '<span style="font-size:18px;margin-right:5px;">+</span>';
+
+  mxUtils.write(elt2, mxResources.get('moreShapes') + '...');
+
+  // Prevents focus
+  mxEvent.addListener(
+    elt2,
+    mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
+    mxUtils.bind(this, function (evt) {
+      evt.preventDefault();
+    }),
+  );
+
+  mxEvent.addListener(
+    elt2,
+    'click',
+    mxUtils.bind(this, function (evt) {
+      this.actions.get('shapes').funct();
+      mxEvent.consume(evt);
+    }),
+  );
+
+  div.appendChild(elt2);
+
+  return div;
 };
 
 /**

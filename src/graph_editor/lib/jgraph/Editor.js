@@ -26,6 +26,7 @@ const {
   mxGraph,
   mxGraphHandler,
   mxGraphView,
+  mxMarker,
   mxMouseEvent,
   mxPoint,
   mxPolyline,
@@ -35,6 +36,7 @@ const {
   mxRectangle,
   mxRectangleShape,
   mxResources,
+  mxStencilRegistry,
   mxUndoManager,
   mxUtils,
 } = require('./mxClient.js');

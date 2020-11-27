@@ -18,7 +18,6 @@
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
-
 import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api';
 
 const {
@@ -50,6 +49,10 @@ export default defineComponent({
   name: 'GraphEditor',
 
   props: {
+    shapeLibraries: {
+      required: true,
+      type: String,
+    },
     previewMode: Boolean,
   },
 
@@ -61,6 +64,8 @@ export default defineComponent({
     const editor = ref(null);
 
     const graph = ref(null);
+
+    const sidebar = ref(null);
 
     function loadImage(url: string): Promise<HTMLImageElement> {
       return new Promise((resolve) => {
@@ -74,6 +79,14 @@ export default defineComponent({
         };
         image.src = url;
       });
+    }
+
+    function fitToWindow() {
+      // TODO: use fitWindow instead of resetView when debugged and working
+      // const fitWindowAction = editorUi.value.actions.get('fitWindow');
+      // fitWindowAction.funct();
+      const resetViewAction = editorUi.value.actions.get('resetView');
+      resetViewAction.funct();
     }
 
     function closeOpenWindows() {
@@ -103,7 +116,6 @@ export default defineComponent({
       if (!enabled) {
         closeOpenWindows();
       }
-
       editorUi.value.toolbar.setEnabled(enabled);
 
       const undo = editorUi.value.actions.get('undo');
@@ -113,6 +125,8 @@ export default defineComponent({
       redo.setEnabled(enabled);
 
       editorUi.value.resetHorizontalScrollbar();
+
+      fitToWindow();
     }
 
     onMounted(() => {
@@ -127,19 +141,37 @@ export default defineComponent({
       editorUi.value = createEditorUi(createEditor(themes), container.value);
       editor.value = editorUi.value.editor;
       graph.value = editor.value.graph;
+      sidebar.value = editorUi.value.sidebar;
+
+      // Add stencils to the sidebar
+      sidebar.value.showEntries(props.shapeLibraries);
 
       graph.value.model.addListener(mxEvent.CHANGE, () => {
         ctx.emit('graph-changed');
       });
 
+      editorUi.value.container.addEventListener('librariesChanged', (event: CustomEvent) => {
+        ctx.emit('shape-libraries-changed', event.detail);
+      });
+
       ctx.root.$nextTick(() => {
         setGraphEnabled(!props.previewMode);
+        window.setTimeout(() => {
+          fitToWindow();
+        }, 0);
       });
     });
 
     onBeforeUnmount(() => {
       closeOpenWindows();
     });
+
+    watch(
+      () => props.shapeLibraries,
+      (val: string) => {
+        sidebar.value.showEntries(val);
+      },
+    );
 
     function getXmlData(): string {
       return mxUtils.getXml(editor.value.getGraphXml());
@@ -154,8 +186,7 @@ export default defineComponent({
       editorUi.value.importXml(data, null, null, false, false, true);
 
       // Reset the view after loading a file
-      graph.value.zoomTo(1);
-      editorUi.value.resetScrollbars();
+      fitToWindow();
     }
 
     function pasteShapes(doc: XMLDocument) {
