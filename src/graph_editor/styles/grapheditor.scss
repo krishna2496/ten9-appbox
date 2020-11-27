@@ -371,6 +371,8 @@ button {
 
 .geSidebarFooter {
   border-top: 1px solid #dadce0;
+  // TEN9: for add more shapes button
+  height: 38px !important;
 }
 
 .geFormatSection {
@@ -753,6 +755,8 @@ div.mxWindow {
   z-index: 2;
   // TEN9: Adding box-sizing explicitly
   box-sizing: content-box;
+  // TEN9: for add more shape dailog
+  width: 680px !important;
 }
 
 .geDialog textarea {

@@ -36,6 +36,7 @@ const {
   OpenDialog,
   OutlineWindow,
   TextareaDialog,
+  MoreShapesDialog,
 } = require('./Dialogs');
 
 const { copyTextToClipboard } = require('./graph_utils');
@@ -1151,6 +1152,18 @@ Actions.prototype.init = function () {
   // TEN9: Add isEnabled to show/hide when graph is enabled/disabled
   action.isEnabled = isGraphEnabled;
 
+  // TEN9 : add more actions
+  this.addAction('shapes', function () {
+    var isLocalStorage = false;
+    ui.showDialog(
+      new MoreShapesDialog(ui, true).container,
+      640,
+      isLocalStorage ? (mxClient.IS_IOS ? 480 : 460) : 440,
+      true,
+      true,
+    );
+  });
+
   // Option actions
   var action = null;
   action = this.addAction(
@@ -1920,7 +1933,6 @@ Actions.prototype.init = function () {
     null,
     Editor.ctrlKey + '+Shift+O',
   );
-
   // TEN9: add isGraphEnabled property
   action.isEnabled = isGraphEnabled;
   action.setToggleAction(true);
