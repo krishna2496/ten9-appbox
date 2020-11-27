@@ -2623,6 +2623,7 @@ App.prototype.loadGapi = function(then)
  */
 App.prototype.load = function()
 {
+	debugger
 	// Checks if we're running in embedded mode
 	if (urlParams['embed'] != '1')
 	{

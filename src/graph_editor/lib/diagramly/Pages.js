@@ -1750,7 +1750,7 @@ EditorUi.prototype.createPageMenu = function(page, label)
 	EditorUi.prototype.refresh = function(sizeDidChange)
 	{
 		editorUiRefresh.apply(this, arguments);
-		this.updateTabContainer();
+		this.updateTabContainer();	
 	}
 })();
 
