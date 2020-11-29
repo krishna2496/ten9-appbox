@@ -139,12 +139,8 @@ export default defineComponent({
     }
 
     function loadXmlData(data: string) {
-      // Clear the graph's default layer before importing a new file
-      const layers = graph.value.model.getChildCells(graph.value.model.getRoot());
-      graph.value.removeCells(layers);
-
       // Import the XML data
-      let doc = mxUtils.parseXml(data);
+      const doc = mxUtils.parseXml(data);
       editor.value.setGraphXml(doc.documentElement);
       editor.value.setModified(false);
       editor.value.undoManager.clear();
