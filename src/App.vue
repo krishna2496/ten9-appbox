@@ -32,6 +32,8 @@ interface FileLogEvent extends EventFileInfo {
   title: string;
 }
 
+const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows;clipart;flowchart';
+
 export default defineComponent({
   name: 'App',
   components: {
@@ -45,6 +47,16 @@ export default defineComponent({
     const editor = ref(null);
 
     const previewMode = ref(false);
+
+    const shapeLibraries = ref('');
+
+    function getShapeLibrariesFromStorage() {
+      return window.localStorage.getItem('shapeLibraries');
+    }
+
+    function saveShapeLibrariesToStorage(libraries: string) {
+      window.localStorage.setItem('shapeLibraries', libraries);
+    }
 
     function updateAppHeight() {
       const container = document.getElementById('container');
@@ -124,6 +136,12 @@ export default defineComponent({
       updateAppHeight();
       window.addEventListener('resize', onResize);
       document.addEventListener('keydown', onKeydown);
+
+      shapeLibraries.value = getShapeLibrariesFromStorage();
+      if (!shapeLibraries.value == null) {
+        shapeLibraries.value = DEFAULT_SHAPE_LIBRARIES;
+        saveShapeLibrariesToStorage(shapeLibraries.value);
+      }
 
       const drag: HTMLElement = document.querySelector('.geEditor');
 
@@ -216,6 +234,11 @@ export default defineComponent({
       previewMode.value = !previewMode.value;
     }
 
+    function onShapeLibrariesChanged(libraries: string) {
+      saveShapeLibrariesToStorage(libraries);
+      shapeLibraries.value = libraries;
+    }
+
     return {
       addLog,
       editor,
@@ -225,8 +248,10 @@ export default defineComponent({
       logs,
       onGraphChanged,
       onPreviewModeChanged,
+      onShapeLibrariesChanged,
       previewMode,
       saveFile,
+      shapeLibraries,
     };
   },
 });
@@ -275,7 +300,13 @@ export default defineComponent({
         )
         label.ml-1(for='preview') Preview Mode
       #container.ge-container
-        graph-editor(ref='editor', @graph-changed='onGraphChanged', :preview-mode='previewMode')
+        graph-editor(
+          ref='editor',
+          :enabled='!previewMode',
+          :shapeLibraries='shapeLibraries',
+          @shape-libraries-changed='onShapeLibrariesChanged',
+          @graph-changed='onGraphChanged'
+        )
 </template>
 
 <style lang="scss">

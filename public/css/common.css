@@ -49,8 +49,8 @@ div.mxWindow {
 	_background: url('../images/window.gif');
 	border:1px solid #c3c3c3;
 	position: absolute;
-  overflow: hidden;
-  /* TEN9: Make z-index higher than fullscreen so they show */
+	overflow: hidden;
+	/* TEN9: Make z-index higher than fullscreen so they show */
 	z-index: 1001;
 }
 table.mxWindow {
