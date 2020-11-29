@@ -18,7 +18,14 @@
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
-import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api';
+import {
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from '@vue/composition-api';
 
 const {
   mxClipboard,
@@ -53,7 +60,7 @@ export default defineComponent({
       required: true,
       type: String,
     },
-    previewMode: Boolean,
+    enabled: Boolean,
   },
 
   setup(props, ctx) {
@@ -81,53 +88,8 @@ export default defineComponent({
       });
     }
 
-    function fitToWindow() {
-      // TODO: use fitWindow instead of resetView when debugged and working
-      // const fitWindowAction = editorUi.value.actions.get('fitWindow');
-      // fitWindowAction.funct();
-      const resetViewAction = editorUi.value.actions.get('resetView');
-      resetViewAction.funct();
-    }
-
-    function closeOpenWindows() {
-      const { actions } = editorUi.value;
-
-      if (actions.layersWindow?.window.isVisible()) {
-        actions.layersWindow.window.setVisible(false);
-      }
-
-      if (actions.outlineWindow?.window.isVisible()) {
-        actions.outlineWindow.window.setVisible(false);
-      }
-    }
-
     function setGraphEnabled(enabled: boolean) {
-      // Set the graph enabled state before anything else
-      graph.value.setEnabled(enabled);
-
-      const formatPanel = editorUi.value.actions.get('formatPanel');
-      formatPanel.funct(enabled);
-
-      const sidebarPanel = editorUi.value.actions.get('sidebarPanel');
-      sidebarPanel.funct(enabled);
-
-      graph.value.popupMenuHandler.hideMenu();
-      graph.value.tooltipHandler.hideTooltip();
-
-      if (!enabled) {
-        closeOpenWindows();
-      }
-      editorUi.value.toolbar.setEnabled(enabled);
-
-      const undo = editorUi.value.actions.get('undo');
-      undo.setEnabled(enabled);
-
-      const redo = editorUi.value.actions.get('redo');
-      redo.setEnabled(enabled);
-
-      editorUi.value.resetHorizontalScrollbar();
-
-      fitToWindow();
+      editorUi.value.setEnabled(enabled);
     }
 
     onMounted(() => {
@@ -155,16 +117,14 @@ export default defineComponent({
         ctx.emit('shape-libraries-changed', event.detail);
       });
 
-      ctx.root.$nextTick(() => {
-        setGraphEnabled(!props.previewMode);
-        window.setTimeout(() => {
-          fitToWindow();
-        }, 0);
+      nextTick(() => {
+        setGraphEnabled(props.enabled);
+        editorUi.value.fitToWindow();
       });
     });
 
     onBeforeUnmount(() => {
-      closeOpenWindows();
+      editorUi.value.closeOpenWindows();
     });
 
     watch(
@@ -187,7 +147,10 @@ export default defineComponent({
       editorUi.value.importXml(data, null, null, false, false, true);
 
       // Reset the view after loading a file
-      fitToWindow();
+      nextTick(() => {
+        setGraphEnabled(true);
+        editorUi.value.fitToWindow();
+      });
     }
 
     function pasteShapes(doc: XMLDocument) {
@@ -348,9 +311,12 @@ export default defineComponent({
     }
 
     watch(
-      () => props.previewMode,
+      () => props.enabled,
       (val) => {
-        setGraphEnabled(!val);
+        nextTick(() => {
+          setGraphEnabled(val);
+          editorUi.value.fitToWindow();
+        });
       },
     );
 
@@ -366,6 +332,7 @@ export default defineComponent({
       loadImage,
       paste,
       pasteShapes,
+      setGraphEnabled,
     };
   },
 });

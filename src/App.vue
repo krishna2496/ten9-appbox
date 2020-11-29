@@ -302,7 +302,7 @@ export default defineComponent({
       #container.ge-container
         graph-editor(
           ref='editor',
-          :preview-mode='previewMode',
+          :enabled='!previewMode',
           :shapeLibraries='shapeLibraries',
           @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged'
