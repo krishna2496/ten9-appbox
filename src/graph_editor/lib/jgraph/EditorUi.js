@@ -1051,12 +1051,48 @@ EditorUi.prototype.lightboxVerticalDivider = 4;
 EditorUi.prototype.hsplitClickEnabled = false;
 
 // TEN9: Add Preview Mode to check the diagram position
-EditorUi.prototype.previewMode = false;
+EditorUi.prototype.enabled = true;
 
-// TEN9: Add Preview Mode enable/disable function
-EditorUi.prototype.setPreviewMode = function (enabled) {
-  this.previewMode = enabled;
+EditorUi.prototype.closeOpenWindows = function () {
+  if (this.actions.layersWindow?.window.isVisible()) {
+    this.actions.layersWindow.window.setVisible(false);
+  }
+
+  if (this.actions.outlineWindow?.window.isVisible()) {
+    this.actions.outlineWindow.window.setVisible(false);
+  }
+}
+
+EditorUi.prototype.fitToWindow = function () {
+  // TODO: use fitWindow instead of resetView when debugged and working
+
+  // const actionName = 'fitWindow';
+  const actionName = 'resetView';
+  const action = this.actions.get(actionName);
+  action.funct();
+}
+
+// TEN9: Add enable/disable function
+EditorUi.prototype.setEnabled = function (enabled) {
+  this.enabled = enabled;
+  // Set the graph enabled state before anything else
+  this.editor.graph.setEnabled(enabled);
   this.toggleSidebarPanel(enabled);
+  this.toggleFormatPanel(enabled);
+
+  this.editor.graph.popupMenuHandler.hideMenu();
+  this.editor.graph.tooltipHandler.hideTooltip();
+
+  if (!enabled) {
+    this.closeOpenWindows();
+  }
+  this.toolbar.setEnabled(enabled);
+
+  const undo = this.actions.get('undo');
+  undo.setEnabled(enabled);
+
+  const redo = this.actions.get('redo');
+  redo.setEnabled(enabled);
 };
 
 /**
@@ -2806,7 +2842,6 @@ EditorUi.prototype.toggleFormatPanel = function (visible) {
 
 // TEN9: Add sidebar toggle function
 EditorUi.prototype.toggleSidebarPanel = function (visible) {
-  this.previewMode = visible;
   if (!visible) {
     this.sidebar.container.style.width = '0px';
     this.sidebar.container.style.display = 'none';
