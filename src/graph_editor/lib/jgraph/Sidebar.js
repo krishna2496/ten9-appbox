@@ -172,57 +172,6 @@ Sidebar.prototype.init = function () {
     ';whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2',
   );
   this.setCurrentSearchEntryLibrary();
-
-  this.setCurrentSearchEntryLibrary('clipart');
-  this.addImagePalette(
-    'clipart',
-    mxResources.get('clipart'),
-    dir + '/clipart/',
-    '_128x128.png',
-    [
-      'Earth_globe',
-      'Empty_Folder',
-      'Full_Folder',
-      'Gear',
-      'Lock',
-      'Software',
-      'Virus',
-      'Email',
-      'Database',
-      'Router_Icon',
-      'iPad',
-      'iMac',
-      'Laptop',
-      'MacBook',
-      'Monitor_Tower',
-      'Printer',
-      'Server_Tower',
-      'Workstation',
-      'Firewall_02',
-      'Wireless_Router_N',
-      'Credit_Card',
-      'Piggy_Bank',
-      'Graph',
-      'Safe',
-      'Shopping_Cart',
-      'Suit1',
-      'Suit2',
-      'Suit3',
-      'Pilot1',
-      'Worker1',
-      'Soldier1',
-      'Doctor1',
-      'Tech1',
-      'Security1',
-      'Telesales1',
-    ],
-    null,
-    {
-      Wireless_Router_N: 'wireless router switch wap wifi access point wlan',
-      Router_Icon: 'router switch',
-    },
-  );
-  this.setCurrentSearchEntryLibrary();
 };
 
 /**
@@ -653,7 +602,23 @@ Sidebar.prototype.addEntry = function (tags, fn) {
     var tagList = [];
     var hash = {};
 
-    // Finds unique tags
+    var doAddEntry = mxUtils.bind(this, function (tag) {
+      if (tag != null && tag.length > 1) {
+        var entry = this.taglist[tag];
+
+        if (typeof entry !== 'object') {
+          entry = { entries: [], dict: new mxDictionary() };
+          this.taglist[tag] = entry;
+        }
+
+        // Ignores duplicates
+        if (entry.dict.get(fn) == null) {
+          entry.dict.put(fn, fn);
+          entry.entries.push(fn);
+        }
+      }
+    });
+
     for (var i = 0; i < tmp.length; i++) {
       if (hash[tmp[i]] == null) {
         hash[tmp[i]] = true;
@@ -2019,6 +1984,7 @@ Sidebar.prototype.addMiscPalette = function (expand) {
   this.addPaletteFunctions('misc', mxResources.get('misc'), expand != null ? expand : true, fns);
   this.setCurrentSearchEntryLibrary();
 };
+
 /**
  * Adds the container palette to the sidebar.
  */

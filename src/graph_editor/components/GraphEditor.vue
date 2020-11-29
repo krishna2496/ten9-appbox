@@ -18,8 +18,14 @@
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
-
-import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api';
+import {
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from '@vue/composition-api';
 
 const {
   mxClipboard,
@@ -50,7 +56,11 @@ export default defineComponent({
   name: 'GraphEditor',
 
   props: {
-    previewMode: Boolean,
+    shapeLibraries: {
+      required: true,
+      type: String,
+    },
+    enabled: Boolean,
   },
 
   setup(props, ctx) {
@@ -61,6 +71,8 @@ export default defineComponent({
     const editor = ref(null);
 
     const graph = ref(null);
+
+    const sidebar = ref(null);
 
     function loadImage(url: string): Promise<HTMLImageElement> {
       return new Promise((resolve) => {
@@ -76,44 +88,8 @@ export default defineComponent({
       });
     }
 
-    function closeOpenWindows() {
-      const { actions } = editorUi.value;
-
-      if (actions.layersWindow?.window.isVisible()) {
-        actions.layersWindow.window.setVisible(false);
-      }
-
-      if (actions.outlineWindow?.window.isVisible()) {
-        actions.outlineWindow.window.setVisible(false);
-      }
-    }
-
     function setGraphEnabled(enabled: boolean) {
-      // Set the graph enabled state before anything else
-      graph.value.setEnabled(enabled);
-
-      const formatPanel = editorUi.value.actions.get('formatPanel');
-      formatPanel.funct(enabled);
-
-      const sidebarPanel = editorUi.value.actions.get('sidebarPanel');
-      sidebarPanel.funct(enabled);
-
-      graph.value.popupMenuHandler.hideMenu();
-      graph.value.tooltipHandler.hideTooltip();
-
-      if (!enabled) {
-        closeOpenWindows();
-      }
-
-      editorUi.value.toolbar.setEnabled(enabled);
-
-      const undo = editorUi.value.actions.get('undo');
-      undo.setEnabled(enabled);
-
-      const redo = editorUi.value.actions.get('redo');
-      redo.setEnabled(enabled);
-
-      editorUi.value.resetHorizontalScrollbar();
+      editorUi.value.setEnabled(enabled);
     }
 
     onMounted(() => {
@@ -128,13 +104,22 @@ export default defineComponent({
       editorUi.value = createEditorUi(createEditor(themes), container.value);
       editor.value = editorUi.value.editor;
       graph.value = editor.value.graph;
+      sidebar.value = editorUi.value.sidebar;
+
+      // Add stencils to the sidebar
+      sidebar.value.showEntries(props.shapeLibraries);
 
       graph.value.model.addListener(mxEvent.CHANGE, () => {
         ctx.emit('graph-changed');
       });
 
-      ctx.root.$nextTick(() => {
-        setGraphEnabled(!props.previewMode);
+      editorUi.value.container.addEventListener('librariesChanged', (event: CustomEvent) => {
+        ctx.emit('shape-libraries-changed', event.detail);
+      });
+
+      nextTick(() => {
+        setGraphEnabled(props.enabled);
+        editorUi.value.fitToWindow();
       });
 
       document.addEventListener('graphChanged', () => {
@@ -143,24 +128,32 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      closeOpenWindows();
+      editorUi.value.closeOpenWindows();
     });
+
+    watch(
+      () => props.shapeLibraries,
+      (val: string) => {
+        sidebar.value.showEntries(val);
+      },
+    );
 
     function getXmlData(): string {
       return mxUtils.getXml(editor.value.getGraphXml());
     }
 
     function loadXmlData(data: string) {
-      // Clear the graph's default layer before importing a new file
-      const layers = graph.value.model.getChildCells(graph.value.model.getRoot());
-      graph.value.removeCells(layers);
-
       // Import the XML data
-      editorUi.value.importXml(data, null, null, false, false, true);
+      const doc = mxUtils.parseXml(data);
+      editor.value.setGraphXml(doc.documentElement);
+      editor.value.setModified(false);
+      editor.value.undoManager.clear();
 
       // Reset the view after loading a file
-      graph.value.zoomTo(1);
-      editorUi.value.resetScrollbars();
+      nextTick(() => {
+        setGraphEnabled(true);
+        editorUi.value.fitToWindow();
+      });
     }
 
     function pasteShapes(doc: XMLDocument) {
@@ -321,9 +314,12 @@ export default defineComponent({
     }
 
     watch(
-      () => props.previewMode,
+      () => props.enabled,
       (val) => {
-        setGraphEnabled(!val);
+        nextTick(() => {
+          setGraphEnabled(val);
+          editorUi.value.fitToWindow();
+        });
       },
     );
 
@@ -339,6 +335,7 @@ export default defineComponent({
       loadImage,
       paste,
       pasteShapes,
+      setGraphEnabled,
     };
   },
 });

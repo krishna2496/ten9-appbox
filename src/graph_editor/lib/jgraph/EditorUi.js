@@ -46,6 +46,8 @@ const { Editor, Dialog, ErrorDialog, FilenameDialog } = require('./Editor.js');
 const { Actions } = require('./Actions.js');
 const { Sidebar } = require('./Sidebar.js');
 require('./Shapes.js');
+require('../diagramly/sidebar/Sidebar.js');
+require('../diagramly/sidebar/Sidebar-Shapes.js');
 const { Format } = require('./Format.js');
 const { Menus } = require('./Menus.js');
 const { Toolbar } = require('./Toolbar.js');
@@ -1018,7 +1020,8 @@ EditorUi.prototype.footerHeight = 0;
 /**
  * Specifies the height of the optional sidebarFooterContainer. Default is 34.
  */
-EditorUi.prototype.sidebarFooterHeight = 34;
+// TEN9: Set to 38 like draw.io
+EditorUi.prototype.sidebarFooterHeight = 38;
 
 /**
  * Specifies the position of the horizontal split bar. Default is 240 or 118 for
@@ -1046,6 +1049,51 @@ EditorUi.prototype.lightboxVerticalDivider = 4;
  * Specifies if single click on horizontal split should collapse sidebar. Default is false.
  */
 EditorUi.prototype.hsplitClickEnabled = false;
+
+// TEN9: Add Preview Mode to check the diagram position
+EditorUi.prototype.enabled = true;
+
+EditorUi.prototype.closeOpenWindows = function () {
+  if (this.actions.layersWindow?.window.isVisible()) {
+    this.actions.layersWindow.window.setVisible(false);
+  }
+
+  if (this.actions.outlineWindow?.window.isVisible()) {
+    this.actions.outlineWindow.window.setVisible(false);
+  }
+}
+
+EditorUi.prototype.fitToWindow = function () {
+  // TODO: use fitWindow instead of resetView when debugged and working
+
+  // const actionName = 'fitWindow';
+  const actionName = 'resetView';
+  const action = this.actions.get(actionName);
+  action.funct();
+}
+
+// TEN9: Add enable/disable function
+EditorUi.prototype.setEnabled = function (enabled) {
+  this.enabled = enabled;
+  // Set the graph enabled state before anything else
+  this.editor.graph.setEnabled(enabled);
+  this.toggleSidebarPanel(enabled);
+  this.toggleFormatPanel(enabled);
+
+  this.editor.graph.popupMenuHandler.hideMenu();
+  this.editor.graph.tooltipHandler.hideTooltip();
+
+  if (!enabled) {
+    this.closeOpenWindows();
+  }
+  this.toolbar.setEnabled(enabled);
+
+  const undo = this.actions.get('undo');
+  undo.setEnabled(enabled);
+
+  const redo = this.actions.get('redo');
+  redo.setEnabled(enabled);
+};
 
 /**
  * Installs the listeners to update the action states.
@@ -2796,10 +2844,12 @@ EditorUi.prototype.toggleFormatPanel = function (visible) {
 EditorUi.prototype.toggleSidebarPanel = function (visible) {
   if (!visible) {
     this.sidebar.container.style.width = '0px';
+    this.sidebar.container.style.display = 'none';
     this.hsplit.style.display = 'none';
     this.diagramContainer.style.left = '0px';
   } else {
     this.sidebar.container.style.width = '212px';
+    this.sidebar.container.style.display = 'block';
     this.hsplit.style.display = 'block';
     this.diagramContainer.style.left = '224px';
   }
@@ -3687,6 +3737,10 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
     this.sidebarFooterContainer.style.bottom = bottom + 'px';
   }
 
+  // this.sidebarContainer.style.height = this.diagramContainer.clientHeight - (this.diagramContainer.offsetHeight - this.diagramContainer.clientHeight) - this.sidebarFooterHeight + 'px';
+  this.sidebarContainer.style.height =
+    this.diagramContainer.offsetHeight - this.sidebarFooterHeight + 'px';
+
   var fw = this.format != null ? this.formatWidth : 0;
   this.sidebarContainer.style.top = tmp + 'px';
   this.sidebarContainer.style.width = effHsplitPosition + 'px';
@@ -3696,7 +3750,12 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
 
   var diagContOffset = this.getDiagramContainerOffset();
   var contLeft = this.hsplit.parentNode != null ? effHsplitPosition + this.splitSize : 0;
-  this.diagramContainer.style.left = contLeft + diagContOffset.x + 'px';
+
+  // TEN9: check if preview mode is on then don't change the diagramContainer position
+  if (this.previewMode) {
+    this.diagramContainer.style.left = contLeft + diagContOffset.x + 'px';
+  }
+
   this.diagramContainer.style.top = tmp + diagContOffset.y + 'px';
   this.footerContainer.style.height = this.footerHeight + 'px';
   this.hsplit.style.top = this.sidebarContainer.style.top;
@@ -3809,11 +3868,48 @@ EditorUi.prototype.createDivs = function () {
   }
 };
 
+// TEN9: Bring in sidebar footer
 /**
- * Hook for sidebar footer container. This implementation returns null.
+ * Hook for sidebar footer container.
  */
 EditorUi.prototype.createSidebarFooterContainer = function () {
-  return null;
+  // TEN9: add add more shaep div in footer
+  //return null;
+  var div = this.createDiv('geSidebarContainer geSidebarFooter');
+  div.style.position = 'absolute';
+  div.style.overflow = 'hidden';
+
+  var elt2 = document.createElement('a');
+  elt2.className = 'geTitle';
+  elt2.style.color = '#DF6C0C';
+  elt2.style.fontWeight = 'bold';
+  elt2.style.height = '100%';
+  elt2.style.paddingTop = '9px';
+  elt2.innerHTML = '<span style="font-size:18px;margin-right:5px;">+</span>';
+
+  mxUtils.write(elt2, mxResources.get('moreShapes') + '...');
+
+  // Prevents focus
+  mxEvent.addListener(
+    elt2,
+    mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
+    mxUtils.bind(this, function (evt) {
+      evt.preventDefault();
+    }),
+  );
+
+  mxEvent.addListener(
+    elt2,
+    'click',
+    mxUtils.bind(this, function (evt) {
+      this.actions.get('shapes').funct();
+      mxEvent.consume(evt);
+    }),
+  );
+
+  div.appendChild(elt2);
+
+  return div;
 };
 
 /**
