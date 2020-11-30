@@ -1196,6 +1196,7 @@ Actions.prototype.init = function () {
   action.isEnabled = isGraphEnabled;
   action = this.addAction('tooltips', function () {
     graph.tooltipHandler.setEnabled(!graph.tooltipHandler.isEnabled());
+    graph.fireEvent(new mxEventObject('graphChanged'));
   });
   action.setToggleAction(true);
   action.setSelectedCallback(function () {
@@ -1227,6 +1228,7 @@ Actions.prototype.init = function () {
     'pageView',
     mxUtils.bind(this, function () {
       ui.setPageVisible(!graph.pageVisible);
+      ui.fireEvent(new mxEventObject('pageViewChanged'));
     }),
   );
   action.isEnabled = isGraphEnabled;

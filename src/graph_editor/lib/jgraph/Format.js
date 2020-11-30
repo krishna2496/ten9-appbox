@@ -7639,7 +7639,6 @@ DiagramFormatPanel.prototype.addGridOption = function (container) {
       mxResources.get('grid'),
       function () {
         var color = graph.view.gridColor;
-
         return graph.isGridEnabled() ? color : null;
       },
       function (color) {

@@ -18,7 +18,7 @@
 import GraphEditor from './graph_editor/components/GraphEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 
-import { defineComponent, ref, onMounted, onBeforeUnmount } from '@vue/composition-api';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 import { debounce } from 'lodash';
 
 interface EventFileInfo {
@@ -26,6 +26,7 @@ interface EventFileInfo {
   size?: number;
   type?: string;
   lastModified?: number;
+  what?: string;
 }
 
 interface FileLogEvent extends EventFileInfo {
@@ -74,6 +75,12 @@ export default defineComponent({
 
     function addLog(fileLogEvent: FileLogEvent) {
       logs.value.push(fileLogEvent);
+      nextTick(() => {
+        const logsList = document.getElementById('logs-list');
+        if (logsList) {
+          logsList.scrollTop = logsList.scrollHeight;
+        }
+      });
     }
 
     function insertDummyImage() {
@@ -130,6 +137,17 @@ export default defineComponent({
         event.preventDefault();
         saveFile();
       }
+    }
+
+    function onGraphChanged(what: string) {
+      const xmlData = editor.value.getXmlData();
+      const fileLogEvent: FileLogEvent = {
+        title: 'Graph Changed',
+        size: xmlData.length,
+        lastModified: Date.now(),
+        what: what,
+      };
+      addLog(fileLogEvent);
     }
 
     onMounted(() => {
@@ -212,16 +230,6 @@ export default defineComponent({
       window.removeEventListener('resize', onResize);
     });
 
-    function onGraphChanged() {
-      const xmlData = editor.value.getXmlData();
-      const fileLogEvent: FileLogEvent = {
-        title: 'Graph Changed',
-        size: xmlData.length,
-        lastModified: Date.now(),
-      };
-      addLog(fileLogEvent);
-    }
-
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
     }
@@ -261,7 +269,7 @@ export default defineComponent({
 #app
   .row
     .col-md-2
-      b-list-group#scroll.custom-list-group
+      b-list-group#logs-list.custom-list-group
         template(v-for='(log, index) in logs')
           table.custom-table(:key='index')
             tr
@@ -272,6 +280,11 @@ export default defineComponent({
                 b Filename
               td.table-details
                 | {{ log.filename }}
+            tr(v-if='log.what')
+              td.table-details
+                b What
+              td.table-details
+                | {{ log.what }}
             tr(v-if='log.size')
               td.table-details
                 b Size

@@ -32,6 +32,7 @@ const {
   mxCodec,
   mxConstants,
   mxEvent,
+  mxEventSource,
   mxEventObject,
   mxGraphModel,
   mxObjectIdentity,
@@ -92,6 +93,27 @@ export default defineComponent({
       editorUi.value.setEnabled(enabled);
     }
 
+    function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
+      ctx.emit('graph-changed', event.name);
+    }
+
+    function addGraphChangedListeners() {
+      graph.value.model.addListener(mxEvent.CHANGE, onGraphChanged);
+      graph.value.addListener('gridSizeChanged', onGraphChanged);
+      graph.value.addListener('graphChanged', onGraphChanged);
+      editorUi.value.addListener('gridEnabledChanged', onGraphChanged);
+      editorUi.value.addListener('guidesEnabledChanged', onGraphChanged);
+      editorUi.value.addListener('pageViewChanged', onGraphChanged);
+      editorUi.value.addListener('connectionArrowsChanged', onGraphChanged);
+      editorUi.value.addListener('connectionPointsChanged', onGraphChanged);
+    }
+
+    function removeGraphChangedListeners() {
+      graph.value.model.removeListener(onGraphChanged);
+      graph.value.removeListener(onGraphChanged);
+      editorUi.value.removeListener(onGraphChanged);
+    }
+
     onMounted(() => {
       mxResources.loadDefaultBundle = false;
       mxResources.parse(resourcesFile);
@@ -109,9 +131,7 @@ export default defineComponent({
       // Add stencils to the sidebar
       sidebar.value.showEntries(props.shapeLibraries);
 
-      graph.value.model.addListener(mxEvent.CHANGE, () => {
-        ctx.emit('graph-changed');
-      });
+      addGraphChangedListeners();
 
       editorUi.value.container.addEventListener('librariesChanged', (event: CustomEvent) => {
         ctx.emit('shape-libraries-changed', event.detail);
@@ -125,6 +145,7 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       editorUi.value.closeOpenWindows();
+      removeGraphChangedListeners();
     });
 
     watch(
