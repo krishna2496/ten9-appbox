@@ -3737,7 +3737,6 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
     this.sidebarFooterContainer.style.bottom = bottom + 'px';
   }
 
-  // this.sidebarContainer.style.height = this.diagramContainer.clientHeight - (this.diagramContainer.offsetHeight - this.diagramContainer.clientHeight) - this.sidebarFooterHeight + 'px';
   this.sidebarContainer.style.height =
     this.diagramContainer.offsetHeight - this.sidebarFooterHeight + 'px';
 
@@ -3752,7 +3751,7 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
   var contLeft = this.hsplit.parentNode != null ? effHsplitPosition + this.splitSize : 0;
 
   // TEN9: check if preview mode is on then don't change the diagramContainer position
-  if (this.previewMode) {
+  if (this.enabled) {
     this.diagramContainer.style.left = contLeft + diagContOffset.x + 'px';
   }
 
