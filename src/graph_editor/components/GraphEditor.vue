@@ -168,7 +168,7 @@ export default defineComponent({
 
       // Reset the view after loading a file
       nextTick(() => {
-        setGraphEnabled(true);
+        setGraphEnabled(props.enabled);
         editorUi.value.fitToWindow();
       });
     }
