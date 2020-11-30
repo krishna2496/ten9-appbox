@@ -1061,7 +1061,7 @@ EditorUi.prototype.closeOpenWindows = function () {
   if (this.actions.outlineWindow?.window.isVisible()) {
     this.actions.outlineWindow.window.setVisible(false);
   }
-}
+};
 
 EditorUi.prototype.fitToWindow = function () {
   // TODO: use fitWindow instead of resetView when debugged and working
@@ -1070,7 +1070,7 @@ EditorUi.prototype.fitToWindow = function () {
   const actionName = 'resetView';
   const action = this.actions.get(actionName);
   action.funct();
-}
+};
 
 // TEN9: Add enable/disable function
 EditorUi.prototype.setEnabled = function (enabled) {
