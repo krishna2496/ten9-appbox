@@ -6309,7 +6309,6 @@ EditorUi.prototype.installNativeClipboardHandler = function () {
   return textInput;
 };
 
-require('../diagramly/Editor.js');
 // TEN9: Added exports
 module.exports = {
   createEditorUi,

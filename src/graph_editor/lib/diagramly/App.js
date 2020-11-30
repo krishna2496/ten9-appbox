@@ -3243,7 +3243,7 @@ App.prototype.checkDrafts = function()
 			{
 				// Collects orphaned drafts
 				var drafts = [];
-				
+				debugger
 				for (var i = 0; i < items.length; i++)
 				{
 					try

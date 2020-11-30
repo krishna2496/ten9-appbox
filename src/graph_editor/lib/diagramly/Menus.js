@@ -30,6 +30,7 @@ const {
 } = require('../jgraph/mxClient.js');
 const { Action } = require('../jgraph/Actions.js');
 const { Menu } = require('../jgraph/Menus.js');
+const { MoreShapesDialog } = require('../jgraph/Dialogs.js');
 
 const urlParams = {};
 const isLocalStorage = false;
@@ -38,7 +39,7 @@ var uiTheme = 'atlas';
 
 (function()
 {
-	// Adds scrollbars for menus that exceed the page height
+	//Adds scrollbars for menus that exceed the page height
 	var mxPopupMenuShowMenu = mxPopupMenu.prototype.showMenu;
 	mxPopupMenu.prototype.showMenu = function()
 	{
