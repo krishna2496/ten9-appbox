@@ -2687,9 +2687,6 @@ Graph.prototype.isLabelMovable = function (cell) {
 Graph.prototype.setGridSize = function (value) {
   this.gridSize = value;
   this.fireEvent(new mxEventObject('gridSizeChanged'));
-  // TEN9: Add custom graph change event
-  const graphChanged = new Event('graphChanged');
-  document.dispatchEvent(graphChanged);
 };
 
 /**
@@ -3751,10 +3748,6 @@ Graph.prototype.zoom = function (factor, center) {
   factor = Math.max(0.01, Math.min(this.view.scale * factor, 160)) / this.view.scale;
 
   mxGraph.prototype.zoom.apply(this, arguments);
-
-  // TEN9: Add custom graph change event
-  const graphChanged = new Event('graphChanged');
-  document.dispatchEvent(graphChanged);
 };
 
 /**

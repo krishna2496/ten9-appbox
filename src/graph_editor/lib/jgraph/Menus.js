@@ -1306,9 +1306,6 @@ Menus.prototype.toggleStyle = function (key, defaultValue) {
       graph.getSelectionCells(),
     ),
   );
-  // TEN9: Add custom graph change event
-  const graphChanged = new Event('graphChanged');
-  document.dispatchEvent(graphChanged);
 };
 
 /**

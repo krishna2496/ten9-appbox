@@ -7499,9 +7499,6 @@ DiagramFormatPanel.prototype.addOptions = function (div) {
         {
           install: function (apply) {
             this.listener = function () {
-              // TEN9: Add custom graph change event
-              const graphChanged = new Event('graphChanged');
-              document.dispatchEvent(graphChanged);
               apply(graph.connectionArrowsEnabled);
             };
 
@@ -7527,9 +7524,6 @@ DiagramFormatPanel.prototype.addOptions = function (div) {
         {
           install: function (apply) {
             this.listener = function () {
-              // TEN9: Add custom graph change event
-              const graphChanged = new Event('graphChanged');
-              document.dispatchEvent(graphChanged);
               apply(graph.connectionHandler.isEnabled());
             };
 
@@ -7648,9 +7642,6 @@ DiagramFormatPanel.prototype.addGridOption = function (container) {
         return graph.isGridEnabled() ? color : null;
       },
       function (color) {
-        // TEN9: Add custom graph change event
-        const graphChanged = new Event('graphChanged');
-        document.dispatchEvent(graphChanged);
         var enabled = graph.isGridEnabled();
 
         if (color == mxConstants.NONE) {
