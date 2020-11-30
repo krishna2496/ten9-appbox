@@ -1,52 +1,49 @@
 /**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+
+// TEN9: Added imports
+const {
+  mxConstants,
+  mxGraph,
+  mxGraphView,
+} = require('../jgraph/mxClient.js');
+
+const { Editor } = require('../jgraph/Editor.js');
+const { Sidebar } = require('../jgraph/Sidebar.js');
+
+// TEN9: TODO: Consolidate globals
+var isLocalStorage = false;
+
+/**
  * Copyright (c) 2006-2017, JGraph Ltd
  * Copyright (c) 2006-2017, Gaudenz Alder
  */
 /**
  * Contains current settings.
  */
-// TEN9: Added imports
-const {
-  mxClient,
-  mxClipboard,
-  mxCodecRegistry,
-  mxConnectionHandler,
-  mxConstants,
-  mxDictionary,
-  mxEvent,
-  mxEventObject,
-  mxEventSource,
-  mxGraph,
-  mxGraphModel,
-  mxGraphView,
-  mxImage,
-  mxKeyHandler,
-  mxMorphing,
-  mxObjectCodec,
-  mxObjectIdentity,
-  mxOutline,
-  mxPoint,
-  mxPopupMenu,
-  mxRectangle,
-  mxResources,
-  mxStackLayout,
-  mxStylesheet,
-  mxUtils,
-  mxXmlRequest,
-} = require('../jgraph/mxClient.js');
-const { Sidebar } = require('../jgraph/Sidebar.js');
-
-const isLocalStorage = false
-
 var mxSettings =
 {
 	/**
 	 * Defines current version of settings.
 	 */
 	currentVersion: 18,
-	
+
 	defaultFormatWidth: (screen.width < 600) ? '0' : '240',
-	
+
 	// NOTE: Hardcoded in index.html due to timing of JS loading
 	key: '.drawio-config',
 
@@ -121,7 +118,7 @@ var mxSettings =
 	{
 		//Convert from old format to the new one
 		var custFonts = mxSettings.settings.customFonts || [];
-		
+
 		for (var i = 0 ; i < custFonts.length; i++)
 		{
 			if (typeof custFonts[i] === 'string')
@@ -129,7 +126,7 @@ var mxSettings =
 				custFonts[i] = {name: custFonts[i], url: null};
 			}
 		}
-		
+
 		return custFonts;
 	},
 	getLibraries: function()
@@ -144,7 +141,7 @@ var mxSettings =
 	{
 		// Makes sure to update the latest data from the localStorage
 		mxSettings.load();
-		
+
 		if (mxUtils.indexOf(mxSettings.settings.customLibraries, id) < 0)
 		{
 			// Makes sure scratchpad is below search in sidebar
@@ -157,7 +154,7 @@ var mxSettings =
 				mxSettings.settings.customLibraries.push(id);
 			}
 		}
-		
+
 		mxSettings.save();
 	},
 	removeCustomLibrary: function(id)
@@ -229,7 +226,7 @@ var mxSettings =
 	},
 	init: function()
 	{
-		mxSettings.settings = 
+		mxSettings.settings =
 		{
 			language: '',
 			configVersion: Editor.configVersion,
@@ -296,12 +293,12 @@ var mxSettings =
 		else
 		{
 			mxSettings.settings = config;
-			
+
 			if (mxSettings.settings.plugins == null)
 			{
 				mxSettings.settings.plugins = [];
 			}
-			
+
 			if (mxSettings.settings.recentColors == null)
 			{
 				mxSettings.settings.recentColors = [];
@@ -311,52 +308,52 @@ var mxSettings =
 			{
 				mxSettings.settings.customFonts = [];
 			}
-			
+
 			if (mxSettings.settings.libraries == null)
 			{
 				mxSettings.settings.libraries = Sidebar.prototype.defaultEntries;
 			}
-			
+
 			if (mxSettings.settings.customLibraries == null)
 			{
 				mxSettings.settings.customLibraries = Editor.defaultCustomLibraries;
 			}
-			
+
 			if (mxSettings.settings.ui == null)
 			{
 				mxSettings.settings.ui = '';
 			}
-			
+
 			if (mxSettings.settings.formatWidth == null)
 			{
 				mxSettings.settings.formatWidth = mxSettings.defaultFormatWidth;
 			}
-			
+
 			if (mxSettings.settings.lastAlert != null)
 			{
 				delete mxSettings.settings.lastAlert;
 			}
-			
+
 			if (mxSettings.settings.createTarget == null)
 			{
 				mxSettings.settings.createTarget = false;
 			}
-			
+
 			if (mxSettings.settings.pageFormat == null)
 			{
 				mxSettings.settings.pageFormat = mxGraph.prototype.pageFormat;
 			}
-			
+
 			if (mxSettings.settings.search == null)
 			{
 				mxSettings.settings.search = true;
 			}
-			
+
 			if (mxSettings.settings.showStartScreen == null)
 			{
 				mxSettings.settings.showStartScreen = true;
-			}		
-			
+			}
+
 			if (mxSettings.settings.gridColor == null)
 			{
 				mxSettings.settings.gridColor = mxGraphView.prototype.defaultGridColor;
@@ -366,19 +363,19 @@ var mxSettings =
 			{
 				mxSettings.settings.darkGridColor = mxGraphView.prototype.defaultDarkGridColor;
 			}
-			
+
 			if (mxSettings.settings.autosave == null)
 			{
 				mxSettings.settings.autosave = true;
 			}
-			
+
 			if (mxSettings.settings.scratchpadSeen != null)
 			{
 				delete mxSettings.settings.scratchpadSeen;
 			}
 		}
 	},
-	clear: function() 
+	clear: function()
 	{
 		if (isLocalStorage)
 		{
@@ -389,7 +386,7 @@ var mxSettings =
 
 /**
  * Variable: mxLoadSettings
- * 
+ *
  * Optional global config variable to toggle loading the settings. Default is true.
  *
  * (code)
@@ -403,6 +400,7 @@ if (typeof(mxLoadSettings) == 'undefined' || mxLoadSettings)
 	// Loads initial content
 	mxSettings.load();
 }
+
 module.exports = {
-  mxSettings
-}
+  mxSettings,
+};

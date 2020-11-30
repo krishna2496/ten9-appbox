@@ -1,3 +1,19 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
 // TEN9: Added imports
 const {
   mxCellRenderer,
@@ -29,7 +45,7 @@ function Toolbar(editorUi, container, editorUiClass) {
   this.init();
 
   // Global handler to hide the current menu
-  this.gestureHandler = mxUtils.bind(this, function(evt) {
+  this.gestureHandler = mxUtils.bind(this, function (evt) {
     if (
       this.editorUi.currentMenu != null &&
       mxEvent.getSource(evt) != this.editorUi.currentMenu.div
@@ -78,7 +94,7 @@ Toolbar.prototype.staticElements = null;
 /**
  * Adds the toolbar elements.
  */
-Toolbar.prototype.init = function() {
+Toolbar.prototype.init = function () {
   var sw = screen.width;
 
   // Takes into account initial compact mode
@@ -109,9 +125,13 @@ Toolbar.prototype.init = function() {
   viewMenu.style.whiteSpace = 'nowrap';
   viewMenu.style.position = 'relative';
   viewMenu.style.overflow = 'hidden';
+  // TEN9: Move Zoom scale button in center
+  viewMenu.style.marginTop = '1px';
 
   if (EditorUi.compactUi) {
-    viewMenu.style.width = mxClient.IS_QUIRKS ? '58px' : '50px';
+    // TEN9: Make Zoom scale button width large to show in center
+    // viewMenu.style.width = mxClient.IS_QUIRKS ? '58px' : '50px';
+    viewMenu.style.width = '65px';
   } else {
     viewMenu.style.width = mxClient.IS_QUIRKS ? '62px' : '36px';
   }
@@ -130,13 +150,15 @@ Toolbar.prototype.init = function() {
   }
 
   // Updates the label if the scale changes
-  this.updateZoom = mxUtils.bind(this, function() {
+  this.updateZoom = mxUtils.bind(this, function () {
     viewMenu.innerHTML =
       Math.round(this.editorUi.editor.graph.view.scale * 100) + '%' + this.dropdownImageHtml;
 
     if (EditorUi.compactUi) {
       viewMenu.getElementsByTagName('img')[0].style.right = '1px';
-      viewMenu.getElementsByTagName('img')[0].style.top = '5px';
+      // TEN9: Zoom scale button on Toolbar is off center
+      // viewMenu.getElementsByTagName('img')[0].style.top = '5px';
+      viewMenu.getElementsByTagName('img')[0].style.top = '6px';
     }
   });
 
@@ -185,7 +207,7 @@ Toolbar.prototype.init = function() {
         '',
         mxResources.get('connection'),
         false,
-        mxUtils.bind(this, function(menu) {
+        mxUtils.bind(this, function (menu) {
           this.editorUi.menus
             .edgeStyleChange(
               menu,
@@ -231,6 +253,10 @@ Toolbar.prototype.init = function() {
             )
             .setAttribute('title', mxResources.get('simpleArrow'));
         }),
+        // TEN9: add id for managing the toolbar buttons
+        undefined,
+        undefined,
+        'toolbar-connection-button',
       );
 
       this.addDropDownArrow(this.edgeShapeMenu, 'geSprite-connection', 44, 50, 0, 0, 22, -4);
@@ -240,7 +266,7 @@ Toolbar.prototype.init = function() {
       'geSprite-orthogonal',
       mxResources.get('waypoints'),
       false,
-      mxUtils.bind(this, function(menu) {
+      mxUtils.bind(this, function (menu) {
         this.editorUi.menus
           .edgeStyleChange(
             menu,
@@ -350,6 +376,10 @@ Toolbar.prototype.init = function() {
           )
           .setAttribute('title', mxResources.get('entityRelation'));
       }),
+      // TEN9: add id for managing the toolbar buttons
+      undefined,
+      undefined,
+      'toolbar-waypoints-button',
     );
 
     this.addDropDownArrow(this.edgeStyleMenu, 'geSprite-orthogonal', 44, 50, 0, 0, 22, -4);
@@ -358,20 +388,25 @@ Toolbar.prototype.init = function() {
   this.addSeparator();
   var insertMenu = this.addMenu(
     '',
-    mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')',
+    mxResources.get('insert'),
     true,
     'insert',
     null,
     true,
+    // TEN9: add id for managing the toolbar buttons
+    undefined,
+    'toolbar-insert-button',
   );
-  this.addDropDownArrow(insertMenu, 'geSprite-plus', 38, 48, -4, -3, 36, -8);
+  // TEN9: Set height of plus icon
+  // this.addDropDownArrow(insertMenu, 'geSprite-plus', 38, 48, -4, -3, 36, -8);
+  this.addDropDownArrow(insertMenu, 'geSprite-plus', 38, 48, -4, 0, 36, -8);
   this.addTableDropDown();
 };
 
 /**
  * Adds the toolbar elements.
  */
-Toolbar.prototype.addTableDropDown = function() {
+Toolbar.prototype.addTableDropDown = function () {
   this.addSeparator();
 
   // KNOWN: All table stuff does not work with undo/redo
@@ -381,7 +416,7 @@ Toolbar.prototype.addTableDropDown = function() {
     'geIcon geSprite geSprite-table',
     mxResources.get('table'),
     false,
-    mxUtils.bind(this, function(menu) {
+    mxUtils.bind(this, function (menu) {
       var graph = this.editorUi.editor.graph;
       var cell = graph.getSelectionCell();
 
@@ -391,7 +426,7 @@ Toolbar.prototype.addTableDropDown = function() {
         var elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             try {
               graph.insertTableColumn(cell, true);
             } catch (e) {
@@ -406,7 +441,7 @@ Toolbar.prototype.addTableDropDown = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             try {
               graph.insertTableColumn(cell, false);
             } catch (e) {
@@ -421,7 +456,7 @@ Toolbar.prototype.addTableDropDown = function() {
         elt = menu.addItem(
           'Delete column',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             if (cell != null) {
               try {
                 graph.deleteTableColumn(cell);
@@ -438,7 +473,7 @@ Toolbar.prototype.addTableDropDown = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             try {
               graph.insertTableRow(cell, true);
             } catch (e) {
@@ -453,7 +488,7 @@ Toolbar.prototype.addTableDropDown = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             try {
               graph.insertTableRow(cell, false);
             } catch (e) {
@@ -468,7 +503,7 @@ Toolbar.prototype.addTableDropDown = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             try {
               graph.deleteTableRow(cell);
             } catch (e) {
@@ -481,6 +516,10 @@ Toolbar.prototype.addTableDropDown = function() {
         elt.setAttribute('title', mxResources.get('deleteRow'));
       }
     }),
+    // TEN9: add id for managing the toolbar buttons
+    undefined,
+    undefined,
+    'toolbar-table-button',
   );
 
   menuElt.style.position = 'relative';
@@ -489,7 +528,8 @@ Toolbar.prototype.addTableDropDown = function() {
   menuElt.innerHTML =
     '<div class="geSprite geSprite-table" style="margin-left:-2px;"></div>' +
     this.dropdownImageHtml;
-  menuElt.style.width = mxClient.IS_QUIRKS ? '50px' : '30px';
+  // TEN9: Add 10px additional width from 30px to 40px
+  menuElt.style.width = mxClient.IS_QUIRKS ? '50px' : '40px';
 
   // Fix for item size in kennedy theme
   if (EditorUi.compactUi) {
@@ -503,7 +543,7 @@ Toolbar.prototype.addTableDropDown = function() {
   // Workaround for possible not a function
   // when extending HTML objects
   if (menu != null && typeof menuElt.setEnabled === 'function') {
-    menu.addListener('stateChanged', function() {
+    menu.addListener('stateChanged', function () {
       menuElt.setEnabled(menu.enabled);
     });
   }
@@ -514,7 +554,7 @@ Toolbar.prototype.addTableDropDown = function() {
 /**
  * Adds the toolbar elements.
  */
-Toolbar.prototype.addDropDownArrow = function(
+Toolbar.prototype.addDropDownArrow = function (
   menu,
   sprite,
   width,
@@ -549,14 +589,16 @@ Toolbar.prototype.addDropDownArrow = function(
   if (EditorUi.compactUi) {
     menu.getElementsByTagName('img')[0].style.left = '24px';
     menu.getElementsByTagName('img')[0].style.top = '5px';
-    menu.style.width = mxClient.IS_QUIRKS ? width + 'px' : width - 10 + 'px';
+    // TEN9: Increase the width of all button to show drop down icon
+    // menu.style.width = mxClient.IS_QUIRKS ? width + 'px' : width - 10 + 'px';
+    menu.style.width = width + 'px';
   }
 };
 
 /**
  * Sets the current font name.
  */
-Toolbar.prototype.setFontName = function(value) {
+Toolbar.prototype.setFontName = function (value) {
   if (this.fontMenu != null) {
     this.fontMenu.innerHTML =
       '<div style="width:60px;overflow:hidden;display:inline-block;">' +
@@ -569,7 +611,7 @@ Toolbar.prototype.setFontName = function(value) {
 /**
  * Sets the current font name.
  */
-Toolbar.prototype.setFontSize = function(value) {
+Toolbar.prototype.setFontSize = function (value) {
   if (this.sizeMenu != null) {
     this.sizeMenu.innerHTML =
       '<div style="width:24px;overflow:hidden;display:inline-block;">' +
@@ -582,7 +624,7 @@ Toolbar.prototype.setFontSize = function(value) {
 /**
  * Hides the current menu.
  */
-Toolbar.prototype.createTextToolbar = function() {
+Toolbar.prototype.createTextToolbar = function () {
   var graph = this.editorUi.editor.graph;
 
   var styleElt = this.addMenu('', mxResources.get('style'), true, 'formatBlock');
@@ -662,11 +704,11 @@ Toolbar.prototype.createTextToolbar = function() {
     '',
     mxResources.get('align'),
     false,
-    mxUtils.bind(this, function(menu) {
+    mxUtils.bind(this, function (menu) {
       elt = menu.addItem(
         '',
         null,
-        mxUtils.bind(this, function(evt) {
+        mxUtils.bind(this, function (evt) {
           graph.cellEditor.alignText(mxConstants.ALIGN_LEFT, evt);
         }),
         null,
@@ -677,7 +719,7 @@ Toolbar.prototype.createTextToolbar = function() {
       elt = menu.addItem(
         '',
         null,
-        mxUtils.bind(this, function(evt) {
+        mxUtils.bind(this, function (evt) {
           graph.cellEditor.alignText(mxConstants.ALIGN_CENTER, evt);
         }),
         null,
@@ -688,7 +730,7 @@ Toolbar.prototype.createTextToolbar = function() {
       elt = menu.addItem(
         '',
         null,
-        mxUtils.bind(this, function(evt) {
+        mxUtils.bind(this, function (evt) {
           graph.cellEditor.alignText(mxConstants.ALIGN_RIGHT, evt);
         }),
         null,
@@ -699,7 +741,7 @@ Toolbar.prototype.createTextToolbar = function() {
       elt = menu.addItem(
         '',
         null,
-        mxUtils.bind(this, function() {
+        mxUtils.bind(this, function () {
           document.execCommand('justifyfull', false, null);
         }),
         null,
@@ -710,7 +752,7 @@ Toolbar.prototype.createTextToolbar = function() {
       elt = menu.addItem(
         '',
         null,
-        mxUtils.bind(this, function() {
+        mxUtils.bind(this, function () {
           document.execCommand('insertorderedlist', false, null);
         }),
         null,
@@ -721,7 +763,7 @@ Toolbar.prototype.createTextToolbar = function() {
       elt = menu.addItem(
         '',
         null,
-        mxUtils.bind(this, function() {
+        mxUtils.bind(this, function () {
           document.execCommand('insertunorderedlist', false, null);
         }),
         null,
@@ -732,7 +774,7 @@ Toolbar.prototype.createTextToolbar = function() {
       elt = menu.addItem(
         '',
         null,
-        mxUtils.bind(this, function() {
+        mxUtils.bind(this, function () {
           document.execCommand('outdent', false, null);
         }),
         null,
@@ -743,7 +785,7 @@ Toolbar.prototype.createTextToolbar = function() {
       elt = menu.addItem(
         '',
         null,
-        mxUtils.bind(this, function() {
+        mxUtils.bind(this, function () {
           document.execCommand('indent', false, null);
         }),
         null,
@@ -769,7 +811,7 @@ Toolbar.prototype.createTextToolbar = function() {
     '',
     mxResources.get('format'),
     false,
-    mxUtils.bind(this, function(menu) {
+    mxUtils.bind(this, function (menu) {
       elt = menu.addItem(
         '',
         null,
@@ -810,7 +852,7 @@ Toolbar.prototype.createTextToolbar = function() {
       elt = menu.addItem(
         '',
         null,
-        mxUtils.bind(this, function() {
+        mxUtils.bind(this, function () {
           document.execCommand('removeformat', false, null);
         }),
         null,
@@ -834,14 +876,14 @@ Toolbar.prototype.createTextToolbar = function() {
 
   this.addSeparator();
 
-  this.addButton('geIcon geSprite geSprite-code', mxResources.get('html'), function() {
+  this.addButton('geIcon geSprite geSprite-code', mxResources.get('html'), function () {
     graph.cellEditor.toggleViewMode();
 
     if (
       graph.cellEditor.textarea.innerHTML.length > 0 &&
       (graph.cellEditor.textarea.innerHTML != '&nbsp;' || !graph.cellEditor.clearOnChange)
     ) {
-      window.setTimeout(function() {
+      window.setTimeout(function () {
         document.execCommand('selectAll', false, null);
       });
     }
@@ -853,11 +895,11 @@ Toolbar.prototype.createTextToolbar = function() {
     '',
     mxResources.get('insert'),
     true,
-    mxUtils.bind(this, function(menu) {
+    mxUtils.bind(this, function (menu) {
       menu.addItem(
         mxResources.get('insertLink'),
         null,
-        mxUtils.bind(this, function() {
+        mxUtils.bind(this, function () {
           this.editorUi.actions.get('link').funct();
         }),
       );
@@ -865,7 +907,7 @@ Toolbar.prototype.createTextToolbar = function() {
       menu.addItem(
         mxResources.get('insertImage'),
         null,
-        mxUtils.bind(this, function() {
+        mxUtils.bind(this, function () {
           this.editorUi.actions.get('image').funct();
         }),
       );
@@ -873,7 +915,7 @@ Toolbar.prototype.createTextToolbar = function() {
       menu.addItem(
         mxResources.get('insertHorizontalRule'),
         null,
-        mxUtils.bind(this, function() {
+        mxUtils.bind(this, function () {
           document.execCommand('inserthorizontalrule', false, null);
         }),
       );
@@ -904,7 +946,7 @@ Toolbar.prototype.createTextToolbar = function() {
     'geIcon geSprite geSprite-table',
     mxResources.get('table'),
     false,
-    mxUtils.bind(this, function(menu) {
+    mxUtils.bind(this, function (menu) {
       var elt = graph.getSelectedElement();
       var cell = graph.getParentByNames(elt, ['TD', 'TH'], graph.cellEditor.text2);
       var row = graph.getParentByName(elt, 'TR', graph.cellEditor.text2);
@@ -935,7 +977,7 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             try {
               graph.selectNode(graph.insertColumn(table, cell != null ? cell.cellIndex : 0));
             } catch (e) {
@@ -950,7 +992,7 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             try {
               graph.selectNode(graph.insertColumn(table, cell != null ? cell.cellIndex + 1 : -1));
             } catch (e) {
@@ -965,7 +1007,7 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           'Delete column',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             if (cell != null) {
               try {
                 graph.deleteColumn(table, cell.cellIndex);
@@ -982,7 +1024,7 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             try {
               graph.selectNode(graph.insertRow(table, row.sectionRowIndex));
             } catch (e) {
@@ -997,7 +1039,7 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             try {
               graph.selectNode(graph.insertRow(table, row.sectionRowIndex + 1));
             } catch (e) {
@@ -1012,7 +1054,7 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             try {
               graph.deleteRow(table, row.sectionRowIndex);
             } catch (e) {
@@ -1027,11 +1069,11 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             // Converts rgb(r,g,b) values
             var color = table.style.borderColor.replace(
               /\brgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/g,
-              function($0, $1, $2, $3) {
+              function ($0, $1, $2, $3) {
                 return (
                   '#' +
                   ('0' + Number($1).toString(16)).substr(-2) +
@@ -1040,7 +1082,7 @@ Toolbar.prototype.createTextToolbar = function() {
                 );
               },
             );
-            this.editorUi.pickColor(color, function(newColor) {
+            this.editorUi.pickColor(color, function (newColor) {
               if (newColor == null || newColor == mxConstants.NONE) {
                 table.removeAttribute('border');
                 table.style.border = '';
@@ -1060,11 +1102,11 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             // Converts rgb(r,g,b) values
             var color = table.style.backgroundColor.replace(
               /\brgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/g,
-              function($0, $1, $2, $3) {
+              function ($0, $1, $2, $3) {
                 return (
                   '#' +
                   ('0' + Number($1).toString(16)).substr(-2) +
@@ -1073,7 +1115,7 @@ Toolbar.prototype.createTextToolbar = function() {
                 );
               },
             );
-            this.editorUi.pickColor(color, function(newColor) {
+            this.editorUi.pickColor(color, function (newColor) {
               if (newColor == null || newColor == mxConstants.NONE) {
                 table.style.backgroundColor = '';
               } else {
@@ -1089,14 +1131,14 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             var value = table.getAttribute('cellPadding') || 0;
 
             var dlg = new FilenameDialog(
               this.editorUi,
               value,
               mxResources.get('apply'),
-              mxUtils.bind(this, function(newValue) {
+              mxUtils.bind(this, function (newValue) {
                 if (newValue != null && newValue.length > 0) {
                   table.setAttribute('cellPadding', newValue);
                 } else {
@@ -1116,7 +1158,7 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             table.setAttribute('align', 'left');
           }),
           null,
@@ -1127,7 +1169,7 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             table.setAttribute('align', 'center');
           }),
           null,
@@ -1138,7 +1180,7 @@ Toolbar.prototype.createTextToolbar = function() {
         elt = menu.addItem(
           '',
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             table.setAttribute('align', 'right');
           }),
           null,
@@ -1167,30 +1209,40 @@ Toolbar.prototype.createTextToolbar = function() {
 /**
  * Hides the current menu.
  */
-Toolbar.prototype.hideMenu = function() {
+Toolbar.prototype.hideMenu = function () {
   this.editorUi.hideCurrentMenu();
 };
 
 /**
  * Adds a label to the toolbar.
  */
-Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name, c, showAll, ignoreState) {
+Toolbar.prototype.addMenu = function (
+  label,
+  tooltip,
+  showLabels,
+  name,
+  c,
+  showAll,
+  ignoreState,
+  id,
+) {
   var menu = this.editorUi.menus.get(name);
   var elt = this.addMenuFunction(
     label,
     tooltip,
     showLabels,
-    function() {
+    function () {
       menu.funct.apply(menu, arguments);
     },
     c,
     showAll,
+    id,
   );
 
   // Workaround for possible not a function
   // when extending HTML objects
   if (!ignoreState && typeof elt.setEnabled === 'function') {
-    menu.addListener('stateChanged', function() {
+    menu.addListener('stateChanged', function () {
       elt.setEnabled(menu.enabled);
     });
   }
@@ -1201,7 +1253,8 @@ Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name, c, showAl
 /**
  * Adds a label to the toolbar.
  */
-Toolbar.prototype.addMenuFunction = function(label, tooltip, showLabels, funct, c, showAll) {
+Toolbar.prototype.addMenuFunction = function (label, tooltip, showLabels, funct, c, showAll, id) {
+  // TEN9: add id for managing the toolbar buttons
   return this.addMenuFunctionInContainer(
     c != null ? c : this.container,
     label,
@@ -1209,21 +1262,27 @@ Toolbar.prototype.addMenuFunction = function(label, tooltip, showLabels, funct, 
     showLabels,
     funct,
     showAll,
+    id,
   );
 };
 
 /**
  * Adds a label to the toolbar.
  */
-Toolbar.prototype.addMenuFunctionInContainer = function(
+Toolbar.prototype.addMenuFunctionInContainer = function (
   container,
   label,
   tooltip,
   showLabels,
   funct,
   showAll,
+  id,
 ) {
   var elt = showLabels ? this.createLabel(label) : this.createButton(label);
+  // TEN9: add id for managing the toolbar buttons
+  if (id) {
+    elt.id = id;
+  }
   this.initElement(elt, tooltip);
   this.addMenuHandler(elt, showLabels, funct, showAll);
   container.appendChild(elt);
@@ -1234,7 +1293,7 @@ Toolbar.prototype.addMenuFunctionInContainer = function(
 /**
  * Adds a separator to the separator.
  */
-Toolbar.prototype.addSeparator = function(c) {
+Toolbar.prototype.addSeparator = function (c) {
   c = c != null ? c : this.container;
   var elt = document.createElement('div');
   elt.className = 'geSeparator';
@@ -1246,9 +1305,8 @@ Toolbar.prototype.addSeparator = function(c) {
 /**
  * Adds given action item
  */
-Toolbar.prototype.addItems = function(keys, c, ignoreDisabled) {
+Toolbar.prototype.addItems = function (keys, c, ignoreDisabled) {
   var items = [];
-
   for (var i = 0; i < keys.length; i++) {
     var key = keys[i];
 
@@ -1265,7 +1323,7 @@ Toolbar.prototype.addItems = function(keys, c, ignoreDisabled) {
 /**
  * Adds given action item
  */
-Toolbar.prototype.addItem = function(sprite, key, c, ignoreDisabled) {
+Toolbar.prototype.addItem = function (sprite, key, c, ignoreDisabled) {
   var action = this.editorUi.actions.get(key);
   var elt = null;
 
@@ -1283,7 +1341,7 @@ Toolbar.prototype.addItem = function(sprite, key, c, ignoreDisabled) {
     if (!ignoreDisabled && typeof elt.setEnabled === 'function') {
       elt.setEnabled(action.enabled);
 
-      action.addListener('stateChanged', function() {
+      action.addListener('stateChanged', function () {
         elt.setEnabled(action.enabled);
       });
     }
@@ -1295,7 +1353,7 @@ Toolbar.prototype.addItem = function(sprite, key, c, ignoreDisabled) {
 /**
  * Adds a button to the toolbar.
  */
-Toolbar.prototype.addButton = function(classname, tooltip, funct, c) {
+Toolbar.prototype.addButton = function (classname, tooltip, funct, c) {
   var elt = this.createButton(classname);
   c = c != null ? c : this.container;
 
@@ -1309,7 +1367,7 @@ Toolbar.prototype.addButton = function(classname, tooltip, funct, c) {
 /**
  * Initializes the given toolbar element.
  */
-Toolbar.prototype.initElement = function(elt, tooltip) {
+Toolbar.prototype.initElement = function (elt, tooltip) {
   // Adds tooltip
   if (tooltip != null) {
     elt.setAttribute('title', tooltip);
@@ -1321,10 +1379,10 @@ Toolbar.prototype.initElement = function(elt, tooltip) {
 /**
  * Adds enabled state with setter to DOM node (avoids JS wrapper).
  */
-Toolbar.prototype.addEnabledState = function(elt) {
+Toolbar.prototype.addEnabledState = function (elt) {
   var classname = elt.className;
 
-  elt.setEnabled = function(value) {
+  elt.setEnabled = function (value) {
     elt.enabled = value;
 
     if (value) {
@@ -1340,9 +1398,9 @@ Toolbar.prototype.addEnabledState = function(elt) {
 /**
  * Adds enabled state with setter to DOM node (avoids JS wrapper).
  */
-Toolbar.prototype.addClickHandler = function(elt, funct) {
+Toolbar.prototype.addClickHandler = function (elt, funct) {
   if (funct != null) {
-    mxEvent.addListener(elt, 'click', function(evt) {
+    mxEvent.addListener(elt, 'click', function (evt) {
       if (elt.enabled) {
         funct(evt);
       }
@@ -1354,7 +1412,7 @@ Toolbar.prototype.addClickHandler = function(elt, funct) {
     mxEvent.addListener(
       elt,
       mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
-      mxUtils.bind(this, function(evt) {
+      mxUtils.bind(this, function (evt) {
         evt.preventDefault();
       }),
     );
@@ -1364,7 +1422,7 @@ Toolbar.prototype.addClickHandler = function(elt, funct) {
 /**
  * Creates and returns a new button.
  */
-Toolbar.prototype.createButton = function(classname) {
+Toolbar.prototype.createButton = function (classname) {
   var elt = document.createElement('a');
   elt.className = 'geButton';
 
@@ -1382,7 +1440,7 @@ Toolbar.prototype.createButton = function(classname) {
 /**
  * Creates and returns a new button.
  */
-Toolbar.prototype.createLabel = function(label, tooltip) {
+Toolbar.prototype.createLabel = function (label, tooltip) {
   var elt = document.createElement('a');
   elt.className = 'geLabel';
   mxUtils.write(elt, label);
@@ -1393,7 +1451,7 @@ Toolbar.prototype.createLabel = function(label, tooltip) {
 /**
  * Adds a handler for showing a menu in the given element.
  */
-Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll) {
+Toolbar.prototype.addMenuHandler = function (elt, showLabels, funct, showAll) {
   if (funct != null) {
     var graph = this.editorUi.editor.graph;
     var menu = null;
@@ -1402,7 +1460,7 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll) {
     mxEvent.addListener(
       elt,
       'click',
-      mxUtils.bind(this, function(evt) {
+      mxUtils.bind(this, function (evt) {
         if (show && (elt.enabled == null || elt.enabled)) {
           graph.popupMenuHandler.hideMenu();
           menu = new mxPopupMenu(funct);
@@ -1422,7 +1480,7 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll) {
             menu.div.style.width = '40px';
           }
 
-          menu.hideMenu = mxUtils.bind(this, function() {
+          menu.hideMenu = mxUtils.bind(this, function () {
             mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
             this.editorUi.resetCurrentMenu();
             menu.destroy();
@@ -1431,7 +1489,7 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll) {
           // Extends destroy to reset global state
           menu.addListener(
             mxEvent.EVENT_HIDE,
-            mxUtils.bind(this, function() {
+            mxUtils.bind(this, function () {
               this.currentElt = null;
             }),
           );
@@ -1446,7 +1504,7 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll) {
     mxEvent.addListener(
       elt,
       mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
-      mxUtils.bind(this, function(evt) {
+      mxUtils.bind(this, function (evt) {
         show = this.currentElt != elt;
         evt.preventDefault();
       }),
@@ -1457,10 +1515,32 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll) {
 /**
  * Adds a handler for showing a menu in the given element.
  */
-Toolbar.prototype.destroy = function() {
+Toolbar.prototype.destroy = function () {
   if (this.gestureHandler != null) {
     mxEvent.removeGestureListeners(document, this.gestureHandler);
     this.gestureHandler = null;
+  }
+};
+
+Toolbar.prototype.setEnabled = function (enabled) {
+  const connection = document.getElementById('toolbar-connection-button');
+  if (connection) {
+    connection.setEnabled(enabled);
+  }
+
+  const waypoints = document.getElementById('toolbar-waypoints-button');
+  if (waypoints) {
+    waypoints.setEnabled(enabled);
+  }
+
+  const insert = document.getElementById('toolbar-insert-button');
+  if (insert) {
+    insert.setEnabled(enabled);
+  }
+
+  const table = document.getElementById('toolbar-table-button');
+  if (table) {
+    table.setEnabled(enabled);
   }
 };
 // TEN9: Added exports

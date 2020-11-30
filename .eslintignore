@@ -3,4 +3,6 @@ node_modules/
 **/*.min.js
 src/graph_editor/lib/deflate/
 src/graph_editor/lib/jgraph/
+src/graph_editor/lib/diagramly/
 src/graph_editor/lib/jscolor/
+src/graph_editor/lib/shapes/

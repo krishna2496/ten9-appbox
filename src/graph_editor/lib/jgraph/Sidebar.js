@@ -1,3 +1,19 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
 // TEN9: Added imports
 const {
   mxCell,
@@ -57,7 +73,7 @@ function Sidebar(editorUi, container, dialogClass) {
 
   document.body.appendChild(this.graph.container);
 
-  this.pointerUpHandler = mxUtils.bind(this, function() {
+  this.pointerUpHandler = mxUtils.bind(this, function () {
     this.showTooltips = true;
   });
 
@@ -67,7 +83,7 @@ function Sidebar(editorUi, container, dialogClass) {
     this.pointerUpHandler,
   );
 
-  this.pointerDownHandler = mxUtils.bind(this, function() {
+  this.pointerDownHandler = mxUtils.bind(this, function () {
     this.showTooltips = false;
     this.hideTooltip();
   });
@@ -78,7 +94,7 @@ function Sidebar(editorUi, container, dialogClass) {
     this.pointerDownHandler,
   );
 
-  this.pointerMoveHandler = mxUtils.bind(this, function(evt) {
+  this.pointerMoveHandler = mxUtils.bind(this, function (evt) {
     var src = mxEvent.getSource(evt);
 
     while (src != null) {
@@ -99,7 +115,7 @@ function Sidebar(editorUi, container, dialogClass) {
   );
 
   // Handles mouse leaving the window
-  this.pointerOutHandler = mxUtils.bind(this, function(evt) {
+  this.pointerOutHandler = mxUtils.bind(this, function (evt) {
     if (evt.toElement == null && evt.relatedTarget == null) {
       this.hideTooltip();
     }
@@ -115,7 +131,7 @@ function Sidebar(editorUi, container, dialogClass) {
   mxEvent.addListener(
     container,
     'scroll',
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       this.showTooltips = true;
       this.hideTooltip();
     }),
@@ -127,7 +143,7 @@ function Sidebar(editorUi, container, dialogClass) {
 /**
  * Adds all palettes to the sidebar.
  */
-Sidebar.prototype.init = function() {
+Sidebar.prototype.init = function () {
   var dir = STENCIL_PATH;
 
   this.addSearchPalette(true);
@@ -154,57 +170,6 @@ Sidebar.prototype.init = function() {
     'Flowchart',
     dir + '/flowchart.xml',
     ';whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2',
-  );
-  this.setCurrentSearchEntryLibrary();
-
-  this.setCurrentSearchEntryLibrary('clipart');
-  this.addImagePalette(
-    'clipart',
-    mxResources.get('clipart'),
-    dir + '/clipart/',
-    '_128x128.png',
-    [
-      'Earth_globe',
-      'Empty_Folder',
-      'Full_Folder',
-      'Gear',
-      'Lock',
-      'Software',
-      'Virus',
-      'Email',
-      'Database',
-      'Router_Icon',
-      'iPad',
-      'iMac',
-      'Laptop',
-      'MacBook',
-      'Monitor_Tower',
-      'Printer',
-      'Server_Tower',
-      'Workstation',
-      'Firewall_02',
-      'Wireless_Router_N',
-      'Credit_Card',
-      'Piggy_Bank',
-      'Graph',
-      'Safe',
-      'Shopping_Cart',
-      'Suit1',
-      'Suit2',
-      'Suit3',
-      'Pilot1',
-      'Worker1',
-      'Soldier1',
-      'Doctor1',
-      'Tech1',
-      'Security1',
-      'Telesales1',
-    ],
-    null,
-    {
-      Wireless_Router_N: 'wireless router switch wap wifi access point wlan',
-      Router_Icon: 'router switch',
-    },
   );
   this.setCurrentSearchEntryLibrary();
 };
@@ -350,14 +315,14 @@ Sidebar.prototype.defaultImageHeight = 80;
 /**
  * Adds all palettes to the sidebar.
  */
-Sidebar.prototype.getTooltipOffset = function() {
+Sidebar.prototype.getTooltipOffset = function () {
   return new mxPoint(0, 0);
 };
 
 /**
  * Adds all palettes to the sidebar.
  */
-Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel) {
+Sidebar.prototype.showTooltip = function (elt, cells, w, h, title, showLabel) {
   if (this.enableTooltips && this.showTooltips) {
     if (this.currentElt != elt) {
       if (this.thread != null) {
@@ -365,7 +330,7 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel) {
         this.thread = null;
       }
 
-      var show = mxUtils.bind(this, function() {
+      var show = mxUtils.bind(this, function () {
         // Lazy creation of the DOM nodes and graph instance
         if (this.tooltip == null) {
           this.tooltip = document.createElement('div');
@@ -531,7 +496,7 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel) {
 /**
  * Hides the current tooltip.
  */
-Sidebar.prototype.hideTooltip = function() {
+Sidebar.prototype.hideTooltip = function () {
   if (this.thread != null) {
     window.clearTimeout(this.thread);
     this.thread = null;
@@ -546,10 +511,10 @@ Sidebar.prototype.hideTooltip = function() {
 /**
  * Hides the current tooltip.
  */
-Sidebar.prototype.addDataEntry = function(tags, width, height, title, data) {
+Sidebar.prototype.addDataEntry = function (tags, width, height, title, data) {
   return this.addEntry(
     tags,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       return this.createVertexTemplateFromData(data, width, height, title);
     }),
   );
@@ -558,9 +523,9 @@ Sidebar.prototype.addDataEntry = function(tags, width, height, title, data) {
 /**
  * Adds the give entries to the search index.
  */
-Sidebar.prototype.addEntries = function(images) {
+Sidebar.prototype.addEntries = function (images) {
   for (var i = 0; i < images.length; i++) {
-    mxUtils.bind(this, function(img) {
+    mxUtils.bind(this, function (img) {
       var data = img.data;
       var tags = img.title != null ? img.title : '';
 
@@ -571,7 +536,7 @@ Sidebar.prototype.addEntries = function(images) {
       if (data != null && tags.length > 0) {
         this.addEntry(
           tags,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             data = this.editorUi.convertDataUri(data);
             var s = 'shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;';
 
@@ -594,7 +559,7 @@ Sidebar.prototype.addEntries = function(images) {
       } else if (img.xml != null && tags.length > 0) {
         this.addEntry(
           tags,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             var cells = this.editorUi.stringToCells(Graph.decompress(img.xml));
 
             return this.createVertexTemplateFromCells(
@@ -616,14 +581,14 @@ Sidebar.prototype.addEntries = function(images) {
 /**
  * Hides the current tooltip.
  */
-Sidebar.prototype.setCurrentSearchEntryLibrary = function(id, lib) {
+Sidebar.prototype.setCurrentSearchEntryLibrary = function (id, lib) {
   this.currentSearchEntryLibrary = id != null ? { id: id, lib: lib } : null;
 };
 
 /**
  * Hides the current tooltip.
  */
-Sidebar.prototype.addEntry = function(tags, fn) {
+Sidebar.prototype.addEntry = function (tags, fn) {
   if (this.taglist != null && tags != null && tags.length > 0) {
     if (this.currentSearchEntryLibrary != null) {
       fn.parentLibraries = [this.currentSearchEntryLibrary];
@@ -637,7 +602,23 @@ Sidebar.prototype.addEntry = function(tags, fn) {
     var tagList = [];
     var hash = {};
 
-    // Finds unique tags
+    var doAddEntry = mxUtils.bind(this, function (tag) {
+      if (tag != null && tag.length > 1) {
+        var entry = this.taglist[tag];
+
+        if (typeof entry !== 'object') {
+          entry = { entries: [], dict: new mxDictionary() };
+          this.taglist[tag] = entry;
+        }
+
+        // Ignores duplicates
+        if (entry.dict.get(fn) == null) {
+          entry.dict.put(fn, fn);
+          entry.entries.push(fn);
+        }
+      }
+    });
+
     for (var i = 0; i < tmp.length; i++) {
       if (hash[tmp[i]] == null) {
         hash[tmp[i]] = true;
@@ -666,7 +647,7 @@ Sidebar.prototype.addEntry = function(tags, fn) {
 /**
  * Hides the current tooltip.
  */
-Sidebar.prototype.addEntryForTag = function(tag, fn) {
+Sidebar.prototype.addEntryForTag = function (tag, fn) {
   if (tag != null && tag.length > 1) {
     var entry = this.taglist[tag];
 
@@ -682,7 +663,7 @@ Sidebar.prototype.addEntryForTag = function(tag, fn) {
 /**
  * Adds shape search UI.
  */
-Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, error) {
+Sidebar.prototype.searchEntries = function (searchTerms, count, page, success, error) {
   if (this.taglist != null && searchTerms != null) {
     var tmp = searchTerms.toLowerCase().split(' ');
     var dict = new mxDictionary();
@@ -733,7 +714,7 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 /**
  * Adds shape search UI.
  */
-Sidebar.prototype.filterTags = function(tags) {
+Sidebar.prototype.filterTags = function (tags) {
   if (tags != null) {
     var arr = tags.split(' ');
     var result = [];
@@ -757,7 +738,7 @@ Sidebar.prototype.filterTags = function(tags) {
 /**
  * Adds the general palette to the sidebar.
  */
-Sidebar.prototype.cloneCell = function(cell, value) {
+Sidebar.prototype.cloneCell = function (cell, value) {
   var clone = cell.clone();
 
   if (value != null) {
@@ -770,14 +751,14 @@ Sidebar.prototype.cloneCell = function(cell, value) {
 /**
  * Adds shape search UI.
  */
-Sidebar.prototype.showPopupMenuForEntry = function(elt, libs, evt) {
+Sidebar.prototype.showPopupMenuForEntry = function (elt, libs, evt) {
   // Hook for subclassers
 };
 
 /**
  * Adds shape search UI.
  */
-Sidebar.prototype.addSearchPalette = function(expand) {
+Sidebar.prototype.addSearchPalette = function (expand) {
   var elt = document.createElement('div');
   elt.style.visibility = 'hidden';
   this.container.appendChild(elt);
@@ -837,7 +818,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
   div.appendChild(inner);
 
   var center = document.createElement('center');
-  var button = mxUtils.button(mxResources.get('moreResults'), function() {
+  var button = mxUtils.button(mxResources.get('moreResults'), function () {
     find();
   });
   button.style.display = 'none';
@@ -863,7 +844,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
   // Count is dynamically updated below
   var count = 12;
 
-  var clearDiv = mxUtils.bind(this, function() {
+  var clearDiv = mxUtils.bind(this, function () {
     active = false;
     this.currentSearch = null;
     var child = div.firstChild;
@@ -879,7 +860,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
     }
   });
 
-  mxEvent.addListener(cross, 'click', function() {
+  mxEvent.addListener(cross, 'click', function () {
     if (cross.getAttribute('src') == Dialog.prototype.closeImage) {
       cross.setAttribute('src', Sidebar.prototype.searchImage);
       cross.setAttribute('title', mxResources.get('search'));
@@ -892,7 +873,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
     input.focus();
   });
 
-  find = mxUtils.bind(this, function() {
+  find = mxUtils.bind(this, function () {
     // Shows 4 rows (minimum 4 results)
     count = 4 * Math.max(1, Math.floor(this.container.clientWidth / (this.thumbWidth + 10)));
     this.hideTooltip();
@@ -922,7 +903,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
             searchTerm,
             count,
             page,
-            mxUtils.bind(this, function(results, len, more, terms) {
+            mxUtils.bind(this, function (results, len, more, terms) {
               if (this.currentSearch == current) {
                 results = results != null ? results : [];
                 active = false;
@@ -939,7 +920,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
                 }
 
                 for (var i = 0; i < results.length; i++) {
-                  mxUtils.bind(this, function(result) {
+                  mxUtils.bind(this, function (result) {
                     try {
                       var elt = result();
 
@@ -956,7 +937,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
                         elt,
                         null,
                         null,
-                        mxUtils.bind(this, function(evt) {
+                        mxUtils.bind(this, function (evt) {
                           var libs = hash[elt.innerHTML];
 
                           if (mxEvent.isPopupTrigger(evt)) {
@@ -986,7 +967,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
                 div.appendChild(center);
               }
             }),
-            mxUtils.bind(this, function() {
+            mxUtils.bind(this, function () {
               // TODO: Error handling
               button.style.cursor = '';
             }),
@@ -1007,7 +988,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
   mxEvent.addListener(
     input,
     'keydown',
-    mxUtils.bind(this, function(evt) {
+    mxUtils.bind(this, function (evt) {
       if (evt.keyCode == 13 /* Enter */) {
         find();
         mxEvent.consume(evt);
@@ -1018,7 +999,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
   mxEvent.addListener(
     input,
     'keyup',
-    mxUtils.bind(this, function(evt) {
+    mxUtils.bind(this, function (evt) {
       if (input.value == '') {
         cross.setAttribute('src', Sidebar.prototype.searchImage);
         cross.setAttribute('title', mxResources.get('search'));
@@ -1044,7 +1025,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
   );
 
   // Workaround for blocked text selection in Editor
-  mxEvent.addListener(input, 'mousedown', function(evt) {
+  mxEvent.addListener(input, 'mousedown', function (evt) {
     if (evt.stopPropagation) {
       evt.stopPropagation();
     }
@@ -1053,7 +1034,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
   });
 
   // Workaround for blocked text selection in Editor
-  mxEvent.addListener(input, 'selectstart', function(evt) {
+  mxEvent.addListener(input, 'selectstart', function (evt) {
     if (evt.stopPropagation) {
       evt.stopPropagation();
     }
@@ -1072,7 +1053,7 @@ Sidebar.prototype.addSearchPalette = function(expand) {
 /**
  * Adds the general palette to the sidebar.
  */
-Sidebar.prototype.insertSearchHint = function(
+Sidebar.prototype.insertSearchHint = function (
   div,
   searchTerm,
   count,
@@ -1098,7 +1079,7 @@ Sidebar.prototype.insertSearchHint = function(
 /**
  * Adds the general palette to the sidebar.
  */
-Sidebar.prototype.addGeneralPalette = function(expand) {
+Sidebar.prototype.addGeneralPalette = function (expand) {
   var lineTags = 'line lines connector connectors connection connections arrow arrows ';
   this.setCurrentSearchEntryLibrary('general', 'general');
 
@@ -1334,7 +1315,7 @@ Sidebar.prototype.addGeneralPalette = function(expand) {
     ),
     this.addEntry(
       'curve',
-      mxUtils.bind(this, function() {
+      mxUtils.bind(this, function () {
         var cell = new mxCell(
           '',
           new mxGeometry(0, 0, 50, 50),
@@ -1420,7 +1401,7 @@ Sidebar.prototype.addGeneralPalette = function(expand) {
     this.createEdgeTemplateEntry('shape=link;html=1;', 100, 0, '', 'Link', null, lineTags + 'link'),
     this.addEntry(
       lineTags + 'edge title',
-      mxUtils.bind(this, function() {
+      mxUtils.bind(this, function () {
         var edge = new mxCell('', new mxGeometry(0, 0, 0, 0), 'endArrow=classic;html=1;');
         edge.geometry.setTerminalPoint(new mxPoint(0, 0), true);
         edge.geometry.setTerminalPoint(new mxPoint(100, 0), false);
@@ -1442,7 +1423,7 @@ Sidebar.prototype.addGeneralPalette = function(expand) {
     ),
     this.addEntry(
       lineTags + 'edge title multiplicity',
-      mxUtils.bind(this, function() {
+      mxUtils.bind(this, function () {
         var edge = new mxCell('', new mxGeometry(0, 0, 0, 0), 'endArrow=classic;html=1;');
         edge.geometry.setTerminalPoint(new mxPoint(0, 0), true);
         edge.geometry.setTerminalPoint(new mxPoint(160, 0), false);
@@ -1474,7 +1455,7 @@ Sidebar.prototype.addGeneralPalette = function(expand) {
     ),
     this.addEntry(
       lineTags + 'edge title multiplicity',
-      mxUtils.bind(this, function() {
+      mxUtils.bind(this, function () {
         var edge = new mxCell('Label', new mxGeometry(0, 0, 0, 0), 'endArrow=classic;html=1;');
         edge.geometry.setTerminalPoint(new mxPoint(0, 0), true);
         edge.geometry.setTerminalPoint(new mxPoint(160, 0), false);
@@ -1516,7 +1497,7 @@ Sidebar.prototype.addGeneralPalette = function(expand) {
     ),
     this.addEntry(
       lineTags + 'edge shape symbol message mail email',
-      mxUtils.bind(this, function() {
+      mxUtils.bind(this, function () {
         var edge = new mxCell('', new mxGeometry(0, 0, 0, 0), 'endArrow=classic;html=1;');
         edge.geometry.setTerminalPoint(new mxPoint(0, 0), true);
         edge.geometry.setTerminalPoint(new mxPoint(100, 0), false);
@@ -1550,7 +1531,7 @@ Sidebar.prototype.addGeneralPalette = function(expand) {
 /**
  * Adds the general palette to the sidebar.
  */
-Sidebar.prototype.addMiscPalette = function(expand) {
+Sidebar.prototype.addMiscPalette = function (expand) {
   var sb = this;
   var lineTags = 'line lines connector connectors connection connections arrow arrows ';
   this.setCurrentSearchEntryLibrary('general', 'misc');
@@ -1659,7 +1640,7 @@ Sidebar.prototype.addMiscPalette = function(expand) {
     ),
     this.addEntry(
       'link hyperlink',
-      mxUtils.bind(this, function() {
+      mxUtils.bind(this, function () {
         var cell = new mxCell(
           'Link',
           new mxGeometry(0, 0, 60, 40),
@@ -1678,7 +1659,7 @@ Sidebar.prototype.addMiscPalette = function(expand) {
     ),
     this.addEntry(
       'timestamp date time text label',
-      mxUtils.bind(this, function() {
+      mxUtils.bind(this, function () {
         var cell = new mxCell(
           '%date{ddd mmm dd yyyy HH:MM:ss}%',
           new mxGeometry(0, 0, 160, 20),
@@ -1697,7 +1678,7 @@ Sidebar.prototype.addMiscPalette = function(expand) {
     ),
     this.addEntry(
       'variable placeholder metadata hello world text label',
-      mxUtils.bind(this, function() {
+      mxUtils.bind(this, function () {
         var cell = new mxCell(
           '%name% Text',
           new mxGeometry(0, 0, 80, 20),
@@ -1927,7 +1908,7 @@ Sidebar.prototype.addMiscPalette = function(expand) {
       null,
       'label image icon symbol',
     ),
-    this.addEntry('shape group container', function() {
+    this.addEntry('shape group container', function () {
       var cell = new mxCell(
         'Label',
         new mxGeometry(0, 0, 160, 70),
@@ -2003,10 +1984,11 @@ Sidebar.prototype.addMiscPalette = function(expand) {
   this.addPaletteFunctions('misc', mxResources.get('misc'), expand != null ? expand : true, fns);
   this.setCurrentSearchEntryLibrary();
 };
+
 /**
  * Adds the container palette to the sidebar.
  */
-Sidebar.prototype.addAdvancedPalette = function(expand) {
+Sidebar.prototype.addAdvancedPalette = function (expand) {
   this.setCurrentSearchEntryLibrary('general', 'advanced');
   this.addPaletteFunctions(
     'advanced',
@@ -2020,7 +2002,7 @@ Sidebar.prototype.addAdvancedPalette = function(expand) {
 /**
  * Adds the general palette to the sidebar.
  */
-Sidebar.prototype.addBasicPalette = function(dir) {
+Sidebar.prototype.addBasicPalette = function (dir) {
   this.setCurrentSearchEntryLibrary('basic');
   this.addStencilPalette(
     'basic',
@@ -2068,7 +2050,7 @@ Sidebar.prototype.addBasicPalette = function(dir) {
 /**
  * Adds the container palette to the sidebar.
  */
-Sidebar.prototype.createAdvancedShapes = function() {
+Sidebar.prototype.createAdvancedShapes = function () {
   // Avoids having to bind all functions to "this"
   var sb = this;
 
@@ -2249,7 +2231,7 @@ Sidebar.prototype.createAdvancedShapes = function() {
       null,
       'switch router',
     ),
-    this.addEntry('process bar', function() {
+    this.addEntry('process bar', function () {
       return sb.createVertexTemplateFromData(
         'zZXRaoMwFIafJpcDjbNrb2233rRQ8AkyPdPQaCRJV+3T7yTG2rUVBoOtgpDzn/xJzncCIdGyateKNeVW5iBI9EqipZLS9KOqXYIQhAY8J9GKUBrgT+jbRDZ02aBhCmrzEwPtDZ9MHKBXdkpmoDWKCVN9VptO+Kw+8kqwGqMkK7nIN6yTB7uTNizbD1FSSsVPsjYMC1qFKHxwIZZSSIVxLZ1/nJNar5+oQPMT7IYCrqUta1ENzuqGaeOFTArBGs3f3Vmtoo2Se7ja1h00kSoHK4bBIKUNy3hdoPYU0mF91i9mT8EEL2ocZ3gKa00ayWujLZY4IfHKFonVDLsRGgXuQ90zBmWgneyTk3yT1iArMKrDKUeem9L3ajHrbSXwohxsQd/ggOleKM7ese048J2/fwuim1uQGmhQCW8vQMkacP3GCQgBFMftHEsr7cYYe95CnmKTPMFbYD8CQ++DGQy+/M5X4ku5wHYmdIktfvk9tecpavThqS3m/0YtnqIWPTy1cD77K2wYjo+Ay317I74A',
         296,
@@ -2267,7 +2249,7 @@ Sidebar.prototype.createAdvancedShapes = function() {
       null,
       'container swimlane lane pool group',
     ),
-    this.addEntry('list group erd table', function() {
+    this.addEntry('list group erd table', function () {
       var cell = new mxCell(
         'List',
         new mxGeometry(0, 0, 140, 110),
@@ -2286,7 +2268,7 @@ Sidebar.prototype.createAdvancedShapes = function() {
         'List',
       );
     }),
-    this.addEntry('list item entry value group erd table', function() {
+    this.addEntry('list item entry value group erd table', function () {
       return sb.createVertexTemplateFromCells(
         [sb.cloneCell(field, 'List Item')],
         field.geometry.width,
@@ -2300,7 +2282,7 @@ Sidebar.prototype.createAdvancedShapes = function() {
 /**
  * Adds the general palette to the sidebar.
  */
-Sidebar.prototype.addUmlPalette = function(expand) {
+Sidebar.prototype.addUmlPalette = function (expand) {
   // Avoids having to bind all functions to "this"
   var sb = this;
 
@@ -2344,7 +2326,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
       null,
       dt + 'interface object instance annotated annotation',
     ),
-    this.addEntry(dt + 'object instance', function() {
+    this.addEntry(dt + 'object instance', function () {
       var cell = new mxCell(
         'Classname',
         new mxGeometry(0, 0, 160, 90),
@@ -2362,7 +2344,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
         'Class',
       );
     }),
-    this.addEntry(dt + 'section subsection', function() {
+    this.addEntry(dt + 'section subsection', function () {
       var cell = new mxCell(
         'Classname',
         new mxGeometry(0, 0, 140, 110),
@@ -2380,7 +2362,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
         'Class 2',
       );
     }),
-    this.addEntry(dt + 'item member method function variable field attribute label', function() {
+    this.addEntry(dt + 'item member method function variable field attribute label', function () {
       return sb.createVertexTemplateFromCells(
         [sb.cloneCell(field, '+ item: attribute')],
         field.geometry.width,
@@ -2388,7 +2370,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
         'Item 1',
       );
     }),
-    this.addEntry(dt + 'item member method function variable field attribute label', function() {
+    this.addEntry(dt + 'item member method function variable field attribute label', function () {
       var cell = new mxCell(
         'item: attribute',
         new mxGeometry(0, 0, 120, field.geometry.height),
@@ -2405,7 +2387,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
         'Item 2',
       );
     }),
-    this.addEntry(dt + 'divider hline line separator', function() {
+    this.addEntry(dt + 'divider hline line separator', function () {
       return sb.createVertexTemplateFromCells(
         [divider.clone()],
         divider.geometry.width,
@@ -2413,7 +2395,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
         'Divider',
       );
     }),
-    this.addEntry(dt + 'spacer space gap separator', function() {
+    this.addEntry(dt + 'spacer space gap separator', function () {
       var cell = new mxCell(
         '',
         new mxGeometry(0, 0, 20, 14),
@@ -2438,7 +2420,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
       null,
       dt + 'title label',
     ),
-    this.addEntry(dt + 'component', function() {
+    this.addEntry(dt + 'component', function () {
       var cell = new mxCell(
         '&laquo;Annotation&raquo;<br/><b>Component</b>',
         new mxGeometry(0, 0, 180, 90),
@@ -2463,7 +2445,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
         'Component',
       );
     }),
-    this.addEntry(dt + 'component', function() {
+    this.addEntry(dt + 'component', function () {
       var cell = new mxCell(
         '<p style="margin:0px;margin-top:6px;text-align:center;"><b>Component</b></p>' +
           '<hr/><p style="margin:0px;margin-left:8px;">+ Attribute1: Type<br/>+ Attribute2: Type</p>',
@@ -2543,7 +2525,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
       null,
       'er entity table',
     ),
-    this.addEntry(dt + 'object instance', function() {
+    this.addEntry(dt + 'object instance', function () {
       var cell = new mxCell(
         '<p style="margin:0px;margin-top:4px;text-align:center;">' +
           '<b>Class</b></p>' +
@@ -2560,7 +2542,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
         'Class 3',
       );
     }),
-    this.addEntry(dt + 'object instance', function() {
+    this.addEntry(dt + 'object instance', function () {
       var cell = new mxCell(
         '<p style="margin:0px;margin-top:4px;text-align:center;">' +
           '<b>Class</b></p>' +
@@ -2577,7 +2559,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
         'Class 4',
       );
     }),
-    this.addEntry(dt + 'object instance', function() {
+    this.addEntry(dt + 'object instance', function () {
       var cell = new mxCell(
         '<p style="margin:0px;margin-top:4px;text-align:center;">' +
           '<b>Class</b></p>' +
@@ -2595,7 +2577,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
         'Class 5',
       );
     }),
-    this.addEntry(dt + 'object instance', function() {
+    this.addEntry(dt + 'object instance', function () {
       var cell = new mxCell(
         '<p style="margin:0px;margin-top:4px;text-align:center;">' +
           '<i>&lt;&lt;Interface&gt;&gt;</i><br/><b>Interface</b></p>' +
@@ -2636,7 +2618,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
       null,
       'uml required interface lollipop notation',
     ),
-    this.addEntry('uml lollipop notation provided required interface', function() {
+    this.addEntry('uml lollipop notation provided required interface', function () {
       return sb.createVertexTemplateFromData(
         'zVTBrptADPyavVYEkt4b0uQd3pMq5dD2uAUD27dgZJwE8vX1spsQlETtpVWRIjFjex3PmFVJWvc70m31hjlYlXxWSUqI7N/qPgVrVRyZXCUbFceR/FS8fRJdjNGo1QQN/0lB7AuO2h7AM57oeLCBIDw0Obj8SCVrJK6wxEbbV8RWyIWQP4F52Juzq9AHRqEqrm2IQpN/IsKTwAYb8MzWWBuO9B0hL2E2BGsqIQyxvJ9rzApD7QBrYBokhcBqNsf5UbrzsLzmXUu/oJET42jwGat5QYcHyiDkTDLKy03TiRrFfSx08m+FrrQtUkOZvZdbFKThmwMfVhf4fQ43/W3uZriiPPT+KKhjwnf4anKuQv//wsg+NPJ7/9d9Xf7eVykwbeeMOFWGYd/qzEVO8tHP/Suw4a2ujXV/+gXsEdhkOgSC8os44BQt0tggicZHeG1N2QiXibhAV48epRayEDd8MT7Ct06TUaXVWq027tCuhcx5VZjebeeaoDNn/WMcb/p+j0AM/dNr6InLl4Lgzylsk6OCgRWYsuI592gNZh5OhgmcblPv7+1l+ws=',
         40,
@@ -2694,7 +2676,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
       null,
       'uml use case usecase',
     ),
-    this.addEntry('uml activity state start', function() {
+    this.addEntry('uml activity state start', function () {
       var cell = new mxCell(
         '',
         new mxGeometry(0, 0, 30, 30),
@@ -2715,7 +2697,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 
       return sb.createVertexTemplateFromCells([cell, edge], 30, 90, 'Start');
     }),
-    this.addEntry('uml activity state', function() {
+    this.addEntry('uml activity state', function () {
       var cell = new mxCell(
         'Activity',
         new mxGeometry(0, 0, 120, 40),
@@ -2736,7 +2718,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 
       return sb.createVertexTemplateFromCells([cell, edge], 120, 100, 'Activity');
     }),
-    this.addEntry('uml activity composite state', function() {
+    this.addEntry('uml activity composite state', function () {
       var cell = new mxCell(
         'Composite State',
         new mxGeometry(0, 0, 160, 60),
@@ -2765,7 +2747,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 
       return sb.createVertexTemplateFromCells([cell, edge], 160, 120, 'Composite State');
     }),
-    this.addEntry('uml activity condition', function() {
+    this.addEntry('uml activity condition', function () {
       var cell = new mxCell(
         'Condition',
         new mxGeometry(0, 0, 80, 40),
@@ -2799,7 +2781,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 
       return sb.createVertexTemplateFromCells([cell, edge1, edge2], 180, 100, 'Condition');
     }),
-    this.addEntry('uml activity fork join', function() {
+    this.addEntry('uml activity fork join', function () {
       var cell = new mxCell(
         '',
         new mxGeometry(0, 0, 200, 10),
@@ -2910,7 +2892,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
       null,
       'uml note',
     ),
-    this.addEntry('uml sequence invoke invocation call activation', function() {
+    this.addEntry('uml sequence invoke invocation call activation', function () {
       var cell = new mxCell(
         '',
         new mxGeometry(0, 0, 10, 80),
@@ -2933,7 +2915,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
     }),
     this.addEntry(
       'uml sequence invoke call delegation synchronous invocation activation',
-      function() {
+      function () {
         var cell = new mxCell(
           '',
           new mxGeometry(0, 0, 10, 80),
@@ -2971,7 +2953,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
         );
       },
     ),
-    this.addEntry('uml sequence self call recursion delegation activation', function() {
+    this.addEntry('uml sequence self call recursion delegation activation', function () {
       var cell = new mxCell(
         '',
         new mxGeometry(0, 20, 10, 40),
@@ -2993,7 +2975,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 
       return sb.createVertexTemplateFromCells([cell, edge], 10, 60, 'Self Call');
     }),
-    this.addEntry('uml sequence invoke call delegation callback activation', function() {
+    this.addEntry('uml sequence invoke call delegation callback activation', function () {
       // TODO: Check if more entries should be converted to compressed XML
       return sb.createVertexTemplateFromData(
         'xZRNT8MwDIZ/Ta6oaymD47rBTkiTuMAxW6wmIm0q19s6fj1OE3V0Y2iCA4dK8euP2I+riGxedUuUjX52CqzIHkU2R+conKpuDtaKNDFKZAuRpgl/In264J303qSRCDVdk5CGhJ20WwhKEFo62ChoqritxURkReNMTa2X80LkC68AmgoIkEWHpF3pamlXR7WIFwASdBeb7KXY4RIc5+KBQ/ZGkY4RYY5Egyl1zLqLmmyDXQ6Zx4n5EIf+HkB2BmAjrV3LzftPIPw4hgNn1pQ1a2tH5Cp2QK1miG7vNeu4iJe4pdeY2BtvbCQDGlAljMCQxBJotJ8rWCFYSWY3LvUdmZi68rvkkLiU6QnL1m1xAzHoBOdw61WEb88II9AW67/ydQ2wq1Cy1aAGvOrFfPh6997qDA3g+dxzv3nIL6MPU/8T+kMw8+m4QPgdfrEJNo8PSQj/+s58Ag==',
@@ -3039,7 +3021,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
       null,
       'uml sequence message call invoke dispatch',
     ),
-    this.addEntry('uml sequence return message', function() {
+    this.addEntry('uml sequence return message', function () {
       var edge = new mxCell(
         'return',
         new mxGeometry(0, 0, 0, 0),
@@ -3052,7 +3034,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 
       return sb.createEdgeTemplateFromCells([edge], 80, 0, 'Return');
     }),
-    this.addEntry('uml relation', function() {
+    this.addEntry('uml relation', function () {
       var edge = new mxCell(
         'name',
         new mxGeometry(0, 0, 0, 0),
@@ -3076,7 +3058,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 
       return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Relation 1');
     }),
-    this.addEntry('uml association', function() {
+    this.addEntry('uml association', function () {
       var edge = new mxCell(
         '',
         new mxGeometry(0, 0, 0, 0),
@@ -3109,7 +3091,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 
       return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Association 1');
     }),
-    this.addEntry('uml aggregation', function() {
+    this.addEntry('uml aggregation', function () {
       var edge = new mxCell(
         '1',
         new mxGeometry(0, 0, 0, 0),
@@ -3124,7 +3106,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 
       return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Aggregation 1');
     }),
-    this.addEntry('uml composition', function() {
+    this.addEntry('uml composition', function () {
       var edge = new mxCell(
         '1',
         new mxGeometry(0, 0, 0, 0),
@@ -3139,7 +3121,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 
       return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Composition 1');
     }),
-    this.addEntry('uml relation', function() {
+    this.addEntry('uml relation', function () {
       var edge = new mxCell(
         'Relation',
         new mxGeometry(0, 0, 0, 0),
@@ -3262,7 +3244,7 @@ Sidebar.prototype.addUmlPalette = function(expand) {
 /**
  * Adds the BPMN library to the sidebar.
  */
-Sidebar.prototype.addBpmnPalette = function(dir, expand) {
+Sidebar.prototype.addBpmnPalette = function (dir, expand) {
   // Avoids having to bind all functions to "this"
   var sb = this;
   this.setCurrentSearchEntryLibrary('bpmn');
@@ -3308,7 +3290,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand) {
       null,
       'bpmn call activity',
     ),
-    this.addEntry('bpmn subprocess sub process sub-process', function() {
+    this.addEntry('bpmn subprocess sub process sub-process', function () {
       var cell = new mxCell(
         'Sub-Process',
         new mxGeometry(0, 0, 120, 80),
@@ -3339,7 +3321,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand) {
         'loop',
         'subprocess sub process sub-process looped',
       ).join(' '),
-      function() {
+      function () {
         var cell = new mxCell(
           'Looped\nSub-Process',
           new mxGeometry(0, 0, 120, 80),
@@ -3371,7 +3353,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand) {
         );
       },
     ),
-    this.addEntry('bpmn receive task', function() {
+    this.addEntry('bpmn receive task', function () {
       var cell = new mxCell(
         'Receive',
         new mxGeometry(0, 0, 120, 80),
@@ -3396,7 +3378,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand) {
         'Receive Task',
       );
     }),
-    this.addEntry(this.getTagsForStencil('mxgraph.bpmn', 'user_task').join(' '), function() {
+    this.addEntry(this.getTagsForStencil('mxgraph.bpmn', 'user_task').join(' '), function () {
       var cell = new mxCell(
         'User',
         new mxGeometry(0, 0, 120, 80),
@@ -3433,7 +3415,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand) {
     }),
     this.addEntry(
       this.getTagsForStencil('mxgraph.bpmn', 'timer_start', 'attached').join(' '),
-      function() {
+      function () {
         var cell = new mxCell(
           'Process',
           new mxGeometry(0, 0, 120, 80),
@@ -3456,7 +3438,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand) {
     ),
     this.addEntry(
       this.getTagsForStencil('mxgraph.bpmn', 'timer_start', 'attached').join(' '),
-      function() {
+      function () {
         var cell = new mxCell(
           'Process',
           new mxGeometry(0, 0, 120, 80),
@@ -3517,7 +3499,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand) {
       null,
       'bpmn call conversation',
     ),
-    this.addEntry('bpmn subconversation sub conversation sub-conversation', function() {
+    this.addEntry('bpmn subconversation sub conversation sub-conversation', function () {
       var cell = new mxCell(
         '',
         new mxGeometry(0, 0, 60, 50),
@@ -3538,7 +3520,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand) {
         'Sub-Conversation',
       );
     }),
-    this.addEntry('bpmn data object', function() {
+    this.addEntry('bpmn data object', function () {
       var cell = new mxCell(
         '',
         new mxGeometry(0, 0, 40, 60),
@@ -3824,7 +3806,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand) {
       null,
       'bpmn message flow',
     ),
-    this.addEntry('bpmn message flow', function() {
+    this.addEntry('bpmn message flow', function () {
       var edge = new mxCell(
         '',
         new mxGeometry(0, 0, 0, 0),
@@ -3857,7 +3839,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand) {
 /**
  * Creates and returns the given title element.
  */
-Sidebar.prototype.createTitle = function(label) {
+Sidebar.prototype.createTitle = function (label) {
   var elt = document.createElement('a');
   elt.setAttribute('title', mxResources.get('sidebarTooltip'));
   elt.className = 'geTitle';
@@ -3869,7 +3851,7 @@ Sidebar.prototype.createTitle = function(label) {
 /**
  * Creates a thumbnail for the given cells.
  */
-Sidebar.prototype.createThumb = function(
+Sidebar.prototype.createThumb = function (
   cells,
   width,
   height,
@@ -3929,8 +3911,9 @@ Sidebar.prototype.createThumb = function(
 
   node.style.position = 'relative';
   node.style.overflow = 'hidden';
-  node.style.left = this.thumbBorder + 'px';
-  node.style.top = this.thumbBorder + 'px';
+  // TEN9: Use default to keep this centered
+  // node.style.left = this.thumbBorder + 'px';
+  // node.style.top = this.thumbBorder + 'px';
   node.style.width = width + 'px';
   node.style.height = height + 'px';
   node.style.visibility = '';
@@ -3965,7 +3948,7 @@ Sidebar.prototype.createThumb = function(
 /**
  * Creates and returns a new palette item for the given image.
  */
-Sidebar.prototype.createItem = function(
+Sidebar.prototype.createItem = function (
   cells,
   title,
   showLabel,
@@ -3987,7 +3970,7 @@ Sidebar.prototype.createItem = function(
   }
 
   // Blocks default click action
-  mxEvent.addListener(elt, 'click', function(evt) {
+  mxEvent.addListener(elt, 'click', function (evt) {
     mxEvent.consume(evt);
   });
 
@@ -4015,7 +3998,7 @@ Sidebar.prototype.createItem = function(
     this.addClickHandler(elt, ds, cells);
 
     // Uses guides for vertices only if enabled in graph
-    ds.isGuidesEnabled = mxUtils.bind(this, function() {
+    ds.isGuidesEnabled = mxUtils.bind(this, function () {
       return this.editorUi.editor.graph.graphHandler.guidesEnabled;
     });
   } else if (cells[0] != null && cells[0].edge) {
@@ -4034,7 +4017,7 @@ Sidebar.prototype.createItem = function(
     mxEvent.addGestureListeners(
       elt,
       null,
-      mxUtils.bind(this, function(evt) {
+      mxUtils.bind(this, function (evt) {
         if (mxEvent.isMouseEvent(evt)) {
           this.showTooltip(elt, cells, bounds.width, bounds.height, title, showLabel);
         }
@@ -4048,7 +4031,7 @@ Sidebar.prototype.createItem = function(
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.updateShapes = function(source, targets) {
+Sidebar.prototype.updateShapes = function (source, targets) {
   var graph = this.editorUi.editor.graph;
   var sourceCellStyle = graph.getCellStyle(source);
   var result = [];
@@ -4149,10 +4132,10 @@ Sidebar.prototype.updateShapes = function(source, targets) {
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInserted, bounds) {
+Sidebar.prototype.createDropHandler = function (cells, allowSplit, allowCellsInserted, bounds) {
   allowCellsInserted = allowCellsInserted != null ? allowCellsInserted : true;
 
-  return mxUtils.bind(this, function(graph, evt, target, x, y, force) {
+  return mxUtils.bind(this, function (graph, evt, target, x, y, force) {
     var elt = force
       ? null
       : mxEvent.isTouchEvent(evt) || mxEvent.isPenEvent(evt)
@@ -4246,7 +4229,7 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInse
             select != null &&
             select.length == 1
           ) {
-            window.setTimeout(function() {
+            window.setTimeout(function () {
               graph.startEditing(select[0]);
             }, 0);
           }
@@ -4261,7 +4244,7 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInse
 /**
  * Creates and returns a preview element for the given width and height.
  */
-Sidebar.prototype.createDragPreview = function(width, height) {
+Sidebar.prototype.createDragPreview = function (width, height) {
   var elt = document.createElement('div');
   elt.style.border = this.dragPreviewBorder;
   elt.style.width = width + 'px';
@@ -4273,7 +4256,7 @@ Sidebar.prototype.createDragPreview = function(width, height) {
 /**
  * Creates a drag source for the given element.
  */
-Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCellIndex, evt) {
+Sidebar.prototype.dropAndConnect = function (source, targets, direction, dropCellIndex, evt) {
   var geo = this.getDropAndConnectGeometry(source, targets[dropCellIndex], direction, targets);
 
   // Targets without the new edge for selection
@@ -4332,7 +4315,7 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
         null,
         null,
         null,
-        function(state, x, y) {
+        function (state, x, y) {
           return !graph.isContainer(state.cell);
         },
       );
@@ -4429,7 +4412,7 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
     }
 
     if (graph.editAfterInsert && evt != null && mxEvent.isMouseEvent(evt) && editingCell != null) {
-      window.setTimeout(function() {
+      window.setTimeout(function () {
         graph.startEditing(editingCell);
       }, 0);
     }
@@ -4441,7 +4424,7 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 /**
  * Creates a drag source for the given element.
  */
-Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction, targets) {
+Sidebar.prototype.getDropAndConnectGeometry = function (source, target, direction, targets) {
   var graph = this.editorUi.editor.graph;
   var view = graph.view;
   var keepSize = targets.length > 1;
@@ -4564,7 +4547,7 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 /**
  * Limits drop style to non-transparent source shapes.
  */
-Sidebar.prototype.isDropStyleEnabled = function(cells, firstVertex) {
+Sidebar.prototype.isDropStyleEnabled = function (cells, firstVertex) {
   var result = true;
 
   if (firstVertex != null && cells.length == 1) {
@@ -4584,7 +4567,7 @@ Sidebar.prototype.isDropStyleEnabled = function(cells, firstVertex) {
 /**
  * Ignores swimlanes as drop style targets.
  */
-Sidebar.prototype.isDropStyleTargetIgnored = function(state) {
+Sidebar.prototype.isDropStyleTargetIgnored = function (state) {
   return (
     this.graph.isSwimlane(state.cell) ||
     this.graph.isTableCell(state.cell) ||
@@ -4596,7 +4579,7 @@ Sidebar.prototype.isDropStyleTargetIgnored = function(state) {
 /**
  * Creates a drag source for the given element.
  */
-Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, bounds) {
+Sidebar.prototype.createDragSource = function (elt, dropHandler, preview, cells, bounds) {
   // Checks if the cells contain any vertices
   var ui = this.editorUi;
   var graph = ui.editor.graph;
@@ -4625,7 +4608,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
   var dragSource = mxUtils.makeDraggable(
     elt,
     graph,
-    mxUtils.bind(this, function(graph, evt, target, x, y) {
+    mxUtils.bind(this, function (graph, evt, target, x, y) {
       if (this.updateThread != null) {
         window.clearTimeout(this.updateThread);
       }
@@ -4669,7 +4652,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
   );
 
   // Stops dragging if cancel is pressed
-  graph.addListener(mxEvent.ESCAPE, function(sender, evt) {
+  graph.addListener(mxEvent.ESCAPE, function (sender, evt) {
     if (dragSource.isActive()) {
       dragSource.reset();
     }
@@ -4678,7 +4661,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
   // Overrides mouseDown to ignore popup triggers
   var mouseDown = dragSource.mouseDown;
 
-  dragSource.mouseDown = function(evt) {
+  dragSource.mouseDown = function (evt) {
     if (!mxEvent.isPopupTrigger(evt) && !mxEvent.isMultiTouchEvent(evt)) {
       graph.stopEditing();
       mouseDown.apply(this, arguments);
@@ -4756,7 +4739,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
   var dsCreatePreviewElement = dragSource.createPreviewElement;
 
   // Stores initial size of preview element
-  dragSource.createPreviewElement = function(graph) {
+  dragSource.createPreviewElement = function (graph) {
     var elt = dsCreatePreviewElement.apply(this, arguments);
 
     // Pass-through events required to tooltip on replace shape
@@ -4772,7 +4755,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 
   // Shows/hides hover icons
   var dragEnter = dragSource.dragEnter;
-  dragSource.dragEnter = function(graph, evt) {
+  dragSource.dragEnter = function (graph, evt) {
     if (ui.hoverIcons != null) {
       ui.hoverIcons.setDisplay('none');
     }
@@ -4781,7 +4764,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
   };
 
   var dragExit = dragSource.dragExit;
-  dragSource.dragExit = function(graph, evt) {
+  dragSource.dragExit = function (graph, evt) {
     if (ui.hoverIcons != null) {
       ui.hoverIcons.setDisplay('');
     }
@@ -4789,7 +4772,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
     dragExit.apply(this, arguments);
   };
 
-  dragSource.dragOver = function(graph, evt) {
+  dragSource.dragOver = function (graph, evt) {
     mxDragSource.prototype.dragOver.apply(this, arguments);
 
     if (this.currentGuide != null && activeArrow != null) {
@@ -4889,12 +4872,12 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
   var sourceCellStyle = this.editorUi.editor.graph.getCellStyle(cells[0]);
 
   // Allows drop into cell only if target is a valid root
-  dragSource.getDropTarget = mxUtils.bind(this, function(graph, x, y, evt) {
+  dragSource.getDropTarget = mxUtils.bind(this, function (graph, x, y, evt) {
     // Alt means no targets at all
     // LATER: Show preview where result will go
     var cell =
       !mxEvent.isAltDown(evt) && cells != null
-        ? graph.getCellAt(x, y, null, null, null, function(state, x, y) {
+        ? graph.getCellAt(x, y, null, null, null, function (state, x, y) {
             return graph.isContainer(state.cell);
           })
         : null;
@@ -4928,7 +4911,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
       }
 
       if (state != null) {
-        this.updateThread = window.setTimeout(function() {
+        this.updateThread = window.setTimeout(function () {
           if (activeArrow == null) {
             prev = state;
             dragSource.getDropTarget(graph, x, y, evt);
@@ -5324,7 +5307,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
     return target;
   });
 
-  dragSource.stopDrag = function() {
+  dragSource.stopDrag = function () {
     mxDragSource.prototype.stopDrag.apply(this, arguments);
 
     var elts = [roundSource, roundTarget, styleTarget, arrowUp, arrowRight, arrowDown, arrowLeft];
@@ -5352,7 +5335,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 /**
  * Adds a handler for inserting the cell with a single click.
  */
-Sidebar.prototype.itemClicked = function(cells, ds, evt, elt) {
+Sidebar.prototype.itemClicked = function (cells, ds, evt, elt) {
   var graph = this.editorUi.editor.graph;
   graph.container.focus();
 
@@ -5404,7 +5387,7 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt) {
 /**
  * Adds a handler for inserting the cell with a single click.
  */
-Sidebar.prototype.addClickHandler = function(elt, ds, cells) {
+Sidebar.prototype.addClickHandler = function (elt, ds, cells) {
   var graph = this.editorUi.editor.graph;
   var oldMouseDown = ds.mouseDown;
   var oldMouseMove = ds.mouseMove;
@@ -5413,7 +5396,7 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells) {
   var first = null;
   var sb = this;
 
-  ds.mouseDown = function(evt) {
+  ds.mouseDown = function (evt) {
     oldMouseDown.apply(this, arguments);
     first = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 
@@ -5423,7 +5406,7 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells) {
     }
   };
 
-  ds.mouseMove = function(evt) {
+  ds.mouseMove = function (evt) {
     if (
       this.dragElement != null &&
       this.dragElement.style.display == 'none' &&
@@ -5438,7 +5421,7 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells) {
     oldMouseMove.apply(this, arguments);
   };
 
-  ds.mouseUp = function(evt) {
+  ds.mouseUp = function (evt) {
     try {
       if (
         !mxEvent.isPopupTrigger(evt) &&
@@ -5465,7 +5448,7 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells) {
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createVertexTemplateEntry = function(
+Sidebar.prototype.createVertexTemplateEntry = function (
   style,
   width,
   height,
@@ -5479,7 +5462,7 @@ Sidebar.prototype.createVertexTemplateEntry = function(
 
   return this.addEntry(
     tags,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       return this.createVertexTemplate(style, width, height, value, title, showLabel, showTitle);
     }),
   );
@@ -5488,7 +5471,7 @@ Sidebar.prototype.createVertexTemplateEntry = function(
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createVertexTemplate = function(
+Sidebar.prototype.createVertexTemplate = function (
   style,
   width,
   height,
@@ -5515,7 +5498,7 @@ Sidebar.prototype.createVertexTemplate = function(
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createVertexTemplateFromData = function(
+Sidebar.prototype.createVertexTemplateFromData = function (
   data,
   width,
   height,
@@ -5546,7 +5529,7 @@ Sidebar.prototype.createVertexTemplateFromData = function(
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createVertexTemplateFromCells = function(
+Sidebar.prototype.createVertexTemplateFromCells = function (
   cells,
   width,
   height,
@@ -5563,7 +5546,7 @@ Sidebar.prototype.createVertexTemplateFromCells = function(
 /**
  *
  */
-Sidebar.prototype.createEdgeTemplateEntry = function(
+Sidebar.prototype.createEdgeTemplateEntry = function (
   style,
   width,
   height,
@@ -5577,7 +5560,7 @@ Sidebar.prototype.createEdgeTemplateEntry = function(
 
   return this.addEntry(
     tags,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       return this.createEdgeTemplate(
         style,
         width,
@@ -5594,7 +5577,7 @@ Sidebar.prototype.createEdgeTemplateEntry = function(
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createEdgeTemplate = function(
+Sidebar.prototype.createEdgeTemplate = function (
   style,
   width,
   height,
@@ -5622,7 +5605,7 @@ Sidebar.prototype.createEdgeTemplate = function(
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createEdgeTemplateFromCells = function(
+Sidebar.prototype.createEdgeTemplateFromCells = function (
   cells,
   width,
   height,
@@ -5636,12 +5619,12 @@ Sidebar.prototype.createEdgeTemplateFromCells = function(
 /**
  * Adds the given palette.
  */
-Sidebar.prototype.addPaletteFunctions = function(id, title, expanded, fns) {
+Sidebar.prototype.addPaletteFunctions = function (id, title, expanded, fns) {
   this.addPalette(
     id,
     title,
     expanded,
-    mxUtils.bind(this, function(content) {
+    mxUtils.bind(this, function (content) {
       for (var i = 0; i < fns.length; i++) {
         content.appendChild(fns[i](content));
       }
@@ -5652,7 +5635,7 @@ Sidebar.prototype.addPaletteFunctions = function(id, title, expanded, fns) {
 /**
  * Adds the given palette.
  */
-Sidebar.prototype.addPalette = function(id, title, expanded, onInit) {
+Sidebar.prototype.addPalette = function (id, title, expanded, onInit) {
   var elt = this.createTitle(title);
   this.container.appendChild(elt);
 
@@ -5688,7 +5671,7 @@ Sidebar.prototype.addPalette = function(id, title, expanded, onInit) {
 /**
  * Create the given title element.
  */
-Sidebar.prototype.addFoldingHandler = function(title, content, funct) {
+Sidebar.prototype.addFoldingHandler = function (title, content, funct) {
   var initialized = false;
 
   // Avoids mixed content warning in IE6-8
@@ -5705,7 +5688,7 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct) {
   mxEvent.addListener(
     title,
     'click',
-    mxUtils.bind(this, function(evt) {
+    mxUtils.bind(this, function (evt) {
       if (content.style.display == 'none') {
         if (!initialized) {
           initialized = true;
@@ -5717,7 +5700,7 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct) {
             title.innerHTML = mxResources.get('loading') + '...';
 
             window.setTimeout(
-              function() {
+              function () {
                 content.style.display = 'block';
                 title.style.cursor = '';
                 title.innerHTML = prev;
@@ -5751,7 +5734,7 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct) {
     mxEvent.addListener(
       title,
       mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
-      mxUtils.bind(this, function(evt) {
+      mxUtils.bind(this, function (evt) {
         evt.preventDefault();
       }),
     );
@@ -5761,7 +5744,7 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct) {
 /**
  * Removes the palette for the given ID.
  */
-Sidebar.prototype.removePalette = function(id) {
+Sidebar.prototype.removePalette = function (id) {
   var elts = this.palettes[id];
 
   if (elts != null) {
@@ -5780,12 +5763,12 @@ Sidebar.prototype.removePalette = function(id) {
 /**
  * Adds the given image palette.
  */
-Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, titles, tags) {
+Sidebar.prototype.addImagePalette = function (id, title, prefix, postfix, items, titles, tags) {
   var showTitles = titles != null;
   var fns = [];
 
   for (var i = 0; i < items.length; i++) {
-    mxUtils.bind(this, function(item, title, tmpTags) {
+    mxUtils.bind(this, function (item, title, tmpTags) {
       if (tmpTags == null) {
         var slash = item.lastIndexOf('/');
         var dot = item.lastIndexOf('.');
@@ -5815,7 +5798,7 @@ Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, 
 /**
  * Creates the array of tags for the given stencil. Duplicates are allowed and will be filtered out later.
  */
-Sidebar.prototype.getTagsForStencil = function(packageName, stencilName, moreTags) {
+Sidebar.prototype.getTagsForStencil = function (packageName, stencilName, moreTags) {
   var tags = packageName.split('.');
 
   for (var i = 1; i < tags.length; i++) {
@@ -5834,7 +5817,7 @@ Sidebar.prototype.getTagsForStencil = function(packageName, stencilName, moreTag
 /**
  * Adds the given stencil palette.
  */
-Sidebar.prototype.addStencilPalette = function(
+Sidebar.prototype.addStencilPalette = function (
   id,
   title,
   stencilFile,
@@ -5860,7 +5843,7 @@ Sidebar.prototype.addStencilPalette = function(
 
     mxStencilRegistry.loadStencilSet(
       stencilFile,
-      mxUtils.bind(this, function(packageName, stencilName, displayName, w, h) {
+      mxUtils.bind(this, function (packageName, stencilName, displayName, w, h) {
         if (ignore == null || mxUtils.indexOf(ignore, stencilName) < 0) {
           var tmp = this.getTagsForStencil(packageName, stencilName);
           var tmpTags = tags != null ? tags[stencilName] : null;
@@ -5893,7 +5876,7 @@ Sidebar.prototype.addStencilPalette = function(
       id,
       title,
       false,
-      mxUtils.bind(this, function(content) {
+      mxUtils.bind(this, function (content) {
         if (style == null) {
           style = '';
         }
@@ -5910,7 +5893,7 @@ Sidebar.prototype.addStencilPalette = function(
 
         mxStencilRegistry.loadStencilSet(
           stencilFile,
-          mxUtils.bind(this, function(packageName, stencilName, displayName, w, h) {
+          mxUtils.bind(this, function (packageName, stencilName, displayName, w, h) {
             if (ignore == null || mxUtils.indexOf(ignore, stencilName) < 0) {
               content.appendChild(
                 this.createVertexTemplate(
@@ -5934,7 +5917,7 @@ Sidebar.prototype.addStencilPalette = function(
 /**
  * Adds the given stencil palette.
  */
-Sidebar.prototype.destroy = function() {
+Sidebar.prototype.destroy = function () {
   if (this.graph != null) {
     if (this.graph.container != null && this.graph.container.parentNode != null) {
       this.graph.container.parentNode.removeChild(this.graph.container);

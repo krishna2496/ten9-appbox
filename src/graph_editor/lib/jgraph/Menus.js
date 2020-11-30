@@ -1,3 +1,19 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
 // TEN9: Added imports
 const {
   mxCircleLayout,
@@ -28,7 +44,7 @@ const graphUtils = require('./graph_utils');
 /**
  * Constructs a new graph editor
  */
-Menus = function(editorUi) {
+Menus = function (editorUi) {
   this.editorUi = editorUi;
   this.menus = new Object();
   this.init();
@@ -50,7 +66,7 @@ Menus.prototype.defaultFont = 'Helvetica';
 Menus.prototype.defaultFontSize = '12';
 
 /**
- * Sets the default font size.
+ * Sets the default menu items.
  */
 // TEN9: Removed help from the menu
 Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange', 'extras'];
@@ -74,7 +90,7 @@ Menus.prototype.defaultFonts = [
 /**
  * Adds the label menu items to the given menu and parent.
  */
-Menus.prototype.init = function() {
+Menus.prototype.init = function () {
   var graph = this.editorUi.editor.graph;
   var isGraphEnabled = mxUtils.bind(graph, graph.isEnabled);
 
@@ -84,8 +100,8 @@ Menus.prototype.init = function() {
   this.put(
     'fontFamily',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
-        var addItem = mxUtils.bind(this, function(fontname) {
+      mxUtils.bind(this, function (menu, parent) {
+        var addItem = mxUtils.bind(this, function (fontname) {
           var tr = this.styleChange(
             menu,
             fontname,
@@ -93,11 +109,11 @@ Menus.prototype.init = function() {
             [fontname],
             null,
             parent,
-            function() {
+            function () {
               document.execCommand('fontname', false, fontname);
             },
-            function() {
-              graph.updateLabelElements(graph.getSelectionCells(), function(elt) {
+            function () {
+              graph.updateLabelElements(graph.getSelectionCells(), function (elt) {
                 elt.removeAttribute('face');
                 elt.style.fontFamily = null;
 
@@ -126,7 +142,7 @@ Menus.prototype.init = function() {
           menu.addItem(
             mxResources.get('reset'),
             null,
-            mxUtils.bind(this, function() {
+            mxUtils.bind(this, function () {
               this.customFonts = [];
               this.editorUi.fireEvent(new mxEventObject('customFontsChanged'));
             }),
@@ -144,7 +160,7 @@ Menus.prototype.init = function() {
           mxConstants.STYLE_FONTFAMILY,
           parent,
           true,
-          mxUtils.bind(this, function(newValue) {
+          mxUtils.bind(this, function (newValue) {
             if (mxUtils.indexOf(this.customFonts, newValue) < 0) {
               this.customFonts.push(newValue);
               this.editorUi.fireEvent(new mxEventObject('customFontsChanged'));
@@ -157,12 +173,12 @@ Menus.prototype.init = function() {
   this.put(
     'formatBlock',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         function addItem(label, tag) {
           return menu.addItem(
             label,
             null,
-            mxUtils.bind(this, function() {
+            mxUtils.bind(this, function () {
               // TODO: Check if visible
               if (graph.cellEditor.textarea != null) {
                 graph.cellEditor.textarea.focus();
@@ -200,10 +216,10 @@ Menus.prototype.init = function() {
   this.put(
     'fontSize',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         var sizes = [6, 8, 9, 10, 11, 12, 14, 18, 24, 36, 48, 72];
 
-        var addItem = mxUtils.bind(this, function(fontsize) {
+        var addItem = mxUtils.bind(this, function (fontsize) {
           this.styleChange(
             menu,
             fontsize,
@@ -211,7 +227,7 @@ Menus.prototype.init = function() {
             [fontsize],
             null,
             parent,
-            function() {
+            function () {
               if (graph.cellEditor.textarea != null) {
                 // Creates an element with arbitrary size 3
                 document.execCommand('fontSize', false, '3');
@@ -250,7 +266,7 @@ Menus.prototype.init = function() {
           menu.addItem(
             mxResources.get('reset'),
             null,
-            mxUtils.bind(this, function() {
+            mxUtils.bind(this, function () {
               this.customFontSizes = [];
             }),
             parent,
@@ -267,7 +283,7 @@ Menus.prototype.init = function() {
           mxConstants.STYLE_FONTSIZE,
           parent,
           true,
-          mxUtils.bind(this, function(newValue) {
+          mxUtils.bind(this, function (newValue) {
             this.customFontSizes.push(newValue);
           }),
         );
@@ -277,11 +293,11 @@ Menus.prototype.init = function() {
   this.put(
     'direction',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         menu.addItem(
           mxResources.get('flipH'),
           null,
-          function() {
+          function () {
             graph.toggleCellStyles(mxConstants.STYLE_FLIPH, false);
           },
           parent,
@@ -289,7 +305,7 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('flipV'),
           null,
-          function() {
+          function () {
             graph.toggleCellStyles(mxConstants.STYLE_FLIPV, false);
           },
           parent,
@@ -301,11 +317,11 @@ Menus.prototype.init = function() {
   this.put(
     'align',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         menu.addItem(
           mxResources.get('leftAlign'),
           null,
-          function() {
+          function () {
             graph.alignCells(mxConstants.ALIGN_LEFT);
           },
           parent,
@@ -313,7 +329,7 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('center'),
           null,
-          function() {
+          function () {
             graph.alignCells(mxConstants.ALIGN_CENTER);
           },
           parent,
@@ -321,7 +337,7 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('rightAlign'),
           null,
-          function() {
+          function () {
             graph.alignCells(mxConstants.ALIGN_RIGHT);
           },
           parent,
@@ -330,7 +346,7 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('topAlign'),
           null,
-          function() {
+          function () {
             graph.alignCells(mxConstants.ALIGN_TOP);
           },
           parent,
@@ -338,7 +354,7 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('middle'),
           null,
-          function() {
+          function () {
             graph.alignCells(mxConstants.ALIGN_MIDDLE);
           },
           parent,
@@ -346,7 +362,7 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('bottomAlign'),
           null,
-          function() {
+          function () {
             graph.alignCells(mxConstants.ALIGN_BOTTOM);
           },
           parent,
@@ -357,11 +373,11 @@ Menus.prototype.init = function() {
   this.put(
     'distribute',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         menu.addItem(
           mxResources.get('horizontal'),
           null,
-          function() {
+          function () {
             graph.distributeCells(true);
           },
           parent,
@@ -369,7 +385,7 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('vertical'),
           null,
-          function() {
+          function () {
             graph.distributeCells(false);
           },
           parent,
@@ -380,13 +396,13 @@ Menus.prototype.init = function() {
   this.put(
     'layout',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
-        var promptSpacing = mxUtils.bind(this, function(defaultValue, fn) {
+      mxUtils.bind(this, function (menu, parent) {
+        var promptSpacing = mxUtils.bind(this, function (defaultValue, fn) {
           var dlg = new FilenameDialog(
             this.editorUi,
             defaultValue,
             mxResources.get('apply'),
-            function(newValue) {
+            function (newValue) {
               fn(parseFloat(newValue));
             },
             mxResources.get('spacing'),
@@ -398,10 +414,10 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('horizontalFlow'),
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             var layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_WEST);
 
-            this.editorUi.executeLayout(function() {
+            this.editorUi.executeLayout(function () {
               var selectionCells = graph.getSelectionCells();
               layout.execute(
                 graph.getDefaultParent(),
@@ -414,10 +430,10 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('verticalFlow'),
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             var layout = new mxHierarchicalLayout(graph, mxConstants.DIRECTION_NORTH);
 
-            this.editorUi.executeLayout(function() {
+            this.editorUi.executeLayout(function () {
               var selectionCells = graph.getSelectionCells();
               layout.execute(
                 graph.getDefaultParent(),
@@ -431,7 +447,7 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('horizontalTree'),
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             var tmp = graph.getSelectionCell();
             var roots = null;
 
@@ -454,10 +470,10 @@ Menus.prototype.init = function() {
 
               promptSpacing(
                 layout.levelDistance,
-                mxUtils.bind(this, function(newValue) {
+                mxUtils.bind(this, function (newValue) {
                   layout.levelDistance = newValue;
 
-                  this.editorUi.executeLayout(function() {
+                  this.editorUi.executeLayout(function () {
                     layout.execute(graph.getDefaultParent(), tmp);
                   }, true);
                 }),
@@ -469,7 +485,7 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('verticalTree'),
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             var tmp = graph.getSelectionCell();
             var roots = null;
 
@@ -492,10 +508,10 @@ Menus.prototype.init = function() {
 
               promptSpacing(
                 layout.levelDistance,
-                mxUtils.bind(this, function(newValue) {
+                mxUtils.bind(this, function (newValue) {
                   layout.levelDistance = newValue;
 
-                  this.editorUi.executeLayout(function() {
+                  this.editorUi.executeLayout(function () {
                     layout.execute(graph.getDefaultParent(), tmp);
                   }, true);
                 }),
@@ -507,7 +523,7 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('radialTree'),
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             var tmp = graph.getSelectionCell();
             var roots = null;
 
@@ -530,10 +546,10 @@ Menus.prototype.init = function() {
 
               promptSpacing(
                 layout.levelDistance,
-                mxUtils.bind(this, function(newValue) {
+                mxUtils.bind(this, function (newValue) {
                   layout.levelDistance = newValue;
 
-                  this.editorUi.executeLayout(function() {
+                  this.editorUi.executeLayout(function () {
                     layout.execute(graph.getDefaultParent(), tmp);
 
                     if (!graph.isSelectionEmpty()) {
@@ -554,15 +570,15 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('organic'),
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             var layout = new mxFastOrganicLayout(graph);
 
             promptSpacing(
               layout.forceConstant,
-              mxUtils.bind(this, function(newValue) {
+              mxUtils.bind(this, function (newValue) {
                 layout.forceConstant = newValue;
 
-                this.editorUi.executeLayout(function() {
+                this.editorUi.executeLayout(function () {
                   var tmp = graph.getSelectionCell();
 
                   if (tmp == null || graph.getModel().getChildCount(tmp) == 0) {
@@ -583,10 +599,10 @@ Menus.prototype.init = function() {
         menu.addItem(
           mxResources.get('circle'),
           null,
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             var layout = new mxCircleLayout(graph);
 
-            this.editorUi.executeLayout(function() {
+            this.editorUi.executeLayout(function () {
               var tmp = graph.getSelectionCell();
 
               if (tmp == null || graph.getModel().getChildCount(tmp) == 0) {
@@ -604,11 +620,11 @@ Menus.prototype.init = function() {
         );
       }),
     ),
-  );
+  ).isEnabled = isGraphEnabled;
   this.put(
     'navigation',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         this.addMenuItems(
           menu,
           ['home', '-', 'exitGroup', 'enterGroup', '-', 'expand', 'collapse', '-', 'collapsible'],
@@ -620,7 +636,7 @@ Menus.prototype.init = function() {
   this.put(
     'arrange',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         this.addMenuItems(menu, ['toFront', 'toBack', '-'], parent);
         this.addSubmenu('direction', menu, parent);
         this.addMenuItems(menu, ['turn', '-'], parent);
@@ -641,15 +657,15 @@ Menus.prototype.init = function() {
   this.put(
     'insert',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         this.addMenuItems(menu, ['insertLink', 'insertImage'], parent);
       }),
     ),
-  );
+  ).isEnabled = isGraphEnabled;
   this.put(
     'view',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         this.addMenuItems(
           menu,
           (this.editorUi.format != null ? ['formatPanel'] : []).concat(
@@ -683,7 +699,7 @@ Menus.prototype.init = function() {
   this.put(
     'viewPanels',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         if (this.editorUi.format != null) {
           this.addMenuItems(menu, ['formatPanel'], parent);
         }
@@ -695,16 +711,16 @@ Menus.prototype.init = function() {
   this.put(
     'viewZoom',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         this.addMenuItems(menu, ['resetView', '-'], parent);
         var scales = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
 
         for (var i = 0; i < scales.length; i++) {
-          (function(scale) {
+          (function (scale) {
             menu.addItem(
               scale * 100 + '%',
               null,
-              function() {
+              function () {
                 graph.zoomTo(scale);
               },
               parent,
@@ -723,7 +739,7 @@ Menus.prototype.init = function() {
   this.put(
     'file',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         // TEN9: Pare down the file list to what we need
         // this.addMenuItems(menu, ['new', 'open', '-', 'save', 'saveAs', '-', 'import', 'export', '-', 'pageSetup', 'print'], parent);
         this.addMenuItems(menu, ['export', '-', 'pageSetup', 'print'], parent);
@@ -733,7 +749,7 @@ Menus.prototype.init = function() {
   this.put(
     'edit',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         this.addMenuItems(menu, [
           'undo',
           'redo',
@@ -767,7 +783,7 @@ Menus.prototype.init = function() {
   this.put(
     'extras',
     new Menu(
-      mxUtils.bind(this, function(menu, parent) {
+      mxUtils.bind(this, function (menu, parent) {
         this.addMenuItems(menu, ['copyConnect', 'collapseExpand', '-', 'editDiagram']);
       }),
     ),
@@ -782,7 +798,7 @@ Menus.prototype.init = function() {
 /**
  * Adds the label menu items to the given menu and parent.
  */
-Menus.prototype.put = function(name, menu) {
+Menus.prototype.put = function (name, menu) {
   this.menus[name] = menu;
 
   return menu;
@@ -791,14 +807,14 @@ Menus.prototype.put = function(name, menu) {
 /**
  * Adds the label menu items to the given menu and parent.
  */
-Menus.prototype.get = function(name) {
+Menus.prototype.get = function (name) {
   return this.menus[name];
 };
 
 /**
  * Adds the given submenu.
  */
-Menus.prototype.addSubmenu = function(name, menu, parent, label) {
+Menus.prototype.addSubmenu = function (name, menu, parent, label) {
   var entry = this.get(name);
 
   if (entry != null) {
@@ -814,7 +830,7 @@ Menus.prototype.addSubmenu = function(name, menu, parent, label) {
 /**
  * Adds the label menu items to the given menu and parent.
  */
-Menus.prototype.addMenu = function(name, popupMenu, parent) {
+Menus.prototype.addMenu = function (name, popupMenu, parent) {
   var menu = this.get(name);
 
   if (menu != null && (popupMenu.showDisabled || menu.isEnabled())) {
@@ -825,12 +841,12 @@ Menus.prototype.addMenu = function(name, popupMenu, parent) {
 /**
  * Adds a menu item to insert a table cell.
  */
-Menus.prototype.addInsertTableCellItem = function(menu, parent) {
+Menus.prototype.addInsertTableCellItem = function (menu, parent) {
   var graph = this.editorUi.editor.graph;
 
   this.addInsertTableItem(
     menu,
-    mxUtils.bind(this, function(evt, rows, cols) {
+    mxUtils.bind(this, function (evt, rows, cols) {
       var table =
         mxEvent.isControlDown(evt) || mxEvent.isMetaDown(evt)
           ? graph.createCrossFunctionalSwimlane(rows, cols)
@@ -852,11 +868,11 @@ Menus.prototype.addInsertTableCellItem = function(menu, parent) {
 /**
  * Adds a menu item to insert a table.
  */
-Menus.prototype.addInsertTableItem = function(menu, insertFn, parent) {
+Menus.prototype.addInsertTableItem = function (menu, insertFn, parent) {
   insertFn =
     insertFn != null
       ? insertFn
-      : mxUtils.bind(this, function(evt, rows, cols) {
+      : mxUtils.bind(this, function (evt, rows, cols) {
           var graph = this.editorUi.editor.graph;
           var td = graph.getParentByName(mxEvent.getSource(evt), 'TD');
 
@@ -1024,7 +1040,7 @@ Menus.prototype.addInsertTableItem = function(menu, insertFn, parent) {
     picker,
     null,
     null,
-    mxUtils.bind(this, function(e) {
+    mxUtils.bind(this, function (e) {
       var selected = mouseover(e);
 
       if (td != null && row2 != null && selected) {
@@ -1032,7 +1048,7 @@ Menus.prototype.addInsertTableItem = function(menu, insertFn, parent) {
 
         // Async required to block event for elements under menu
         window.setTimeout(
-          mxUtils.bind(this, function() {
+          mxUtils.bind(this, function () {
             this.editorUi.hideCurrentMenu();
           }),
           0,
@@ -1046,11 +1062,11 @@ Menus.prototype.addInsertTableItem = function(menu, insertFn, parent) {
 /**
  * Adds a style change item to the given menu.
  */
-Menus.prototype.edgeStyleChange = function(menu, label, keys, values, sprite, parent, reset) {
+Menus.prototype.edgeStyleChange = function (menu, label, keys, values, sprite, parent, reset) {
   return menu.addItem(
     label,
     null,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       var graph = this.editorUi.editor.graph;
       graph.stopEditing(false);
 
@@ -1097,13 +1113,13 @@ Menus.prototype.edgeStyleChange = function(menu, label, keys, values, sprite, pa
 /**
  * Adds a style change item to the given menu.
  */
-Menus.prototype.styleChange = function(menu, label, keys, values, sprite, parent, fn, post) {
+Menus.prototype.styleChange = function (menu, label, keys, values, sprite, parent, fn, post) {
   var apply = this.createStyleChangeFunction(keys, values);
 
   return menu.addItem(
     label,
     null,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       var graph = this.editorUi.editor.graph;
 
       if (fn != null && graph.cellEditor.isContentEditing()) {
@@ -1120,8 +1136,8 @@ Menus.prototype.styleChange = function(menu, label, keys, values, sprite, parent
 /**
  *
  */
-Menus.prototype.createStyleChangeFunction = function(keys, values) {
-  return mxUtils.bind(this, function(post) {
+Menus.prototype.createStyleChangeFunction = function (keys, values) {
+  return mxUtils.bind(this, function (post) {
     var graph = this.editorUi.editor.graph;
     graph.stopEditing(false);
 
@@ -1134,7 +1150,7 @@ Menus.prototype.createStyleChangeFunction = function(keys, values) {
 
         // Removes CSS alignment to produce consistent output
         if (keys[i] == mxConstants.STYLE_ALIGN) {
-          graph.updateLabelElements(cells, function(elt) {
+          graph.updateLabelElements(cells, function (elt) {
             elt.removeAttribute('align');
             elt.style.textAlign = null;
           });
@@ -1166,7 +1182,7 @@ Menus.prototype.createStyleChangeFunction = function(keys, values) {
 /**
  * Adds a style change item with a prompt to the given menu.
  */
-Menus.prototype.promptChange = function(
+Menus.prototype.promptChange = function (
   menu,
   label,
   hint,
@@ -1180,7 +1196,7 @@ Menus.prototype.promptChange = function(
   return menu.addItem(
     label,
     null,
-    mxUtils.bind(this, function() {
+    mxUtils.bind(this, function () {
       var graph = this.editorUi.editor.graph;
       var value = defaultValue;
       var state = graph.getView().getState(graph.getSelectionCell());
@@ -1193,7 +1209,7 @@ Menus.prototype.promptChange = function(
         this.editorUi,
         value,
         mxResources.get('apply'),
-        mxUtils.bind(this, function(newValue) {
+        mxUtils.bind(this, function (newValue) {
           if (newValue != null && newValue.length > 0) {
             graph.getModel().beginUpdate();
             try {
@@ -1222,7 +1238,7 @@ Menus.prototype.promptChange = function(
 /**
  * Adds a handler for showing a menu in the given element.
  */
-Menus.prototype.pickColor = function(key, cmd, defaultValue) {
+Menus.prototype.pickColor = function (key, cmd, defaultValue) {
   var graph = this.editorUi.editor.graph;
   var h =
     226 +
@@ -1237,11 +1253,11 @@ Menus.prototype.pickColor = function(key, cmd, defaultValue) {
     var dlg = new ColorDialog(
       this.editorUi,
       defaultValue || '000000',
-      mxUtils.bind(this, function(color) {
+      mxUtils.bind(this, function (color) {
         graph.cellEditor.restoreSelection(selState);
         document.execCommand(cmd, false, color != mxConstants.NONE ? color : 'transparent');
       }),
-      function() {
+      function () {
         graph.cellEditor.restoreSelection(selState);
       },
     );
@@ -1276,7 +1292,7 @@ Menus.prototype.pickColor = function(key, cmd, defaultValue) {
 /**
  * Adds a handler for showing a menu in the given element.
  */
-Menus.prototype.toggleStyle = function(key, defaultValue) {
+Menus.prototype.toggleStyle = function (key, defaultValue) {
   var graph = this.editorUi.editor.graph;
   var value = graph.toggleCellStyles(key, defaultValue);
   this.editorUi.fireEvent(
@@ -1295,14 +1311,14 @@ Menus.prototype.toggleStyle = function(key, defaultValue) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.addMenuItem = function(menu, key, parent, trigger, sprite, label) {
+Menus.prototype.addMenuItem = function (menu, key, parent, trigger, sprite, label) {
   var action = this.editorUi.actions.get(key);
 
   if (action != null && (menu.showDisabled || action.isEnabled()) && action.visible) {
     var item = menu.addItem(
       label || action.label,
       null,
-      function() {
+      function () {
         action.funct(trigger);
       },
       parent,
@@ -1326,7 +1342,7 @@ Menus.prototype.addMenuItem = function(menu, key, parent, trigger, sprite, label
 /**
  * Adds a checkmark to the given menuitem.
  */
-Menus.prototype.addShortcut = function(item, action) {
+Menus.prototype.addShortcut = function (item, action) {
   if (action.shortcut != null) {
     var td = item.firstChild.nextSibling.nextSibling;
     var span = document.createElement('span');
@@ -1339,7 +1355,7 @@ Menus.prototype.addShortcut = function(item, action) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.addMenuItems = function(menu, keys, parent, trigger, sprites) {
+Menus.prototype.addMenuItems = function (menu, keys, parent, trigger, sprites) {
   for (var i = 0; i < keys.length; i++) {
     if (keys[i] == '-') {
       menu.addSeparator(parent);
@@ -1352,7 +1368,7 @@ Menus.prototype.addMenuItems = function(menu, keys, parent, trigger, sprites) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.createPopupMenu = function(menu, cell, evt) {
+Menus.prototype.createPopupMenu = function (menu, cell, evt) {
   menu.smartSeparators = true;
 
   this.addPopupMenuHistoryItems(menu, cell, evt);
@@ -1366,7 +1382,7 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.addPopupMenuHistoryItems = function(menu, cell, evt) {
+Menus.prototype.addPopupMenuHistoryItems = function (menu, cell, evt) {
   if (this.editorUi.editor.graph.isSelectionEmpty()) {
     this.addMenuItems(menu, ['undo', 'redo'], null, evt);
   }
@@ -1375,7 +1391,7 @@ Menus.prototype.addPopupMenuHistoryItems = function(menu, cell, evt) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.addPopupMenuEditItems = function(menu, cell, evt) {
+Menus.prototype.addPopupMenuEditItems = function (menu, cell, evt) {
   if (this.editorUi.editor.graph.isSelectionEmpty()) {
     this.addMenuItems(menu, ['pasteHere'], null, evt);
   } else {
@@ -1386,7 +1402,7 @@ Menus.prototype.addPopupMenuEditItems = function(menu, cell, evt) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.addPopupMenuStyleItems = function(menu, cell, evt) {
+Menus.prototype.addPopupMenuStyleItems = function (menu, cell, evt) {
   if (this.editorUi.editor.graph.getSelectionCount() == 1) {
     this.addMenuItems(menu, ['-', 'setAsDefaultStyle'], null, evt);
   } else if (this.editorUi.editor.graph.isSelectionEmpty()) {
@@ -1397,7 +1413,7 @@ Menus.prototype.addPopupMenuStyleItems = function(menu, cell, evt) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.addPopupMenuArrangeItems = function(menu, cell, evt) {
+Menus.prototype.addPopupMenuArrangeItems = function (menu, cell, evt) {
   var graph = this.editorUi.editor.graph;
 
   if (!graph.isSelectionEmpty()) {
@@ -1419,7 +1435,7 @@ Menus.prototype.addPopupMenuArrangeItems = function(menu, cell, evt) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.addPopupMenuCellItems = function(menu, cell, evt) {
+Menus.prototype.addPopupMenuCellItems = function (menu, cell, evt) {
   var graph = this.editorUi.editor.graph;
   cell = graph.getSelectionCell();
   var state = graph.view.getState(cell);
@@ -1483,7 +1499,7 @@ Menus.prototype.addPopupMenuCellItems = function(menu, cell, evt) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.addPopupMenuSelectionItems = function(menu, cell, evt) {
+Menus.prototype.addPopupMenuSelectionItems = function (menu, cell, evt) {
   if (this.editorUi.editor.graph.isSelectionEmpty()) {
     this.addMenuItems(menu, ['-', 'selectVertices', 'selectEdges', 'selectAll'], null, evt);
   }
@@ -1492,15 +1508,15 @@ Menus.prototype.addPopupMenuSelectionItems = function(menu, cell, evt) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.createMenubar = function(container) {
+Menus.prototype.createMenubar = function (container) {
   var menubar = new Menubar(this.editorUi, container);
   var menus = this.defaultMenuItems;
 
   for (var i = 0; i < menus.length; i++) {
-    mxUtils.bind(this, function(menu) {
+    mxUtils.bind(this, function (menu) {
       var elt = menubar.addMenu(
         mxResources.get(menus[i]),
-        mxUtils.bind(this, function() {
+        mxUtils.bind(this, function () {
           // Allows extensions of menu.funct
           menu.funct.apply(this, arguments);
         }),
@@ -1516,11 +1532,11 @@ Menus.prototype.createMenubar = function(container) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.menuCreated = function(menu, elt, className) {
+Menus.prototype.menuCreated = function (menu, elt, className) {
   if (elt != null) {
     className = className != null ? className : 'geItem';
 
-    menu.addListener('stateChanged', function() {
+    menu.addListener('stateChanged', function () {
       elt.enabled = menu.enabled;
 
       if (!menu.enabled) {
@@ -1551,14 +1567,14 @@ function Menubar(editorUi, container) {
 /**
  * Adds the menubar elements.
  */
-Menubar.prototype.hideMenu = function() {
+Menubar.prototype.hideMenu = function () {
   this.editorUi.hideCurrentMenu();
 };
 
 /**
  * Adds a submenu to this menubar.
  */
-Menubar.prototype.addMenu = function(label, funct, before) {
+Menubar.prototype.addMenu = function (label, funct, before) {
   var elt = document.createElement('a');
   elt.className = 'geItem';
   mxUtils.write(elt, label);
@@ -1576,11 +1592,11 @@ Menubar.prototype.addMenu = function(label, funct, before) {
 /**
  * Adds a handler for showing a menu in the given element.
  */
-Menubar.prototype.addMenuHandler = function(elt, funct) {
+Menubar.prototype.addMenuHandler = function (elt, funct) {
   if (funct != null) {
     var show = true;
 
-    var clickHandler = mxUtils.bind(this, function(evt) {
+    var clickHandler = mxUtils.bind(this, function (evt) {
       if ((show && elt.enabled == null) || elt.enabled) {
         this.editorUi.editor.graph.popupMenuHandler.hideMenu();
         var menu = new mxPopupMenu(funct);
@@ -1590,7 +1606,7 @@ Menubar.prototype.addMenuHandler = function(elt, funct) {
         menu.autoExpand = true;
 
         // Disables autoexpand and destroys menu when hidden
-        menu.hideMenu = mxUtils.bind(this, function() {
+        menu.hideMenu = mxUtils.bind(this, function () {
           mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
           this.editorUi.resetCurrentMenu();
           menu.destroy();
@@ -1610,7 +1626,7 @@ Menubar.prototype.addMenuHandler = function(elt, funct) {
     mxEvent.addListener(
       elt,
       'mousemove',
-      mxUtils.bind(this, function(evt) {
+      mxUtils.bind(this, function (evt) {
         if (this.editorUi.currentMenu != null && this.editorUi.currentMenuElt != elt) {
           this.editorUi.hideCurrentMenu();
           clickHandler(evt);
@@ -1622,7 +1638,7 @@ Menubar.prototype.addMenuHandler = function(elt, funct) {
     mxEvent.addListener(
       elt,
       mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
-      mxUtils.bind(this, function(evt) {
+      mxUtils.bind(this, function (evt) {
         show = this.currentElt != elt;
         evt.preventDefault();
       }),
@@ -1631,7 +1647,7 @@ Menubar.prototype.addMenuHandler = function(elt, funct) {
     mxEvent.addListener(
       elt,
       'click',
-      mxUtils.bind(this, function(evt) {
+      mxUtils.bind(this, function (evt) {
         clickHandler(evt);
         show = true;
       }),
@@ -1642,7 +1658,7 @@ Menubar.prototype.addMenuHandler = function(elt, funct) {
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menubar.prototype.destroy = function() {
+Menubar.prototype.destroy = function () {
   // do nothing
 };
 
@@ -1661,14 +1677,14 @@ mxUtils.extend(Menu, mxEventSource);
 /**
  * Sets the enabled state of the action and fires a stateChanged event.
  */
-Menu.prototype.isEnabled = function() {
+Menu.prototype.isEnabled = function () {
   return this.enabled;
 };
 
 /**
  * Sets the enabled state of the action and fires a stateChanged event.
  */
-Menu.prototype.setEnabled = function(value) {
+Menu.prototype.setEnabled = function (value) {
   if (this.enabled != value) {
     this.enabled = value;
     this.fireEvent(new mxEventObject('stateChanged'));
@@ -1678,7 +1694,7 @@ Menu.prototype.setEnabled = function(value) {
 /**
  * Sets the enabled state of the action and fires a stateChanged event.
  */
-Menu.prototype.execute = function(menu, parent) {
+Menu.prototype.execute = function (menu, parent) {
   this.funct(menu, parent);
 };
 

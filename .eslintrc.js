@@ -76,7 +76,9 @@ module.exports = {
   },
 
   rules: {
+    // eslint-disable-next-line no-process-env
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    // eslint-disable-next-line no-process-env
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
     'func-names': ['error', 'as-needed'],

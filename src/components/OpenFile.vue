@@ -51,5 +51,12 @@ export default defineComponent({
 .btn-left
   button(@click='chooseFile')
     | Open File
-  input(ref='file' type='file' value='Open File' style='opacity:0;' accept='.draw, .xml' @change='loadFile')
+  input(
+    ref='file',
+    type='file',
+    value='Open File',
+    style='opacity:0;',
+    accept='.draw, .xml',
+    @change='loadFile'
+  )
 </template>
