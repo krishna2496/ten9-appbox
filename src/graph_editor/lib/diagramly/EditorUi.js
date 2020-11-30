@@ -13675,7 +13675,6 @@ const STYLE_PATH = 'styles';
 	 */
 	EditorUi.prototype.getDatabaseItems = function(success, error, storeName)
 	{
-		debugger
 		this.openDatabase(mxUtils.bind(this, function(db)
 		{
 			try

@@ -2623,7 +2623,6 @@ App.prototype.loadGapi = function(then)
  */
 App.prototype.load = function()
 {
-	debugger
 	// Checks if we're running in embedded mode
 	if (urlParams['embed'] != '1')
 	{
@@ -2993,14 +2992,17 @@ App.prototype.start = function()
 						{
 							var id = this.getDiagramId();
 							
-							
-							if (EditorUi.enableDrafts && (urlParams['mode'] == null || EditorUi.isElectronApp) &&
-								this.getServiceName() == 'draw.io' && (id == null || id.length == 0) &&
-								!this.editor.isChromelessView())
-							{
+							// TEN9: For testing
+							// debugger
+							// if (EditorUi.enableDrafts && (urlParams['mode'] == null || EditorUi.isElectronApp) &&
+							// 	this.getServiceName() == 'draw.io' && (id == null || id.length == 0) &&
+							// 	!this.editor.isChromelessView())
+							// {
+								
 								this.checkDrafts();
-							}
-							else if (id != null && id.length > 0)
+							//}
+							//else 
+							if (id != null && id.length > 0)
 							{
 								this.loadFile(id, null, null, mxUtils.bind(this, function()
 								{
@@ -3265,14 +3267,16 @@ App.prototype.checkDrafts = function()
 					}
 				}
 				
-				if (drafts.length == 1)
-				{
+				// TEN9: for testing
+				// if (drafts.length == 1)
+				// {
 					this.loadDraft(drafts[0].data, mxUtils.bind(this, function()
 					{
 						this.removeDatabaseItem(drafts[0].key);
 					}));
-				}
-				else if (drafts.length > 1)
+				//}
+				//else 
+				if (drafts.length > 1)
 				{
 					var ts = new Date(drafts[0].modified);
 					
