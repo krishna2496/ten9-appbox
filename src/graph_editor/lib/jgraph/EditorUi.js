@@ -5356,7 +5356,7 @@ EditorUi.prototype.updateTabContainer = function()
 
 
 
-require('../diagramly/LocalFile.js');
+ require('../diagramly/LocalFile.js');
 require('../diagramly/EditorUi.js');
 require('../diagramly/Editor.js');
 require('../diagramly/Pages.js');

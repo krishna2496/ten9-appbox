@@ -1472,12 +1472,7 @@ EditorUi.prototype.createPageMenuTab = function()
 				if (page != null)
 				{
 					menu.addSeparator(parent);
-	
-					menu.addItem(mxResources.get('delete'), null, mxUtils.bind(this, function()
-					{
-						this.removePage(page);
-					}), parent);
-					
+			
 					menu.addItem(mxResources.get('rename'), null, mxUtils.bind(this, function()
 					{
 						this.renamePage(page, page.getName());

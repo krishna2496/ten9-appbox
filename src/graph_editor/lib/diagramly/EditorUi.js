@@ -13675,7 +13675,6 @@ const STYLE_PATH = 'styles';
 	 */
 	EditorUi.prototype.getDatabaseItems = function(success, error, storeName)
 	{
-		debugger
 		this.openDatabase(mxUtils.bind(this, function(db)
 		{
 			try
@@ -13685,7 +13684,6 @@ const STYLE_PATH = 'styles';
 				var req = trx.objectStore(storeName).openCursor(
 					IDBKeyRange.lowerBound(0));
 				var items = [];
-				
 				req.onsuccess = function(e)
 				{
 					if (e.target.result == null)
