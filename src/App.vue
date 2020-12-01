@@ -66,6 +66,7 @@ export default defineComponent({
       const bottomMargin = 5;
       const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
       container.style.height = `${newHeight}px`;
+      editor.value.editorUi.refresh();
     }
 
     const debounceTime = 100;
