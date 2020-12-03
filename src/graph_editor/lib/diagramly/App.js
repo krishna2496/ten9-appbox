@@ -39,17 +39,18 @@ const {
 } = require('../jgraph/mxClient.js');
 
 const { mxSettings } = require('./Settings.js');
-const urlParams = {};
+const urlParams = {dev: "1",sync: "manual"};
 const isLocalStorage = false;
 var IMAGE_PATH = '../../../../public/images';
 const RESOURCE_BASE = '../../../../public/resources/dia';
 var uiTheme = 'atlas';
+const STYLE_PATH = 'styles';
 
 App = function(editor, container, lightbox)
 {
-	EditorUi.call(this, editor, container, (lightbox != null) ? lightbox :
-		(urlParams['lightbox'] == '1' || (uiTheme == 'min' &&
-		urlParams['chrome'] != '0')));
+	// EditorUi.call(this, editor, container, (lightbox != null) ? lightbox :
+	// 	(urlParams['lightbox'] == '1' || (uiTheme == 'min' &&
+	// 	urlParams['chrome'] != '0')));
 	
 	// Logs unloading of window with modifications for Google Drive file
 	if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp)
@@ -86,6 +87,8 @@ App = function(editor, container, lightbox)
 		});
 	}
 
+	// TEN9: make editor and container global
+	this.editor = editor;
 	// Logs changes to autosave
 	this.editor.addListener('autosaveChanged', mxUtils.bind(this, function()
 	{
@@ -206,8 +209,8 @@ App = function(editor, container, lightbox)
 	}
 
 	this.load();
+	App.main();
 };
-
 /**
  * Timeout error
  */
@@ -568,7 +571,7 @@ App.getStoredMode = function()
  * 
  * Optional callback is called with the app instance.
  */
-App.main = function(callback, createUi)
+App.main = function(createUi)
 {
 	// Logs uncaught errors
 	window.onerror = function(message, url, linenumber, colno, err)
@@ -860,10 +863,11 @@ App.main = function(callback, createUi)
 	 			Graph.prototype.defaultThemes['darkTheme'] = xhr[2].getDocumentElement();
 			}
 			
+			var ui = createUi;
 			// Main
-			var ui = (createUi != null) ? createUi() : new App(new Editor(
-					urlParams['chrome'] == '0' || uiTheme == 'min',
-					null, null, null, urlParams['chrome'] != '0'));
+			// var ui = (createUi != null) ? createUi() : new App(new Editor(
+			// 		urlParams['chrome'] == '0' || uiTheme == 'min',
+			// 		null, null, null, urlParams['chrome'] != '0'));
 			
 			if (window.mxscript != null)
 			{
@@ -929,10 +933,10 @@ App.main = function(callback, createUi)
 	
 			}
 			
-			if (callback != null)
-			{
-				callback(ui);
-			}
+			// if (callback != null)
+			// {
+			// 	callback(ui);
+			// }
 			
 			/**
 			 * For developers only
@@ -1103,7 +1107,6 @@ App.main = function(callback, createUi)
 				}
 			}
 		}
-		
 		doMain();
 	}
 };
@@ -1938,7 +1941,11 @@ App.prototype.getEditBlankXml = function()
 App.prototype.updateActionStates = function()
 {
 	EditorUi.prototype.updateActionStates.apply(this, arguments);
-	this.actions.get('revisionHistory').setEnabled(this.isRevisionHistoryEnabled());
+	// TEN9: Check if action is available
+	if(this.actions != undefined)
+	{
+		this.actions.get('revisionHistory').setEnabled(this.isRevisionHistoryEnabled());
+	}	
 };
 
 /**
@@ -2687,6 +2694,12 @@ App.prototype.load = function()
 	}
 };
 
+// TEN9:
+var Load = function(editor,container)
+{
+	new App(editor,container)
+};
+
 /**
  * Adds the listener for automatically saving the diagram for local changes.
  */
@@ -2999,7 +3012,6 @@ App.prototype.start = function()
 							// 	this.getServiceName() == 'draw.io' && (id == null || id.length == 0) &&
 							// 	!this.editor.isChromelessView())
 							// {
-								
 								this.checkDrafts();
 							//}
 							//else 
@@ -3189,7 +3201,6 @@ App.prototype.start = function()
 							this.getSearch(['open']));
 						window.location.hash = urlParams['open'];
 					}
-					
 					done();
 				}
 			}
@@ -3206,6 +3217,7 @@ App.prototype.start = function()
  */
 App.prototype.loadDraft = function(xml, success)
 {
+	debugger
 	this.createFile(this.defaultFilename, xml, null, null, mxUtils.bind(this, function()
 	{
 		window.setTimeout(mxUtils.bind(this, function()
@@ -3239,7 +3251,6 @@ App.prototype.checkDrafts = function()
 		window.setTimeout(mxUtils.bind(this, function()
 		{
 			localStorage.removeItem('.draft-alive-check');
-
 			this.getDatabaseItems(mxUtils.bind(this, function(items)
 			{
 				// Collects orphaned drafts
@@ -3268,15 +3279,14 @@ App.prototype.checkDrafts = function()
 				}
 				
 				// TEN9: for testing
-				// if (drafts.length == 1)
-				// {
+				if (drafts.length == 1)
+				{
 					this.loadDraft(drafts[0].data, mxUtils.bind(this, function()
 					{
 						this.removeDatabaseItem(drafts[0].key);
 					}));
-				//}
-				//else 
-				if (drafts.length > 1)
+				}
+				else if (drafts.length > 1)
 				{
 					var ts = new Date(drafts[0].modified);
 					
@@ -4500,6 +4510,7 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
  */
 App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 {
+	debugger
 	var url = window.location.pathname;
 	
 	if (libs != null && libs.length > 0)
@@ -6936,4 +6947,11 @@ Editor.prototype.resetGraph = function()
 	// Overrides default with persisted value
 	this.graph.pageFormat = mxSettings.getPageFormat();
 };
-App.main();
+//App.main();
+
+// TEN9: Added exports
+module.exports = {
+	App,
+	Load
+};
+  

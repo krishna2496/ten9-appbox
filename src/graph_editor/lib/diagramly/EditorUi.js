@@ -32,7 +32,7 @@ const {
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
 
-const urlParams = {};
+const urlParams = {dev: "1",sync: "manual"};
 const isLocalStorage = false;
 const STYLE_PATH = 'styles';
 
@@ -10782,46 +10782,50 @@ const STYLE_PATH = 'styles';
 	 */
 	EditorUi.prototype.setGraphEnabled = function(enabled)
 	{
-		this.diagramContainer.style.visibility = (enabled) ? '' : 'hidden';
-		this.formatContainer.style.visibility = (enabled) ? '' : 'hidden';
-		this.sidebarFooterContainer.style.display = (enabled) ? '' : 'none';
-		this.sidebarContainer.style.display = (enabled) ? '' : 'none';
-		this.hsplit.style.display = (enabled) ? '' : 'none';
-		this.editor.graph.setEnabled(enabled);
-		
-		if (this.ruler != null)
+		if(this.diagramContainer != undefined)
 		{
-			this.ruler.hRuler.container.style.visibility = (enabled) ? '' : 'hidden';
-			this.ruler.vRuler.container.style.visibility = (enabled) ? '' : 'hidden';
+			this.diagramContainer.style.visibility = (enabled) ? '' : 'hidden';
+			this.formatContainer.style.visibility = (enabled) ? '' : 'hidden';
+			this.sidebarFooterContainer.style.display = (enabled) ? '' : 'none';
+			this.sidebarContainer.style.display = (enabled) ? '' : 'none';
+			this.hsplit.style.display = (enabled) ? '' : 'none';
+			this.editor.graph.setEnabled(enabled);
+			
+			if (this.ruler != null)
+			{
+				this.ruler.hRuler.container.style.visibility = (enabled) ? '' : 'hidden';
+				this.ruler.vRuler.container.style.visibility = (enabled) ? '' : 'hidden';
+			}
+			
+			if (this.tabContainer != null)
+			{
+				this.tabContainer.style.visibility = (enabled) ? '' : 'hidden';	
+			}
+			
+			if (!enabled)
+			{
+				if (this.actions.outlineWindow != null)
+				{
+					this.actions.outlineWindow.window.setVisible(false);
+				}
+
+				if (this.actions.layersWindow != null)
+				{
+					this.actions.layersWindow.window.setVisible(false);
+				}
+
+				if (this.menus.tagsWindow != null)
+				{
+					this.menus.tagsWindow.window.setVisible(false);
+				}
+
+				if (this.menus.findWindow != null)
+				{
+					this.menus.findWindow.window.setVisible(false);
+				}
+			}
 		}
 		
-		if (this.tabContainer != null)
-		{
-			this.tabContainer.style.visibility = (enabled) ? '' : 'hidden';	
-		}
-		
-		if (!enabled)
-		{
-            if (this.actions.outlineWindow != null)
-            {
-            	this.actions.outlineWindow.window.setVisible(false);
-            }
-
-            if (this.actions.layersWindow != null)
-            {
-            	this.actions.layersWindow.window.setVisible(false);
-            }
-
-            if (this.menus.tagsWindow != null)
-            {
-            	this.menus.tagsWindow.window.setVisible(false);
-            }
-
-            if (this.menus.findWindow != null)
-            {
-            	this.menus.findWindow.window.setVisible(false);
-            }
-		}
 	};
 	
 	/**
@@ -12756,47 +12760,48 @@ const STYLE_PATH = 'styles';
 		var file = this.getCurrentFile();
 		var active = file != null || (urlParams['embed'] == '1' &&
 			this.editor.graph.isEnabled());
-		this.menus.get('viewPanels').setEnabled(active);
-		this.menus.get('viewZoom').setEnabled(active);
+		// TEN9: Disable extra menus
+		// this.menus.get('viewPanels').setEnabled(active);
+		// this.menus.get('viewZoom').setEnabled(active);
 		
-		var restricted = (urlParams['embed'] != '1' ||
-			!this.editor.graph.isEnabled()) &&
-			(file == null || file.isRestricted());
-		this.actions.get('makeCopy').setEnabled(!restricted);
-		this.actions.get('print').setEnabled(!restricted);
-		this.menus.get('exportAs').setEnabled(!restricted);
-		this.menus.get('embed').setEnabled(!restricted);
+		// var restricted = (urlParams['embed'] != '1' ||
+		// 	!this.editor.graph.isEnabled()) &&
+		// 	(file == null || file.isRestricted());
+		// this.actions.get('makeCopy').setEnabled(!restricted);
+		// this.actions.get('print').setEnabled(!restricted);
+		// this.menus.get('exportAs').setEnabled(!restricted);
+		// this.menus.get('embed').setEnabled(!restricted);
 		
-		// Disables libraries and extras menu in embed mode
-		// while waiting for file data
-		var libsEnabled = urlParams['embed'] != '1' ||
-				this.editor.graph.isEnabled();
-		this.menus.get('extras').setEnabled(libsEnabled);
+		// // Disables libraries and extras menu in embed mode
+		// // while waiting for file data
+		// var libsEnabled = urlParams['embed'] != '1' ||
+		// 		this.editor.graph.isEnabled();
+		// this.menus.get('extras').setEnabled(libsEnabled);
 		
-		if (Editor.enableCustomLibraries)
-		{
-			this.menus.get('openLibraryFrom').setEnabled(libsEnabled);
-			this.menus.get('newLibrary').setEnabled(libsEnabled);
-		}
+		// if (Editor.enableCustomLibraries)
+		// {
+		// 	this.menus.get('openLibraryFrom').setEnabled(libsEnabled);
+		// 	this.menus.get('newLibrary').setEnabled(libsEnabled);
+		// }
 		
-		// Disables actions in the toolbar
-		var editable = (urlParams['embed'] == '1' &&
-			this.editor.graph.isEnabled()) ||
-			(file != null && file.isEditable());
-		this.actions.get('image').setEnabled(active);
-		this.actions.get('zoomIn').setEnabled(active);
-		this.actions.get('zoomOut').setEnabled(active);
-		this.actions.get('resetView').setEnabled(active);
+		// // Disables actions in the toolbar
+		// var editable = (urlParams['embed'] == '1' &&
+		// 	this.editor.graph.isEnabled()) ||
+		// 	(file != null && file.isEditable());
+		// this.actions.get('image').setEnabled(active);
+		// this.actions.get('zoomIn').setEnabled(active);
+		// this.actions.get('zoomOut').setEnabled(active);
+		// this.actions.get('resetView').setEnabled(active);
 		
-		// Updates undo history states
-		this.actions.get('undo').setEnabled(this.canUndo() && editable);
-		this.actions.get('redo').setEnabled(this.canRedo() && editable);
+		// // Updates undo history states
+		// this.actions.get('undo').setEnabled(this.canUndo() && editable);
+		// this.actions.get('redo').setEnabled(this.canRedo() && editable);
 	
-		// Disables menus
-		this.menus.get('edit').setEnabled(active);
-		this.menus.get('view').setEnabled(active);
-		this.menus.get('importFrom').setEnabled(editable);
-		this.menus.get('arrange').setEnabled(editable);
+		// // Disables menus
+		// this.menus.get('edit').setEnabled(active);
+		// this.menus.get('view').setEnabled(active);
+		// this.menus.get('importFrom').setEnabled(editable);
+		// this.menus.get('arrange').setEnabled(editable);
 		
 		// Disables connection drop downs in toolbar
 		if (this.toolbar != null)
@@ -12864,38 +12869,43 @@ const STYLE_PATH = 'styles';
 	var editorUiUpdateActionStates = EditorUi.prototype.updateActionStates;
 	EditorUi.prototype.updateActionStates = function()
 	{
-		editorUiUpdateActionStates.apply(this, arguments);
+		// TEN9: Check if action is available
+		if(this.actions != undefined)
+		{
+			editorUiUpdateActionStates.apply(this, arguments);
 
-		var graph = this.editor.graph;
-		var active = this.isDiagramActive();
-		var file = this.getCurrentFile();
-		var enabled = file != null || urlParams['embed'] == '1';
-		this.actions.get('pageSetup').setEnabled(active);
-		this.actions.get('autosave').setEnabled(file != null && file.isEditable() && file.isAutosaveOptional());
-		this.actions.get('guides').setEnabled(active);
-		this.actions.get('editData').setEnabled(active);
-		//this.actions.get('shadowVisible').setEnabled(active);
-		this.actions.get('connectionArrows').setEnabled(active);
-		this.actions.get('connectionPoints').setEnabled(active);
-		//this.actions.get('copyStyle').setEnabled(active && !graph.isSelectionEmpty());
-		//this.actions.get('pasteStyle').setEnabled(active && !graph.isSelectionEmpty());
-		// this.actions.get('editGeometry').setEnabled(graph.getModel().isVertex(graph.getSelectionCell()));
-		// this.actions.get('createShape').setEnabled(active);
-		// this.actions.get('createRevision').setEnabled(active);
-		// this.actions.get('moveToFolder').setEnabled(file != null);
-		// this.actions.get('makeCopy').setEnabled(file != null && !file.isRestricted());
-		// this.actions.get('editDiagram').setEnabled(active && (file == null || !file.isRestricted()));
-		// this.actions.get('publishLink').setEnabled(file != null && !file.isRestricted());
-		// this.actions.get('tags').setEnabled(this.diagramContainer.style.visibility != 'hidden');
-		// this.actions.get('find').setEnabled(this.diagramContainer.style.visibility != 'hidden');
-		// this.actions.get('layers').setEnabled(this.diagramContainer.style.visibility != 'hidden');
-		// this.actions.get('outline').setEnabled(this.diagramContainer.style.visibility != 'hidden');
-		// this.actions.get('rename').setEnabled((file != null && file.isRenamable()) || urlParams['embed'] == '1');
-		// this.actions.get('close').setEnabled(file != null);
-		// this.menus.get('publish').setEnabled(file != null && !file.isRestricted());
+			var graph = this.editor.graph;
+			var active = this.isDiagramActive();
+			var file = this.getCurrentFile();
+			var enabled = file != null || urlParams['embed'] == '1';
+			this.actions.get('pageSetup').setEnabled(active);
+			this.actions.get('autosave').setEnabled(file != null && file.isEditable() && file.isAutosaveOptional());
+			this.actions.get('guides').setEnabled(active);
+			this.actions.get('editData').setEnabled(active);
+			this.actions.get('shadowVisible').setEnabled(active);
+			this.actions.get('connectionArrows').setEnabled(active);
+			this.actions.get('connectionPoints').setEnabled(active);
+			//this.actions.get('copyStyle').setEnabled(active && !graph.isSelectionEmpty());
+			//this.actions.get('pasteStyle').setEnabled(active && !graph.isSelectionEmpty());
+			// this.actions.get('editGeometry').setEnabled(graph.getModel().isVertex(graph.getSelectionCell()));
+			// this.actions.get('createShape').setEnabled(active);
+			// this.actions.get('createRevision').setEnabled(active);
+			// this.actions.get('moveToFolder').setEnabled(file != null);
+			// this.actions.get('makeCopy').setEnabled(file != null && !file.isRestricted());
+			// this.actions.get('editDiagram').setEnabled(active && (file == null || !file.isRestricted()));
+			// this.actions.get('publishLink').setEnabled(file != null && !file.isRestricted());
+			// this.actions.get('tags').setEnabled(this.diagramContainer.style.visibility != 'hidden');
+			// this.actions.get('find').setEnabled(this.diagramContainer.style.visibility != 'hidden');
+			// this.actions.get('layers').setEnabled(this.diagramContainer.style.visibility != 'hidden');
+			// this.actions.get('outline').setEnabled(this.diagramContainer.style.visibility != 'hidden');
+			// this.actions.get('rename').setEnabled((file != null && file.isRenamable()) || urlParams['embed'] == '1');
+			// this.actions.get('close').setEnabled(file != null);
+			// this.menus.get('publish').setEnabled(file != null && !file.isRestricted());
+			
+			var state = graph.view.getState(graph.getSelectionCell());
+			this.actions.get('editShape').setEnabled(active && state != null && state.shape != null && state.shape.stencil != null);
+		}
 		
-		var state = graph.view.getState(graph.getSelectionCell());
-		//this.actions.get('editShape').setEnabled(active && state != null && state.shape != null && state.shape.stencil != null);
 	};
 
 	/**
@@ -13536,8 +13546,8 @@ const STYLE_PATH = 'styles';
 	
 								window.addEventListener('message', messageListener);
 							})); //Ignore errors
-						}
-							
+						}	
+						
 						success(db);
 						
 						db.onversionchange = function() 

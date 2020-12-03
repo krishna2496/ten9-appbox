@@ -1741,7 +1741,6 @@ EditorUi.prototype.createPageMenu = function(page, label)
 (function()
 {
 	var editorUiRefresh = EditorUi.prototype.refresh;
-	
 	EditorUi.prototype.refresh = function(sizeDidChange)
 	{
 		editorUiRefresh.apply(this, arguments);

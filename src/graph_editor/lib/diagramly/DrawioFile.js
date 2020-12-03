@@ -12,7 +12,7 @@ const {
   mxUtils
 } = require('../jgraph/mxClient.js');
 
-const urlParams = {};
+const urlParams = {dev: "1",sync: "manual"};
 
 DrawioFile = function(ui, data)
 {

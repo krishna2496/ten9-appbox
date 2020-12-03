@@ -44,7 +44,8 @@ const { Sidebar } = require('../jgraph/Sidebar.js');
 const IMAGE_PATH = '/images';
 // const SHAPES_PATH = '../../../graph_editor/lib/shapes';
 // const STENCIL_PATH = '../../../../public/stencils';
-const urlParams = {};
+const urlParams = {dev: "1",sync: "manual"};
+
 const DRAW_MATH_URL = 'math';
 const uiTheme = 'atlas';
 

@@ -16,6 +16,7 @@
 
 <script lang="ts">
 import { createEditorUi } from '../lib/jgraph/EditorUi';
+import { Load } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
 import {
@@ -128,6 +129,7 @@ export default defineComponent({
       graph.value = editor.value.graph;
       sidebar.value = editorUi.value.sidebar;
 
+      Load(editor.value, container.value);
       // Add stencils to the sidebar
       sidebar.value.showEntries(props.shapeLibraries);
 

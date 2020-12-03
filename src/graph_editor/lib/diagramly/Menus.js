@@ -32,7 +32,7 @@ const { Action } = require('../jgraph/Actions.js');
 const { Menu } = require('../jgraph/Menus.js');
 const { MoreShapesDialog } = require('../jgraph/Dialogs.js');
 
-const urlParams = {};
+const urlParams = {dev: "1",sync: "manual"};
 const isLocalStorage = false;
 const RESOURCE_BASE = '../../../../public/resources/dia';
 var uiTheme = 'atlas';
