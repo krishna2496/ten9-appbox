@@ -31,11 +31,11 @@ const {
   mxUtils,
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
-
+const { DiagramPage } = require('./Pages.js');
 const urlParams = {dev: "1",sync: "manual"};
 const isLocalStorage = false;
 const STYLE_PATH = 'styles';
-
+var { appPages } = require('../jgraph/EditorUi');
 (function()
 {
 	/**
@@ -122,8 +122,9 @@ const STYLE_PATH = 'styles';
 	/**
 	 * Specifies if drafts should be saved in IndexedDB.
 	 */
-	EditorUi.enableDrafts = !mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
-		isLocalStorage && urlParams['drafts'] != '0';
+	//EditorUi.enableDrafts = !mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
+		//isLocalStorage && urlParams['drafts'] != '0';
+		EditorUi.enableDrafts = true;
 	
 	/**
 	 * Link for scratchpad help.
@@ -1815,9 +1816,8 @@ const STYLE_PATH = 'styles';
 						{
 							page.setName(mxResources.get('pageWithNumber', [i + 1]));
 						}
-						
 						this.pages.push(page);
-						
+						appPages.push(page)
 						if (urlParams['page-id'] != null && page.getId() == urlParams['page-id'])
 						{
 							selectedPage = page;
@@ -2565,7 +2565,10 @@ const STYLE_PATH = 'styles';
 			oldFile.close();
 		}
 		
-		this.editor.graph.model.clear();
+		setTimeout(() => {
+			this.editor.graph.model.clear();
+		},2000)
+		
 		this.editor.undoManager.clear();
 	
 		var noFile = mxUtils.bind(this, function()
@@ -9409,7 +9412,10 @@ const STYLE_PATH = 'styles';
 			}), false);
 		}
 		
-		this.initPages();
+		// TEN9: call init pages after pages gets load
+		setTimeout(() => {
+			this.initPages();
+		},2000);
 
 		// Embedded mode
 		if (urlParams['embed'] == '1')
@@ -13547,7 +13553,6 @@ const STYLE_PATH = 'styles';
 								window.addEventListener('message', messageListener);
 							})); //Ignore errors
 						}	
-						
 						success(db);
 						
 						db.onversionchange = function() 
@@ -13696,15 +13701,20 @@ const STYLE_PATH = 'styles';
 				var items = [];
 				req.onsuccess = function(e)
 				{
-					if (e.target.result == null)
-					{
+					// if (e.target.result == null)
+					// {
+					// 	success(items);
+					// }
+					// else
+					// {
+						var temp = {
+							data: {"type":"draft","created":1607063526930,"modified":1607063530176,"data":"<mxfile host=\"localhost\" modified=\"2020-12-04T06:32:10.201Z\" agent=\"5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36\" etag=\"L5LsLLZ7z6whefusgX-e\" version=\"@DRAWIO-VERSION@\"><diagram id=\"qhYVMg6a4_YdBo9QcgAd\" name=\"Page-1\">rZTbboMwDIafhstNEErX3fawg7SplSpt0u5S4kLWQFBqCu3TLylJgVXT2mlX2F8cx/lt4oWTrH5UtEhfJQPhEZ/VXjj1CAnCKNIfQ/YNIWTQgERxZoNasOQHsNC3tOQMtr1AlFIgL/owlnkOMfYYVUpW/bC1FP1TC5rAGVjGVJzTd84wbeiI3LX8CXiSupOD4X2zklEXbG+yTSmTVSdrOPPCiZISGyurJyCMeE6XZt/DD6unwhTkeMkGwT7H7Hk2VYtEMj70d4O3jxubZUdFaS9si8W9U0DXXRgTdYPhIE26cQGKZ4CgunzRwnGVcoRlQWOzs9IRmqWYCe0F2lzzGlyzjX9+F1cYKIT6u2h62kDqo9Reh9RusKzOdtBG1q3argUuJO10bGgZtYOSnDK3WmrDynmFtORyaeNyBb+LtpJlzoC9rE6AxptEGTovUfDcqcmo2sx1Go5GC//Wj/qQHOk/6R75f9N9dL3u2m1/l+Na59EJZ18=</diagram></mxfile>","title":"Untitled Diagram"}, key: ".draft_-o-EqlGnRRupDn_MtX31"
+						}
+						
+						items.push(temp);
 						success(items);
-					}
-					else
-					{
-						items.push(e.target.result.value);
-						e.target.result.continue();
-					}
+						//e.target.result.continue();
+					//}
 		        };
 		        
 		        req.onerror = error;
@@ -14036,8 +14046,6 @@ const STYLE_PATH = 'styles';
 	{
 		localStorage.setItem('.localStorageMigrated', '1');	
 	};
-
-	
 })();
 
 /**

@@ -209,6 +209,8 @@ App = function(editor, container, lightbox)
 	}
 
 	this.load();
+	// TEN9: call main function\
+	this.defaultFilename = "Untitled Diagram";
 	App.main();
 };
 /**
@@ -3217,7 +3219,6 @@ App.prototype.start = function()
  */
 App.prototype.loadDraft = function(xml, success)
 {
-	debugger
 	this.createFile(this.defaultFilename, xml, null, null, mxUtils.bind(this, function()
 	{
 		window.setTimeout(mxUtils.bind(this, function()
@@ -3263,8 +3264,9 @@ App.prototype.checkDrafts = function()
 						
 						if (key != null && key.substring(0, 7) == '.draft_')
 						{
-							var obj = JSON.parse(items[i].data);
-							
+							// TEN9:
+							//var obj = JSON.parse(items[i].data);
+							var obj = items[i].data;
 							if (obj != null && obj.type == 'draft' && obj.aliveCheck != guid)
 							{
 								obj.key = key;
@@ -4382,13 +4384,16 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 {
 	mode = (tempFile) ? null : ((mode != null) ? mode : this.mode);
 
-	if (title != null && this.spinner.spin(document.body, mxResources.get('inserting')))
+	// TEN9: Remove spinner code
+	//if (title != null && this.spinner.spin(document.body, mxResources.get('inserting')))
+	if(title != null)
 	{
 		data = (data != null) ? data : this.emptyDiagramXml;
 		
 		var complete = mxUtils.bind(this, function()
 		{
-			this.spinner.stop();
+			// TEN9: remove spinner code
+			//this.spinner.stop();
 		});
 		
 		var error = mxUtils.bind(this, function(resp)
@@ -4510,7 +4515,6 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
  */
 App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 {
-	debugger
 	var url = window.location.pathname;
 	
 	if (libs != null && libs.length > 0)
@@ -4533,8 +4537,9 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 
 	// Makes sure to produce consistent output with finalized files via createFileData this needs
 	// to save the file again since it needs the newly created file ID for redirecting in HTML
-	if (this.spinner.spin(document.body, mxResources.get('inserting')))
-	{
+	// TEN9: remove spinner code
+	// if (this.spinner.spin(document.body, mxResources.get('inserting')))
+	// {
 		var data = file.getData();
 		var dataNode = (data.length > 0) ? this.editor.extractGraphModel(
 			mxUtils.parseXml(data).documentElement, true) : null;
@@ -4559,7 +4564,8 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 
 		var complete = mxUtils.bind(this, function()
 		{
-			this.spinner.stop();
+			// TEN9: remove spinner code
+			//this.spinner.stop();
 		});
 		
 		var fn = mxUtils.bind(this, function()
@@ -4663,7 +4669,7 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 				this.handleError(resp);
 			}));
 		}
-	}
+	//}
 };
 
 /**

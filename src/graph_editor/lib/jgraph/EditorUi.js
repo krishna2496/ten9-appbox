@@ -54,9 +54,9 @@ const { Toolbar } = require('./Toolbar.js');
 const { ColorDialog, EditDataDialog, LinkDialog, OpenDialog } = require('./Dialogs.js');
 const { DiagramPage } = require('../diagramly/Diagram.js');
 const graphUtils = require('./graph_utils.js');
-
+var appPages = [];
 const urlParams = { dev: '1', sync: 'manual' };
-
+var uiTheme = 'atlas';
 //TEN9: add more sheet
 // const { tabsContainer,
 //   pageChange,
@@ -987,7 +987,6 @@ EditorUi = function (editor, container, lightbox) {
 
 // Extends mxEventSource
 mxUtils.extend(EditorUi, mxEventSource);
-
 /**
  * Global config that specifies if the compact UI elements should be used.
  */
@@ -5195,7 +5194,10 @@ EditorUi.prototype.destroy = function () {
 
 // TEN9: add for more sheet
 EditorUi.prototype.updateTabContainer = function () {
-  if (this.tabContainer != null && this.pages != null) {
+  console.log(appPages);
+  if (this.tabContainer != null && appPages.length > 0 ) {
+    this.pages = appPages;
+
     var graph = this.editor.graph;
     var wrapper = document.createElement('div');
     wrapper.style.position = 'relative';
@@ -5225,7 +5227,9 @@ EditorUi.prototype.updateTabContainer = function () {
           tab.className = 'geActivePage';
           tab.style.backgroundColor = uiTheme == 'dark' ? '#2a2a2a' : '#fff';
         } else {
-          tab.className = 'geInactivePage';
+          //tab.className = 'geInactivePage';
+          tab.className = 'geActivePage';
+          tab.style.backgroundColor = uiTheme == 'dark' ? '#2a2a2a' : '#fff';
         }
 
         tab.setAttribute('draggable', 'true');
@@ -6323,12 +6327,13 @@ module.exports = {
   createEditorUi,
   EditorUi,
   ChangePageSetup,
+  appPages,
 };
 
 require('../diagramly/DrawioFile.js');
 require('../diagramly/LocalFile.js');
 require('../diagramly/Editor.js');
 require('../diagramly/EditorUi.js');
-//require('../diagramly/App.js');
+require('../diagramly/App.js');
 require('../diagramly/Menus.js');
 require('../diagramly/Pages.js');
