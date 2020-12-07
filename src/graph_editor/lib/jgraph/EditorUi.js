@@ -1199,6 +1199,20 @@ EditorUi.prototype.init = function () {
   this.textInputForNativeClipboard = this.installNativeClipboardHandler();
 };
 
+// TEN9: Add shadow checkbox
+changeListener = mxUtils.bind(this, function (sender, eventObject) {
+  var data = getData();
+
+  if (data != lastData && !ignoreChange) {
+    var msg = this.createLoadMessage('autosave');
+    msg.xml = data;
+    var parent = window.opener || window.parent;
+    parent.postMessage(JSON.stringify(msg), '*');
+  }
+
+  lastData = data;
+});
+
 /**
  * Returns true if the given event should start editing. This implementation returns true.
  */
@@ -5195,7 +5209,7 @@ EditorUi.prototype.destroy = function () {
 // TEN9: add for more sheet
 EditorUi.prototype.updateTabContainer = function () {
   console.log(appPages);
-  if (this.tabContainer != null && appPages.length > 0 ) {
+  if (this.tabContainer != null && appPages.length > 0) {
     this.pages = appPages;
 
     var graph = this.editor.graph;
@@ -5223,12 +5237,13 @@ EditorUi.prototype.updateTabContainer = function () {
     for (var i = 0; i < this.pages.length; i++) {
       // Install drag and drop for page reorder
       mxUtils.bind(this, function (index, tab) {
-        if (this.pages[index] == this.currentPage) {
+        // TEN9: check if only one page is there is gets activated by default
+        //if (this.pages[index] == this.currentPage) {
+        if (this.pages[index] == this.currentPage || this.currentPage == undefined) {
           tab.className = 'geActivePage';
           tab.style.backgroundColor = uiTheme == 'dark' ? '#2a2a2a' : '#fff';
         } else {
-          //tab.className = 'geInactivePage';
-          tab.className = 'geActivePage';
+          tab.className = 'geInactivePage';
           tab.style.backgroundColor = uiTheme == 'dark' ? '#2a2a2a' : '#fff';
         }
 
@@ -6327,13 +6342,14 @@ module.exports = {
   createEditorUi,
   EditorUi,
   ChangePageSetup,
+  ChangeGridColor,
   appPages,
 };
 
 require('../diagramly/DrawioFile.js');
 require('../diagramly/LocalFile.js');
-require('../diagramly/Editor.js');
 require('../diagramly/EditorUi.js');
+require('../diagramly/Editor.js');
 require('../diagramly/App.js');
 require('../diagramly/Menus.js');
 require('../diagramly/Pages.js');

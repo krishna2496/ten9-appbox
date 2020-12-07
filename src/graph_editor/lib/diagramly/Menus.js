@@ -28,6 +28,7 @@ const {
   mxUtils,
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
+const { mxSettings } = require('./Settings.js');
 const { Action } = require('../jgraph/Actions.js');
 const { Menu } = require('../jgraph/Menus.js');
 const { MoreShapesDialog } = require('../jgraph/Dialogs.js');

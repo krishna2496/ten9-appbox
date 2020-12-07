@@ -15,6 +15,7 @@
  */
 // TEN9: Added imports
 const {
+  mxCodec,
   mxClient,
   mxClipboard,
   mxCodecRegistry,
@@ -24,7 +25,8 @@ const {
   mxEvent,
   mxEventObject,
   mxEventSource,
-	mxGraphModel,
+  mxGraph,
+  mxGraphModel,
   mxImage,
   mxKeyHandler,
   mxMorphing,
@@ -42,6 +44,7 @@ const {
 } = require('../jgraph/mxClient.js');
 
 var { Graph } = require('../jgraph/Graph.js');
+var { FilenameDialog } = require('../jgraph/Editor.js');
 var uiTheme = 'atlas';
 const urlParams = {dev: "1",sync: "manual"};
 function DiagramPage(node, id)
@@ -198,7 +201,18 @@ SelectPage.prototype.execute = function()
 	
 	if (this.page != null && prevIndex >= 0)
 	{
-		var page = this.ui.currentPage;
+		var page
+		// TEN9: check if ui current page is available or not
+		if(this.ui.currentPage == undefined)
+		{
+			page = this.page;
+		}
+		else
+		{
+			page = this.ui.currentPage;
+		}
+		
+		
 		var editor = this.ui.editor;
 		var graph = editor.graph;
 		
@@ -477,6 +491,7 @@ EditorUi.prototype.initPages = function()
 
 			for (var i = 0; i < changes.length; i++)
 			{
+				// TEN9:
 				// if (changes[i] instanceof SelectPage ||
 				// 	changes[i] instanceof RenamePage ||
 				// 	changes[i] instanceof MovePage ||
@@ -1000,7 +1015,9 @@ EditorUi.prototype.createPageId = function()
  */
 EditorUi.prototype.createPage = function(name, id)
 {
-	var page = new DiagramPage(this.fileNode.ownerDocument.createElement('diagram'), id);
+	// TEN9: get node value from pages
+	// var page = new DiagramPage(this.fileNode.ownerDocument.createElement('diagram'), id);
+	var page = new DiagramPage(this.pages[0].node.ownerDocument.createElement('diagram'), id);
 	page.setName((name != null) ? name : this.createPageName());
 	
 	return page;
@@ -1611,9 +1628,13 @@ EditorUi.prototype.addTabListeners = function(page, tab)
 					this.resetCurrentMenu();
 					menu.destroy();
 				});
-		
-				var x = mxEvent.getClientX(evt);
-				var y = mxEvent.getClientY(evt);
+				
+				var offset = mxUtils.getOffset(this.container);
+				// TEN9: correct popup position
+				// var x = mxEvent.getClientX(evt);
+				// var y = mxEvent.getClientY(evt);
+				var x = mxEvent.getClientX(evt) - offset.x;
+				var y = mxEvent.getClientY(evt) - offset.y;
 				menu.popup(x, y, null, evt);
 				this.setCurrentMenu(menu, tab);
 			}

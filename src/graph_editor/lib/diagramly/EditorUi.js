@@ -1110,7 +1110,6 @@ var { appPages } = require('../jgraph/EditorUi');
 		else
 		{
 			var fileNode = node;
-	
 			// Ignores case for possible HTML or XML nodes
 			if (fileNode.nodeName.toLowerCase() != 'mxfile')
 			{
@@ -13701,6 +13700,7 @@ var { appPages } = require('../jgraph/EditorUi');
 				var items = [];
 				req.onsuccess = function(e)
 				{
+					// TEN9: 
 					// if (e.target.result == null)
 					// {
 					// 	success(items);
@@ -13708,7 +13708,7 @@ var { appPages } = require('../jgraph/EditorUi');
 					// else
 					// {
 						var temp = {
-							data: {"type":"draft","created":1607063526930,"modified":1607063530176,"data":"<mxfile host=\"localhost\" modified=\"2020-12-04T06:32:10.201Z\" agent=\"5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36\" etag=\"L5LsLLZ7z6whefusgX-e\" version=\"@DRAWIO-VERSION@\"><diagram id=\"qhYVMg6a4_YdBo9QcgAd\" name=\"Page-1\">rZTbboMwDIafhstNEErX3fawg7SplSpt0u5S4kLWQFBqCu3TLylJgVXT2mlX2F8cx/lt4oWTrH5UtEhfJQPhEZ/VXjj1CAnCKNIfQ/YNIWTQgERxZoNasOQHsNC3tOQMtr1AlFIgL/owlnkOMfYYVUpW/bC1FP1TC5rAGVjGVJzTd84wbeiI3LX8CXiSupOD4X2zklEXbG+yTSmTVSdrOPPCiZISGyurJyCMeE6XZt/DD6unwhTkeMkGwT7H7Hk2VYtEMj70d4O3jxubZUdFaS9si8W9U0DXXRgTdYPhIE26cQGKZ4CgunzRwnGVcoRlQWOzs9IRmqWYCe0F2lzzGlyzjX9+F1cYKIT6u2h62kDqo9Reh9RusKzOdtBG1q3argUuJO10bGgZtYOSnDK3WmrDynmFtORyaeNyBb+LtpJlzoC9rE6AxptEGTovUfDcqcmo2sx1Go5GC//Wj/qQHOk/6R75f9N9dL3u2m1/l+Na59EJZ18=</diagram></mxfile>","title":"Untitled Diagram"}, key: ".draft_-o-EqlGnRRupDn_MtX31"
+							data: {"type":"draft","created":1607343992029,"modified":1607344069929,"data":"<mxfile host=\"localhost\" modified=\"2020-12-07T12:27:49.931Z\" agent=\"5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36\" etag=\"0qNZf31FybfwgL2tJ1lD\" version=\"@DRAWIO-VERSION@\"><diagram id=\"qhYVMg6a4_YdBo9QcgAd\" name=\"Page-1\">ddHNEoIgEADgp+Gu7PR3NqtLJw+dGdmEGXQdpNF6+nTAjLFOLN8uLD8Msno4W9GqK0k0jCdyYHBknKew2YzDJE8vkHIPldUyFC1Q6BcGTII+tMQuKnRExuk2xpKaBksXmbCW+rjsTibu2ooKV1CUwqz1pqVTXvd8t/gFdaXmzun24DO1mIvDTTolJPVfBDmDzBI5H9VDhmZ6vPld/LrTn+znYBYb92PBGCx7j5PohyB/Aw==</diagram></mxfile>","title":"Untitled Diagram"}, key: ".draft_-o-EqlGnRRupDn_MtX31"
 						}
 						
 						items.push(temp);
