@@ -3880,7 +3880,9 @@ EditorUi.prototype.createSidebarFooterContainer = function () {
 
   var elt2 = document.createElement('a');
   elt2.className = 'geTitle';
-  elt2.style.color = '#DF6C0C';
+  // TEN9: Use ten9 Color instead of orange
+  // elt2.style.color = '#DF6C0C';
+  elt2.style.color = '#124C8B';
   elt2.style.fontWeight = 'bold';
   elt2.style.height = '100%';
   elt2.style.paddingTop = '9px';
