@@ -205,7 +205,7 @@ SelectPage.prototype.execute = function()
 		// TEN9: check if ui current page is available or not
 		if(this.ui.currentPage == undefined)
 		{
-			page = this.page;
+			page = this.ui.pages[0];
 		}
 		else
 		{
@@ -279,6 +279,7 @@ SelectPage.prototype.execute = function()
  */
 function ChangePage(ui, page, select, index, noSelect)
 {
+
 	SelectPage.call(this, ui, select);
 	this.relatedPage = page;
 	this.index = index;
@@ -327,6 +328,11 @@ EditorUi.prototype.tabContainerHeight = 38;
  */
 EditorUi.prototype.getSelectedPageIndex = function()
 {
+	// TEN9:
+	if(this.currentPage == undefined)
+	{
+		this.currentPage = this.pages[0];
+	}
 	var result = null;
 	
 	if (this.pages != null && this.currentPage != null)
@@ -1470,7 +1476,9 @@ EditorUi.prototype.createPageMenuTab = function()
 					}), parent);
 					
 					// Adds checkmark to current page
-					if (this.pages[index] == this.currentPage)
+					// TEN9: if currentPage is undefined only one page exists
+					//if (this.pages[index] == this.currentPage)
+					if (this.pages[index] == this.currentPage || this.currentPage == undefined)
 					{
 						menu.addCheckmark(item, Editor.checkmarkImage);
 					}
@@ -1486,11 +1494,27 @@ EditorUi.prototype.createPageMenuTab = function()
 					this.insertPage();
 				}), parent);
 
-				var page = this.currentPage;
+				// TEN9: if currentPage is undefined we can set page as first page
+				var page;
+				if(this.currentPage == undefined)
+				{
+					page = this.pages[0];
+				}
+				else
+				{
+					page = this.currentPage;
+				}
+				 
 				
 				if (page != null)
 				{
 					menu.addSeparator(parent);
+
+					// TEN9: Adding delete option
+					menu.addItem(mxResources.get('delete'), null, mxUtils.bind(this, function()
+					{
+						this.removePage(page);
+					}), parent)
 			
 					menu.addItem(mxResources.get('rename'), null, mxUtils.bind(this, function()
 					{
@@ -1518,9 +1542,14 @@ EditorUi.prototype.createPageMenuTab = function()
 			mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
 			menu.destroy();
 		});
-	
-		var x = mxEvent.getClientX(evt);
-		var y = mxEvent.getClientY(evt);
+
+		var offset = mxUtils.getOffset(this.container);
+		// TEN9: correct popup position
+		// var x = mxEvent.getClientX(evt);
+		// var y = mxEvent.getClientY(evt);
+		var x = mxEvent.getClientX(evt) - offset.x;
+		var y = mxEvent.getClientY(evt) - offset.y;
+
 		menu.popup(x, y, null, evt);
 		
 		// Allows hiding by clicking on document

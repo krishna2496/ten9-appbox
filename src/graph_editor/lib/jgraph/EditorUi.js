@@ -5208,7 +5208,6 @@ EditorUi.prototype.destroy = function () {
 
 // TEN9: add for more sheet
 EditorUi.prototype.updateTabContainer = function () {
-  console.log(appPages);
   if (this.tabContainer != null && appPages.length > 0) {
     this.pages = appPages;
 

@@ -46,8 +46,7 @@ const { ChangePageSetup, ChangeGridColor } = require('../jgraph/EditorUi.js');
 const IMAGE_PATH = '/images';
 // const SHAPES_PATH = '../../../graph_editor/lib/shapes';
 // const STENCIL_PATH = '../../../../public/stencils';
-const urlParams = {dev: "1",sync: "manual"};
-
+const urlParams = {};
 const DRAW_MATH_URL = 'math';
 const uiTheme = 'atlas';
 
@@ -2213,7 +2212,6 @@ const uiTheme = 'atlas';
         this.graph.useCssTransforms =
           !mxClient.NO_FO && this.isChromelessView() && this.graph.isCssTransformsSupported();
         this.graph.updateCssTransform();
-
         this.graph.setShadowVisible(node.getAttribute('shadow') == '1', false);
 
         var extFonts = node.getAttribute('extFonts');
@@ -3742,6 +3740,7 @@ const uiTheme = 'atlas';
 
     	Format.prototype.refresh = function()
     	{
+        // TEN9: feresh format panel with checkong urlParams
     		// if (this.editorUi.getCurrentFile() != null || urlParams['embed'] == '1' ||
     		// 	this.editorUi.editor.chromeless)
     		// {
@@ -3795,8 +3794,7 @@ const uiTheme = 'atlas';
     				var change = new ChangePageSetup(ui);
     				change.ignoreColor = true;
     				change.ignoreImage = true;
-    				change.shadowVisible = checked;
-
+            change.shadowVisible = checked;
     				graph.model.execute(change);
     			},
     			{
@@ -3830,91 +3828,91 @@ const uiTheme = 'atlas';
     // 	/**
     // 	 * Adds autosave and math typesetting options.
     // 	 */
-    // 	var diagramFormatPanelAddOptions = DiagramFormatPanel.prototype.addOptions;
-    // 	DiagramFormatPanel.prototype.addOptions = function(div)
-    // 	{
-    // 		div = diagramFormatPanelAddOptions.apply(this, arguments);
+    	// var diagramFormatPanelAddOptions = DiagramFormatPanel.prototype.addOptions;
+    	// DiagramFormatPanel.prototype.addOptions = function(div)
+    	// {
+    	// 	div = diagramFormatPanelAddOptions.apply(this, arguments);
 
-    // 		var ui = this.editorUi;
-    // 		var editor = ui.editor;
-    // 		var graph = editor.graph;
+    	// 	var ui = this.editorUi;
+    	// 	var editor = ui.editor;
+    	// 	var graph = editor.graph;
 
-    // 		if (graph.isEnabled())
-    // 		{
-    // 			var file = ui.getCurrentFile();
+    	// 	if (graph.isEnabled())
+    	// 	{
+    	// 		var file = ui.getCurrentFile();
 
-    // 			if (file != null && file.isAutosaveOptional())
-    // 			{
-    // 				var opt = this.createOption(mxResources.get('autosave'), function()
-    // 				{
-    // 					return ui.editor.autosave;
-    // 				}, function(checked)
-    // 				{
-    // 					ui.editor.setAutosave(checked);
+    	// 		if (file != null && file.isAutosaveOptional())
+    	// 		{
+    	// 			var opt = this.createOption(mxResources.get('autosave'), function()
+    	// 			{
+    	// 				return ui.editor.autosave;
+    	// 			}, function(checked)
+    	// 			{
+    	// 				ui.editor.setAutosave(checked);
 
-    // 					if (ui.editor.autosave && file.isModified())
-    // 					{
-    // 						file.fileChanged();
-    // 					}
-    // 				},
-    // 				{
-    // 					install: function(apply)
-    // 					{
-    // 						this.listener = function()
-    // 						{
-    // 							apply(ui.editor.autosave);
-    // 						};
+    	// 				if (ui.editor.autosave && file.isModified())
+    	// 				{
+    	// 					file.fileChanged();
+    	// 				}
+    	// 			},
+    	// 			{
+    	// 				install: function(apply)
+    	// 				{
+    	// 					this.listener = function()
+    	// 					{
+    	// 						apply(ui.editor.autosave);
+    	// 					};
 
-    // 						ui.editor.addListener('autosaveChanged', this.listener);
-    // 					},
-    // 					destroy: function()
-    // 					{
-    // 						ui.editor.removeListener(this.listener);
-    // 					}
-    // 				});
+    	// 					ui.editor.addListener('autosaveChanged', this.listener);
+    	// 				},
+    	// 				destroy: function()
+    	// 				{
+    	// 					ui.editor.removeListener(this.listener);
+    	// 				}
+    	// 			});
 
-    // 				div.appendChild(opt);
-    // 			}
-    // 		}
+    	// 			div.appendChild(opt);
+    	// 		}
+    	// 	}
 
-    //         if (this.isMathOptionVisible() && graph.isEnabled() && typeof(MathJax) !== 'undefined')
-    //         {
-    //             // Math
-    //             var option = this.createOption(mxResources.get('mathematicalTypesetting'), function()
-    //             {
-    //                 return graph.mathEnabled;
-    //             }, function(checked)
-    //             {
-    //                 ui.actions.get('mathematicalTypesetting').funct();
-    //             },
-    //             {
-    //                 install: function(apply)
-    //                 {
-    //                     this.listener = function()
-    //                     {
-    //                         apply(graph.mathEnabled);
-    //                     };
+      //       if (this.isMathOptionVisible() && graph.isEnabled() && typeof(MathJax) !== 'undefined')
+      //       {
+      //           // Math
+      //           var option = this.createOption(mxResources.get('mathematicalTypesetting'), function()
+      //           {
+      //               return graph.mathEnabled;
+      //           }, function(checked)
+      //           {
+      //               ui.actions.get('mathematicalTypesetting').funct();
+      //           },
+      //           {
+      //               install: function(apply)
+      //               {
+      //                   this.listener = function()
+      //                   {
+      //                       apply(graph.mathEnabled);
+      //                   };
 
-    //                     ui.addListener('mathEnabledChanged', this.listener);
-    //                 },
-    //                 destroy: function()
-    //                 {
-    //                     ui.removeListener(this.listener);
-    //                 }
-    //             });
+      //                   ui.addListener('mathEnabledChanged', this.listener);
+      //               },
+      //               destroy: function()
+      //               {
+      //                   ui.removeListener(this.listener);
+      //               }
+      //           });
 
-    //             option.style.paddingTop = '5px';
-    //             div.appendChild(option);
+      //           option.style.paddingTop = '5px';
+      //           div.appendChild(option);
 
-    //             var help = ui.menus.createHelpLink('https://desk.draw.io/support/solutions/articles/16000032875');
-    //             help.style.position = 'relative';
-    //             help.style.marginLeft = '6px';
-    //             help.style.top = '2px';
-    //             option.appendChild(help);
-    //         }
+      //           var help = ui.menus.createHelpLink('https://desk.draw.io/support/solutions/articles/16000032875');
+      //           help.style.position = 'relative';
+      //           help.style.marginLeft = '6px';
+      //           help.style.top = '2px';
+      //           option.appendChild(help);
+      //       }
 
-    // 		return div;
-    // 	};
+    	// 	return div;
+    	// };
 
     // 	mxCellRenderer.prototype.defaultVertexShape.prototype.customProperties = [
     //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: mxConstants.LINE_ARCSIZE},
@@ -7476,8 +7474,6 @@ const uiTheme = 'atlas';
           }
       }
   };
-
-
 
   /**
    * Capability check for canvas export

@@ -790,7 +790,8 @@ App.main = function(createUi)
 	 */
 	if (urlParams['math'] != '0')
 	{
-		Editor.initMath();
+		// TEN9: not using math
+		//Editor.initMath();
 	}
 
 	function doLoad(bundle)

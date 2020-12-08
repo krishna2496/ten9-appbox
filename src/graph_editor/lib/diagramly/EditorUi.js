@@ -47,7 +47,8 @@ var { appPages } = require('../jgraph/EditorUi');
 	/**
 	 * Overrides compact UI setting.
 	 */
-	EditorUi.compactUi = uiTheme != 'atlas';
+	// TEN9: Override the default value and change the styles
+	//EditorUi.compactUi = uiTheme != 'atlas';
 
 	/**
 	 * Overrides default grid color for dark mode
@@ -8904,8 +8905,8 @@ var { appPages } = require('../jgraph/EditorUi');
 		
 		if (mxClient.IS_SVG)
 		{
-			// LATER: Add shadow for labels in graph.container (eg. math, NO_FO), scaling
-			//this.editor.graph.addSvgShadow(graph.view.canvas.ownerSVGElement, null, true);
+			// TEN9: to apply shdow from the format panel
+			this.editor.graph.addSvgShadow(graph.view.canvas.ownerSVGElement, null, true);
 		}
 
 		// Overrides print dialog size
