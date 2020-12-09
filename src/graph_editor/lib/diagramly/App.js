@@ -2335,6 +2335,9 @@ App.prototype.createBackground = function()
 	
 	App.prototype.setMode = function(mode, remember)
 	{
+		// TEN9: get editor mode function
+		var editorUiSetMode = EditorUi.prototype.setMode;
+
 		editorUiSetMode.apply(this, arguments);
 		
 		// Note: UseLocalStorage affects the file dialogs

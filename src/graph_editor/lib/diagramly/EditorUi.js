@@ -3675,8 +3675,9 @@ var { appPages } = require('../jgraph/EditorUi');
     			Toolbar.prototype.selectedBackground = 'rgb(242, 242, 242)';
     		}
     		
-    		Editor.prototype.initialTopSpacing = 3;
-    		EditorUi.prototype.menubarHeight = 41;
+			Editor.prototype.initialTopSpacing = 3;
+			// TEN9: override the menubar height of jgraph
+    		//EditorUi.prototype.menubarHeight = 41;
     		EditorUi.prototype.toolbarHeight = 38;
     	}
     	else if (uiTheme == 'dark')

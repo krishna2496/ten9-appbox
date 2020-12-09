@@ -19,6 +19,14 @@ import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { Load } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
+require('../lib/diagramly/DrawioFile.js');
+require('../lib/diagramly/LocalFile.js');
+require('../lib/diagramly/EditorUi.js');
+require('../lib/diagramly/Editor.js');
+require('../lib/diagramly/App.js');
+require('../lib/diagramly/Menus.js');
+require('../lib/diagramly/Pages.js');
+
 import {
   defineComponent,
   nextTick,

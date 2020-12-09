@@ -407,7 +407,8 @@ EditorUi.prototype.initPages = function()
 					(this.pages.length == 1 && urlParams['pages'] == '0'))
 				{
 					// TEN9: for testing
-					this.tabContainer.style.height = '38px';
+					//this.tabContainer.style.height = '0px';
+					this.tabContainer.style.height = this.tabContainerHeight + 'px';
 				}
 				else
 				{

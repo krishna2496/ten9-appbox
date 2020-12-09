@@ -6344,11 +6344,3 @@ module.exports = {
   ChangeGridColor,
   appPages,
 };
-
-require('../diagramly/DrawioFile.js');
-require('../diagramly/LocalFile.js');
-require('../diagramly/EditorUi.js');
-require('../diagramly/Editor.js');
-require('../diagramly/App.js');
-require('../diagramly/Menus.js');
-require('../diagramly/Pages.js');
