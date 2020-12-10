@@ -698,6 +698,7 @@ div.mxWindow {
 .geTabContainer {
   border-top: 1px solid #e5e5e5;
   background-color: #f1f3f4;
+	height: 37px !important;
 }
 
 .geTitle {
@@ -2275,10 +2276,4 @@ input {
   div.geNoPrint {
     display: none !important;
   }
-}
-
-.geTabContainer {
-	border-top:1px solid #e5e5e5;
-	background-color:#f1f3f4;
-	height: 37px !important;
 }
