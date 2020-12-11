@@ -35,6 +35,7 @@ const { DiagramPage } = require('./Pages.js');
 const urlParams = {dev: "1",sync: "manual"};
 const isLocalStorage = false;
 const STYLE_PATH = 'styles';
+var SelectedFile;
 var { appPages } = require('../jgraph/EditorUi');
 (function()
 {
@@ -1277,7 +1278,6 @@ var { appPages } = require('../jgraph/EditorUi');
 				{
 					clone = pageNode.cloneNode(true);
 				}
-				
 				node.appendChild(clone);
 			};
 
@@ -1287,6 +1287,8 @@ var { appPages } = require('../jgraph/EditorUi');
 			}
 			else
 			{
+				// TEN9: add pages value
+				this.pages = appPages;
 				// Restores order of pages
 				for (var i = 0; i < this.pages.length; i++)
 				{
@@ -1304,12 +1306,10 @@ var { appPages } = require('../jgraph/EditorUi');
 							delete this.pages[i].needsUpdate;
 						}
 					}
-					
 					appendPage(this.pages[i].node);
 				}
 			}
 		}
-		
 		return node;
 	};
 	
@@ -1617,6 +1617,7 @@ var { appPages } = require('../jgraph/EditorUi');
 			}
 		}
 		
+		debugger
 		node = (node != null) ? node : this.getXmlFileData(ignoreSelection, currentPage, uncompressed);
 		file = (file != null) ? file : this.getCurrentFile();
 
@@ -4223,6 +4224,7 @@ var { appPages } = require('../jgraph/EditorUi');
 		}
 		
 		this.currentFile = file;
+		SelectedFile = file
 	};
 
 	/**
@@ -10588,7 +10590,8 @@ var { appPages } = require('../jgraph/EditorUi');
 					}
 	    		}
 				
-				this.spinner.stop();
+				// TEB9: remove spinner code
+				//this.spinner.stop();
 				this.openLocalFile(data, name, temp, fileHandle, (fileHandle != null) ? file : null);
 			}
 		}
@@ -10599,8 +10602,8 @@ var { appPages } = require('../jgraph/EditorUi');
 	 */
 	EditorUi.prototype.openFiles = function(files, temp)
 	{
-		if (this.spinner.spin(document.body, mxResources.get('loading')))
-		{
+		// if (this.spinner.spin(document.body, mxResources.get('loading')))
+		// {
 			for (var i = 0; i < files.length; i++)
 			{
 				(mxUtils.bind(this, function(file)
@@ -10638,7 +10641,7 @@ var { appPages } = require('../jgraph/EditorUi');
 					}
 				}))(files[i]);
 			}
-		}
+		//}
 	};
 
 	/**
@@ -12811,6 +12814,8 @@ var { appPages } = require('../jgraph/EditorUi');
 		// this.menus.get('arrange').setEnabled(editable);
 		
 		// Disables connection drop downs in toolbar
+		// TEN9:
+		var editable = true;
 		if (this.toolbar != null)
 		{
 			if (this.toolbar.edgeShapeMenu != null)
@@ -14047,6 +14052,104 @@ var { appPages } = require('../jgraph/EditorUi');
 	EditorUi.prototype.setMigratedFlag = function()
 	{
 		localStorage.setItem('.localStorageMigrated', '1');	
+	};
+
+	// TEN9: save pages function
+	EditorUi.prototype.saveFile = function(forceDialog, success)
+	{
+		// TEN9
+		//var file = this.getCurrentFile();
+		var file = SelectedFile;
+		
+		if (file != null)
+		{
+			// FIXME: Invoke for local files
+			var done = mxUtils.bind(this, function()
+			{
+				if (EditorUi.enableDrafts)
+				{
+					file.removeDraft();
+				}
+				
+				if (this.getCurrentFile() != file && !file.isModified())
+				{
+					// Workaround for possible status update while save as dialog is showing
+					// is to show no saved status for device files
+					if (file.getMode() != App.MODE_DEVICE)
+					{
+						this.editor.setStatus(mxUtils.htmlEntities(mxResources.get('allChangesSaved')));
+					}
+					else
+					{
+						this.editor.setStatus('');
+					}
+				}
+				
+				if (success != null)
+				{
+					success();
+				}
+			});		
+				this.save(file.getTitle(), done);
+		}
+	};
+
+	EditorUi.prototype.save = function(name, done)
+	{
+		// TEN9
+		//var file = this.getCurrentFile();
+		var file = SelectedFile;
+		
+		// TEN9: remove spinner code
+		//if (file != null && this.spinner.spin(document.body, mxResources.get('saving')))
+		if (file != null )
+		{
+			this.editor.setStatus('');
+			
+			if (this.editor.graph.isEditing())
+			{
+				this.editor.graph.stopEditing();
+			}
+			
+			var success = mxUtils.bind(this, function()
+			{
+				file.handleFileSuccess(true);
+
+				if (done != null)
+				{
+					done();
+				}
+			});
+			
+			var error = mxUtils.bind(this, function(err)
+			{
+				if (file.isModified())
+				{
+					Editor.addRetryToError(err, mxUtils.bind(this, function()
+					{
+						this.save(name, done);
+					}));
+				}
+				
+				file.handleFileError(err, true);
+			});
+			
+			try
+			{
+				if (name == file.getTitle())
+				{
+					file.save(true, success, error);
+				}
+				else
+				{
+					file.saveAs(name, success, error)
+				}
+			}
+			catch (err)
+			{
+				error(err);
+			}
+		}
 	};
 })();
 

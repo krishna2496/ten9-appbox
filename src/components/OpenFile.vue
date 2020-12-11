@@ -28,12 +28,13 @@ export default defineComponent({
     }
 
     function loadFile() {
-      let fileData = null;
+      //let fileData = null;
       let [selectedFile] = file.value.files;
       let reader = new FileReader();
-      reader.onload = (e) => {
-        fileData = e.target.result;
-        ctx.emit('file-loaded', fileData);
+      reader.onload = () => {
+        //fileData = e.target.result;
+        //ctx.emit('file-loaded', fileData);
+        ctx.emit('file-loaded', file.value.files);
       };
       reader.readAsText(selectedFile);
     }

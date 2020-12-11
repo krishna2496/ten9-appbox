@@ -1550,7 +1550,6 @@ EditorUi.prototype.createPageMenuTab = function()
 		// var y = mxEvent.getClientY(evt);
 		var x = mxEvent.getClientX(evt) - offset.x;
 		var y = mxEvent.getClientY(evt) - offset.y;
-
 		menu.popup(x, y, null, evt);
 		
 		// Allows hiding by clicking on document

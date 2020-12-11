@@ -1758,7 +1758,8 @@ DrawioFile.prototype.redirectToNewApp = function(error, details)
  */
 DrawioFile.prototype.handleFileSuccess = function(saved)
 {
-	this.ui.spinner.stop();
+	// TEN9: remove spinner code
+	//this.ui.spinner.stop();
 	
 	if (this.ui.getCurrentFile() == this)
 	{
@@ -1801,7 +1802,8 @@ DrawioFile.prototype.handleFileSuccess = function(saved)
  */
 DrawioFile.prototype.handleFileError = function(err, manual)
 {
-	this.ui.spinner.stop();
+	// TEN9: remove spinner code
+	//this.ui.spinner.stop();
 	
 	if (this.ui.getCurrentFile() == this)
 	{
@@ -2192,7 +2194,8 @@ DrawioFile.prototype.descriptorChanged = function()
  */
 DrawioFile.prototype.contentChanged = function()
 {
-	this.fireEvent(new mxEventObject('contentChanged'));
+	// TEN9:
+	//this.fireEvent(new mxEventObject('contentChanged'));
 };
 
 /**
