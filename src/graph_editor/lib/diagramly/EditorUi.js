@@ -25,8 +25,8 @@ const {
   mxPopupMenu,
   mxRectangle,
   mxResources,
-	mxStackLayout,
-	mxStencilRegistry,
+  mxStackLayout,
+  mxStencilRegistry,
   mxStylesheet,
   mxUtils,
   mxXmlRequest,
@@ -42,14 +42,16 @@ var { appPages } = require('../jgraph/EditorUi');
 	/**
 	 * Version
 	 */
+
+	// TEN9: Set default uiTheme
 	var uiTheme = 'atlas'
-	EditorUi.VERSION = '@DRAWIO-VERSION@';
+	EditorUi.VERSION = '@TEN9-VERSION@';
 	
 	/**
 	 * Overrides compact UI setting.
 	 */
 	// TEN9: Override the default value and change the styles
-	//EditorUi.compactUi = uiTheme != 'atlas';
+	// EditorUi.compactUi = uiTheme != 'atlas';
 
 	/**
 	 * Overrides default grid color for dark mode
@@ -69,15 +71,17 @@ var { appPages } = require('../jgraph/EditorUi');
 		/.*\.diagrams\.net$/.test(window.location.hostname)) &&
 		window.location.hostname != 'support.draw.io';
 	
+	// TEN9: Set default for our app
 	/**
-	 * Protocol and hostname to use for embedded files. Default is https://www.draw.io
+	 * Protocol and hostname to use for embedded files
 	 */
-	EditorUi.drawHost = 'https://www.draw.io';
+	EditorUi.drawHost = 'https://www.ten9.com';
 	
+	// TEN9: Set default for our app
 	/**
-	 * Protocol and hostname to use for embedded files. Default is https://www.draw.io
+	 * Protocol and hostname to use for embedded files
 	 */
-	EditorUi.lightboxHost = 'https://www.draw.io';
+	EditorUi.lightboxHost = 'https://www.ten9.com';
 	
 	/**
 	 * Switch to disable logging for mode and search terms.
@@ -92,6 +96,8 @@ var { appPages } = require('../jgraph/EditorUi');
 	/**
 	 * Specifies the URL for the templates index file.
 	 */
+	// TEN9: Hardcode template path for our app
+	// EditorUi.templateFile = TEMPLATE_PATH + '/index.xml';
 	EditorUi.templateFile = 'templates' + '/index.xml';
 
 	/**
@@ -121,12 +127,13 @@ var { appPages } = require('../jgraph/EditorUi');
 	EditorUi.isElectronApp = window != null && window.process != null &&
 		window.process.versions != null && window.process.versions['electron'] != null;
 	
+	// TEN9: Disable drafts for our app
 	/**
 	 * Specifies if drafts should be saved in IndexedDB.
 	 */
 	//EditorUi.enableDrafts = !mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
 		//isLocalStorage && urlParams['drafts'] != '0';
-		EditorUi.enableDrafts = true;
+	EditorUi.enableDrafts = false;
 	
 	/**
 	 * Link for scratchpad help.
@@ -1617,7 +1624,6 @@ var { appPages } = require('../jgraph/EditorUi');
 			}
 		}
 		
-		debugger
 		node = (node != null) ? node : this.getXmlFileData(ignoreSelection, currentPage, uncompressed);
 		file = (file != null) ? file : this.getCurrentFile();
 
@@ -2566,6 +2572,7 @@ var { appPages } = require('../jgraph/EditorUi');
 			oldFile.close();
 		}
 		
+		// TEN9: TODO: Remove this hack which gets the pages tabs to show
 		setTimeout(() => {
 			this.editor.graph.model.clear();
 		},2000)
@@ -3678,7 +3685,7 @@ var { appPages } = require('../jgraph/EditorUi');
     		
 			Editor.prototype.initialTopSpacing = 3;
 			// TEN9: override the menubar height of jgraph
-    		//EditorUi.prototype.menubarHeight = 41;
+    		// EditorUi.prototype.menubarHeight = 41;
     		EditorUi.prototype.toolbarHeight = 38;
     	}
     	else if (uiTheme == 'dark')
@@ -3786,7 +3793,9 @@ var { appPages } = require('../jgraph/EditorUi');
 		
 		var elt2 = document.createElement('a');
 		elt2.className = 'geTitle';
-		elt2.style.color = '#DF6C0C';
+		// TEN9: Use ten9 Color instead of orange
+		// elt2.style.color = '#DF6C0C';
+		elt2.style.color = '#124C8B';
 		elt2.style.fontWeight = 'bold';
 		elt2.style.height = '100%';
 		elt2.style.paddingTop = '9px';
@@ -4224,7 +4233,10 @@ var { appPages } = require('../jgraph/EditorUi');
 		}
 		
 		this.currentFile = file;
-		SelectedFile = file
+		// TEN9: TODO: BU: Review: Come back to this as setting this shouldn't be needed and ideally getCurrentFile
+		// would work in places where SelectedFile is used
+		// TEN9: Set SelectedFile to our one file
+		SelectedFile = file;
 	};
 
 	/**
@@ -8908,7 +8920,7 @@ var { appPages } = require('../jgraph/EditorUi');
 		
 		if (mxClient.IS_SVG)
 		{
-			// TEN9: to apply shdow from the format panel
+			// TEN9: to apply shadow from the format panel
 			this.editor.graph.addSvgShadow(graph.view.canvas.ownerSVGElement, null, true);
 		}
 
@@ -9039,8 +9051,11 @@ var { appPages } = require('../jgraph/EditorUi');
 			this.keyHandler.bindAction(75, true, 'insertEllipse', true); // Ctrl+Shift+K
 			this.altShiftActions[83] = 'synchronize'; // Alt+Shift+S
 
-		    this.installImagePasteHandler();
-		    this.installNativeClipboardHandler();
+			this.installImagePasteHandler();
+			
+			// TEN9: Save the handler so we can use it in some actions
+			// this.installNativeClipboardHandler();
+			this.textInputForNativeClipboard = this.installNativeClipboardHandler();
 		};
 
 		var y = Math.max(document.body.clientHeight || 0, document.documentElement.clientHeight || 0) / 2;
@@ -9048,6 +9063,7 @@ var { appPages } = require('../jgraph/EditorUi');
 	
 		// Holds the x-coordinate of the point
 	//	this.spinner = this.createSpinner(x, y, 24);
+	// TEN9: TODO: BU: Get spinners to work
 	this.spinner = {}
 		// Installs drag and drop handler for rich text editor
 		if (Graph.fileSupport)
@@ -9415,10 +9431,11 @@ var { appPages } = require('../jgraph/EditorUi');
 			}), false);
 		}
 		
+		// TEN9: TODO: BU: Fix this
 		// TEN9: call init pages after pages gets load
 		setTimeout(() => {
 			this.initPages();
-		},2000);
+		}, 2000);
 
 		// Embedded mode
 		if (urlParams['embed'] == '1')
@@ -9702,6 +9719,9 @@ var { appPages } = require('../jgraph/EditorUi');
 
 			return isSelectionAllowed2.apply(this, arguments);
 		};
+
+		// TEN9: Return textinput element so we can use it in Actions later
+		return textInput;
 	};
 
 	/**
@@ -10590,8 +10610,9 @@ var { appPages } = require('../jgraph/EditorUi');
 					}
 	    		}
 				
+				// TEN9: TODO: BU: Get spinners to work
 				// TEB9: remove spinner code
-				//this.spinner.stop();
+				// this.spinner.stop();
 				this.openLocalFile(data, name, temp, fileHandle, (fileHandle != null) ? file : null);
 			}
 		}
@@ -10602,6 +10623,7 @@ var { appPages } = require('../jgraph/EditorUi');
 	 */
 	EditorUi.prototype.openFiles = function(files, temp)
 	{
+		// TEN9: TODO: BU: Get spinners to work
 		// if (this.spinner.spin(document.body, mxResources.get('loading')))
 		// {
 			for (var i = 0; i < files.length; i++)
@@ -10641,7 +10663,7 @@ var { appPages } = require('../jgraph/EditorUi');
 					}
 				}))(files[i]);
 			}
-		//}
+		//} // TEN9: TODO: BU: Get spinners to work
 	};
 
 	/**
@@ -10792,6 +10814,7 @@ var { appPages } = require('../jgraph/EditorUi');
 	 */
 	EditorUi.prototype.setGraphEnabled = function(enabled)
 	{
+		// TEN9: Add check for diagram Container
 		if(this.diagramContainer != undefined)
 		{
 			this.diagramContainer.style.visibility = (enabled) ? '' : 'hidden';
@@ -12814,7 +12837,8 @@ var { appPages } = require('../jgraph/EditorUi');
 		// this.menus.get('arrange').setEnabled(editable);
 		
 		// Disables connection drop downs in toolbar
-		// TEN9:
+		// TEN9: TODO: BU: Review initing this to true always
+		// TEN9: Initialize editable to true
 		var editable = true;
 		if (this.toolbar != null)
 		{
@@ -12881,6 +12905,7 @@ var { appPages } = require('../jgraph/EditorUi');
 	var editorUiUpdateActionStates = EditorUi.prototype.updateActionStates;
 	EditorUi.prototype.updateActionStates = function()
 	{
+		// TEN9: TODO: BU: Review
 		// TEN9: Check if action is available
 		if(this.actions != undefined)
 		{
@@ -13707,7 +13732,8 @@ var { appPages } = require('../jgraph/EditorUi');
 				var items = [];
 				req.onsuccess = function(e)
 				{
-					// TEN9: 
+					// TEN9: TODO: BU: Review - Check all this. DB should be used/needed.
+
 					// if (e.target.result == null)
 					// {
 					// 	success(items);
@@ -14055,8 +14081,11 @@ var { appPages } = require('../jgraph/EditorUi');
 	};
 
 	// TEN9: save pages function
+	// TEN9: Taken from App.prototype.saveFile
+	// TEN9: TODO: BU: Review
 	EditorUi.prototype.saveFile = function(forceDialog, success)
 	{
+		debugger;
 		// TEN9
 		//var file = this.getCurrentFile();
 		var file = SelectedFile;
@@ -14094,6 +14123,8 @@ var { appPages } = require('../jgraph/EditorUi');
 		}
 	};
 
+	// TEN9: Taken from App.prototype.save
+	// TEN9: TODO: BU: Review
 	EditorUi.prototype.save = function(name, done)
 	{
 		// TEN9
@@ -15077,7 +15108,7 @@ var ConfirmDialog = function(editorUi, message, okFn, cancelFn, okLabel, cancelL
 	this.container = div;
 };
 
-// TEN9 
+// TEN9: TODO: BU: Review - Do we need Minimal theme?
 EditorUi.initMinimalTheme = function()
 {
 	// Disabled in lightbox and chromeless mode

@@ -1196,7 +1196,8 @@ EditorUi.prototype.init = function () {
     }
   }
 
-  this.textInputForNativeClipboard = this.installNativeClipboardHandler();
+  // TEN9: Let the diagramly one take care of this
+  // this.textInputForNativeClipboard = this.installNativeClipboardHandler();
 };
 
 // TEN9: Add shadow checkbox
@@ -3901,49 +3902,51 @@ EditorUi.prototype.createDivs = function () {
   }
 };
 
-// TEN9: Bring in sidebar footer
-/**
- * Hook for sidebar footer container.
- */
-EditorUi.prototype.createSidebarFooterContainer = function () {
-  // TEN9: add add more shaep div in footer
-  //return null;
-  var div = this.createDiv('geSidebarContainer geSidebarFooter');
-  div.style.position = 'absolute';
-  div.style.overflow = 'hidden';
+// // TEN9: Brought over sidebar footer container from diagramly
+// /**
+//  * Hook for sidebar footer container.
+//  */
+// EditorUi.prototype.createSidebarFooterContainer = function () {
+//   // TEN9: add add more shaep div in footer
+//   //return null;
+//   var div = this.createDiv('geSidebarContainer geSidebarFooter');
+//   div.style.position = 'absolute';
+//   div.style.overflow = 'hidden';
 
-  var elt2 = document.createElement('a');
-  elt2.className = 'geTitle';
-  elt2.style.color = '#DF6C0C';
-  elt2.style.fontWeight = 'bold';
-  elt2.style.height = '100%';
-  elt2.style.paddingTop = '9px';
-  elt2.innerHTML = '<span style="font-size:18px;margin-right:5px;">+</span>';
+//   var elt2 = document.createElement('a');
+//   elt2.className = 'geTitle';
+// 	// TEN9: Use ten9 Color instead of orange
+// 	// elt2.style.color = '#DF6C0C';
+// 	elt2.style.color = '#124C8B';
+//   elt2.style.fontWeight = 'bold';
+//   elt2.style.height = '100%';
+//   elt2.style.paddingTop = '9px';
+//   elt2.innerHTML = '<span style="font-size:18px;margin-right:5px;">+</span>';
 
-  mxUtils.write(elt2, mxResources.get('moreShapes') + '...');
+//   mxUtils.write(elt2, mxResources.get('moreShapes') + '...');
 
-  // Prevents focus
-  mxEvent.addListener(
-    elt2,
-    mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
-    mxUtils.bind(this, function (evt) {
-      evt.preventDefault();
-    }),
-  );
+//   // Prevents focus
+//   mxEvent.addListener(
+//     elt2,
+//     mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
+//     mxUtils.bind(this, function (evt) {
+//       evt.preventDefault();
+//     }),
+//   );
 
-  mxEvent.addListener(
-    elt2,
-    'click',
-    mxUtils.bind(this, function (evt) {
-      this.actions.get('shapes').funct();
-      mxEvent.consume(evt);
-    }),
-  );
+//   mxEvent.addListener(
+//     elt2,
+//     'click',
+//     mxUtils.bind(this, function (evt) {
+//       this.actions.get('shapes').funct();
+//       mxEvent.consume(evt);
+//     }),
+//   );
 
-  div.appendChild(elt2);
+//   div.appendChild(elt2);
 
-  return div;
-};
+//   return div;
+// };
 
 /**
  * Creates the required containers.
@@ -4457,22 +4460,22 @@ EditorUi.prototype.extractGraphModelFromEvent = function (evt) {
   return result;
 };
 
-// TEN9: Brought over from diagramly
-/**
- * Returns true if the given string contains a compatible graph model.
- */
-EditorUi.prototype.isCompatibleString = function (data) {
-  try {
-    var doc = mxUtils.parseXml(data);
-    var node = this.editor.extractGraphModel(doc.documentElement, true);
+// // TEN9: Brought over from diagramly
+// /**
+//  * Returns true if the given string contains a compatible graph model.
+//  */
+// EditorUi.prototype.isCompatibleString = function (data) {
+//   try {
+//     var doc = mxUtils.parseXml(data);
+//     var node = this.editor.extractGraphModel(doc.documentElement, true);
 
-    return node != null && node.getElementsByTagName('parsererror').length == 0;
-  } catch (e) {
-    // ignore
-  }
+//     return node != null && node.getElementsByTagName('parsererror').length == 0;
+//   } catch (e) {
+//     // ignore
+//   }
 
-  return false;
-};
+//   return false;
+// };
 
 // TEN9: Commenting out default in favor of diagramly one above.
 // /**
@@ -5389,99 +5392,99 @@ EditorUi.prototype.updateTabContainer = function () {
   }
 };
 
-// TEN9: Brought over from diagramly for native paste handler support
-EditorUi.prototype.copyCells = function (elt, removeCells) {
-  var graph = this.editor.graph;
-  let xml = null;
+// // TEN9: Brought over from diagramly for native paste handler support
+// EditorUi.prototype.copyCells = function (elt, removeCells) {
+//   var graph = this.editor.graph;
+//   let xml = null;
 
-  if (!graph.isSelectionEmpty()) {
-    // Fixes cross-platform clipboard UTF8 issues by encoding as URI
-    var cells = mxUtils.sortCells(graph.model.getTopmostCells(graph.getSelectionCells()));
-    xml = mxUtils.getXml(graph.encodeCells(cells));
-    mxUtils.setTextContent(elt, encodeURIComponent(xml));
+//   if (!graph.isSelectionEmpty()) {
+//     // Fixes cross-platform clipboard UTF8 issues by encoding as URI
+//     var cells = mxUtils.sortCells(graph.model.getTopmostCells(graph.getSelectionCells()));
+//     xml = mxUtils.getXml(graph.encodeCells(cells));
+//     mxUtils.setTextContent(elt, encodeURIComponent(xml));
 
-    if (removeCells) {
-      graph.removeCells(cells, false);
-      graph.lastPasteXml = null;
-    } else {
-      graph.lastPasteXml = xml;
-      graph.pasteCounter = 0;
-    }
+//     if (removeCells) {
+//       graph.removeCells(cells, false);
+//       graph.lastPasteXml = null;
+//     } else {
+//       graph.lastPasteXml = xml;
+//       graph.pasteCounter = 0;
+//     }
 
-    // TEN9: Encode URI before returning the XML as this is for copying
-    xml = encodeURIComponent(xml);
+//     // TEN9: Encode URI before returning the XML as this is for copying
+//     xml = encodeURIComponent(xml);
 
-    elt.focus();
-    document.execCommand('selectAll', false, null);
-  } else {
-    // Disables copy on focused element
-    elt.innerHTML = '';
-  }
-  return xml;
-};
+//     elt.focus();
+//     document.execCommand('selectAll', false, null);
+//   } else {
+//     // Disables copy on focused element
+//     elt.innerHTML = '';
+//   }
+//   return xml;
+// };
 
-// TEN9: Brought over from diagramly for native paste handler support
-/**
- * Returns true for Gliffy
- */
-EditorUi.prototype.isLucidChartData = function (data) {
-  return false;
-  // return data != null && (data.substring(0, 26) ==
-  //   '{"state":"{\\"Properties\\":' ||
-  //   data.substring(0, 14) == '{"Properties":');
-};
+// // TEN9: Brought over from diagramly for native paste handler support
+// /**
+//  * Returns true for Gliffy
+//  */
+// EditorUi.prototype.isLucidChartData = function (data) {
+//   return false;
+//   // return data != null && (data.substring(0, 26) ==
+//   //   '{"state":"{\\"Properties\\":' ||
+//   //   data.substring(0, 14) == '{"Properties":');
+// };
 
-// TEN9: Brought over from diagramly for native paste handler support
-/**
- * Returns true for Gliffy data.
- */
-EditorUi.prototype.isRemoteFileFormat = function (data, filename) {
-  return false;
-  // /(\"contentType\":\s*\"application\/gliffy\+json\")/.test(data);
-};
+// // TEN9: Brought over from diagramly for native paste handler support
+// /**
+//  * Returns true for Gliffy data.
+//  */
+// EditorUi.prototype.isRemoteFileFormat = function (data, filename) {
+//   return false;
+//   // /(\"contentType\":\s*\"application\/gliffy\+json\")/.test(data);
+// };
 
-// TEN9: Brought over from diagramly for native paste handler support
-/**
- * Returns true if no external comms allowed or possible
- */
-EditorUi.prototype.isOffline = function (ignoreStealth) {
-  // return this.isOfflineApp() || !navigator.onLine || (!ignoreStealth && urlParams['stealth'] == '1');
-  return !navigator.onLine;
-};
+// // TEN9: Brought over from diagramly for native paste handler support
+// /**
+//  * Returns true if no external comms allowed or possible
+//  */
+// EditorUi.prototype.isOffline = function (ignoreStealth) {
+//   // return this.isOfflineApp() || !navigator.onLine || (!ignoreStealth && urlParams['stealth'] == '1');
+//   return !navigator.onLine;
+// };
 
-// TEN9: Brought over from diagramly for native paste handler support
+// // TEN9: Brought over from diagramly for native paste handler support
 /**
  * Loads the image from the given URI.
  *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
-EditorUi.prototype.loadImage = function (uri, onload, onerror) {
-  try {
-    var img = new Image();
+// EditorUi.prototype.loadImage = function (uri, onload, onerror) {
+//   try {
+//     var img = new Image();
 
-    img.onload = function () {
-      img.width = img.width > 0 ? img.width : 120;
-      img.height = img.height > 0 ? img.height : 120;
+//     img.onload = function () {
+//       img.width = img.width > 0 ? img.width : 120;
+//       img.height = img.height > 0 ? img.height : 120;
 
-      onload(img);
-    };
+//       onload(img);
+//     };
 
-    if (onerror != null) {
-      img.onerror = onerror;
-    }
+//     if (onerror != null) {
+//       img.onerror = onerror;
+//     }
 
-    img.src = uri;
-  } catch (e) {
-    if (onerror != null) {
-      onerror(e);
-    } else {
-      throw e;
-    }
-  }
-};
+//     img.src = uri;
+//   } catch (e) {
+//     if (onerror != null) {
+//       onerror(e);
+//     } else {
+//       throw e;
+//     }
+//   }
+// };
 
-// TEN9: Brought over from diagramly for native paste handler support
+// // TEN9: Brought over from diagramly for native paste handler support
 /**
  * Handling drag and drop and import.
  */
@@ -5489,852 +5492,852 @@ EditorUi.prototype.loadImage = function (uri, onload, onerror) {
 /**
  * Imports the given XML into the existing diagram.
  */
-EditorUi.prototype.importXml = function (
-  xml,
-  dx,
-  dy,
-  crop,
-  noErrorHandling,
-  dontImportIntoDefaultLayer = false,
-) {
-  dx = dx != null ? dx : 0;
-  dy = dy != null ? dy : 0;
-  var cells = [];
-
-  try {
-    var graph = this.editor.graph;
-
-    if (xml != null && xml.length > 0) {
-      // Adds pages
-      graph.model.beginUpdate();
-      try {
-        var doc = mxUtils.parseXml(xml);
-        var mapping = {};
-
-        // Checks for mxfile with multiple pages
-        var node = this.editor.extractGraphModel(doc.documentElement, this.pages != null);
-
-        if (node != null && node.nodeName == 'mxfile' && this.pages != null) {
-          var diagrams = node.getElementsByTagName('diagram');
-
-          if (diagrams.length == 1) {
-            node = Editor.parseDiagramNode(diagrams[0]);
-
-            if (this.currentPage != null) {
-              mapping[diagrams[0].getAttribute('id')] = this.currentPage.getId();
-            }
-          } else if (diagrams.length > 1) {
-            var pages = [];
-            var i0 = 0;
-
-            // Adds first page to current page if current page is only page and empty
-            if (this.pages != null && this.pages.length == 1 && this.isDiagramEmpty()) {
-              mapping[diagrams[0].getAttribute('id')] = this.pages[0].getId();
-              node = Editor.parseDiagramNode(diagrams[0]);
-              crop = false;
-              i0 = 1;
-            }
-
-            for (var i = i0; i < diagrams.length; i++) {
-              // Imported pages must obtain a new ID and
-              // all links to pages must be updated below
-              var oldId = diagrams[i].getAttribute('id');
-              diagrams[i].removeAttribute('id');
-
-              var page = this.updatePageRoot(new DiagramPage(diagrams[i]));
-              mapping[oldId] = diagrams[i].getAttribute('id');
-              var index = this.pages.length;
-
-              // Checks for invalid page names
-              if (page.getName() == null) {
-                page.setName(mxResources.get('pageWithNumber', [index + 1]));
-              }
-
-              graph.model.execute(new ChangePage(this, page, page, index, true));
-              pages.push(page);
-            }
-
-            this.updatePageLinks(mapping, pages);
-          }
-        }
-
-        if (node != null && node.nodeName === 'mxGraphModel') {
-          // TEN9: Added param dontImportIntoDefaultLayer to assist when loading entire new file
-          cells = graph.importGraphModel(node, dx, dy, crop, dontImportIntoDefaultLayer);
-
-          if (cells != null) {
-            for (var i = 0; i < cells.length; i++) {
-              this.updatePageLinksForCell(mapping, cells[i]);
-            }
-          }
-        }
-      } finally {
-        graph.model.endUpdate();
-      }
-    }
-  } catch (e) {
-    if (!noErrorHandling) {
-      this.handleError(e);
-    } else {
-      throw e;
-    }
-  }
-
-  return cells;
-};
-
-// TEN9: Brought over from diagramly for native paste handler support
-/**
- * Updates links to pages in shapes and labels.
- */
-EditorUi.prototype.updatePageLinks = function (mapping, pages) {
-  for (var i = 0; i < pages.length; i++) {
-    this.updatePageLinksForCell(mapping, pages[i].root);
-  }
-};
-
-// TEN9: Brought over from diagramly for native paste handler support
-/**
- * Updates links to pages in shapes and labels.
- */
-EditorUi.prototype.updatePageLinksForCell = function (mapping, cell) {
-  var temp = document.createElement('div');
-  var graph = this.editor.graph;
-  var href = graph.getLinkForCell(cell);
-
-  if (href != null) {
-    graph.setLinkForCell(cell, this.updatePageLink(mapping, href));
-  }
-
-  if (graph.isHtmlLabel(cell)) {
-    temp.innerHTML = graph.sanitizeHtml(graph.getLabel(cell));
-    var links = temp.getElementsByTagName('a');
-    var changed = false;
-
-    for (var i = 0; i < links.length; i++) {
-      href = links[i].getAttribute('href');
-
-      if (href != null) {
-        links[i].setAttribute('href', this.updatePageLink(mapping, href));
-        changed = true;
-      }
-    }
-
-    if (changed) {
-      graph.labelChanged(cell, temp.innerHTML);
-    }
-  }
-
-  for (var i = 0; i < graph.model.getChildCount(cell); i++) {
-    this.updatePageLinksForCell(mapping, graph.model.getChildAt(cell, i));
-  }
-};
-
-// TEN9: Brought over from diagramly for native paste handler support
-/**
- * Updates links to pages in shapes and labels.
- */
-EditorUi.prototype.updatePageLink = function (mapping, href) {
-  if (href.substring(0, 13) == 'data:page/id,') {
-    var newId = mapping[href.substring(href.indexOf(',') + 1)];
-    href = newId != null ? 'data:page/id,' + newId : null;
-  } else if (href.substring(0, 17) == 'data:action/json,') {
-    try {
-      var link = JSON.parse(href.substring(17));
-
-      if (link.actions != null) {
-        for (var i = 0; i < link.actions.length; i++) {
-          var action = link.actions[i];
-
-          if (action.open != null && action.open.substring(0, 13) == 'data:page/id,') {
-            var newId = mapping[action.open.substring(action.open.indexOf(',') + 1)];
-
-            if (newId != null) {
-              action.open = 'data:page/id,' + newId;
-            } else {
-              delete action.open;
-            }
-          }
-        }
-
-        href = 'data:action/json,' + JSON.stringify(link);
-      }
-    } catch (e) {
-      // Ignore
-    }
-  }
-
-  return href;
-};
-
-// TEN9: Brought over from diagramly for native paste handler support
-/**
- * Imports the given XML into the existing diagram.
- * TODO: Make this function asynchronous
- */
-EditorUi.prototype.insertTextAt = function (text, dx, dy, html, asImage, crop, resizeImages) {
-  crop = crop != null ? crop : true;
-  resizeImages = resizeImages != null ? resizeImages : true;
-
-  // Handles special case for Gliffy data which requires async server-side for parsing
-  if (text != null) {
-    if (
-      Graph.fileSupport &&
-      !this.isOffline() &&
-      new XMLHttpRequest().upload &&
-      this.isRemoteFileFormat(text)
-    ) {
-      // Fixes possible parsing problems with ASCII 160 (non-breaking space)
-      this.parseFile(
-        new Blob([text.replace(/\s+/g, ' ')], { type: 'application/octet-stream' }),
-        mxUtils.bind(this, function (xhr) {
-          if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status <= 299) {
-            this.editor.graph.setSelectionCells(this.insertTextAt(xhr.responseText, dx, dy, true));
-          }
-        }),
-      );
-
-      // Returns empty cells array as it is aysynchronous
-      return [];
-    }
-    // Handles special case of data URI which requires async loading for finding size
-    else if (
-      text.substring(0, 5) == 'data:' ||
-      (!this.isOffline() && (asImage || /\.(gif|jpg|jpeg|tiff|png|svg)$/i.test(text)))
-    ) {
-      var graph = this.editor.graph;
-
-      // Checks for embedded XML in PDF
-      if (text.substring(0, 28) == 'data:application/pdf;base64,') {
-        var xml = Editor.extractGraphModelFromPdf(text);
-
-        if (xml != null && xml.length > 0) {
-          return this.importXml(xml, dx, dy, crop, true);
-        }
-      }
-
-      // Checks for embedded XML in PNG
-      if (text.substring(0, 22) == 'data:image/png;base64,') {
-        var xml = this.extractGraphModelFromPng(text);
-
-        if (xml != null && xml.length > 0) {
-          return this.importXml(xml, dx, dy, crop, true);
-        }
-      }
-
-      // Tries to extract embedded XML from SVG data URI
-      if (text.substring(0, 19) == 'data:image/svg+xml;') {
-        try {
-          var xml = null;
-
-          if (text.substring(0, 26) == 'data:image/svg+xml;base64,') {
-            xml = text.substring(text.indexOf(',') + 1);
-            xml = window.atob && !mxClient.IS_SF ? atob(xml) : Base64.decode(xml, true);
-          } else {
-            xml = decodeURIComponent(text.substring(text.indexOf(',') + 1));
-          }
-
-          var result = this.importXml(xml, dx, dy, crop, true);
-
-          if (result.length > 0) {
-            return result;
-          }
-        } catch (e) {
-          // Ignore
-        }
-      }
-
-      this.loadImage(
-        text,
-        mxUtils.bind(this, function (img) {
-          if (text.substring(0, 5) == 'data:') {
-            this.resizeImage(
-              img,
-              text,
-              mxUtils.bind(this, function (data2, w2, h2) {
-                graph.setSelectionCell(
-                  graph.insertVertex(
-                    null,
-                    null,
-                    '',
-                    graph.snap(dx),
-                    graph.snap(dy),
-                    w2,
-                    h2,
-                    'shape=image;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;' +
-                      'verticalAlign=top;aspect=fixed;imageAspect=0;image=' +
-                      this.convertDataUri(data2) +
-                      ';',
-                  ),
-                );
-              }),
-              resizeImages,
-              this.maxImageSize,
-            );
-          } else {
-            var s = Math.min(
-              1,
-              Math.min(this.maxImageSize / img.width, this.maxImageSize / img.height),
-            );
-            var w = Math.round(img.width * s);
-            var h = Math.round(img.height * s);
-
-            graph.setSelectionCell(
-              graph.insertVertex(
-                null,
-                null,
-                '',
-                graph.snap(dx),
-                graph.snap(dy),
-                w,
-                h,
-                'shape=image;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;' +
-                  'verticalAlign=top;aspect=fixed;imageAspect=0;image=' +
-                  text +
-                  ';',
-              ),
-            );
-          }
-        }),
-        mxUtils.bind(this, function () {
-          var cell = null;
-
-          // Inserts invalid data URIs as text
-          graph.getModel().beginUpdate();
-          try {
-            cell = graph.insertVertex(
-              graph.getDefaultParent(),
-              null,
-              text,
-              graph.snap(dx),
-              graph.snap(dy),
-              1,
-              1,
-              'text;' + (html ? 'html=1;' : ''),
-            );
-            graph.updateCellSize(cell);
-            graph.fireEvent(new mxEventObject('textInserted', 'cells', [cell]));
-          } finally {
-            graph.getModel().endUpdate();
-          }
-
-          graph.setSelectionCell(cell);
-        }),
-      );
-
-      return [];
-    } else {
-      text = Graph.zapGremlins(mxUtils.trim(text));
-
-      if (this.isCompatibleString(text)) {
-        return this.importXml(text, dx, dy, crop);
-      } else if (text.length > 0) {
-        if (this.isLucidChartData(text)) {
-          this.convertLucidChart(
-            text,
-            mxUtils.bind(this, function (xml) {
-              this.editor.graph.setSelectionCells(this.importXml(xml, dx, dy, crop));
-            }),
-            mxUtils.bind(this, function (e) {
-              this.handleError(e);
-            }),
-          );
-        } else {
-          var graph = this.editor.graph;
-          var cell = null;
-
-          graph.getModel().beginUpdate();
-          try {
-            // Fires cellsInserted to apply the current style to the inserted text.
-            // This requires the value to be empty when the event is fired.
-            cell = graph.insertVertex(
-              graph.getDefaultParent(),
-              null,
-              '',
-              graph.snap(dx),
-              graph.snap(dy),
-              1,
-              1,
-              'text;whiteSpace=wrap;' + (html ? 'html=1;' : ''),
-            );
-            graph.fireEvent(new mxEventObject('textInserted', 'cells', [cell]));
-
-            // Single tag is converted
-            if (text.charAt(0) == '<' && text.indexOf('>') == text.length - 1) {
-              text = mxUtils.htmlEntities(text);
-            }
-
-            //TODO Refuse unsupported file types early as at this stage a lot of processing has beed done and time is wasted.
-            //		For example, 5 MB PDF files is processed and then only 0.5 MB of meaningless text is added!
-            //Limit labels to maxTextBytes
-            if (text.length > this.maxTextBytes) {
-              text = text.substring(0, this.maxTextBytes) + '...';
-            }
-
-            // Apply value and updates the cell size to fit the text block
-            cell.value = text;
-            graph.updateCellSize(cell);
-
-            // Adds wrapping for large text blocks
-            if (this.maxTextWidth > 0 && cell.geometry.width > this.maxTextWidth) {
-              var size = graph.getPreferredSizeForCell(cell, this.maxTextWidth);
-              cell.geometry.width = size.width;
-              cell.geometry.height = size.height;
-            }
-
-            // See https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
-            if (Graph.isLink(cell.value)) {
-              graph.setLinkForCell(cell, cell.value);
-            }
-
-            // Adds spacing
-            cell.geometry.width += graph.gridSize;
-            cell.geometry.height += graph.gridSize;
-          } finally {
-            graph.getModel().endUpdate();
-          }
-
-          return [cell];
-        }
-      }
-    }
-  }
-
-  return [];
-};
-
-// TEN9: Brought over from diagramly for native paste handler support
-/**
- * Creates the format panel and adds overrides.
- */
-EditorUi.prototype.pasteCells = function (evt, realElt, useEvent, pasteAsLabel) {
-  if (!mxEvent.isConsumed(evt)) {
-    // TEN9: if this is a file, let it bubble up as there's another handler
-    // to take care of it.
-    if (evt.clipboardData && evt.clipboardData.files.length > 0) {
-      return;
-    }
-
-    var elt = realElt;
-    var asHtml = false;
-
-    if (useEvent && evt.clipboardData != null && evt.clipboardData.getData) {
-      var data = evt.clipboardData.getData('text/html');
-
-      // TEN9: Disable use of text/html data.
-      data = null;
-
-      if (data != null && data.length > 0) {
-        var hasMeta = data.substring(0, 6) == '<meta ';
-        elt = document.createElement('div');
-        elt.innerHTML =
-          (hasMeta ? '<meta charset="utf-8">' : '') + this.editor.graph.sanitizeHtml(data);
-        asHtml = true;
-
-        // Workaround for innerText not ignoring style elements in Chrome
-        var styles = elt.getElementsByTagName('style');
-
-        if (styles != null) {
-          while (styles.length > 0) {
-            styles[0].parentNode.removeChild(styles[0]);
-          }
-        }
-
-        // Special case of link pasting from Chrome
-        if (
-          elt.firstChild != null &&
-          elt.firstChild.nodeType == mxConstants.NODETYPE_ELEMENT &&
-          elt.firstChild.nextSibling != null &&
-          elt.firstChild.nextSibling.nodeType == mxConstants.NODETYPE_ELEMENT &&
-          elt.firstChild.nodeName == 'META' &&
-          elt.firstChild.nextSibling.nodeName == 'A' &&
-          elt.firstChild.nextSibling.nextSibling == null
-        ) {
-          var temp =
-            elt.firstChild.nextSibling.innerText == null
-              ? mxUtils.getTextContent(elt.firstChild.nextSibling)
-              : elt.firstChild.nextSibling.innerText;
-
-          if (temp == elt.firstChild.nextSibling.getAttribute('href')) {
-            mxUtils.setTextContent(elt, temp);
-            asHtml = false;
-          }
-        }
-
-        // Extracts single image source address
-        var img = hasMeta && elt.firstChild != null ? elt.firstChild.nextSibling : elt.firstChild;
-
-        if (
-          img != null &&
-          img.nextSibling == null &&
-          img.nodeType == mxConstants.NODETYPE_ELEMENT &&
-          img.nodeName == 'IMG'
-        ) {
-          var temp = img.getAttribute('src');
-
-          if (temp != null) {
-            mxUtils.setTextContent(elt, temp);
-            asHtml = false;
-          }
-        }
-
-        if (asHtml) {
-          Graph.removePasteFormatting(elt);
-        }
-      } else {
-        data = evt.clipboardData.getData('text/plain');
-
-        if (data != null && data.length > 0) {
-          elt = document.createElement('div');
-          mxUtils.setTextContent(elt, data);
-        }
-      }
-    }
-
-    var spans = elt.getElementsByTagName('span');
-
-    if (
-      spans != null &&
-      spans.length > 0 &&
-      spans[0].getAttribute('data-lucid-type') === 'application/vnd.lucid.chart.objects'
-    ) {
-      var content = spans[0].getAttribute('data-lucid-content');
-
-      if (content != null && content.length > 0) {
-        this.convertLucidChart(
-          content,
-          mxUtils.bind(this, function (xml) {
-            var graph = this.editor.graph;
-
-            if (graph.lastPasteXml == xml) {
-              graph.pasteCounter++;
-            } else {
-              graph.lastPasteXml = xml;
-              graph.pasteCounter = 0;
-            }
-
-            var dx = graph.pasteCounter * graph.gridSize;
-            graph.setSelectionCells(this.importXml(xml, dx, dx));
-            graph.scrollCellToVisible(graph.getSelectionCell());
-          }),
-          mxUtils.bind(this, function (e) {
-            this.handleError(e);
-          }),
-        );
-
-        mxEvent.consume(evt);
-      }
-    } else {
-      // KNOWN: Paste from IE11 to other browsers on Windows
-      // seems to paste the contents of index.html
-      var xml = asHtml
-        ? elt.innerHTML
-        : mxUtils.trim(elt.innerText == null ? mxUtils.getTextContent(elt) : elt.innerText);
-      var compat = false;
-
-      // Workaround for junk after XML in VM
-      try {
-        var idx = xml.lastIndexOf('%3E');
-
-        if (idx >= 0 && idx < xml.length - 3) {
-          xml = xml.substring(0, idx + 3);
-        }
-      } catch (e) {
-        // ignore
-      }
-
-      // Checks for embedded XML content
-      try {
-        var spans = elt.getElementsByTagName('span');
-        var tmp =
-          spans != null && spans.length > 0
-            ? mxUtils.trim(decodeURIComponent(spans[0].textContent))
-            : decodeURIComponent(xml);
-
-        if (this.isCompatibleString(tmp)) {
-          compat = true;
-          xml = tmp;
-        }
-      } catch (e) {
-        // ignore
-      }
-
-      try {
-        var graph = this.editor.graph;
-
-        if (xml != null && xml.length > 0) {
-          if (graph.lastPasteXml == xml) {
-            graph.pasteCounter++;
-          } else {
-            graph.lastPasteXml = xml;
-            graph.pasteCounter = 0;
-          }
-
-          var dx = graph.pasteCounter * graph.gridSize;
-
-          if (compat || this.isCompatibleString(xml)) {
-            graph.setSelectionCells(this.importXml(xml, dx, dx));
-          } else if (pasteAsLabel && graph.getSelectionCount() == 1) {
-            var cell = graph.getStartEditingCell(graph.getSelectionCell(), evt);
-
-            if (
-              /\.(gif|jpg|jpeg|tiff|png|svg)$/i.test(xml) &&
-              graph.getCurrentCellStyle(cell)[mxConstants.STYLE_SHAPE] == 'image'
-            ) {
-              graph.setCellStyles(mxConstants.STYLE_IMAGE, xml, [cell]);
-            } else {
-              graph.labelChanged(cell, xml);
-
-              if (Graph.isLink(xml)) {
-                graph.setLinkForCell(cell, xml);
-              }
-            }
-
-            graph.setSelectionCell(cell);
-          } else {
-            var pt = graph.getInsertPoint();
-
-            if (graph.isMouseInsertPoint()) {
-              dx = 0;
-
-              // No offset for insert at mouse position
-              if (graph.lastPasteXml == xml && graph.pasteCounter > 0) {
-                graph.pasteCounter--;
-              }
-            }
-
-            graph.setSelectionCells(this.insertTextAt(xml, pt.x + dx, pt.y + dx, true));
-          }
-
-          if (!graph.isSelectionEmpty()) {
-            graph.scrollCellToVisible(graph.getSelectionCell());
-
-            if (this.hoverIcons != null) {
-              this.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
-            }
-          }
-
-          try {
-            mxEvent.consume(evt);
-          } catch (e) {
-            // ignore event no longer exists in async handler in IE8-
-          }
-        } else if (!useEvent) {
-          graph.lastPasteXml = null;
-          graph.pasteCounter = 0;
-        }
-      } catch (e) {
-        this.handleError(e);
-      }
-    }
-  }
-
-  realElt.innerHTML = '&nbsp;';
-};
-
-// TEN9: Brought over from diagramly for native paste handler support
-/**
- * Installs the native clipboard support.
- */
-EditorUi.prototype.installNativeClipboardHandler = function () {
-  var graph = this.editor.graph;
-
-  // Focused but invisible textarea during control or meta key events
-  // LATER: Disable text rendering to avoid delay while keeping focus
-  var textInput = document.createElement('div');
-  textInput.setAttribute('autocomplete', 'off');
-  textInput.setAttribute('autocorrect', 'off');
-  textInput.setAttribute('autocapitalize', 'off');
-  textInput.setAttribute('spellcheck', 'false');
-  textInput.style.textRendering = 'optimizeSpeed';
-  textInput.style.fontFamily = 'monospace';
-  textInput.style.wordBreak = 'break-all';
-  textInput.style.background = 'transparent';
-  textInput.style.color = 'transparent';
-  textInput.style.position = 'absolute';
-  textInput.style.whiteSpace = 'nowrap';
-  textInput.style.overflow = 'hidden';
-  textInput.style.display = 'block';
-  textInput.style.fontSize = '1';
-  textInput.style.zIndex = '-1';
-  textInput.style.resize = 'none';
-  textInput.style.outline = 'none';
-  textInput.style.width = '1px';
-  textInput.style.height = '1px';
-  mxUtils.setOpacity(textInput, 0);
-  textInput.contentEditable = true;
-  textInput.innerHTML = '&nbsp;';
-
-  var restoreFocus = false;
-
-  // Disables built-in cut, copy and paste shortcuts
-  this.keyHandler.bindControlKey(88, null);
-  this.keyHandler.bindControlKey(67, null);
-  this.keyHandler.bindControlKey(86, null);
-
-  // Shows a textarea when control/cmd is pressed to handle native clipboard actions
-  mxEvent.addListener(
-    document,
-    'keydown',
-    mxUtils.bind(this, function (evt) {
-      // No dialog visible
-      var source = mxEvent.getSource(evt);
-
-      if (
-        graph.container != null &&
-        graph.isEnabled() &&
-        !graph.isMouseDown &&
-        !graph.isEditing() &&
-        this.dialog == null &&
-        source.nodeName != 'INPUT' &&
-        source.nodeName != 'TEXTAREA'
-      ) {
-        if (
-          evt.keyCode == 224 /* FF */ ||
-          (!mxClient.IS_MAC && evt.keyCode == 17) /* Control */ ||
-          (mxClient.IS_MAC && (evt.keyCode == 91 || evt.keyCode == 93)) /* Left/Right Meta */
-        ) {
-          // Cannot use parentNode for check in IE
-          if (!restoreFocus) {
-            // Avoid autoscroll but allow handling of all pass-through ctrl shortcuts
-            textInput.style.left = graph.container.scrollLeft + 10 + 'px';
-            textInput.style.top = graph.container.scrollTop + 10 + 'px';
-
-            graph.container.appendChild(textInput);
-            restoreFocus = true;
-
-            // Workaround for selected document content in quirks mode
-            if (mxClient.IS_QUIRKS) {
-              window.setTimeout(function () {
-                textInput.focus();
-                document.execCommand('selectAll', false, null);
-              }, 0);
-            } else {
-              textInput.focus();
-              document.execCommand('selectAll', false, null);
-            }
-          }
-        }
-      }
-    }),
-  );
-
-  // Clears input and restores focus and selection
-  function clearInput() {
-    window.setTimeout(function () {
-      textInput.innerHTML = '&nbsp;';
-      textInput.focus();
-      document.execCommand('selectAll', false, null);
-    }, 0);
-  }
-
-  mxEvent.addListener(
-    document,
-    'keyup',
-    mxUtils.bind(this, function (evt) {
-      // Workaround for asynchronous event read invalid in IE quirks mode
-      var keyCode = evt.keyCode;
-
-      // Asynchronous workaround for scroll to origin after paste if the
-      // Ctrl-key is not pressed for long enough in FF on Windows
-      window.setTimeout(
-        mxUtils.bind(this, function () {
-          if (
-            restoreFocus &&
-            (keyCode == 224 /* FF */ ||
-              keyCode == 17 /* Control */ ||
-              keyCode == 91 /* Left Meta */ ||
-              keyCode == 93) /* Right Meta */
-          ) {
-            restoreFocus = false;
-
-            if (!graph.isEditing() && this.dialog == null && graph.container != null) {
-              graph.container.focus();
-            }
-
-            textInput.parentNode.removeChild(textInput);
-
-            // Workaround for lost cursor in focused element
-            if (this.dialog == null) {
-              mxUtils.clearSelection();
-            }
-          }
-        }),
-        0,
-      );
-    }),
-  );
-
-  mxEvent.addListener(
-    textInput,
-    'copy',
-    mxUtils.bind(this, function (evt) {
-      if (graph.isEnabled()) {
-        try {
-          mxClipboard.copy(graph);
-          this.copyCells(textInput);
-          clearInput();
-        } catch (e) {
-          this.handleError(e);
-        }
-      }
-    }),
-  );
-
-  mxEvent.addListener(
-    textInput,
-    'cut',
-    mxUtils.bind(this, function (evt) {
-      if (graph.isEnabled()) {
-        try {
-          mxClipboard.copy(graph);
-          this.copyCells(textInput, true);
-          clearInput();
-        } catch (e) {
-          this.handleError(e);
-        }
-      }
-    }),
-  );
-
-  mxEvent.addListener(
-    textInput,
-    'paste',
-    mxUtils.bind(this, function (evt) {
-      if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())) {
-        var t0 = new Date().getTime();
-        textInput.innerHTML = '&nbsp;';
-        textInput.focus();
-
-        if (evt.clipboardData != null) {
-          this.pasteCells(evt, textInput, true, true);
-        }
-
-        if (!mxEvent.isConsumed(evt)) {
-          window.setTimeout(
-            mxUtils.bind(this, function () {
-              this.pasteCells(evt, textInput, false, true);
-            }),
-            0,
-          );
-        }
-      }
-    }),
-    true,
-  );
-
-  // Needed for IE11
-  var isSelectionAllowed2 = this.isSelectionAllowed;
-  this.isSelectionAllowed = function (evt) {
-    if (mxEvent.getSource(evt) == textInput) {
-      return true;
-    }
-
-    return isSelectionAllowed2.apply(this, arguments);
-  };
-
-  return textInput;
-};
+// EditorUi.prototype.importXml = function (
+//   xml,
+//   dx,
+//   dy,
+//   crop,
+//   noErrorHandling,
+//   dontImportIntoDefaultLayer = false,
+// ) {
+//   dx = dx != null ? dx : 0;
+//   dy = dy != null ? dy : 0;
+//   var cells = [];
+
+//   try {
+//     var graph = this.editor.graph;
+
+//     if (xml != null && xml.length > 0) {
+//       // Adds pages
+//       graph.model.beginUpdate();
+//       try {
+//         var doc = mxUtils.parseXml(xml);
+//         var mapping = {};
+
+//         // Checks for mxfile with multiple pages
+//         var node = this.editor.extractGraphModel(doc.documentElement, this.pages != null);
+
+//         if (node != null && node.nodeName == 'mxfile' && this.pages != null) {
+//           var diagrams = node.getElementsByTagName('diagram');
+
+//           if (diagrams.length == 1) {
+//             node = Editor.parseDiagramNode(diagrams[0]);
+
+//             if (this.currentPage != null) {
+//               mapping[diagrams[0].getAttribute('id')] = this.currentPage.getId();
+//             }
+//           } else if (diagrams.length > 1) {
+//             var pages = [];
+//             var i0 = 0;
+
+//             // Adds first page to current page if current page is only page and empty
+//             if (this.pages != null && this.pages.length == 1 && this.isDiagramEmpty()) {
+//               mapping[diagrams[0].getAttribute('id')] = this.pages[0].getId();
+//               node = Editor.parseDiagramNode(diagrams[0]);
+//               crop = false;
+//               i0 = 1;
+//             }
+
+//             for (var i = i0; i < diagrams.length; i++) {
+//               // Imported pages must obtain a new ID and
+//               // all links to pages must be updated below
+//               var oldId = diagrams[i].getAttribute('id');
+//               diagrams[i].removeAttribute('id');
+
+//               var page = this.updatePageRoot(new DiagramPage(diagrams[i]));
+//               mapping[oldId] = diagrams[i].getAttribute('id');
+//               var index = this.pages.length;
+
+//               // Checks for invalid page names
+//               if (page.getName() == null) {
+//                 page.setName(mxResources.get('pageWithNumber', [index + 1]));
+//               }
+
+//               graph.model.execute(new ChangePage(this, page, page, index, true));
+//               pages.push(page);
+//             }
+
+//             this.updatePageLinks(mapping, pages);
+//           }
+//         }
+
+//         if (node != null && node.nodeName === 'mxGraphModel') {
+//           // TEN9: Added param dontImportIntoDefaultLayer to assist when loading entire new file
+//           cells = graph.importGraphModel(node, dx, dy, crop, dontImportIntoDefaultLayer);
+
+//           if (cells != null) {
+//             for (var i = 0; i < cells.length; i++) {
+//               this.updatePageLinksForCell(mapping, cells[i]);
+//             }
+//           }
+//         }
+//       } finally {
+//         graph.model.endUpdate();
+//       }
+//     }
+//   } catch (e) {
+//     if (!noErrorHandling) {
+//       this.handleError(e);
+//     } else {
+//       throw e;
+//     }
+//   }
+
+//   return cells;
+// };
+
+// // TEN9: Brought over from diagramly for native paste handler support
+// /**
+//  * Updates links to pages in shapes and labels.
+//  */
+// EditorUi.prototype.updatePageLinks = function (mapping, pages) {
+//   for (var i = 0; i < pages.length; i++) {
+//     this.updatePageLinksForCell(mapping, pages[i].root);
+//   }
+// };
+
+// // TEN9: Brought over from diagramly for native paste handler support
+// /**
+//  * Updates links to pages in shapes and labels.
+//  */
+// EditorUi.prototype.updatePageLinksForCell = function (mapping, cell) {
+//   var temp = document.createElement('div');
+//   var graph = this.editor.graph;
+//   var href = graph.getLinkForCell(cell);
+
+//   if (href != null) {
+//     graph.setLinkForCell(cell, this.updatePageLink(mapping, href));
+//   }
+
+//   if (graph.isHtmlLabel(cell)) {
+//     temp.innerHTML = graph.sanitizeHtml(graph.getLabel(cell));
+//     var links = temp.getElementsByTagName('a');
+//     var changed = false;
+
+//     for (var i = 0; i < links.length; i++) {
+//       href = links[i].getAttribute('href');
+
+//       if (href != null) {
+//         links[i].setAttribute('href', this.updatePageLink(mapping, href));
+//         changed = true;
+//       }
+//     }
+
+//     if (changed) {
+//       graph.labelChanged(cell, temp.innerHTML);
+//     }
+//   }
+
+//   for (var i = 0; i < graph.model.getChildCount(cell); i++) {
+//     this.updatePageLinksForCell(mapping, graph.model.getChildAt(cell, i));
+//   }
+// };
+
+// // TEN9: Brought over from diagramly for native paste handler support
+// /**
+//  * Updates links to pages in shapes and labels.
+//  */
+// EditorUi.prototype.updatePageLink = function (mapping, href) {
+//   if (href.substring(0, 13) == 'data:page/id,') {
+//     var newId = mapping[href.substring(href.indexOf(',') + 1)];
+//     href = newId != null ? 'data:page/id,' + newId : null;
+//   } else if (href.substring(0, 17) == 'data:action/json,') {
+//     try {
+//       var link = JSON.parse(href.substring(17));
+
+//       if (link.actions != null) {
+//         for (var i = 0; i < link.actions.length; i++) {
+//           var action = link.actions[i];
+
+//           if (action.open != null && action.open.substring(0, 13) == 'data:page/id,') {
+//             var newId = mapping[action.open.substring(action.open.indexOf(',') + 1)];
+
+//             if (newId != null) {
+//               action.open = 'data:page/id,' + newId;
+//             } else {
+//               delete action.open;
+//             }
+//           }
+//         }
+
+//         href = 'data:action/json,' + JSON.stringify(link);
+//       }
+//     } catch (e) {
+//       // Ignore
+//     }
+//   }
+
+//   return href;
+// };
+
+// // TEN9: Brought over from diagramly for native paste handler support
+// /**
+//  * Imports the given XML into the existing diagram.
+//  * TODO: Make this function asynchronous
+//  */
+// EditorUi.prototype.insertTextAt = function (text, dx, dy, html, asImage, crop, resizeImages) {
+//   crop = crop != null ? crop : true;
+//   resizeImages = resizeImages != null ? resizeImages : true;
+
+//   // Handles special case for Gliffy data which requires async server-side for parsing
+//   if (text != null) {
+//     if (
+//       Graph.fileSupport &&
+//       !this.isOffline() &&
+//       new XMLHttpRequest().upload &&
+//       this.isRemoteFileFormat(text)
+//     ) {
+//       // Fixes possible parsing problems with ASCII 160 (non-breaking space)
+//       this.parseFile(
+//         new Blob([text.replace(/\s+/g, ' ')], { type: 'application/octet-stream' }),
+//         mxUtils.bind(this, function (xhr) {
+//           if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status <= 299) {
+//             this.editor.graph.setSelectionCells(this.insertTextAt(xhr.responseText, dx, dy, true));
+//           }
+//         }),
+//       );
+
+//       // Returns empty cells array as it is aysynchronous
+//       return [];
+//     }
+//     // Handles special case of data URI which requires async loading for finding size
+//     else if (
+//       text.substring(0, 5) == 'data:' ||
+//       (!this.isOffline() && (asImage || /\.(gif|jpg|jpeg|tiff|png|svg)$/i.test(text)))
+//     ) {
+//       var graph = this.editor.graph;
+
+//       // Checks for embedded XML in PDF
+//       if (text.substring(0, 28) == 'data:application/pdf;base64,') {
+//         var xml = Editor.extractGraphModelFromPdf(text);
+
+//         if (xml != null && xml.length > 0) {
+//           return this.importXml(xml, dx, dy, crop, true);
+//         }
+//       }
+
+//       // Checks for embedded XML in PNG
+//       if (text.substring(0, 22) == 'data:image/png;base64,') {
+//         var xml = this.extractGraphModelFromPng(text);
+
+//         if (xml != null && xml.length > 0) {
+//           return this.importXml(xml, dx, dy, crop, true);
+//         }
+//       }
+
+//       // Tries to extract embedded XML from SVG data URI
+//       if (text.substring(0, 19) == 'data:image/svg+xml;') {
+//         try {
+//           var xml = null;
+
+//           if (text.substring(0, 26) == 'data:image/svg+xml;base64,') {
+//             xml = text.substring(text.indexOf(',') + 1);
+//             xml = window.atob && !mxClient.IS_SF ? atob(xml) : Base64.decode(xml, true);
+//           } else {
+//             xml = decodeURIComponent(text.substring(text.indexOf(',') + 1));
+//           }
+
+//           var result = this.importXml(xml, dx, dy, crop, true);
+
+//           if (result.length > 0) {
+//             return result;
+//           }
+//         } catch (e) {
+//           // Ignore
+//         }
+//       }
+
+//       this.loadImage(
+//         text,
+//         mxUtils.bind(this, function (img) {
+//           if (text.substring(0, 5) == 'data:') {
+//             this.resizeImage(
+//               img,
+//               text,
+//               mxUtils.bind(this, function (data2, w2, h2) {
+//                 graph.setSelectionCell(
+//                   graph.insertVertex(
+//                     null,
+//                     null,
+//                     '',
+//                     graph.snap(dx),
+//                     graph.snap(dy),
+//                     w2,
+//                     h2,
+//                     'shape=image;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;' +
+//                       'verticalAlign=top;aspect=fixed;imageAspect=0;image=' +
+//                       this.convertDataUri(data2) +
+//                       ';',
+//                   ),
+//                 );
+//               }),
+//               resizeImages,
+//               this.maxImageSize,
+//             );
+//           } else {
+//             var s = Math.min(
+//               1,
+//               Math.min(this.maxImageSize / img.width, this.maxImageSize / img.height),
+//             );
+//             var w = Math.round(img.width * s);
+//             var h = Math.round(img.height * s);
+
+//             graph.setSelectionCell(
+//               graph.insertVertex(
+//                 null,
+//                 null,
+//                 '',
+//                 graph.snap(dx),
+//                 graph.snap(dy),
+//                 w,
+//                 h,
+//                 'shape=image;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;' +
+//                   'verticalAlign=top;aspect=fixed;imageAspect=0;image=' +
+//                   text +
+//                   ';',
+//               ),
+//             );
+//           }
+//         }),
+//         mxUtils.bind(this, function () {
+//           var cell = null;
+
+//           // Inserts invalid data URIs as text
+//           graph.getModel().beginUpdate();
+//           try {
+//             cell = graph.insertVertex(
+//               graph.getDefaultParent(),
+//               null,
+//               text,
+//               graph.snap(dx),
+//               graph.snap(dy),
+//               1,
+//               1,
+//               'text;' + (html ? 'html=1;' : ''),
+//             );
+//             graph.updateCellSize(cell);
+//             graph.fireEvent(new mxEventObject('textInserted', 'cells', [cell]));
+//           } finally {
+//             graph.getModel().endUpdate();
+//           }
+
+//           graph.setSelectionCell(cell);
+//         }),
+//       );
+
+//       return [];
+//     } else {
+//       text = Graph.zapGremlins(mxUtils.trim(text));
+
+//       if (this.isCompatibleString(text)) {
+//         return this.importXml(text, dx, dy, crop);
+//       } else if (text.length > 0) {
+//         if (this.isLucidChartData(text)) {
+//           this.convertLucidChart(
+//             text,
+//             mxUtils.bind(this, function (xml) {
+//               this.editor.graph.setSelectionCells(this.importXml(xml, dx, dy, crop));
+//             }),
+//             mxUtils.bind(this, function (e) {
+//               this.handleError(e);
+//             }),
+//           );
+//         } else {
+//           var graph = this.editor.graph;
+//           var cell = null;
+
+//           graph.getModel().beginUpdate();
+//           try {
+//             // Fires cellsInserted to apply the current style to the inserted text.
+//             // This requires the value to be empty when the event is fired.
+//             cell = graph.insertVertex(
+//               graph.getDefaultParent(),
+//               null,
+//               '',
+//               graph.snap(dx),
+//               graph.snap(dy),
+//               1,
+//               1,
+//               'text;whiteSpace=wrap;' + (html ? 'html=1;' : ''),
+//             );
+//             graph.fireEvent(new mxEventObject('textInserted', 'cells', [cell]));
+
+//             // Single tag is converted
+//             if (text.charAt(0) == '<' && text.indexOf('>') == text.length - 1) {
+//               text = mxUtils.htmlEntities(text);
+//             }
+
+//             //TODO Refuse unsupported file types early as at this stage a lot of processing has beed done and time is wasted.
+//             //		For example, 5 MB PDF files is processed and then only 0.5 MB of meaningless text is added!
+//             //Limit labels to maxTextBytes
+//             if (text.length > this.maxTextBytes) {
+//               text = text.substring(0, this.maxTextBytes) + '...';
+//             }
+
+//             // Apply value and updates the cell size to fit the text block
+//             cell.value = text;
+//             graph.updateCellSize(cell);
+
+//             // Adds wrapping for large text blocks
+//             if (this.maxTextWidth > 0 && cell.geometry.width > this.maxTextWidth) {
+//               var size = graph.getPreferredSizeForCell(cell, this.maxTextWidth);
+//               cell.geometry.width = size.width;
+//               cell.geometry.height = size.height;
+//             }
+
+//             // See https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
+//             if (Graph.isLink(cell.value)) {
+//               graph.setLinkForCell(cell, cell.value);
+//             }
+
+//             // Adds spacing
+//             cell.geometry.width += graph.gridSize;
+//             cell.geometry.height += graph.gridSize;
+//           } finally {
+//             graph.getModel().endUpdate();
+//           }
+
+//           return [cell];
+//         }
+//       }
+//     }
+//   }
+
+//   return [];
+// };
+
+// // TEN9: Brought over from diagramly for native paste handler support
+// /**
+//  * Creates the format panel and adds overrides.
+//  */
+// EditorUi.prototype.pasteCells = function (evt, realElt, useEvent, pasteAsLabel) {
+//   if (!mxEvent.isConsumed(evt)) {
+//     // TEN9: if this is a file, let it bubble up as there's another handler
+//     // to take care of it.
+//     if (evt.clipboardData && evt.clipboardData.files.length > 0) {
+//       return;
+//     }
+
+//     var elt = realElt;
+//     var asHtml = false;
+
+//     if (useEvent && evt.clipboardData != null && evt.clipboardData.getData) {
+//       var data = evt.clipboardData.getData('text/html');
+
+//       // TEN9: Disable use of text/html data.
+//       data = null;
+
+//       if (data != null && data.length > 0) {
+//         var hasMeta = data.substring(0, 6) == '<meta ';
+//         elt = document.createElement('div');
+//         elt.innerHTML =
+//           (hasMeta ? '<meta charset="utf-8">' : '') + this.editor.graph.sanitizeHtml(data);
+//         asHtml = true;
+
+//         // Workaround for innerText not ignoring style elements in Chrome
+//         var styles = elt.getElementsByTagName('style');
+
+//         if (styles != null) {
+//           while (styles.length > 0) {
+//             styles[0].parentNode.removeChild(styles[0]);
+//           }
+//         }
+
+//         // Special case of link pasting from Chrome
+//         if (
+//           elt.firstChild != null &&
+//           elt.firstChild.nodeType == mxConstants.NODETYPE_ELEMENT &&
+//           elt.firstChild.nextSibling != null &&
+//           elt.firstChild.nextSibling.nodeType == mxConstants.NODETYPE_ELEMENT &&
+//           elt.firstChild.nodeName == 'META' &&
+//           elt.firstChild.nextSibling.nodeName == 'A' &&
+//           elt.firstChild.nextSibling.nextSibling == null
+//         ) {
+//           var temp =
+//             elt.firstChild.nextSibling.innerText == null
+//               ? mxUtils.getTextContent(elt.firstChild.nextSibling)
+//               : elt.firstChild.nextSibling.innerText;
+
+//           if (temp == elt.firstChild.nextSibling.getAttribute('href')) {
+//             mxUtils.setTextContent(elt, temp);
+//             asHtml = false;
+//           }
+//         }
+
+//         // Extracts single image source address
+//         var img = hasMeta && elt.firstChild != null ? elt.firstChild.nextSibling : elt.firstChild;
+
+//         if (
+//           img != null &&
+//           img.nextSibling == null &&
+//           img.nodeType == mxConstants.NODETYPE_ELEMENT &&
+//           img.nodeName == 'IMG'
+//         ) {
+//           var temp = img.getAttribute('src');
+
+//           if (temp != null) {
+//             mxUtils.setTextContent(elt, temp);
+//             asHtml = false;
+//           }
+//         }
+
+//         if (asHtml) {
+//           Graph.removePasteFormatting(elt);
+//         }
+//       } else {
+//         data = evt.clipboardData.getData('text/plain');
+
+//         if (data != null && data.length > 0) {
+//           elt = document.createElement('div');
+//           mxUtils.setTextContent(elt, data);
+//         }
+//       }
+//     }
+
+//     var spans = elt.getElementsByTagName('span');
+
+//     if (
+//       spans != null &&
+//       spans.length > 0 &&
+//       spans[0].getAttribute('data-lucid-type') === 'application/vnd.lucid.chart.objects'
+//     ) {
+//       var content = spans[0].getAttribute('data-lucid-content');
+
+//       if (content != null && content.length > 0) {
+//         this.convertLucidChart(
+//           content,
+//           mxUtils.bind(this, function (xml) {
+//             var graph = this.editor.graph;
+
+//             if (graph.lastPasteXml == xml) {
+//               graph.pasteCounter++;
+//             } else {
+//               graph.lastPasteXml = xml;
+//               graph.pasteCounter = 0;
+//             }
+
+//             var dx = graph.pasteCounter * graph.gridSize;
+//             graph.setSelectionCells(this.importXml(xml, dx, dx));
+//             graph.scrollCellToVisible(graph.getSelectionCell());
+//           }),
+//           mxUtils.bind(this, function (e) {
+//             this.handleError(e);
+//           }),
+//         );
+
+//         mxEvent.consume(evt);
+//       }
+//     } else {
+//       // KNOWN: Paste from IE11 to other browsers on Windows
+//       // seems to paste the contents of index.html
+//       var xml = asHtml
+//         ? elt.innerHTML
+//         : mxUtils.trim(elt.innerText == null ? mxUtils.getTextContent(elt) : elt.innerText);
+//       var compat = false;
+
+//       // Workaround for junk after XML in VM
+//       try {
+//         var idx = xml.lastIndexOf('%3E');
+
+//         if (idx >= 0 && idx < xml.length - 3) {
+//           xml = xml.substring(0, idx + 3);
+//         }
+//       } catch (e) {
+//         // ignore
+//       }
+
+//       // Checks for embedded XML content
+//       try {
+//         var spans = elt.getElementsByTagName('span');
+//         var tmp =
+//           spans != null && spans.length > 0
+//             ? mxUtils.trim(decodeURIComponent(spans[0].textContent))
+//             : decodeURIComponent(xml);
+
+//         if (this.isCompatibleString(tmp)) {
+//           compat = true;
+//           xml = tmp;
+//         }
+//       } catch (e) {
+//         // ignore
+//       }
+
+//       try {
+//         var graph = this.editor.graph;
+
+//         if (xml != null && xml.length > 0) {
+//           if (graph.lastPasteXml == xml) {
+//             graph.pasteCounter++;
+//           } else {
+//             graph.lastPasteXml = xml;
+//             graph.pasteCounter = 0;
+//           }
+
+//           var dx = graph.pasteCounter * graph.gridSize;
+
+//           if (compat || this.isCompatibleString(xml)) {
+//             graph.setSelectionCells(this.importXml(xml, dx, dx));
+//           } else if (pasteAsLabel && graph.getSelectionCount() == 1) {
+//             var cell = graph.getStartEditingCell(graph.getSelectionCell(), evt);
+
+//             if (
+//               /\.(gif|jpg|jpeg|tiff|png|svg)$/i.test(xml) &&
+//               graph.getCurrentCellStyle(cell)[mxConstants.STYLE_SHAPE] == 'image'
+//             ) {
+//               graph.setCellStyles(mxConstants.STYLE_IMAGE, xml, [cell]);
+//             } else {
+//               graph.labelChanged(cell, xml);
+
+//               if (Graph.isLink(xml)) {
+//                 graph.setLinkForCell(cell, xml);
+//               }
+//             }
+
+//             graph.setSelectionCell(cell);
+//           } else {
+//             var pt = graph.getInsertPoint();
+
+//             if (graph.isMouseInsertPoint()) {
+//               dx = 0;
+
+//               // No offset for insert at mouse position
+//               if (graph.lastPasteXml == xml && graph.pasteCounter > 0) {
+//                 graph.pasteCounter--;
+//               }
+//             }
+
+//             graph.setSelectionCells(this.insertTextAt(xml, pt.x + dx, pt.y + dx, true));
+//           }
+
+//           if (!graph.isSelectionEmpty()) {
+//             graph.scrollCellToVisible(graph.getSelectionCell());
+
+//             if (this.hoverIcons != null) {
+//               this.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
+//             }
+//           }
+
+//           try {
+//             mxEvent.consume(evt);
+//           } catch (e) {
+//             // ignore event no longer exists in async handler in IE8-
+//           }
+//         } else if (!useEvent) {
+//           graph.lastPasteXml = null;
+//           graph.pasteCounter = 0;
+//         }
+//       } catch (e) {
+//         this.handleError(e);
+//       }
+//     }
+//   }
+
+//   realElt.innerHTML = '&nbsp;';
+// };
+
+// // TEN9: Brought over from diagramly for native paste handler support
+// /**
+//  * Installs the native clipboard support.
+//  */
+// EditorUi.prototype.installNativeClipboardHandler = function () {
+//   var graph = this.editor.graph;
+
+//   // Focused but invisible textarea during control or meta key events
+//   // LATER: Disable text rendering to avoid delay while keeping focus
+//   var textInput = document.createElement('div');
+//   textInput.setAttribute('autocomplete', 'off');
+//   textInput.setAttribute('autocorrect', 'off');
+//   textInput.setAttribute('autocapitalize', 'off');
+//   textInput.setAttribute('spellcheck', 'false');
+//   textInput.style.textRendering = 'optimizeSpeed';
+//   textInput.style.fontFamily = 'monospace';
+//   textInput.style.wordBreak = 'break-all';
+//   textInput.style.background = 'transparent';
+//   textInput.style.color = 'transparent';
+//   textInput.style.position = 'absolute';
+//   textInput.style.whiteSpace = 'nowrap';
+//   textInput.style.overflow = 'hidden';
+//   textInput.style.display = 'block';
+//   textInput.style.fontSize = '1';
+//   textInput.style.zIndex = '-1';
+//   textInput.style.resize = 'none';
+//   textInput.style.outline = 'none';
+//   textInput.style.width = '1px';
+//   textInput.style.height = '1px';
+//   mxUtils.setOpacity(textInput, 0);
+//   textInput.contentEditable = true;
+//   textInput.innerHTML = '&nbsp;';
+
+//   var restoreFocus = false;
+
+//   // Disables built-in cut, copy and paste shortcuts
+//   this.keyHandler.bindControlKey(88, null);
+//   this.keyHandler.bindControlKey(67, null);
+//   this.keyHandler.bindControlKey(86, null);
+
+//   // Shows a textarea when control/cmd is pressed to handle native clipboard actions
+//   mxEvent.addListener(
+//     document,
+//     'keydown',
+//     mxUtils.bind(this, function (evt) {
+//       // No dialog visible
+//       var source = mxEvent.getSource(evt);
+
+//       if (
+//         graph.container != null &&
+//         graph.isEnabled() &&
+//         !graph.isMouseDown &&
+//         !graph.isEditing() &&
+//         this.dialog == null &&
+//         source.nodeName != 'INPUT' &&
+//         source.nodeName != 'TEXTAREA'
+//       ) {
+//         if (
+//           evt.keyCode == 224 /* FF */ ||
+//           (!mxClient.IS_MAC && evt.keyCode == 17) /* Control */ ||
+//           (mxClient.IS_MAC && (evt.keyCode == 91 || evt.keyCode == 93)) /* Left/Right Meta */
+//         ) {
+//           // Cannot use parentNode for check in IE
+//           if (!restoreFocus) {
+//             // Avoid autoscroll but allow handling of all pass-through ctrl shortcuts
+//             textInput.style.left = graph.container.scrollLeft + 10 + 'px';
+//             textInput.style.top = graph.container.scrollTop + 10 + 'px';
+
+//             graph.container.appendChild(textInput);
+//             restoreFocus = true;
+
+//             // Workaround for selected document content in quirks mode
+//             if (mxClient.IS_QUIRKS) {
+//               window.setTimeout(function () {
+//                 textInput.focus();
+//                 document.execCommand('selectAll', false, null);
+//               }, 0);
+//             } else {
+//               textInput.focus();
+//               document.execCommand('selectAll', false, null);
+//             }
+//           }
+//         }
+//       }
+//     }),
+//   );
+
+//   // Clears input and restores focus and selection
+//   function clearInput() {
+//     window.setTimeout(function () {
+//       textInput.innerHTML = '&nbsp;';
+//       textInput.focus();
+//       document.execCommand('selectAll', false, null);
+//     }, 0);
+//   }
+
+//   mxEvent.addListener(
+//     document,
+//     'keyup',
+//     mxUtils.bind(this, function (evt) {
+//       // Workaround for asynchronous event read invalid in IE quirks mode
+//       var keyCode = evt.keyCode;
+
+//       // Asynchronous workaround for scroll to origin after paste if the
+//       // Ctrl-key is not pressed for long enough in FF on Windows
+//       window.setTimeout(
+//         mxUtils.bind(this, function () {
+//           if (
+//             restoreFocus &&
+//             (keyCode == 224 /* FF */ ||
+//               keyCode == 17 /* Control */ ||
+//               keyCode == 91 /* Left Meta */ ||
+//               keyCode == 93) /* Right Meta */
+//           ) {
+//             restoreFocus = false;
+
+//             if (!graph.isEditing() && this.dialog == null && graph.container != null) {
+//               graph.container.focus();
+//             }
+
+//             textInput.parentNode.removeChild(textInput);
+
+//             // Workaround for lost cursor in focused element
+//             if (this.dialog == null) {
+//               mxUtils.clearSelection();
+//             }
+//           }
+//         }),
+//         0,
+//       );
+//     }),
+//   );
+
+//   mxEvent.addListener(
+//     textInput,
+//     'copy',
+//     mxUtils.bind(this, function (evt) {
+//       if (graph.isEnabled()) {
+//         try {
+//           mxClipboard.copy(graph);
+//           this.copyCells(textInput);
+//           clearInput();
+//         } catch (e) {
+//           this.handleError(e);
+//         }
+//       }
+//     }),
+//   );
+
+//   mxEvent.addListener(
+//     textInput,
+//     'cut',
+//     mxUtils.bind(this, function (evt) {
+//       if (graph.isEnabled()) {
+//         try {
+//           mxClipboard.copy(graph);
+//           this.copyCells(textInput, true);
+//           clearInput();
+//         } catch (e) {
+//           this.handleError(e);
+//         }
+//       }
+//     }),
+//   );
+
+//   mxEvent.addListener(
+//     textInput,
+//     'paste',
+//     mxUtils.bind(this, function (evt) {
+//       if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())) {
+//         var t0 = new Date().getTime();
+//         textInput.innerHTML = '&nbsp;';
+//         textInput.focus();
+
+//         if (evt.clipboardData != null) {
+//           this.pasteCells(evt, textInput, true, true);
+//         }
+
+//         if (!mxEvent.isConsumed(evt)) {
+//           window.setTimeout(
+//             mxUtils.bind(this, function () {
+//               this.pasteCells(evt, textInput, false, true);
+//             }),
+//             0,
+//           );
+//         }
+//       }
+//     }),
+//     true,
+//   );
+
+//   // Needed for IE11
+//   var isSelectionAllowed2 = this.isSelectionAllowed;
+//   this.isSelectionAllowed = function (evt) {
+//     if (mxEvent.getSource(evt) == textInput) {
+//       return true;
+//     }
+
+//     return isSelectionAllowed2.apply(this, arguments);
+//   };
+
+//   return textInput;
+// };
 
 // TEN9: Added exports
 module.exports = {

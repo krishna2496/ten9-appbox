@@ -1,4 +1,20 @@
 /**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+/**
  * Copyright (c) 2006-2017, JGraph Ltd
  * Copyright (c) 2006-2017, Gaudenz Alder
  */
@@ -1758,7 +1774,7 @@ DrawioFile.prototype.redirectToNewApp = function(error, details)
  */
 DrawioFile.prototype.handleFileSuccess = function(saved)
 {
-	// TEN9: remove spinner code
+	// TEN9: TODO: BU: Get spinner to work
 	//this.ui.spinner.stop();
 	
 	if (this.ui.getCurrentFile() == this)
@@ -1802,7 +1818,7 @@ DrawioFile.prototype.handleFileSuccess = function(saved)
  */
 DrawioFile.prototype.handleFileError = function(err, manual)
 {
-	// TEN9: remove spinner code
+	// TEN9: TODO: BU: Get spinner to work
 	//this.ui.spinner.stop();
 	
 	if (this.ui.getCurrentFile() == this)
@@ -2194,7 +2210,7 @@ DrawioFile.prototype.descriptorChanged = function()
  */
 DrawioFile.prototype.contentChanged = function()
 {
-	// TEN9:
+	// TEN9: TODO: BU: Review why this was commented out
 	//this.fireEvent(new mxEventObject('contentChanged'));
 };
 

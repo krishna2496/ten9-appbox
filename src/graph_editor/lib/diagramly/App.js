@@ -1,4 +1,20 @@
 /**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+/**
  * Copyright (c) 2006-2020, JGraph Ltd
  * Copyright (c) 2006-2020, draw.io AG
  */
@@ -48,6 +64,7 @@ const STYLE_PATH = 'styles';
 
 App = function(editor, container, lightbox)
 {
+	// TEN9: We already have an editorUi for our app
 	// EditorUi.call(this, editor, container, (lightbox != null) ? lightbox :
 	// 	(urlParams['lightbox'] == '1' || (uiTheme == 'min' &&
 	// 	urlParams['chrome'] != '0')));
@@ -209,6 +226,7 @@ App = function(editor, container, lightbox)
 	}
 
 	this.load();
+
 	// TEN9: call main function\
 	this.defaultFilename = "Untitled Diagram";
 	App.main();
@@ -573,6 +591,7 @@ App.getStoredMode = function()
  * 
  * Optional callback is called with the app instance.
  */
+// TEN9: No callback needed for our app
 App.main = function(createUi)
 {
 	// Logs uncaught errors
@@ -791,7 +810,7 @@ App.main = function(createUi)
 	if (urlParams['math'] != '0')
 	{
 		// TEN9: not using math
-		//Editor.initMath();
+		// Editor.initMath();
 	}
 
 	function doLoad(bundle)
@@ -866,6 +885,7 @@ App.main = function(createUi)
 	 			Graph.prototype.defaultThemes['darkTheme'] = xhr[2].getDocumentElement();
 			}
 			
+			// TEN9: We'll use our own UI
 			var ui = createUi;
 			// Main
 			// var ui = (createUi != null) ? createUi() : new App(new Editor(
@@ -936,6 +956,7 @@ App.main = function(createUi)
 	
 			}
 			
+			// TEN9: No callback for our app
 			// if (callback != null)
 			// {
 			// 	callback(ui);
@@ -1022,6 +1043,7 @@ App.main = function(createUi)
 		// be used if we know that all keys are defined in the language specific file)
 		mxResources.loadDefaultBundle = false;
 		doLoad(mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) ||
+			// TEN9: Hardcoding to en-us for now
 			mxResources.getSpecialBundle(RESOURCE_BASE, 'en-us'));
 	};
 
@@ -1332,7 +1354,7 @@ App.prototype.init = function()
 	/**
 	 * Creates github client.
 	 */
-	// TEN9
+	// TEN9: No github client needed for our app.
 	// this.gitHub = (!mxClient.IS_IE || document.documentMode == 10 ||
 	// 		mxClient.IS_IE11 || mxClient.IS_EDGE) &&
 	// 		(urlParams['gh'] != '0' && (urlParams['embed'] != '1' ||
@@ -1350,7 +1372,7 @@ App.prototype.init = function()
 	/**
 	 * Creates gitlab client.
 	 */
-	// TEN9
+	// TEN9: No gitlab client needed for our app.
 	// this.gitLab = (!mxClient.IS_IE || document.documentMode == 10 ||
 	// 	mxClient.IS_IE11 || mxClient.IS_EDGE) &&
 	// 	(urlParams['gl'] != '0' && (urlParams['embed'] != '1' ||
@@ -2640,7 +2662,7 @@ App.prototype.load = function()
 	// Checks if we're running in embedded mode
 	if (urlParams['embed'] != '1')
 	{
-		// TEN9
+		// TEN9: TODO: BU: Get Spinner to work
 		// if (this.spinner.spin(document.body, mxResources.get('starting')))
 		// {
 			try
@@ -2700,7 +2722,8 @@ App.prototype.load = function()
 	}
 };
 
-// TEN9:
+// TEN9: Create our app
+// TEN9: TODO: BU: Review closely
 var Load = function(editor,container)
 {
 	new App(editor,container)
@@ -2822,8 +2845,8 @@ App.prototype.start = function()
 	}
 	
 	this.restoreLibraries();
-	// TEN9
-	//this.spinner.stop();
+	// TEN9: TODO: BU: Get spinners to work
+	// this.spinner.stop();
 
 	try
 	{
@@ -3013,12 +3036,12 @@ App.prototype.start = function()
 							var id = this.getDiagramId();
 							
 							// TEN9: For testing
-							// debugger
+							// TEN9: We don't have drafts in our app rn
 							// if (EditorUi.enableDrafts && (urlParams['mode'] == null || EditorUi.isElectronApp) &&
 							// 	this.getServiceName() == 'draw.io' && (id == null || id.length == 0) &&
 							// 	!this.editor.isChromelessView())
 							// {
-								this.checkDrafts();
+								// this.checkDrafts();
 							//}
 							//else 
 							if (id != null && id.length > 0)
@@ -3268,7 +3291,7 @@ App.prototype.checkDrafts = function()
 						
 						if (key != null && key.substring(0, 7) == '.draft_')
 						{
-							// TEN9:
+							// TEN9: TODO: BU: Review
 							//var obj = JSON.parse(items[i].data);
 							var obj = items[i].data;
 							if (obj != null && obj.type == 'draft' && obj.aliveCheck != guid)
@@ -3409,7 +3432,7 @@ App.prototype.showSplash = function(force)
 	{
 		var rowLimit = (serviceCount == 4) ? 2 : 3;
 		
-		// TEN9
+		// TEN9: We don't need storage dialog for our app
 		// var dlg = new StorageDialog(this, mxUtils.bind(this, function()
 		// {
 		// 	this.hideDialog();
@@ -4388,7 +4411,7 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 {
 	mode = (tempFile) ? null : ((mode != null) ? mode : this.mode);
 
-	// TEN9: Remove spinner code
+	// TEN9: TODO: VU: Fix spinner code
 	//if (title != null && this.spinner.spin(document.body, mxResources.get('inserting')))
 	if(title != null)
 	{
@@ -4496,7 +4519,7 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 						error(e);
 					}
 				}), this.createFileSystemOptions(title));
-				}
+			}
 			else
 			{
 				complete();
@@ -4506,7 +4529,7 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 		catch (e)
 		{
 			complete();
-			this.handleError(e);	
+			this.handleError(e);
 		}
 	}
 };
@@ -4541,7 +4564,7 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 
 	// Makes sure to produce consistent output with finalized files via createFileData this needs
 	// to save the file again since it needs the newly created file ID for redirecting in HTML
-	// TEN9: remove spinner code
+	// TEN9:TODO: BU: Get spinner code to work
 	// if (this.spinner.spin(document.body, mxResources.get('inserting')))
 	// {
 		var data = file.getData();
@@ -4568,7 +4591,7 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 
 		var complete = mxUtils.bind(this, function()
 		{
-			// TEN9: remove spinner code
+			// TEN9: TODO: BU: Get spinner code to work
 			//this.spinner.stop();
 		});
 		
@@ -6964,4 +6987,3 @@ module.exports = {
 	App,
 	Load
 };
-  

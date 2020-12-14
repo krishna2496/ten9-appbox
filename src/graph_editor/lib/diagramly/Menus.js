@@ -13,10 +13,10 @@ const {
   mxEvent,
   mxEventObject,
   mxEventSource,
-	mxGraphModel,
+  mxGraphModel,
   mxImage,
-	mxKeyHandler,
-	mxLanguage,
+  mxKeyHandler,
+  mxLanguage,
   mxMorphing,
   mxObjectCodec,
   mxObjectIdentity,
@@ -38,9 +38,11 @@ const isLocalStorage = false;
 const RESOURCE_BASE = '../../../../public/resources/dia';
 var uiTheme = 'atlas';
 
+DriveFile = function() {};
+
 (function()
 {
-	//Adds scrollbars for menus that exceed the page height
+	// Adds scrollbars for menus that exceed the page height
 	var mxPopupMenuShowMenu = mxPopupMenu.prototype.showMenu;
 	mxPopupMenu.prototype.showMenu = function()
 	{

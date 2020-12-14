@@ -107,6 +107,7 @@ DiagramPage.prototype.setName = function(value)
 	}
 };
 
+// TEN9: TODO: BU: Review
 function mxRootChange(model, root) {
   this.model = model;
   this.root = root;
@@ -201,7 +202,8 @@ SelectPage.prototype.execute = function()
 	
 	if (this.page != null && prevIndex >= 0)
 	{
-		var page
+		// TEN9: TODO: BU: Review
+		var page;
 		// TEN9: check if ui current page is available or not
 		if(this.ui.currentPage == undefined)
 		{
@@ -279,7 +281,6 @@ SelectPage.prototype.execute = function()
  */
 function ChangePage(ui, page, select, index, noSelect)
 {
-
 	SelectPage.call(this, ui, select);
 	this.relatedPage = page;
 	this.index = index;
@@ -328,7 +329,8 @@ EditorUi.prototype.tabContainerHeight = 38;
  */
 EditorUi.prototype.getSelectedPageIndex = function()
 {
-	// TEN9:
+	// TEN9: TODO: BU: Review
+	// TEN9: Init curent page
 	if(this.currentPage == undefined)
 	{
 		this.currentPage = this.pages[0];
@@ -406,7 +408,7 @@ EditorUi.prototype.initPages = function()
 				if (this.fileNode == null || this.pages == null ||
 					(this.pages.length == 1 && urlParams['pages'] == '0'))
 				{
-					// TEN9: for testing
+					// TEN9: TODO: for testing
 					//this.tabContainer.style.height = '0px';
 					this.tabContainer.style.height = this.tabContainerHeight + 'px';
 				}
@@ -498,14 +500,14 @@ EditorUi.prototype.initPages = function()
 
 			for (var i = 0; i < changes.length; i++)
 			{
-				// TEN9:
+				// TEN9: TODO: Fix this
 				// if (changes[i] instanceof SelectPage ||
 				// 	changes[i] instanceof RenamePage ||
 				// 	changes[i] instanceof MovePage ||
 				// 	changes[i] instanceof mxRootChange)
 				// {
 					updateTabs();
-					break;	
+					break;
 				//}
 			}
 		}));
@@ -1213,6 +1215,7 @@ EditorUi.prototype.createTabContainer = function()
 	return div;
 };
 
+// TEN9: TODO: BU: Review... we should look to keep this here and not move it
 /**
  * Returns true if the given string contains an mxfile.
  */
@@ -1544,8 +1547,8 @@ EditorUi.prototype.createPageMenuTab = function()
 			menu.destroy();
 		});
 
-		var offset = mxUtils.getOffset(this.container);
 		// TEN9: correct popup position
+		var offset = mxUtils.getOffset(this.container);
 		// var x = mxEvent.getClientX(evt);
 		// var y = mxEvent.getClientY(evt);
 		var x = mxEvent.getClientX(evt) - offset.x;
@@ -1658,8 +1661,8 @@ EditorUi.prototype.addTabListeners = function(page, tab)
 					menu.destroy();
 				});
 				
-				var offset = mxUtils.getOffset(this.container);
 				// TEN9: correct popup position
+				var offset = mxUtils.getOffset(this.container);
 				// var x = mxEvent.getClientX(evt);
 				// var y = mxEvent.getClientY(evt);
 				var x = mxEvent.getClientX(evt) - offset.x;
@@ -1793,10 +1796,11 @@ EditorUi.prototype.createPageMenu = function(page, label)
 (function()
 {
 	var editorUiRefresh = EditorUi.prototype.refresh;
+	
 	EditorUi.prototype.refresh = function(sizeDidChange)
 	{
 		editorUiRefresh.apply(this, arguments);
-		this.updateTabContainer();	
+		this.updateTabContainer();
 	}
 })();
 
@@ -1915,7 +1919,6 @@ EditorUi.prototype.createPageMenu = function(page, label)
 			var temp = node.ownerDocument.createElement('diagram');
 			temp.setAttribute('id', node.getAttribute('relatedPage'));
 			temp.setAttribute('name', node.getAttribute('name'));
-			
 			obj.relatedPage = new DiagramPage(temp);
 
 			var vs = node.getAttribute('viewState');

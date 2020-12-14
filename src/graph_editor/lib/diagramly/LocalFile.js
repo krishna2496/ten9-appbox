@@ -175,6 +175,7 @@ LocalFile.prototype.saveFile = function(title, revision, success, error, useCurr
 	var binary = this.ui.useCanvasForExport && /(\.png)$/i.test(this.getTitle());
 	this.setShadowModified(false);
 	var data = this.getData();
+	
 	var done = mxUtils.bind(this, function()
 	{
 		this.setModified(this.getShadowModified());
