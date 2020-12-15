@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { createEditorUi } from '../lib/jgraph/EditorUi';
-import { Load } from '../lib/diagramly/App';
+import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
 require('../lib/diagramly/DrawioFile.js');
@@ -74,6 +74,9 @@ export default defineComponent({
   },
 
   setup(props, ctx) {
+
+    const app = ref(null);
+
     const container = ref(null);
 
     const editorUi = ref(null);
@@ -136,8 +139,9 @@ export default defineComponent({
       editor.value = editorUi.value.editor;
       graph.value = editor.value.graph;
       sidebar.value = editorUi.value.sidebar;
+      debugger;
+      app.value = createApp(editor.value, container.value);
 
-      Load(editor.value, container.value);
       // Add stencils to the sidebar
       sidebar.value.showEntries(props.shapeLibraries);
 

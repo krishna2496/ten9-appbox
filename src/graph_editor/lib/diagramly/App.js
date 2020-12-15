@@ -229,7 +229,6 @@ App = function(editor, container, lightbox)
 
 	// TEN9: call main function\
 	this.defaultFilename = "Untitled Diagram";
-	App.main();
 };
 /**
  * Timeout error
@@ -2723,10 +2722,9 @@ App.prototype.load = function()
 };
 
 // TEN9: Create our app
-// TEN9: TODO: BU: Review closely
-var Load = function(editor,container)
+function createApp(editor, container)
 {
-	new App(editor,container)
+	return new App(editor, container);
 };
 
 /**
@@ -6985,5 +6983,5 @@ Editor.prototype.resetGraph = function()
 // TEN9: Added exports
 module.exports = {
 	App,
-	Load
+	createApp,
 };

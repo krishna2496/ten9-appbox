@@ -109,31 +109,31 @@ export default defineComponent({
       insertDummyImage();
     }
 
-    // function saveXmlFile(xmlData: string) {
-    //   const filename = 'diagram';
-    //   const ext = 'draw';
+    function saveXmlFile(xmlData: string) {
+      const filename = 'diagram';
+      const ext = 'draw';
 
-    //   const blob = new Blob([xmlData], { type: 'application/xml' });
+      const blob = new Blob([xmlData], { type: 'application/xml' });
 
-    //   const a = document.createElement('a');
-    //   a.download = `${filename}.${ext}`;
-    //   a.href = URL.createObjectURL(blob);
-    //   a.dataset.downloadurl = `${ext}:${a.download}:${a.href}`;
-    //   a.style.display = 'none';
-    //   document.body.appendChild(a);
-    //   a.click();
-    //   document.body.removeChild(a);
-    //   setTimeout(() => {
-    //     URL.revokeObjectURL(a.href);
-    //   }, 0);
-    // }
+      const a = document.createElement('a');
+      a.download = `${filename}.${ext}`;
+      a.href = URL.createObjectURL(blob);
+      a.dataset.downloadurl = `${ext}:${a.download}:${a.href}`;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => {
+        URL.revokeObjectURL(a.href);
+      }, 0);
+    }
 
     function saveFile() {
       //debugger
-      editor.value.editorUi.saveFile();
+      // editor.value.editorUi.saveFile();
 
-      //const xmlData = editor.value.getXmlData();
-      //saveXmlFile(xmlData);
+      const xmlData = editor.value.getXmlData();
+      saveXmlFile(xmlData);
     }
 
     function onKeydown(event: KeyboardEvent) {
@@ -160,7 +160,7 @@ export default defineComponent({
       document.addEventListener('keydown', onKeydown);
 
       shapeLibraries.value = getShapeLibrariesFromStorage();
-      if (!shapeLibraries.value == null) {
+      if (!shapeLibraries.value) {
         shapeLibraries.value = DEFAULT_SHAPE_LIBRARIES;
         saveShapeLibrariesToStorage(shapeLibraries.value);
       }
