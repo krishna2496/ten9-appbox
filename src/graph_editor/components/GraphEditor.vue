@@ -74,7 +74,6 @@ export default defineComponent({
   },
 
   setup(props, ctx) {
-
     const app = ref(null);
 
     const container = ref(null);
