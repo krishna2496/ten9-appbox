@@ -139,7 +139,6 @@ export default defineComponent({
       editor.value = editorUi.value.editor;
       graph.value = editor.value.graph;
       sidebar.value = editorUi.value.sidebar;
-      debugger;
       app.value = createApp(editor.value, container.value);
 
       // Add stencils to the sidebar
