@@ -157,7 +157,7 @@ export default defineComponent({
       document.addEventListener('keydown', onKeydown);
 
       shapeLibraries.value = getShapeLibrariesFromStorage();
-      if (!shapeLibraries.value == null) {
+      if (!shapeLibraries.value) {
         shapeLibraries.value = DEFAULT_SHAPE_LIBRARIES;
         saveShapeLibrariesToStorage(shapeLibraries.value);
       }
