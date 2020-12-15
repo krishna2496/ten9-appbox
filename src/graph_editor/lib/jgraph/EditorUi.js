@@ -2740,10 +2740,21 @@ EditorUi.prototype.initCanvas = function () {
           while (source != null) {
             if (source == graph.container) {
               graph.tooltipHandler.hideTooltip();
-              cursorPosition =
-                cx != null && cy != null
-                  ? new mxPoint(cx, cy)
-                  : new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+
+              if (cx && cy) {
+                cursorPosition = new mxPoint(cx, cy);
+              } else {
+                const {
+                  x: containerX,
+                  y: containerY,
+                } = mxClient.getDocumentContainer().getBoundingClientRect();
+                const mouseX = mxEvent.getClientX(evt);
+                const mouseY = mxEvent.getClientY(evt);
+                const newX = mouseX - containerX;
+                const newY = mouseY - containerY;
+                cursorPosition = new mxPoint(newX, newY);
+              }
+
               forcedZoom = force;
               graph.lazyZoom(up);
               mxEvent.consume(evt);
