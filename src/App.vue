@@ -129,7 +129,6 @@ export default defineComponent({
     }
 
     function saveFile() {
-      //debugger
       // editor.value.editorUi.saveFile();
 
       const xmlData = editor.value.getXmlData();
