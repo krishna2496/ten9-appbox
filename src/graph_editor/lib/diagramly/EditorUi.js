@@ -31,12 +31,18 @@ const {
   mxUtils,
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
+
 const { DiagramPage } = require('./Pages.js');
-const urlParams = {dev: "1",sync: "manual"};
+const { appPages } = require('../jgraph/EditorUi');
+
+// TEN9: TODO: Consolidate all constants
+// const urlParams = {dev: '1', sync: 'manual'};
+const urlParams = {};
 const isLocalStorage = false;
 const STYLE_PATH = 'styles';
+
 var SelectedFile;
-var { appPages } = require('../jgraph/EditorUi');
+
 (function()
 {
 	/**
@@ -1824,7 +1830,7 @@ var { appPages } = require('../jgraph/EditorUi');
 							page.setName(mxResources.get('pageWithNumber', [i + 1]));
 						}
 						this.pages.push(page);
-						appPages.push(page)
+						appPages.push(page);
 						if (urlParams['page-id'] != null && page.getId() == urlParams['page-id'])
 						{
 							selectedPage = page;
@@ -2572,11 +2578,7 @@ var { appPages } = require('../jgraph/EditorUi');
 			oldFile.close();
 		}
 		
-		// TEN9: TODO: Remove this hack which gets the pages tabs to show
-		setTimeout(() => {
-			this.editor.graph.model.clear();
-		},2000)
-		
+		this.editor.graph.model.clear();
 		this.editor.undoManager.clear();
 	
 		var noFile = mxUtils.bind(this, function()
@@ -9431,11 +9433,7 @@ var { appPages } = require('../jgraph/EditorUi');
 			}), false);
 		}
 		
-		// TEN9: TODO: BU: Fix this
-		// TEN9: call init pages after pages gets load
-		setTimeout(() => {
-			this.initPages();
-		}, 2000);
+		this.initPages();
 
 		// Embedded mode
 		if (urlParams['embed'] == '1')
@@ -14085,7 +14083,6 @@ var { appPages } = require('../jgraph/EditorUi');
 	// TEN9: TODO: BU: Review
 	EditorUi.prototype.saveFile = function(forceDialog, success)
 	{
-		debugger;
 		// TEN9
 		//var file = this.getCurrentFile();
 		var file = SelectedFile;
@@ -15456,21 +15453,22 @@ EditorUi.initMinimalTheme = function()
     {
     	return false;
     };
+	
+	// TEN9: TODO: BU: Review - Removed for now to match draw while debugging
+    // // Overridden to ignore tabContainer height for diagramContainer
+    // var editorUiUpdateTabContainer = EditorUi.prototype.updateTabContainer;
     
-    // Overridden to ignore tabContainer height for diagramContainer
-    var editorUiUpdateTabContainer = EditorUi.prototype.updateTabContainer;
-    
-    EditorUi.prototype.updateTabContainer = function()
-    {
-    	if (this.tabContainer != null)
-        {
-        	// Makes room for view zoom menu
-        	this.tabContainer.style.right = '70px';
-        	this.diagramContainer.style.bottom = this.tabContainerHeight + 'px';
-        }
+    // EditorUi.prototype.updateTabContainer = function()
+    // {
+    // 	if (this.tabContainer != null)
+    //     {
+    //     	// Makes room for view zoom menu
+    //     	this.tabContainer.style.right = '70px';
+    //     	this.diagramContainer.style.bottom = this.tabContainerHeight + 'px';
+    //     }
     	
-    	editorUiUpdateTabContainer.apply(this, arguments);
-    };
+    // 	editorUiUpdateTabContainer.apply(this, arguments);
+    // };
 
     // Overridden to update save menu state
 	/**

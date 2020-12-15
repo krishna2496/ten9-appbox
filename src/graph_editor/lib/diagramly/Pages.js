@@ -37,6 +37,7 @@ const {
   mxPopupMenu,
   mxRectangle,
   mxResources,
+  mxRootChange,
   mxStackLayout,
   mxStylesheet,
   mxUtils,
@@ -45,8 +46,11 @@ const {
 
 var { Graph } = require('../jgraph/Graph.js');
 var { FilenameDialog } = require('../jgraph/Editor.js');
+const { appPages } = require('../jgraph/EditorUi.js');
+
 var uiTheme = 'atlas';
 const urlParams = {dev: "1",sync: "manual"};
+
 function DiagramPage(node, id)
 {
 	this.node = node;
@@ -107,12 +111,6 @@ DiagramPage.prototype.setName = function(value)
 	}
 };
 
-// TEN9: TODO: BU: Review
-function mxRootChange(model, root) {
-  this.model = model;
-  this.root = root;
-  this.previous = root;
-}
 /**
  * Change types
  */
@@ -501,14 +499,14 @@ EditorUi.prototype.initPages = function()
 			for (var i = 0; i < changes.length; i++)
 			{
 				// TEN9: TODO: Fix this
-				// if (changes[i] instanceof SelectPage ||
-				// 	changes[i] instanceof RenamePage ||
-				// 	changes[i] instanceof MovePage ||
-				// 	changes[i] instanceof mxRootChange)
-				// {
+				if (changes[i] instanceof SelectPage ||
+					changes[i] instanceof RenamePage ||
+					changes[i] instanceof MovePage ||
+					changes[i] instanceof mxRootChange)
+				{
 					updateTabs();
 					break;
-				//}
+				}
 			}
 		}));
 		
@@ -1219,165 +1217,173 @@ EditorUi.prototype.createTabContainer = function()
 /**
  * Returns true if the given string contains an mxfile.
  */
-// EditorUi.prototype.updateTabContainer = function()
-// {
-// 	if (this.tabContainer != null && this.pages != null)
-// 	{
-// 		var graph = this.editor.graph;
-// 		var wrapper = document.createElement('div');
-// 		wrapper.style.position = 'relative';
-// 		wrapper.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
-// 		wrapper.style.verticalAlign = 'top';
-// 		wrapper.style.height = this.tabContainer.style.height;
-// 		wrapper.style.whiteSpace = 'nowrap';
-// 		wrapper.style.overflow = 'hidden';
-// 		wrapper.style.fontSize = '13px';
-		
-// 		// Allows for negative left margin of first tab
-// 		wrapper.style.marginLeft = '30px';
-		
-// 		// Automatic tab width to match available width
-// 		// TODO: Fix tabWidth in chromeless mode
-// 		var btnWidth = (this.editor.isChromelessView()) ? 29 : 59;
-// 		var tabWidth = Math.min(140, Math.max(20, (this.tabContainer.clientWidth - btnWidth) / this.pages.length) + 1);
-// 		var startIndex = null;
+EditorUi.prototype.updateTabContainer = function()
+{
+    this.pages = appPages;
 
-// 		for (var i = 0; i < this.pages.length; i++)
-// 		{
-// 			// Install drag and drop for page reorder
-// 			(mxUtils.bind(this, function(index, tab)
-// 			{
-// 				if (this.pages[index] == this.currentPage)
-// 				{
-// 					tab.className = 'geActivePage';
-// 					tab.style.backgroundColor = (uiTheme == 'dark') ? '#2a2a2a' : '#fff';
-// 				}
-// 				else
-// 				{
-// 					tab.className = 'geInactivePage';
-// 				}
+	if (this.tabContainer != null && this.pages != null)
+	{
+		var graph = this.editor.graph;
+		var wrapper = document.createElement('div');
+		wrapper.style.position = 'relative';
+		wrapper.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
+		wrapper.style.verticalAlign = 'top';
+		wrapper.style.height = this.tabContainer.style.height;
+		wrapper.style.whiteSpace = 'nowrap';
+		wrapper.style.overflow = 'hidden';
+		wrapper.style.fontSize = '13px';
+		
+		// Allows for negative left margin of first tab
+		wrapper.style.marginLeft = '30px';
+		
+		// Automatic tab width to match available width
+		// TODO: Fix tabWidth in chromeless mode
+		var btnWidth = (this.editor.isChromelessView()) ? 29 : 59;
+		var tabWidth = Math.min(140, Math.max(20, (this.tabContainer.clientWidth - btnWidth) / this.pages.length) + 1);
+		var startIndex = null;
+
+		for (var i = 0; i < this.pages.length; i++)
+		{
+			// TEN9: Initialize this.currentPage since this.currentPage
+			// is not the same as this.currentPage previously initialized
+			if (!this.currentPage) {
+				this.currentPage = this.pages[0];
+			}
+
+			// Install drag and drop for page reorder
+			(mxUtils.bind(this, function(index, tab)
+			{
+				if (this.pages[index] == this.currentPage)
+				{
+					tab.className = 'geActivePage';
+					tab.style.backgroundColor = (uiTheme == 'dark') ? '#2a2a2a' : '#fff';
+				}
+				else
+				{
+					tab.className = 'geInactivePage';
+				}
 				
-// 				tab.setAttribute('draggable', 'true');
+				tab.setAttribute('draggable', 'true');
 				
-// 				mxEvent.addListener(tab, 'dragstart', mxUtils.bind(this, function(evt)
-// 				{
-// 					if (graph.isEnabled())
-// 					{
-// 						// Workaround for no DnD on DIV in FF
-// 						if (mxClient.IS_FF)
-// 						{
-// 							// LATER: Check what triggers a parse as XML on this in FF after drop
-// 							evt.dataTransfer.setData('Text', '<diagram/>');
-// 						}
+				mxEvent.addListener(tab, 'dragstart', mxUtils.bind(this, function(evt)
+				{
+					if (graph.isEnabled())
+					{
+						// Workaround for no DnD on DIV in FF
+						if (mxClient.IS_FF)
+						{
+							// LATER: Check what triggers a parse as XML on this in FF after drop
+							evt.dataTransfer.setData('Text', '<diagram/>');
+						}
 						
-// 						startIndex = index;
-// 					}
-// 					else
-// 					{
-// 						// Blocks event
-// 						mxEvent.consume(evt);
-// 					}
-// 				}));
+						startIndex = index;
+					}
+					else
+					{
+						// Blocks event
+						mxEvent.consume(evt);
+					}
+				}));
 				
-// 				mxEvent.addListener(tab, 'dragend', mxUtils.bind(this, function(evt)
-// 				{
-// 					startIndex = null;
-// 					evt.stopPropagation();
-// 					evt.preventDefault();
-// 				}));
+				mxEvent.addListener(tab, 'dragend', mxUtils.bind(this, function(evt)
+				{
+					startIndex = null;
+					evt.stopPropagation();
+					evt.preventDefault();
+				}));
 				
-// 				mxEvent.addListener(tab, 'dragover', mxUtils.bind(this, function(evt)
-// 				{
-// 					if (startIndex != null)
-// 					{
-// 						evt.dataTransfer.dropEffect = 'move';
-// 					}
+				mxEvent.addListener(tab, 'dragover', mxUtils.bind(this, function(evt)
+				{
+					if (startIndex != null)
+					{
+						evt.dataTransfer.dropEffect = 'move';
+					}
 					
-// 					evt.stopPropagation();
-// 					evt.preventDefault();
-// 				}));
+					evt.stopPropagation();
+					evt.preventDefault();
+				}));
 				
-// 				mxEvent.addListener(tab, 'drop', mxUtils.bind(this, function(evt)
-// 				{
-// 					if (startIndex != null && index != startIndex)
-// 					{
-// 						// LATER: Shift+drag for merge, ctrl+drag for clone 
-// 						this.movePage(startIndex, index);
-// 					}
+				mxEvent.addListener(tab, 'drop', mxUtils.bind(this, function(evt)
+				{
+					if (startIndex != null && index != startIndex)
+					{
+						// LATER: Shift+drag for merge, ctrl+drag for clone 
+						this.movePage(startIndex, index);
+					}
 
-// 					evt.stopPropagation();
-// 					evt.preventDefault();
-// 				}));
+					evt.stopPropagation();
+					evt.preventDefault();
+				}));
 				
-// 				wrapper.appendChild(tab);
-// 			}))(i, this.createTabForPage(this.pages[i], tabWidth, this.pages[i] != this.currentPage, i + 1));
-// 		}
+				wrapper.appendChild(tab);
+			}))(i, this.createTabForPage(this.pages[i], tabWidth, this.pages[i] != this.currentPage, i + 1));
+		}
 		
-// 		this.tabContainer.innerHTML = '';
-// 		this.tabContainer.appendChild(wrapper);
+		this.tabContainer.innerHTML = '';
+		this.tabContainer.appendChild(wrapper);
 		
-// 		// Adds floating menu with all pages and insert option
-// 		var menutab = this.createPageMenuTab();
-// 		this.tabContainer.appendChild(menutab);
-// 		var insertTab = null;
+		// Adds floating menu with all pages and insert option
+		var menutab = this.createPageMenuTab();
+		this.tabContainer.appendChild(menutab);
+		var insertTab = null;
 		
-// 		// Not chromeless and not read-only file
-// 		if (this.isPageInsertTabVisible())
-// 		{
-// 			insertTab = this.createPageInsertTab();
-// 			this.tabContainer.appendChild(insertTab);
-// 		}
+		// Not chromeless and not read-only file
+		if (this.isPageInsertTabVisible())
+		{
+			insertTab = this.createPageInsertTab();
+			this.tabContainer.appendChild(insertTab);
+		}
 
-// 		if (wrapper.clientWidth > this.tabContainer.clientWidth - btnWidth)
-// 		{
-// 			if (insertTab != null)
-// 			{
-// 				insertTab.style.position = 'absolute';
-// 				insertTab.style.right = '0px';
-// 				wrapper.style.marginRight = '30px';
-// 			}
+		if (wrapper.clientWidth > this.tabContainer.clientWidth - btnWidth)
+		{
+			if (insertTab != null)
+			{
+				insertTab.style.position = 'absolute';
+				insertTab.style.right = '0px';
+				wrapper.style.marginRight = '30px';
+			}
 			
-// 			var temp = this.createControlTab(4, '&nbsp;&#10094;&nbsp;');
-// 			temp.style.position = 'absolute';
-// 			temp.style.right = (this.editor.chromeless) ? '29px' : '55px';
-// 			temp.style.fontSize = '13pt';
+			var temp = this.createControlTab(4, '&nbsp;&#10094;&nbsp;');
+			temp.style.position = 'absolute';
+			temp.style.right = (this.editor.chromeless) ? '29px' : '55px';
+			temp.style.fontSize = '13pt';
 			
-// 			this.tabContainer.appendChild(temp);
+			this.tabContainer.appendChild(temp);
 			
-// 			var temp2 = this.createControlTab(4, '&nbsp;&#10095;');
-// 			temp2.style.position = 'absolute';
-// 			temp2.style.right = (this.editor.chromeless) ? '0px' : '29px';
-// 			temp2.style.fontSize = '13pt';
+			var temp2 = this.createControlTab(4, '&nbsp;&#10095;');
+			temp2.style.position = 'absolute';
+			temp2.style.right = (this.editor.chromeless) ? '0px' : '29px';
+			temp2.style.fontSize = '13pt';
 			
-// 			this.tabContainer.appendChild(temp2);
+			this.tabContainer.appendChild(temp2);
 			
-// 			// TODO: Scroll to current page
-// 			var dx = Math.max(0, this.tabContainer.clientWidth - ((this.editor.chromeless) ? 86 : 116));
-// 			wrapper.style.width = dx + 'px';
+			// TODO: Scroll to current page
+			var dx = Math.max(0, this.tabContainer.clientWidth - ((this.editor.chromeless) ? 86 : 116));
+			wrapper.style.width = dx + 'px';
 			
-// 			var fade = 50;
+			var fade = 50;
 			
-// 			mxEvent.addListener(temp, 'click', mxUtils.bind(this, function(evt)
-// 			{
-// 				wrapper.scrollLeft -= Math.max(20, dx - 20);
-// 				mxUtils.setOpacity(temp, (wrapper.scrollLeft > 0) ? 100 : fade);
-// 				mxUtils.setOpacity(temp2, (wrapper.scrollLeft < wrapper.scrollWidth - wrapper.clientWidth) ? 100 : fade);
-// 				mxEvent.consume(evt);
-// 			}));
+			mxEvent.addListener(temp, 'click', mxUtils.bind(this, function(evt)
+			{
+				wrapper.scrollLeft -= Math.max(20, dx - 20);
+				mxUtils.setOpacity(temp, (wrapper.scrollLeft > 0) ? 100 : fade);
+				mxUtils.setOpacity(temp2, (wrapper.scrollLeft < wrapper.scrollWidth - wrapper.clientWidth) ? 100 : fade);
+				mxEvent.consume(evt);
+			}));
 		
-// 			mxUtils.setOpacity(temp, (wrapper.scrollLeft > 0) ? 100 : fade);
-// 			mxUtils.setOpacity(temp2, (wrapper.scrollLeft < wrapper.scrollWidth - wrapper.clientWidth) ? 100 : fade);
+			mxUtils.setOpacity(temp, (wrapper.scrollLeft > 0) ? 100 : fade);
+			mxUtils.setOpacity(temp2, (wrapper.scrollLeft < wrapper.scrollWidth - wrapper.clientWidth) ? 100 : fade);
 
-// 			mxEvent.addListener(temp2, 'click', mxUtils.bind(this, function(evt)
-// 			{
-// 				wrapper.scrollLeft += Math.max(20, dx - 20);
-// 				mxUtils.setOpacity(temp, (wrapper.scrollLeft > 0) ? 100 : fade);
-// 				mxUtils.setOpacity(temp2, (wrapper.scrollLeft < wrapper.scrollWidth - wrapper.clientWidth) ? 100 : fade);
-// 				mxEvent.consume(evt);
-// 			}));
-// 		}
-// 	}
-// };
+			mxEvent.addListener(temp2, 'click', mxUtils.bind(this, function(evt)
+			{
+				wrapper.scrollLeft += Math.max(20, dx - 20);
+				mxUtils.setOpacity(temp, (wrapper.scrollLeft > 0) ? 100 : fade);
+				mxUtils.setOpacity(temp2, (wrapper.scrollLeft < wrapper.scrollWidth - wrapper.clientWidth) ? 100 : fade);
+				mxEvent.consume(evt);
+			}));
+		}
+	}
+};
 
 /**
  * Returns true if the given string contains an mxfile.
@@ -1404,7 +1410,7 @@ EditorUi.prototype.createTab = function(hoverEnabled)
 	tab.style.textAlign = 'center';
 	tab.style.marginLeft = '-1px';
 	tab.style.height = this.tabContainer.clientHeight + 'px';
-	tab.style.padding = '12px 4px 8px 4px';
+	tab.style.padding = '9px 4px 8px 4px';
 	tab.style.border = (uiTheme == 'dark') ? '1px solid #505759' : '1px solid #e8eaed';
 	tab.style.borderTopStyle = 'none';
 	tab.style.borderBottomStyle = 'none';

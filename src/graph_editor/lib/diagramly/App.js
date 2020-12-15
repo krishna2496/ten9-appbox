@@ -226,9 +226,6 @@ App = function(editor, container, lightbox)
 	}
 
 	this.load();
-
-	// TEN9: call main function\
-	this.defaultFilename = "Untitled Diagram";
 };
 /**
  * Timeout error
@@ -2837,6 +2834,9 @@ App.prototype.showAlert = function(message)
  */
 App.prototype.start = function()
 {
+	// TEN9: Init default filename here before createFile
+	this.defaultFilename = mxResources.get('untitledDiagram');
+
 	if (this.bg != null && this.bg.parentNode != null)
 	{
 		this.bg.parentNode.removeChild(this.bg);
@@ -3063,7 +3063,8 @@ App.prototype.start = function()
 									}
 								}));
 							}
-							else if (urlParams['splash'] != '0')
+							// TEN9: Default splash to false to not choose a file
+							else if (false && urlParams['splash'] != '0')
 							{
 								this.loadFile();
 							}

@@ -85265,6 +85265,7 @@ module.exports = {
   mxRectangleShape,
   mxResources,
   mxRhombus,
+  mxRootChange,
   mxRubberband,
   mxSelectionCellsHandler,
   mxShape,
