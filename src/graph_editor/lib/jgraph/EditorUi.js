@@ -3845,7 +3845,6 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
   }
 };
 
-
 /**
  * Creates the required containers.
  */
@@ -5149,7 +5148,6 @@ EditorUi.prototype.destroy = function () {
     }
   }
 };
-
 
 // TEN9: Added exports
 module.exports = {
