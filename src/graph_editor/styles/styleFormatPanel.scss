@@ -1,0 +1,51 @@
+.geToolbarContainer {
+  &.styleFormatPanel {
+    font-weight: normal;
+    white-space: nowrap;
+    position: relative;
+    padding: 0;
+    margin: 2px 0;
+
+    .linewidth__input {
+      text-align: right;
+      margin-top: 2px;
+      width: 41px;
+
+      position: absolute;
+      left: 148px;
+      height: 24px;
+
+      &.quirks {
+        height: 17px;
+      }
+    }
+
+    .linewidth__stepper {
+      margin-top: 2px;
+
+      left: 190px;
+    }
+
+    .altInput {
+      position: absolute;
+      left: 148px;
+      height: 24px;
+      &.quirks {
+        height: 17px;
+      }
+    }
+
+    .linewidth__altstepper {
+      margin-top: 2px;
+      left: 190px;
+    }
+  }
+}
+
+.edgeStyle__dropdown {
+  .geIcon {
+    position: relative;
+    top: 3px;
+    left: 3px;
+  }
+}

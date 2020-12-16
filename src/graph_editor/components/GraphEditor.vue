@@ -51,7 +51,7 @@ interface InsertLinkInfo {
   noTruncateTitle?: boolean;
 }
 
-import '../styles/grapheditor.scss';
+import '../styles/main.scss';
 
 export default defineComponent({
   name: 'GraphEditor',

@@ -800,8 +800,9 @@ BaseFormatPanel.prototype.installInputHandler = function (
  */
 BaseFormatPanel.prototype.createPanel = function () {
   var div = document.createElement('div');
-  div.className = 'geFormatSection';
-  div.style.padding = '12px 0px 12px 18px';
+
+  // TEN9: Moved styles to scss
+  div.className = 'geFormatSection panelContainer';
 
   return div;
 };
@@ -834,31 +835,19 @@ BaseFormatPanel.prototype.createStepper = function (
   isFloat,
 ) {
   step = step != null ? step : 1;
-  height = height != null ? height : 8;
-
-  if (mxClient.IS_QUIRKS) {
-    height = height - 2;
-  } else if (mxClient.IS_MT || document.documentMode >= 8) {
-    height = height + 1;
-  }
 
   var stepper = document.createElement('div');
-  mxUtils.setPrefixedStyle(stepper.style, 'borderRadius', '3px');
-  stepper.style.border = '1px solid rgb(192, 192, 192)';
-  stepper.style.position = 'absolute';
+  // TEN9: Moved to scss files.
+  stepper.classList.add('stepper');
 
   var up = document.createElement('div');
-  up.style.borderBottom = '1px solid rgb(192, 192, 192)';
-  up.style.position = 'relative';
-  up.style.height = height + 'px';
-  up.style.width = '10px';
-  up.className = 'geBtnUp';
+  // TEN9: Moved to scss files.
+  up.className = 'geBtnUp arrow up';
   stepper.appendChild(up);
 
   var down = up.cloneNode(false);
-  down.style.border = 'none';
-  down.style.height = height + 'px';
-  down.className = 'geBtnDown';
+  // TEN9: Moved to scss files.
+  down.className = 'geBtnDown arrow down';
   stepper.appendChild(down);
 
   mxEvent.addListener(down, 'click', function (evt) {
@@ -1308,39 +1297,31 @@ BaseFormatPanel.prototype.createCellColorOption = function (
  *
  */
 BaseFormatPanel.prototype.addArrow = function (elt, height) {
-  height = height != null ? height : 10;
+  // height = height != null ? height : 10;
 
   var arrow = document.createElement('div');
-  arrow.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
-  arrow.style.padding = '6px';
-  arrow.style.paddingRight = '4px';
-
-  // TEN9: Updates for arrow dropdown
-  arrow.style.paddingTop = '4px';
-  arrow.style.paddingBottom = '0px';
-  arrow.style.right = '0';
-
-  var m = 10 - height;
-
-  if (m == 2) {
-    arrow.style.paddingTop = 6 + 'px';
-  } else if (m > 0) {
-    arrow.style.paddingTop = 6 - m + 'px';
-  } else {
-    arrow.style.marginTop = '-2px';
-  }
+  // TEN9: Moved styles to formatpanel.scss
+  arrow.classList.add('dropdown-arrow');
 
   // TEN9: Updates for arrow dropdown
   // arrow.style.height = height + 'px';
-  arrow.style.borderLeft = '1px solid #a0a0a0';
+  // arrow.style.borderLeft = '1px solid #a0a0a0';
   // TEN9: Add explicit vertical-align:baseline to avoid default img style from bootstrap
-  arrow.innerHTML =
-    '<img border="0" src="' +
-    (mxClient.IS_SVG
-      ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHBJREFUeNpidHB2ZyAGsACxDRBPIKCuA6TwCBB/h2rABu4A8SYmKCcXiP/iUFgAxL9gCi8A8SwsirZCMQMTkmANEH9E4v+CmsaArvAdyNFI/FlQ92EoBIE+qCRIUz168DBgsU4OqhinQpgHMABAgAEALY4XLIsJ20oAAAAASUVORK5CYII='
-      : IMAGE_PATH + '/dropdown.png') +
-    '" style="margin-bottom:4px;vertical-align:baseline">';
-  mxUtils.setOpacity(arrow, 70);
+  const dropdownArrowImage = document.createElement('img');
+  dropdownArrowImage.setAttribute(
+    'src',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHBJREFUeNpidHB2ZyAGsACxDRBPIKCuA6TwCBB/h2rABu4A8SYmKCcXiP/iUFgAxL9gCi8A8SwsirZCMQMTkmANEH9E4v+CmsaArvAdyNFI/FlQ92EoBIE+qCRIUz168DBgsU4OqhinQpgHMABAgAEALY4XLIsJ20oAAAAASUVORK5CYII=',
+  );
+  arrow.appendChild(dropdownArrowImage);
+
+  // arrow.innerHTML =
+  //   '<img border="0" src="' +
+  //   (mxClient.IS_SVG
+  //     ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHBJREFUeNpidHB2ZyAGsACxDRBPIKCuA6TwCBB/h2rABu4A8SYmKCcXiP/iUFgAxL9gCi8A8SwsirZCMQMTkmANEH9E4v+CmsaArvAdyNFI/FlQ92EoBIE+qCRIUz168DBgsU4OqhinQpgHMABAgAEALY4XLIsJ20oAAAAASUVORK5CYII='
+  //     : IMAGE_PATH + '/dropdown.png') +
+  //   '" style="margin-bottom:4px;vertical-align:baseline">';
+
+  // mxUtils.setOpacity(arrow, 70);
 
   var symbol = elt.getElementsByTagName('div')[0];
 
@@ -1955,7 +1936,8 @@ ArrangePanel.prototype.addAlign = function (div) {
   stylePanel.style.position = 'relative';
   stylePanel.style.paddingLeft = '0px';
   stylePanel.style.borderWidth = '0px';
-  stylePanel.className = 'geToolbarContainer';
+  // TEN9: Added class to toolbar
+  stylePanel.className = 'geToolbarContainer arrangePanel';
 
   if (mxClient.IS_QUIRKS) {
     div.style.height = '60px';
@@ -2817,7 +2799,8 @@ TextFormatPanel.prototype.addFont = function (container) {
   stylePanel.style.position = 'relative';
   stylePanel.style.marginLeft = '-2px';
   stylePanel.style.borderWidth = '0px';
-  stylePanel.className = 'geToolbarContainer';
+  // TEN9: Added class to toolbar
+  stylePanel.className = 'geToolbarContainer textFormatPanel';
 
   if (mxClient.IS_QUIRKS) {
     stylePanel.style.display = 'block';
@@ -5042,13 +5025,8 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   // Used if only edges selected
   var stylePanel = colorPanel.cloneNode(false);
-  stylePanel.style.fontWeight = 'normal';
-  stylePanel.style.whiteSpace = 'nowrap';
-  stylePanel.style.position = 'relative';
-  stylePanel.style.paddingLeft = '16px';
-  stylePanel.style.marginBottom = '2px';
-  stylePanel.style.marginTop = '2px';
-  stylePanel.className = 'geToolbarContainer';
+  // TEN9: Added class to toolbar
+  stylePanel.className = 'geToolbarContainer styleFormatPanel';
 
   var addItem = mxUtils.bind(this, function (menu, width, cssName, keys, values) {
     var item = this.editorUi.menus.styleChange(menu, '', keys, values, 'geIcon', null);
@@ -5059,8 +5037,10 @@ StyleFormatPanel.prototype.addStroke = function (container) {
     pat.style.borderBottom = '1px ' + cssName + ' ' + this.defaultStrokeColor;
     pat.style.paddingTop = '6px';
 
-    item.firstChild.firstChild.style.padding = '0px 4px 0px 4px';
-    item.firstChild.firstChild.style.width = width + 'px';
+    // TEN9: Compensate for padding due to box-sizing
+    const padding = 4;
+    item.firstChild.firstChild.style.padding = '0 ' + padding + 'px';
+    item.firstChild.firstChild.style.width = width + padding * 2 + 'px';
     item.firstChild.firstChild.appendChild(pat);
 
     return item;
@@ -5109,6 +5089,7 @@ StyleFormatPanel.prototype.addStroke = function (container) {
       ).setAttribute('title', mxResources.get('dotted') + ' (3)');
     }),
   );
+  pattern.classList.add('edgeStyle__dropdown');
 
   // Used for mixed selection (vertices and edges)
   var altStylePanel = stylePanel.cloneNode(false);
@@ -5237,14 +5218,15 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   // Stroke width
   var input = document.createElement('input');
-  input.style.textAlign = 'right';
-  input.style.marginTop = '2px';
-  input.style.width = '41px';
+  // TEN9: Moved styles to styleFormatPanel.scss
+  input.className = 'linewidth__input';
   input.setAttribute('title', mxResources.get('linewidth'));
 
   stylePanel.appendChild(input);
 
   var altInput = input.cloneNode(true);
+  // TEN9: Moved styles to styleFormatPanel.scss
+  altInput.classList.add('altInput');
   altStylePanel.appendChild(altInput);
 
   function update(evt) {
@@ -5297,31 +5279,19 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   var stepper = this.createStepper(input, update, 1, 9);
   stepper.style.display = input.style.display;
-  stepper.style.marginTop = '2px';
+  // TEN9: Moved styles to styleFormatPanel.scss
+  stepper.classList.add('linewidth__stepper');
   stylePanel.appendChild(stepper);
 
   var altStepper = this.createStepper(altInput, altUpdate, 1, 9);
   altStepper.style.display = altInput.style.display;
-  altStepper.style.marginTop = '2px';
+  // TEN9: Moved styles to styleFormatPanel.scss
+  altStepper.classList.add('linewidth__altstepper');
   altStylePanel.appendChild(altStepper);
 
-  if (!mxClient.IS_QUIRKS) {
-    input.style.position = 'absolute';
-    // TEN9: Increase Height of the Line Weight text box
-    // input.style.height = '15px';
-    input.style.height = '25px';
-    input.style.left = '141px';
-    stepper.style.left = '190px';
-
-    altInput.style.position = 'absolute';
-    altInput.style.left = '141px';
-    // TEN9: increase textbox height for line format
-    // altInput.style.height = '15px';
-    altInput.style.height = '24px';
-    altStepper.style.left = '190px';
-  } else {
-    input.style.height = '17px';
-    altInput.style.height = '17px';
+  // TEN9: Moved styles to scss. styleFormatPanel.scss
+  if (mxClient.IS_QUIRKS) {
+    input.classList.add('quirks');
   }
 
   mxEvent.addListener(input, 'blur', update);
