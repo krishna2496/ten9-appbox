@@ -45,7 +45,7 @@ const {
 const urlParams = {dev: "1",sync: "manual"};
 const isLocalStorage = false;
 const RESOURCE_BASE = '../../../../public/resources/dia';
-var uiTheme = 'atlas';
+var uiTheme = null;
 
 DriveFile = function() {};
 
@@ -141,25 +141,26 @@ DriveFile = function() {};
 			dlg.init();
 		});
 
-		editorUi.actions.put('insertTemplate', new Action(mxResources.get('template') + '...', function()
-		{
-			var dlg = new NewDialog(editorUi, null, false, function(xml)
-			{
-				editorUi.hideDialog();
+		// TEN9: Disable for our app
+		// editorUi.actions.put('insertTemplate', new Action(mxResources.get('template') + '...', function()
+		// {
+		// 	var dlg = new NewDialog(editorUi, null, false, function(xml)
+		// 	{
+		// 		editorUi.hideDialog();
 				
-				if (xml != null)
-				{
-					var insertPoint = editorUi.editor.graph.getFreeInsertPoint();
-					graph.setSelectionCells(editorUi.importXml(xml,
-						Math.max(insertPoint.x, 20),
-						Math.max(insertPoint.y, 20), true));
-					graph.scrollCellToVisible(graph.getSelectionCell());
-				}
-			}, null, null, null, null, null, null, null, null, null, null,
-				false, mxResources.get('insert'));
+		// 		if (xml != null)
+		// 		{
+		// 			var insertPoint = editorUi.editor.graph.getFreeInsertPoint();
+		// 			graph.setSelectionCells(editorUi.importXml(xml,
+		// 				Math.max(insertPoint.x, 20),
+		// 				Math.max(insertPoint.y, 20), true));
+		// 			graph.scrollCellToVisible(graph.getSelectionCell());
+		// 		}
+		// 	}, null, null, null, null, null, null, null, null, null, null,
+		// 		false, mxResources.get('insert'));
 
-			editorUi.showDialog(dlg.container, 620, 440, true, true);
-		})).isEnabled = isGraphEnabled;
+		// 	editorUi.showDialog(dlg.container, 620, 440, true, true);
+		// })).isEnabled = isGraphEnabled;
 		
 		var pointAction = editorUi.actions.addAction('points', function()
 		{
@@ -685,6 +686,7 @@ DriveFile = function() {};
 		}));
 		action.setToggleAction(true);
 		action.setSelectedCallback(function() { return graph.shadowVisible; });
+		action.isEnabled = isGraphEnabled;
 
 		var showingAbout = false;
 		
@@ -745,29 +747,30 @@ DriveFile = function() {};
 			editorUi.openLink('https://get.diagrams.net/');
 		});
 		
-		action = editorUi.actions.addAction('tags...', mxUtils.bind(this, function()
-		{
-			if (this.tagsWindow == null)
-			{
-				this.tagsWindow = new TagsWindow(editorUi, document.body.offsetWidth - 380, 230, 300, 120);
-				this.tagsWindow.window.addListener('show', function()
-				{
-					editorUi.fireEvent(new mxEventObject('tags'));
-				});
-				this.tagsWindow.window.addListener('hide', function()
-				{
-					editorUi.fireEvent(new mxEventObject('tags'));
-				});
-				this.tagsWindow.window.setVisible(true);
-				editorUi.fireEvent(new mxEventObject('tags'));
-			}
-			else
-			{
-				this.tagsWindow.window.setVisible(!this.tagsWindow.window.isVisible());
-			}
-		}));
-		action.setToggleAction(true);
-		action.setSelectedCallback(mxUtils.bind(this, function() { return this.tagsWindow != null && this.tagsWindow.window.isVisible(); }));
+		// TEN9: We don't want Tags... for our app
+		// action = editorUi.actions.addAction('tags...', mxUtils.bind(this, function()
+		// {
+		// 	if (this.tagsWindow == null)
+		// 	{
+		// 		this.tagsWindow = new TagsWindow(editorUi, document.body.offsetWidth - 380, 230, 300, 120);
+		// 		this.tagsWindow.window.addListener('show', function()
+		// 		{
+		// 			editorUi.fireEvent(new mxEventObject('tags'));
+		// 		});
+		// 		this.tagsWindow.window.addListener('hide', function()
+		// 		{
+		// 			editorUi.fireEvent(new mxEventObject('tags'));
+		// 		});
+		// 		this.tagsWindow.window.setVisible(true);
+		// 		editorUi.fireEvent(new mxEventObject('tags'));
+		// 	}
+		// 	else
+		// 	{
+		// 		this.tagsWindow.window.setVisible(!this.tagsWindow.window.isVisible());
+		// 	}
+		// }));
+		// action.setToggleAction(true);
+		// action.setSelectedCallback(mxUtils.bind(this, function() { return this.tagsWindow != null && this.tagsWindow.window.isVisible(); }));
 		
 		action = editorUi.actions.addAction('find...', mxUtils.bind(this, function()
 		{
@@ -1051,7 +1054,8 @@ DriveFile = function() {};
 		{
 			layoutMenuFunct.apply(this, arguments);
 
-			menu.addItem(mxResources.get('orgChart'), null, function()
+			// TEN9: Skip any orgchart
+			false && menu.addItem(mxResources.get('orgChart'), null, function()
 			{
 				var branchOptimizer = null, parentChildSpacingVal = 20, siblingSpacingVal = 20, notExecuted = true;
 				
@@ -1200,24 +1204,25 @@ DriveFile = function() {};
 				editorUi.showDialog(dlg.container, 355, 125, true, true);
 			}, parent, null, isGraphEnabled());
 						
-			menu.addSeparator(parent);
+			// TEN9: Disabled for our app
+			// menu.addSeparator(parent);
 		
-			menu.addItem(mxResources.get('parallels'), null, mxUtils.bind(this, function()
-			{
-				// Keeps parallel edges apart
-				var layout = new mxParallelEdgeLayout(graph);
-				layout.checkOverlap = true;
-				layout.spacing = 20;
+			// menu.addItem(mxResources.get('parallels'), null, mxUtils.bind(this, function()
+			// {
+			// 	// Keeps parallel edges apart
+			// 	var layout = new mxParallelEdgeLayout(graph);
+			// 	layout.checkOverlap = true;
+			// 	layout.spacing = 20;
 				
-	    		editorUi.executeLayout(function()
-	    		{
-	    			layout.execute(graph.getDefaultParent(), (!graph.isSelectionEmpty()) ?
-	    				graph.getSelectionCells() : null);
-	    		}, false);
-			}), parent);
+	    	// 	editorUi.executeLayout(function()
+	    	// 	{
+	    	// 		layout.execute(graph.getDefaultParent(), (!graph.isSelectionEmpty()) ?
+	    	// 			graph.getSelectionCells() : null);
+	    	// 	}, false);
+			// }), parent);
 			
-			menu.addSeparator(parent);
-			editorUi.menus.addMenuItem(menu, 'runLayout', parent, null, null, mxResources.get('apply') + '...');
+			// menu.addSeparator(parent);
+			// editorUi.menus.addMenuItem(menu, 'runLayout', parent, null, null, mxResources.get('apply') + '...');
 		};
 		
 		this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
@@ -1912,20 +1917,21 @@ DriveFile = function() {};
 			});
 		}
 		
-		var action = editorUi.actions.addAction('search', function()
-		{
-			var visible = editorUi.sidebar.isEntryVisible('search');
-			editorUi.sidebar.showPalette('search', !visible);
+		// TEN9: Always show search for our app
+		// var action = editorUi.actions.addAction('search', function()
+		// {
+		// 	var visible = editorUi.sidebar.isEntryVisible('search');
+		// 	editorUi.sidebar.showPalette('search', !visible);
 			
-			if (isLocalStorage)
-			{
-				mxSettings.settings.search = !visible;
-				mxSettings.save();
-			}
-		});
+		// 	if (isLocalStorage)
+		// 	{
+		// 		mxSettings.settings.search = !visible;
+		// 		mxSettings.save();
+		// 	}
+		// });
 		
-		action.setToggleAction(true);
-		action.setSelectedCallback(function() { return editorUi.sidebar.isEntryVisible('search'); });
+		// action.setToggleAction(true);
+		// action.setSelectedCallback(function() { return editorUi.sidebar.isEntryVisible('search'); });
 		
 		if (urlParams['embed'] == '1')
 		{
@@ -2705,33 +2711,36 @@ DriveFile = function() {};
 		{
 			this.addMenuItems(menu, ['insertRectangle', 'insertEllipse',
 				'insertRhombus', '-', 'insertText', 'insertLink', '-',
-				'createShape', 'insertFreehand', '-', 'insertImage'], parent);
+				// TEN9: Disabling items for our app
+				/* 'createShape', 'insertFreehand', '-', */ 'insertImage'], parent);
 
 			if (editorUi.insertTemplateEnabled && !editorUi.isOffline())
 			{
 				this.addMenuItems(menu, ['insertTemplate'], parent);
 			}
 			
-			menu.addSeparator(parent);
-			this.addSubmenu('insertLayout', menu, parent, mxResources.get('layout'));
-			this.addSubmenu('insertAdvanced', menu, parent, mxResources.get('advanced'));
+			// TEN9: Disabling for our app
+			// menu.addSeparator(parent);
+			// this.addSubmenu('insertLayout', menu, parent, mxResources.get('layout'));
+			// this.addSubmenu('insertAdvanced', menu, parent, mxResources.get('advanced'));
 		}))).isEnabled = isGraphEnabled;
 
-		this.put('insertLayout', new Menu(mxUtils.bind(this, function(menu, parent)
-		{
-			addInsertMenuItems(menu, parent, ['horizontalFlow', 'verticalFlow', '-', 'horizontalTree',
-				'verticalTree', 'radialTree', '-', 'organic', 'circle']);
-		})));
+		// TEN9: Disabling for our app
+		// this.put('insertLayout', new Menu(mxUtils.bind(this, function(menu, parent)
+		// {
+		// 	addInsertMenuItems(menu, parent, ['horizontalFlow', 'verticalFlow', '-', 'horizontalTree',
+		// 		'verticalTree', 'radialTree', '-', 'organic', 'circle']);
+		// })));
 
-        this.put('insertAdvanced', new Menu(mxUtils.bind(this, function(menu, parent)
-        {
-			addInsertMenuItems(menu, parent, ['fromText', 'plantUml', 'mermaid', '-', 'formatSql']);
+        // this.put('insertAdvanced', new Menu(mxUtils.bind(this, function(menu, parent)
+        // {
+		// 	addInsertMenuItems(menu, parent, ['fromText', 'plantUml', 'mermaid', '-', 'formatSql']);
 			
-			menu.addItem(mxResources.get('csv') + '...', null, function()
-			{
-				editorUi.showImportCsvDialog();
-			}, parent, null, isGraphEnabled());
-        })));
+		// 	menu.addItem(mxResources.get('csv') + '...', null, function()
+		// 	{
+		// 		editorUi.showImportCsvDialog();
+		// 	}, parent, null, isGraphEnabled());
+        // })));
         
 		this.put('openRecent', new Menu(function(menu, parent)
 		{
@@ -3176,8 +3185,9 @@ DriveFile = function() {};
 				this.addMenuItems(menu, ['copyAsImage']);
 			}
 			
+			// TEN9: We don't want Edit Geometry dialog for our app
 			this.addMenuItems(menu, ['paste', 'delete', '-', 'duplicate', '-', 'find', '-', 'editData', 'editTooltip', '-',
-				 'editStyle',  'editGeometry', '-', 'edit', '-', 'editLink', 'openLink', '-',
+				 'editStyle',  /* 'editGeometry' */, '-', 'edit', '-', 'editLink', 'openLink', '-',
                  'selectVertices', 'selectEdges', 'selectAll', 'selectNone', '-', 'lockUnlock']);
 		})));
 
@@ -3547,13 +3557,14 @@ DriveFile = function() {};
 		// 	}
 		// })));
 		
+		// TEN9: No file menu for our app
 		this.put(
 			'file',
 			new Menu(
 			  mxUtils.bind(this, function (menu, parent) {
 				// TEN9: Pare down the file list to what we need
 				// this.addMenuItems(menu, ['new', 'open', '-', 'save', 'saveAs', '-', 'import', 'export', '-', 'pageSetup', 'print'], parent);
-				this.addMenuItems(menu, ['export', '-', 'pageSetup', 'print'], parent);
+				this.addMenuItems(menu, ['print'], parent);
 			  }),
 			),
 		  );

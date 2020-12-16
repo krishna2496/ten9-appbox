@@ -102,6 +102,9 @@ export default defineComponent({
 
     function setGraphEnabled(enabled: boolean) {
       editorUi.value.setEnabled(enabled);
+      if (!enabled) {
+        graph.value.clearSelection();
+      }
     }
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
@@ -138,7 +141,7 @@ export default defineComponent({
       editor.value = editorUi.value.editor;
       graph.value = editor.value.graph;
       sidebar.value = editorUi.value.sidebar;
-      app.value = createApp(editor.value, container.value);
+      app.value = createApp(editorUi.value, editor.value, container.value);
 
       // Add stencils to the sidebar
       sidebar.value.showEntries(props.shapeLibraries);

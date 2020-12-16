@@ -48,8 +48,7 @@ var { Graph } = require('../jgraph/Graph.js');
 var { FilenameDialog } = require('../jgraph/Editor.js');
 const { appPages } = require('../jgraph/EditorUi.js');
 const graphUtils = require('../jgraph/graph_utils.js');
-const { every } = require('lodash');
-var uiTheme = 'atlas';
+var uiTheme = null;
 const urlParams = {dev: "1",sync: "manual"};
 
 function DiagramPage(node, id)

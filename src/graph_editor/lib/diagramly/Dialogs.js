@@ -35,7 +35,7 @@ const {
 const { Dialog, FilenameDialog } = require('../jgraph/Editor.js');
 // TEN9: Consolidate variables
 const IMAGE_PATH = '/images';
-var uiTheme = 'atlas';
+var uiTheme = null;
 const urlParams = {dev: "1",sync: "manual"};
 
 var StorageDialog = function(editorUi, fn, rowLimit)
@@ -1888,9 +1888,10 @@ var ParseDialog = function(editorUi, title, defaultType)
 		}
 		else if (type == 'mermaid')
 		{
+            // TEN9: TODO: BU: Get spinners to work
             // TEN9: remove spinner code
-			// if (editorUi.spinner.spin(document.body, mxResources.get('inserting')))
-			// {
+			if (editorUi.spinner.spin(document.body, mxResources.get('inserting')))
+			{
 				var graph = editorUi.editor.graph;
 				
 				editorUi.generateMermaidImage(text, format, function(data, w, h)
@@ -1923,7 +1924,7 @@ var ParseDialog = function(editorUi, title, defaultType)
 				{
 					editorUi.handleError(e);
 				});
-			//}
+			}
 		}
 		else if (type == 'table')
 		{
@@ -3238,14 +3239,16 @@ var NewDialog = function(editorUi, compact, showName, callback, createOnly, canc
 						
 						node = node.nextSibling;
 					}
-                    
+					
+            		// TEN9: TODO: BU: Get spinners to work
                     // TEN9: remove spinner code
 					//spinner.stop();
 					initUi();
 				}
 			});
 		};
-        
+		
+        // TEN9: TODO: BU: Get spinners to work		
         // TEN9: remove spinner code
 		//spinner.spin(div);
 		
@@ -4021,16 +4024,18 @@ var ImageDialog = function(editorUi, title, initialValue, fn, ignoreExisting, co
 		
 		if (!editorUi.isOffline() || (dataUri && typeof chrome === 'undefined'))
 		{
+            // TEN9: TODO: BU: Get spinners to work
             // TEN9: remove spinner code
-            //if (newValue.length > 0 && editorUi.spinner.spin(document.body, mxResources.get('inserting')))
-            if (newValue.length > 0)
+            if (newValue.length > 0 && editorUi.spinner.spin(document.body, mxResources.get('inserting')))
+            // if (newValue.length > 0)
 			{
 				var maxSize = 520;
 				
 				editorUi.loadImage(newValue, function(img)
 				{
+		            // TEN9: TODO: BU: Get spinners to work
                     // TEN9: remove spinner code
-					//editorUi.spinner.stop();
+					editorUi.spinner.stop();
 					editorUi.hideDialog();
 					var s = (resize === false) ? 1 :
 						(w != null && h != null) ? Math.max(w / img.width, h / img.height) :
@@ -4564,19 +4569,20 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn, showPages)
 	btns.style.marginTop = '20px';
 	btns.style.textAlign = 'center';
 	
-	var helpBtn = mxUtils.button(mxResources.get('help'), function()
-	{
-		editorUi.openLink('https://desk.draw.io/support/solutions/articles/16000080137');
-	});
+	// TEN9: No Help for our app
+	// var helpBtn = mxUtils.button(mxResources.get('help'), function()
+	// {
+	// 	editorUi.openLink('https://desk.draw.io/support/solutions/articles/16000080137');
+	// });
 
-	helpBtn.style.verticalAlign = 'middle';
-	helpBtn.className = 'geBtn';
-	btns.appendChild(helpBtn);
+	// helpBtn.style.verticalAlign = 'middle';
+	// helpBtn.className = 'geBtn';
+	// btns.appendChild(helpBtn);
 
-	if (editorUi.isOffline() && !mxClient.IS_CHROMEAPP)
-	{
-		helpBtn.style.display = 'none';
-	}
+	// if (editorUi.isOffline() && !mxClient.IS_CHROMEAPP)
+	// {
+	// 	helpBtn.style.display = 'none';
+	// }
 	
 	var cancelBtn = mxUtils.button(mxResources.get('cancel'), function()
 	{
@@ -6045,11 +6051,12 @@ var FindWindow = function(ui, x, y, w, h)
 	mxUtils.write(regexLabel, mxResources.get('regularExpression'));
 	div.appendChild(regexLabel);
 	
-    var help = ui.menus.createHelpLink('https://desk.draw.io/support/solutions/articles/16000088250');
-    help.style.position = 'relative';
-    help.style.marginLeft = '6px';
-    help.style.top = '-1px';
-    div.appendChild(help);
+	// TEN9: No Help for our app
+    // var help = ui.menus.createHelpLink('https://desk.draw.io/support/solutions/articles/16000088250');
+    // help.style.position = 'relative';
+    // help.style.marginLeft = '6px';
+    // help.style.top = '-1px';
+    // div.appendChild(help);
     
 	mxUtils.br(div);
 
@@ -8769,13 +8776,14 @@ var EditShapeDialog = function(editorUi, cell, title, w, h)
 	
 	if (!editorUi.isOffline())
 	{
-		var helpBtn = mxUtils.button(mxResources.get('help'), function()
-		{
-			editorUi.openLink('https://desk.draw.io/support/solutions/articles/16000052874');
-		});
+		// TEN9: No Help for our app
+		// var helpBtn = mxUtils.button(mxResources.get('help'), function()
+		// {
+		// 	editorUi.openLink('https://desk.draw.io/support/solutions/articles/16000052874');
+		// });
 		
-		helpBtn.className = 'geBtn';
-		td.appendChild(helpBtn);
+		// helpBtn.className = 'geBtn';
+		// td.appendChild(helpBtn);
 	}
 	
 	var cancelBtn = mxUtils.button(mxResources.get('cancel'), function()
