@@ -85253,6 +85253,7 @@ module.exports = {
   mxObjectCodec,
   mxObjectIdentity,
   mxOutline,
+  mxParallelEdgeLayout,
   mxPanningHandler,
   mxPerimeter,
   mxPoint,

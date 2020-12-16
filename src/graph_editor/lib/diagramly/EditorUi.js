@@ -32,9 +32,10 @@ const {
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
 
+const { mxSettings } = require('./Settings.js');
 const { DiagramPage } = require('./Pages.js');
-const { appPages } = require('../jgraph/EditorUi');
-
+const { appPages, ChangePageSetup } = require('../jgraph/EditorUi.js');
+const { BackgroundImageDialog, ImageDialog, LinkDialog } = require('./Dialogs.js');
 // TEN9: TODO: Consolidate all constants
 // const urlParams = {dev: '1', sync: 'manual'};
 const urlParams = {};
@@ -8130,8 +8131,9 @@ var SelectedFile;
 				graph.setSelectionCells(cells);
 			});
 			
-			if (this.spinner.spin(document.body, mxResources.get('loading')))
-			{
+			// TEN9: remove spinner code
+			// if (this.spinner.spin(document.body, mxResources.get('loading')))
+			// {
 				var count = files.length;
 				var remain = count;
 				var queue = [];
@@ -8143,7 +8145,8 @@ var SelectedFile;
 					
 					if (--remain == 0)
 					{
-						this.spinner.stop();
+						// TEN9: remove spinner code
+						//this.spinner.stop();
 						
 						if (barrierFn != null)
 						{
@@ -8448,7 +8451,7 @@ var SelectedFile;
 						}
 					}))(i);
 				}
-			}
+			//}
 		});
 		
 		if (largeImages)
@@ -9077,6 +9080,7 @@ var SelectedFile;
 		var x = document.body.clientWidth / 2 - 2;
 	
 		// Holds the x-coordinate of the point
+		// TEN9: Remove the spinner code
 	//	this.spinner = this.createSpinner(x, y, 24);
 	// TEN9: TODO: BU: Get spinners to work
 	this.spinner = {}

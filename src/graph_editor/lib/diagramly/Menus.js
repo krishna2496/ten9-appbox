@@ -21,6 +21,7 @@ const {
   mxObjectCodec,
   mxObjectIdentity,
   mxOutline,
+  mxParallelEdgeLayout,
   mxPoint,
   mxPopupMenu,
   mxRectangle,
@@ -31,8 +32,16 @@ const {
 const { mxSettings } = require('./Settings.js');
 const { Action } = require('../jgraph/Actions.js');
 const { Menu } = require('../jgraph/Menus.js');
-const { MoreShapesDialog } = require('../jgraph/Dialogs.js');
-
+const { MoreShapesDialog, TextareaDialog } = require('../jgraph/Dialogs.js');
+const { 
+  CustomDialog,
+  EditGeometryDialog,
+  EditShapeDialog,
+  FindWindow,
+  NewDialog,
+  ParseDialog,
+  TagsWindow,
+} = require('./Dialogs.js');
 const urlParams = {dev: "1",sync: "manual"};
 const isLocalStorage = false;
 const RESOURCE_BASE = '../../../../public/resources/dia';
@@ -176,10 +185,11 @@ DriveFile = function() {};
 		mmAction.setToggleAction(true);
 		mmAction.setSelectedCallback(function() { return editorUi.editor.graph.view.unit == mxConstants.MILLIMETERS; });
 
-		this.put('units', new Menu(mxUtils.bind(this, function(menu, parent)
-		{
-			this.addMenuItems(menu, ['points', /*'inches',*/ 'millimeters'], parent);
-		})));
+		// TEN9: remove menu
+		// this.put('units', new Menu(mxUtils.bind(this, function(menu, parent)
+		// {
+		// 	this.addMenuItems(menu, ['points', /*'inches',*/ 'millimeters'], parent);
+		// })));
 		
 		var rulerAction = editorUi.actions.addAction('ruler', function()
 		{
@@ -563,7 +573,7 @@ DriveFile = function() {};
 				editorUi.showDialog(dlg.container, 200, 270, true, true);
 				dlg.init();
 			}
-		}, null, null, Editor.ctrlKey + '+Shift+M');
+		}, null, null, Editor.ctrlKey + '+Shift+M').isEnabled = isGraphEnabled;
 
 		var currentStyle = null;
 		
@@ -763,7 +773,9 @@ DriveFile = function() {};
 		{
 			if (this.findWindow == null)
 			{
-				this.findWindow = new FindWindow(editorUi, document.body.offsetWidth - 300, 110, 240, 155);
+				// TEN9: adjust findWindow height 
+				// this.findWindow = new FindWindow(editorUi, document.body.offsetWidth - 300, 110, 240, 155);
+				this.findWindow = new FindWindow(editorUi, document.body.offsetWidth - 300, 110, 240, 175);
 				this.findWindow.window.addListener('show', function()
 				{
 					editorUi.fireEvent(new mxEventObject('find'));
@@ -1071,8 +1083,8 @@ DriveFile = function() {};
 				{
 					if (typeof mxOrgChartLayout === 'undefined' && !editorUi.loadingOrgChart && !editorUi.isOffline(true))
 					{
-						if (editorUi.spinner.spin(document.body, mxResources.get('loading')))
-						{
+						// if (editorUi.spinner.spin(document.body, mxResources.get('loading')))
+						// {
 							editorUi.loadingOrgChart = true;
 							
 							if (urlParams['dev'] == '1')
@@ -1083,7 +1095,7 @@ DriveFile = function() {};
 							{
 								mxscript('js/extensions.min.js', delayed);
 							}
-						}
+						//}
 					}
 					else
 					{
@@ -1626,17 +1638,20 @@ DriveFile = function() {};
 
 		editorUi.actions.addAction('shapes...', function()
 		{
-			if (mxClient.IS_CHROMEAPP || !editorUi.isOffline())
+			if (graph.isEnabled())
 			{
-				editorUi.showDialog(new MoreShapesDialog(editorUi, true).container, 640, (isLocalStorage) ?
-						((mxClient.IS_IOS) ? 480 : 460) : 440, true, true);
+				if (mxClient.IS_CHROMEAPP || !editorUi.isOffline())
+				{
+					editorUi.showDialog(new MoreShapesDialog(editorUi, true).container, 640, (isLocalStorage) ?
+							((mxClient.IS_IOS) ? 480 : 460) : 440, true, true);
+				}
+				else
+				{
+					editorUi.showDialog(new MoreShapesDialog(editorUi, false).container, 360, (isLocalStorage) ?
+							((mxClient.IS_IOS) ? 300 : 280) : 260, true, true);
+				}
 			}
-			else
-			{
-				editorUi.showDialog(new MoreShapesDialog(editorUi, false).container, 360, (isLocalStorage) ?
-						((mxClient.IS_IOS) ? 300 : 280) : 260, true, true);
-			}
-		});
+		}).isEnabled = isGraphEnabled;
 
 		editorUi.actions.put('createShape', new Action(mxResources.get('shape') + '...', function(evt)
 		{
@@ -1984,7 +1999,8 @@ DriveFile = function() {};
 				}
 			});
 		}
-		
+			
+		// TEN9: remove menu
 		this.put('exportAs', new Menu(mxUtils.bind(this, function(menu, parent)
 		{
 			if (editorUi.isExportToCanvas())
@@ -2030,314 +2046,316 @@ DriveFile = function() {};
 			}
 		})));
 
-		this.put('importFrom', new Menu(mxUtils.bind(this, function(menu, parent)
-		{
-			var doImportFile = mxUtils.bind(this, function(data, mime, filename)
-			{
-				// Gets insert location
-				var view = graph.view;
-				var bds = graph.getGraphBounds();
-				var x = graph.snap(Math.ceil(Math.max(0, bds.x / view.scale - view.translate.x) + 4 * graph.gridSize));
-				var y = graph.snap(Math.ceil(Math.max(0, (bds.y + bds.height) / view.scale - view.translate.y) + 4 * graph.gridSize));
+		// TEN9: remove menu
+		// this.put('importFrom', new Menu(mxUtils.bind(this, function(menu, parent)
+		// {
+		// 	var doImportFile = mxUtils.bind(this, function(data, mime, filename)
+		// 	{
+		// 		// Gets insert location
+		// 		var view = graph.view;
+		// 		var bds = graph.getGraphBounds();
+		// 		var x = graph.snap(Math.ceil(Math.max(0, bds.x / view.scale - view.translate.x) + 4 * graph.gridSize));
+		// 		var y = graph.snap(Math.ceil(Math.max(0, (bds.y + bds.height) / view.scale - view.translate.y) + 4 * graph.gridSize));
 
-				if (data.substring(0, 11) == 'data:image/')
-				{
-					editorUi.loadImage(data, mxUtils.bind(this, function(img)
-	    			{
-			    		var resizeImages = true;
+		// 		if (data.substring(0, 11) == 'data:image/')
+		// 		{
+		// 			editorUi.loadImage(data, mxUtils.bind(this, function(img)
+	    // 			{
+		// 	    		var resizeImages = true;
 			    		
-			    		var doInsert = mxUtils.bind(this, function()
-			    		{
-		    				editorUi.resizeImage(img, data, mxUtils.bind(this, function(data2, w2, h2)
-	    	    			{
-	    		    			var s = (resizeImages) ? Math.min(1, Math.min(editorUi.maxImageSize / w2, editorUi.maxImageSize / h2)) : 1;
+		// 	    		var doInsert = mxUtils.bind(this, function()
+		// 	    		{
+		//     				editorUi.resizeImage(img, data, mxUtils.bind(this, function(data2, w2, h2)
+	    // 	    			{
+	    // 		    			var s = (resizeImages) ? Math.min(1, Math.min(editorUi.maxImageSize / w2, editorUi.maxImageSize / h2)) : 1;
 	
-    							editorUi.importFile(data, mime, x, y, Math.round(w2 * s), Math.round(h2 * s), filename, function(cells)
-    							{
-    								editorUi.spinner.stop();
-    								graph.setSelectionCells(cells);
-    								graph.scrollCellToVisible(graph.getSelectionCell());
-    							});
-	    	    			}), resizeImages);
-			    		});
+    	// 						editorUi.importFile(data, mime, x, y, Math.round(w2 * s), Math.round(h2 * s), filename, function(cells)
+    	// 						{
+    	// 							editorUi.spinner.stop();
+    	// 							graph.setSelectionCells(cells);
+    	// 							graph.scrollCellToVisible(graph.getSelectionCell());
+    	// 						});
+	    // 	    			}), resizeImages);
+		// 	    		});
 			    		
-			    		if (data.length > editorUi.resampleThreshold)
-			    		{
-			    			editorUi.confirmImageResize(function(doResize)
-	    					{
-	    						resizeImages = doResize;
-	    						doInsert();
-	    					});
-			    		}
-			    		else
-		    			{
-			    			doInsert();
-		    			}
-	    			}), mxUtils.bind(this, function()
-	    			{
-	    				editorUi.handleError({message: mxResources.get('cannotOpenFile')});
-	    			}));
-				}
-				else
-				{
-					editorUi.importFile(data, mime, x, y, 0, 0, filename, function(cells)
-					{
-						editorUi.spinner.stop();
-						graph.setSelectionCells(cells);
-						graph.scrollCellToVisible(graph.getSelectionCell());
-					});
-				}
-			});
+		// 	    		if (data.length > editorUi.resampleThreshold)
+		// 	    		{
+		// 	    			editorUi.confirmImageResize(function(doResize)
+	    // 					{
+	    // 						resizeImages = doResize;
+	    // 						doInsert();
+	    // 					});
+		// 	    		}
+		// 	    		else
+		//     			{
+		// 	    			doInsert();
+		//     			}
+	    // 			}), mxUtils.bind(this, function()
+	    // 			{
+	    // 				editorUi.handleError({message: mxResources.get('cannotOpenFile')});
+	    // 			}));
+		// 		}
+		// 		else
+		// 		{
+		// 			editorUi.importFile(data, mime, x, y, 0, 0, filename, function(cells)
+		// 			{
+		// 				editorUi.spinner.stop();
+		// 				graph.setSelectionCells(cells);
+		// 				graph.scrollCellToVisible(graph.getSelectionCell());
+		// 			});
+		// 		}
+		// 	});
 			
-			var getMimeType = mxUtils.bind(this, function(filename)
-			{
-				var mime = 'text/xml';
+		// 	var getMimeType = mxUtils.bind(this, function(filename)
+		// 	{
+		// 		var mime = 'text/xml';
 				
-				if (/\.png$/i.test(filename))
-				{
-					mime = 'image/png';
-				}
-				else if (/\.jpe?g$/i.test(filename))
-				{
-					mime = 'image/jpg';
-				}
-				else if (/\.gif$/i.test(filename))
-				{
-					mime = 'image/gif';
-				}
-				else if (/\.pdf$/i.test(filename))
-				{
-					mime = 'application/pdf';
-				}
+		// 		if (/\.png$/i.test(filename))
+		// 		{
+		// 			mime = 'image/png';
+		// 		}
+		// 		else if (/\.jpe?g$/i.test(filename))
+		// 		{
+		// 			mime = 'image/jpg';
+		// 		}
+		// 		else if (/\.gif$/i.test(filename))
+		// 		{
+		// 			mime = 'image/gif';
+		// 		}
+		// 		else if (/\.pdf$/i.test(filename))
+		// 		{
+		// 			mime = 'application/pdf';
+		// 		}
 				
-				return mime;
-			});
+		// 		return mime;
+		// 	});
 			
-			function pickFileFromService(service)
-			{
-				// Drive requires special arguments for libraries and bypassing realtime
-				service.pickFile(function(id)
-				{
-					if (editorUi.spinner.spin(document.body, mxResources.get('loading')))
-					{
-						// NOTE The third argument in getFile says denyConvert to match
-						// the existing signature in the original DriveClient which has
-						// as slightly different semantic, but works the same way.
-						service.getFile(id, function(file)
-						{
-							var mime = (file.getData().substring(0, 11) == 'data:image/') ? getMimeType(file.getTitle()) : 'text/xml';
+		// 	function pickFileFromService(service)
+		// 	{
+		// 		// Drive requires special arguments for libraries and bypassing realtime
+		// 		service.pickFile(function(id)
+		// 		{
+		// 			if (editorUi.spinner.spin(document.body, mxResources.get('loading')))
+		// 			{
+		// 				// NOTE The third argument in getFile says denyConvert to match
+		// 				// the existing signature in the original DriveClient which has
+		// 				// as slightly different semantic, but works the same way.
+		// 				service.getFile(id, function(file)
+		// 				{
+		// 					var mime = (file.getData().substring(0, 11) == 'data:image/') ? getMimeType(file.getTitle()) : 'text/xml';
 							
-							// Imports SVG as images
-							if (/\.svg$/i.test(file.getTitle()) && !editorUi.editor.isDataSvg(file.getData()))
-							{
-								file.setData(Editor.createSvgDataUri(file.getData()));
-								mime = 'image/svg+xml';
-							}
+		// 					// Imports SVG as images
+		// 					if (/\.svg$/i.test(file.getTitle()) && !editorUi.editor.isDataSvg(file.getData()))
+		// 					{
+		// 						file.setData(Editor.createSvgDataUri(file.getData()));
+		// 						mime = 'image/svg+xml';
+		// 					}
 							
-							doImportFile(file.getData(), mime, file.getTitle());
-						},
-						function(resp)
-						{
-							editorUi.handleError(resp, (resp != null) ? mxResources.get('errorLoadingFile') : null);
-						}, service == editorUi.drive);
-					}
-				}, true);
-			};
+		// 					doImportFile(file.getData(), mime, file.getTitle());
+		// 				},
+		// 				function(resp)
+		// 				{
+		// 					editorUi.handleError(resp, (resp != null) ? mxResources.get('errorLoadingFile') : null);
+		// 				}, service == editorUi.drive);
+		// 			}
+		// 		}, true);
+		// 	};
 		
-			if (typeof(google) != 'undefined' && typeof(google.picker) != 'undefined')
-			{
-				if (editorUi.drive != null)
-				{
-					// Requires special arguments for libraries and realtime
-					menu.addItem(mxResources.get('googleDrive') + '...', null, function()
-					{
-						pickFileFromService(editorUi.drive);
-					}, parent);
-				}
-				else if (googleEnabled && typeof window.DriveClient === 'function')
-				{
-					menu.addItem(mxResources.get('googleDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
-					{
-						// do nothing
-					}, parent, null, false);
-				}
-			}
+		// 	if (typeof(google) != 'undefined' && typeof(google.picker) != 'undefined')
+		// 	{
+		// 		if (editorUi.drive != null)
+		// 		{
+		// 			// Requires special arguments for libraries and realtime
+		// 			menu.addItem(mxResources.get('googleDrive') + '...', null, function()
+		// 			{
+		// 				pickFileFromService(editorUi.drive);
+		// 			}, parent);
+		// 		}
+		// 		else if (googleEnabled && typeof window.DriveClient === 'function')
+		// 		{
+		// 			menu.addItem(mxResources.get('googleDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 			{
+		// 				// do nothing
+		// 			}, parent, null, false);
+		// 		}
+		// 	}
 
-			if (editorUi.oneDrive != null)
-			{
-				menu.addItem(mxResources.get('oneDrive') + '...', null, function()
-				{
-					pickFileFromService(editorUi.oneDrive);
-				}, parent);
-			}
-			else if (oneDriveEnabled && typeof window.OneDriveClient === 'function')
-			{
-				menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
-				{
-					// do nothing
-				}, parent, null, false);
-			}
+		// 	if (editorUi.oneDrive != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('oneDrive') + '...', null, function()
+		// 		{
+		// 			pickFileFromService(editorUi.oneDrive);
+		// 		}, parent);
+		// 	}
+		// 	else if (oneDriveEnabled && typeof window.OneDriveClient === 'function')
+		// 	{
+		// 		menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 		{
+		// 			// do nothing
+		// 		}, parent, null, false);
+		// 	}
 
-			if (editorUi.dropbox != null)
-			{
-				menu.addItem(mxResources.get('dropbox') + '...', null, function()
-				{
-					pickFileFromService(editorUi.dropbox);
-				}, parent);
-			}
-			else if (dropboxEnabled && typeof window.DropboxClient === 'function')
-			{
-				menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function()
-				{
-					// do nothing
-				}, parent, null, false);
-			}
+		// 	if (editorUi.dropbox != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('dropbox') + '...', null, function()
+		// 		{
+		// 			pickFileFromService(editorUi.dropbox);
+		// 		}, parent);
+		// 	}
+		// 	else if (dropboxEnabled && typeof window.DropboxClient === 'function')
+		// 	{
+		// 		menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 		{
+		// 			// do nothing
+		// 		}, parent, null, false);
+		// 	}
 			
-			menu.addSeparator(parent);
+		// 	menu.addSeparator(parent);
 			
-			if (editorUi.gitHub != null)
-			{
-				menu.addItem(mxResources.get('github') + '...', null, function()
-				{
-					pickFileFromService(editorUi.gitHub);
-				}, parent);
-			}
+		// 	if (editorUi.gitHub != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('github') + '...', null, function()
+		// 		{
+		// 			pickFileFromService(editorUi.gitHub);
+		// 		}, parent);
+		// 	}
 			
-			if (editorUi.gitLab != null)
-			{
-				menu.addItem(mxResources.get('gitlab') + '...', null, function()
-				{
-					pickFileFromService(editorUi.gitLab);
-				}, parent);
-			}
+		// 	if (editorUi.gitLab != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('gitlab') + '...', null, function()
+		// 		{
+		// 			pickFileFromService(editorUi.gitLab);
+		// 		}, parent);
+		// 	}
 
-			if (editorUi.trello != null)
-			{
-				menu.addItem(mxResources.get('trello') + '...', null, function()
-				{
-					pickFileFromService(editorUi.trello);
-				}, parent);
-			}
-			else if (trelloEnabled && typeof window.TrelloClient === 'function')
-			{
-				menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function()
-				{
-					// do nothing
-				}, parent, null, false);
-			}
+		// 	if (editorUi.trello != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('trello') + '...', null, function()
+		// 		{
+		// 			pickFileFromService(editorUi.trello);
+		// 		}, parent);
+		// 	}
+		// 	else if (trelloEnabled && typeof window.TrelloClient === 'function')
+		// 	{
+		// 		menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 		{
+		// 			// do nothing
+		// 		}, parent, null, false);
+		// 	}
 			
-			menu.addSeparator(parent);
+		// 	menu.addSeparator(parent);
 
-			if (isLocalStorage && urlParams['browser'] != '0')
-			{
-				menu.addItem(mxResources.get('browser') + '...', null, function()
-				{
-					editorUi.importLocalFile(false);
-				}, parent);
-			}
+		// 	if (isLocalStorage && urlParams['browser'] != '0')
+		// 	{
+		// 		menu.addItem(mxResources.get('browser') + '...', null, function()
+		// 		{
+		// 			editorUi.importLocalFile(false);
+		// 		}, parent);
+		// 	}
 
-			menu.addItem(mxResources.get('device') + '...', null, function()
-			{
-				editorUi.importLocalFile(true);
-			}, parent);
+		// 	menu.addItem(mxResources.get('device') + '...', null, function()
+		// 	{
+		// 		editorUi.importLocalFile(true);
+		// 	}, parent);
 
-			if (!editorUi.isOffline())
-			{
-				menu.addSeparator(parent);
+		// 	if (!editorUi.isOffline())
+		// 	{
+		// 		menu.addSeparator(parent);
 				
-				menu.addItem(mxResources.get('url') + '...', null, function()
-				{
-					var dlg = new FilenameDialog(editorUi, '', mxResources.get('import'), function(fileUrl)
-					{
-						if (fileUrl != null && fileUrl.length > 0 && editorUi.spinner.spin(document.body, mxResources.get('loading')))
-						{
-							var mime = (/(\.png)($|\?)/i.test(fileUrl)) ? 'image/png' : 'text/xml';
+		// 		menu.addItem(mxResources.get('url') + '...', null, function()
+		// 		{
+		// 			var dlg = new FilenameDialog(editorUi, '', mxResources.get('import'), function(fileUrl)
+		// 			{
+		// 				if (fileUrl != null && fileUrl.length > 0 && editorUi.spinner.spin(document.body, mxResources.get('loading')))
+		// 				{
+		// 					var mime = (/(\.png)($|\?)/i.test(fileUrl)) ? 'image/png' : 'text/xml';
 							
-							// Uses proxy to avoid CORS issues
-							editorUi.editor.loadUrl(PROXY_URL + '?url=' + encodeURIComponent(fileUrl), function(data)
-							{
-								doImportFile(data, mime, fileUrl);
-							},
-							function ()
-							{
-								editorUi.spinner.stop();
-								editorUi.handleError(null, mxResources.get('errorLoadingFile'));
-							}, mime == 'image/png');
-						}
-					}, mxResources.get('url'));
-					editorUi.showDialog(dlg.container, 300, 80, true, true);
-					dlg.init();
-				}, parent);
-			}
-		}))).isEnabled = isGraphEnabled;
+		// 					// Uses proxy to avoid CORS issues
+		// 					editorUi.editor.loadUrl(PROXY_URL + '?url=' + encodeURIComponent(fileUrl), function(data)
+		// 					{
+		// 						doImportFile(data, mime, fileUrl);
+		// 					},
+		// 					function ()
+		// 					{
+		// 						editorUi.spinner.stop();
+		// 						editorUi.handleError(null, mxResources.get('errorLoadingFile'));
+		// 					}, mime == 'image/png');
+		// 				}
+		// 			}, mxResources.get('url'));
+		// 			editorUi.showDialog(dlg.container, 300, 80, true, true);
+		// 			dlg.init();
+		// 		}, parent);
+		// 	}
+		// }))).isEnabled = isGraphEnabled;
 
-		this.put('theme', new Menu(mxUtils.bind(this, function(menu, parent)
-		{
-			var theme = mxSettings.getUi();
+		// TEN9: remove theme menu
+		// this.put('theme', new Menu(mxUtils.bind(this, function(menu, parent)
+		// {
+		// 	var theme = mxSettings.getUi();
 
-			var item = menu.addItem(mxResources.get('automatic'), null, function()
-			{
-				mxSettings.setUi('');
-				mxSettings.save();
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	var item = menu.addItem(mxResources.get('automatic'), null, function()
+		// 	{
+		// 		mxSettings.setUi('');
+		// 		mxSettings.save();
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 			
-			if (theme != 'kennedy' && theme != 'atlas' &&
-				theme != 'dark' && theme != 'min')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
+		// 	if (theme != 'kennedy' && theme != 'atlas' &&
+		// 		theme != 'dark' && theme != 'min')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
 
-			menu.addSeparator(parent);
+		// 	menu.addSeparator(parent);
 			
-			item = menu.addItem(mxResources.get('kennedy'), null, function()
-			{
-				mxSettings.setUi('kennedy');
-				mxSettings.save();
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	item = menu.addItem(mxResources.get('kennedy'), null, function()
+		// 	{
+		// 		mxSettings.setUi('kennedy');
+		// 		mxSettings.save();
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 
-			if (theme == 'kennedy')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
+		// 	if (theme == 'kennedy')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
 
-			item = menu.addItem(mxResources.get('minimal'), null, function()
-			{
-				mxSettings.setUi('min');
-				mxSettings.save();
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	item = menu.addItem(mxResources.get('minimal'), null, function()
+		// 	{
+		// 		mxSettings.setUi('min');
+		// 		mxSettings.save();
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 			
-			if (theme == 'min')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
+		// 	if (theme == 'min')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
 			
-			item = menu.addItem(mxResources.get('atlas'), null, function()
-			{
-				mxSettings.setUi('atlas');
-				mxSettings.save();
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	item = menu.addItem(mxResources.get('atlas'), null, function()
+		// 	{
+		// 		mxSettings.setUi('atlas');
+		// 		mxSettings.save();
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 			
-			if (theme == 'atlas')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
+		// 	if (theme == 'atlas')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
 			
-			item = menu.addItem(mxResources.get('dark'), null, function()
-			{
-				mxSettings.setUi('dark');
-				mxSettings.save();
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	item = menu.addItem(mxResources.get('dark'), null, function()
+		// 	{
+		// 		mxSettings.setUi('dark');
+		// 		mxSettings.save();
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 			
-			if (theme == 'dark')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
-		})));
+		// 	if (theme == 'dark')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
+		// })));
 
 		var renameAction = this.editorUi.actions.addAction('rename...', mxUtils.bind(this, function()
 		{
@@ -2400,80 +2418,81 @@ DriveFile = function() {};
 		
 		renameAction.visible = urlParams['embed'] != '1';
 		
-		editorUi.actions.addAction('makeCopy...', mxUtils.bind(this, function()
-		{
-			var file = editorUi.getCurrentFile();
+		// TEN9: remove menu
+		// editorUi.actions.addAction('makeCopy...', mxUtils.bind(this, function()
+		// {
+		// 	var file = editorUi.getCurrentFile();
 			
-			if (file != null)
-			{
-				var title = editorUi.getCopyFilename(file);
+		// 	if (file != null)
+		// 	{
+		// 		var title = editorUi.getCopyFilename(file);
 
-				if (file.constructor == DriveFile)
-				{
-					var dlg = new CreateDialog(editorUi, title, mxUtils.bind(this, function(newTitle, mode)
-					{
-						if (mode == '_blank')
-						{
-							editorUi.editor.editAsNew(editorUi.getFileData(), newTitle);
-						}
-						else
-						{
-							// Mode is "download" if Create button is pressed, means use Google Drive
-							if (mode == 'download')
-							{
-								mode = App.MODE_GOOGLE;
-							}
+		// 		if (file.constructor == DriveFile)
+		// 		{
+		// 			var dlg = new CreateDialog(editorUi, title, mxUtils.bind(this, function(newTitle, mode)
+		// 			{
+		// 				if (mode == '_blank')
+		// 				{
+		// 					editorUi.editor.editAsNew(editorUi.getFileData(), newTitle);
+		// 				}
+		// 				else
+		// 				{
+		// 					// Mode is "download" if Create button is pressed, means use Google Drive
+		// 					if (mode == 'download')
+		// 					{
+		// 						mode = App.MODE_GOOGLE;
+		// 					}
 	
-							if (newTitle != null && newTitle.length > 0)
-							{
-								if (mode == App.MODE_GOOGLE)
-								{
-									if (editorUi.spinner.spin(document.body, mxResources.get('saving')))
-									{
-										// Saveas does not update the file descriptor in Google Drive
-										file.saveAs(newTitle, mxUtils.bind(this, function(resp)
-										{
-											// Replaces file descriptor in-place and saves
-											file.desc = resp;
+		// 					if (newTitle != null && newTitle.length > 0)
+		// 					{
+		// 						if (mode == App.MODE_GOOGLE)
+		// 						{
+		// 							if (editorUi.spinner.spin(document.body, mxResources.get('saving')))
+		// 							{
+		// 								// Saveas does not update the file descriptor in Google Drive
+		// 								file.saveAs(newTitle, mxUtils.bind(this, function(resp)
+		// 								{
+		// 									// Replaces file descriptor in-place and saves
+		// 									file.desc = resp;
 											
-											// Makes sure the latest XML is in the file
-											file.save(false, mxUtils.bind(this, function()
-											{
-												editorUi.spinner.stop();
-												file.setModified(false);
-												file.addAllSavedStatus();
-											}), mxUtils.bind(this, function(resp)
-											{
-												editorUi.handleError(resp);
-											}));
-										}), mxUtils.bind(this, function(resp)
-										{
-											editorUi.handleError(resp);
-										}));
-									}
-								}
-								else
-								{
-									editorUi.createFile(newTitle, editorUi.getFileData(true), null, mode);
-								}
-							}
-						}
-					}), mxUtils.bind(this, function()
-					{
-						editorUi.hideDialog();
-					}), mxResources.get('makeCopy'), mxResources.get('create'), null,
-						null, true, null, true, null, null, null, null,
-						editorUi.editor.fileExtensions);
-					editorUi.showDialog(dlg.container, 420, 380, true, true);
-					dlg.init();
-				}
-				else
-				{
-					// Creates a copy with no predefined storage
-					editorUi.editor.editAsNew(this.editorUi.getFileData(true), title);
-				}
-			}
-		}));
+		// 									// Makes sure the latest XML is in the file
+		// 									file.save(false, mxUtils.bind(this, function()
+		// 									{
+		// 										editorUi.spinner.stop();
+		// 										file.setModified(false);
+		// 										file.addAllSavedStatus();
+		// 									}), mxUtils.bind(this, function(resp)
+		// 									{
+		// 										editorUi.handleError(resp);
+		// 									}));
+		// 								}), mxUtils.bind(this, function(resp)
+		// 								{
+		// 									editorUi.handleError(resp);
+		// 								}));
+		// 							}
+		// 						}
+		// 						else
+		// 						{
+		// 							editorUi.createFile(newTitle, editorUi.getFileData(true), null, mode);
+		// 						}
+		// 					}
+		// 				}
+		// 			}), mxUtils.bind(this, function()
+		// 			{
+		// 				editorUi.hideDialog();
+		// 			}), mxResources.get('makeCopy'), mxResources.get('create'), null,
+		// 				null, true, null, true, null, null, null, null,
+		// 				editorUi.editor.fileExtensions);
+		// 			editorUi.showDialog(dlg.container, 420, 380, true, true);
+		// 			dlg.init();
+		// 		}
+		// 		else
+		// 		{
+		// 			// Creates a copy with no predefined storage
+		// 			editorUi.editor.editAsNew(this.editorUi.getFileData(true), title);
+		// 		}
+		// 	}
+		// }));
 		
 		editorUi.actions.addAction('moveToFolder...', mxUtils.bind(this, function()
 		{
@@ -2511,10 +2530,11 @@ DriveFile = function() {};
 			}
 		}));
 		
-		this.put('publish', new Menu(mxUtils.bind(this, function(menu, parent)
-		{
-			this.addMenuItems(menu, ['publishLink'], parent);
-		})));
+		// TEN9: remove menu
+		// this.put('publish', new Menu(mxUtils.bind(this, function(menu, parent)
+		// {
+		// 	this.addMenuItems(menu, ['publishLink'], parent);
+		// })));
 
 		editorUi.actions.put('useOffline', new Action(mxResources.get('useOffline') + '...', function()
 		{
@@ -2543,28 +2563,29 @@ DriveFile = function() {};
 			}
 		}));
 
-		this.put('embed', new Menu(mxUtils.bind(this, function(menu, parent)
-		{
-			var file = editorUi.getCurrentFile();
+		// TEN9: remove menu
+		// this.put('embed', new Menu(mxUtils.bind(this, function(menu, parent)
+		// {
+		// 	var file = editorUi.getCurrentFile();
 			
-			if (file != null && (file.getMode() == App.MODE_GOOGLE ||
-				file.getMode() == App.MODE_GITHUB) && /(\.png)$/i.test(file.getTitle()))
-			{
-				this.addMenuItems(menu, ['liveImage', '-'], parent);
-			}
+		// 	if (file != null && (file.getMode() == App.MODE_GOOGLE ||
+		// 		file.getMode() == App.MODE_GITHUB) && /(\.png)$/i.test(file.getTitle()))
+		// 	{
+		// 		this.addMenuItems(menu, ['liveImage', '-'], parent);
+		// 	}
 			
-			this.addMenuItems(menu, ['embedImage', 'embedSvg', '-', 'embedHtml'], parent);
+		// 	this.addMenuItems(menu, ['embedImage', 'embedSvg', '-', 'embedHtml'], parent);
 			
-			if (!navigator.standalone && !editorUi.isOffline())
-			{
-				this.addMenuItems(menu, ['embedIframe'], parent);
-			}
+		// 	if (!navigator.standalone && !editorUi.isOffline())
+		// 	{
+		// 		this.addMenuItems(menu, ['embedIframe'], parent);
+		// 	}
 
-			if (urlParams['embed'] != '1' && !editorUi.isOffline())
-			{
-				this.addMenuItems(menu, ['-', 'googleDocs', 'googleSlides', 'googleSheets', '-', 'microsoftOffice'], parent);
-			}
-		})));
+		// 	if (urlParams['embed'] != '1' && !editorUi.isOffline())
+		// 	{
+		// 		this.addMenuItems(menu, ['-', 'googleDocs', 'googleSlides', 'googleSheets', '-', 'microsoftOffice'], parent);
+		// 	}
+		// })));
 
 		var addInsertItem = function(menu, parent, title, method)
 		{
@@ -2694,7 +2715,7 @@ DriveFile = function() {};
 			menu.addSeparator(parent);
 			this.addSubmenu('insertLayout', menu, parent, mxResources.get('layout'));
 			this.addSubmenu('insertAdvanced', menu, parent, mxResources.get('advanced'));
-		})));
+		}))).isEnabled = isGraphEnabled;
 
 		this.put('insertLayout', new Menu(mxUtils.bind(this, function(menu, parent)
 		{
@@ -2750,398 +2771,400 @@ DriveFile = function() {};
 			}, parent);
 		}));
 		
-		this.put('openFrom', new Menu(function(menu, parent)
-		{
-			if (editorUi.drive != null)
-			{
-				menu.addItem(mxResources.get('googleDrive') + '...', null, function()
-				{
-					editorUi.pickFile(App.MODE_GOOGLE);
-				}, parent);
-			}
-			else if (googleEnabled && typeof window.DriveClient === 'function')
-			{
-				menu.addItem(mxResources.get('googleDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
-				{
-					// do nothing
-				}, parent, null, false);
-			}
+		// TEN9: remove menu
+		// this.put('openFrom', new Menu(function(menu, parent)
+		// {
+		// 	if (editorUi.drive != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('googleDrive') + '...', null, function()
+		// 		{
+		// 			editorUi.pickFile(App.MODE_GOOGLE);
+		// 		}, parent);
+		// 	}
+		// 	else if (googleEnabled && typeof window.DriveClient === 'function')
+		// 	{
+		// 		menu.addItem(mxResources.get('googleDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 		{
+		// 			// do nothing
+		// 		}, parent, null, false);
+		// 	}
 			
-			if (editorUi.oneDrive != null)
-			{
-				menu.addItem(mxResources.get('oneDrive') + '...', null, function()
-				{
-					editorUi.pickFile(App.MODE_ONEDRIVE);
-				}, parent);
-			}
-			else if (oneDriveEnabled && typeof window.OneDriveClient === 'function')
-			{
-				menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
-				{
-					// do nothing
-				}, parent, null, false);
-			}
+		// 	if (editorUi.oneDrive != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('oneDrive') + '...', null, function()
+		// 		{
+		// 			editorUi.pickFile(App.MODE_ONEDRIVE);
+		// 		}, parent);
+		// 	}
+		// 	else if (oneDriveEnabled && typeof window.OneDriveClient === 'function')
+		// 	{
+		// 		menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 		{
+		// 			// do nothing
+		// 		}, parent, null, false);
+		// 	}
 			
-			if (editorUi.dropbox != null)
-			{
-				menu.addItem(mxResources.get('dropbox') + '...', null, function()
-				{
-					editorUi.pickFile(App.MODE_DROPBOX);
-				}, parent);
-			}
-			else if (dropboxEnabled && typeof window.DropboxClient === 'function')
-			{
-				menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function()
-				{
-					// do nothing
-				}, parent, null, false);
-			}
+		// 	if (editorUi.dropbox != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('dropbox') + '...', null, function()
+		// 		{
+		// 			editorUi.pickFile(App.MODE_DROPBOX);
+		// 		}, parent);
+		// 	}
+		// 	else if (dropboxEnabled && typeof window.DropboxClient === 'function')
+		// 	{
+		// 		menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 		{
+		// 			// do nothing
+		// 		}, parent, null, false);
+		// 	}
 
-			menu.addSeparator(parent);
+		// 	menu.addSeparator(parent);
 			
-			if (editorUi.gitHub != null)
-			{
-				menu.addItem(mxResources.get('github') + '...', null, function()
-				{
-					editorUi.pickFile(App.MODE_GITHUB);
-				}, parent);
-			}
+		// 	if (editorUi.gitHub != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('github') + '...', null, function()
+		// 		{
+		// 			editorUi.pickFile(App.MODE_GITHUB);
+		// 		}, parent);
+		// 	}
 			
-			if (editorUi.gitLab != null)
-			{
-				menu.addItem(mxResources.get('gitlab') + '...', null, function()
-				{
-					editorUi.pickFile(App.MODE_GITLAB);
-				}, parent);
-			}
+		// 	if (editorUi.gitLab != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('gitlab') + '...', null, function()
+		// 		{
+		// 			editorUi.pickFile(App.MODE_GITLAB);
+		// 		}, parent);
+		// 	}
 
-			if (editorUi.trello != null)
-			{
-				menu.addItem(mxResources.get('trello') + '...', null, function()
-				{
-					editorUi.pickFile(App.MODE_TRELLO);
-				}, parent);
-			}
-			else if (trelloEnabled && typeof window.TrelloClient === 'function')
-			{
-				menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function()
-				{
-					// do nothing
-				}, parent, null, false);
-			}
+		// 	if (editorUi.trello != null)
+		// 	{
+		// 		menu.addItem(mxResources.get('trello') + '...', null, function()
+		// 		{
+		// 			editorUi.pickFile(App.MODE_TRELLO);
+		// 		}, parent);
+		// 	}
+		// 	else if (trelloEnabled && typeof window.TrelloClient === 'function')
+		// 	{
+		// 		menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 		{
+		// 			// do nothing
+		// 		}, parent, null, false);
+		// 	}
 			
-			menu.addSeparator(parent);
+		// 	menu.addSeparator(parent);
 
-			if (isLocalStorage && urlParams['browser'] != '0')
-			{
-				menu.addItem(mxResources.get('browser') + '...', null, function()
-				{
-					editorUi.pickFile(App.MODE_BROWSER);
-				}, parent);
-			}
+		// 	if (isLocalStorage && urlParams['browser'] != '0')
+		// 	{
+		// 		menu.addItem(mxResources.get('browser') + '...', null, function()
+		// 		{
+		// 			editorUi.pickFile(App.MODE_BROWSER);
+		// 		}, parent);
+		// 	}
 			
-			//if (!mxClient.IS_IOS)
-			{
-				menu.addItem(mxResources.get('device') + '...', null, function()
-				{
-					editorUi.pickFile(App.MODE_DEVICE);
-				}, parent);
-			}
+		// 	//if (!mxClient.IS_IOS)
+		// 	{
+		// 		menu.addItem(mxResources.get('device') + '...', null, function()
+		// 		{
+		// 			editorUi.pickFile(App.MODE_DEVICE);
+		// 		}, parent);
+		// 	}
 
-			if (!editorUi.isOffline())
-			{
-				menu.addSeparator(parent);
+		// 	if (!editorUi.isOffline())
+		// 	{
+		// 		menu.addSeparator(parent);
 				
-				menu.addItem(mxResources.get('url') + '...', null, function()
-				{
-					var dlg = new FilenameDialog(editorUi, '', mxResources.get('open'), function(fileUrl)
-					{
-						if (fileUrl != null && fileUrl.length > 0)
-						{
-							if (editorUi.getCurrentFile() == null)
-							{
-								window.location.hash = '#U' + encodeURIComponent(fileUrl);
-							}
-							else
-							{
-								window.openWindow(((mxClient.IS_CHROMEAPP) ?
-									'https://www.draw.io/' : 'https://' + location.host + '/') +
-									window.location.search + '#U' + encodeURIComponent(fileUrl));
-							}
-						}
-					}, mxResources.get('url'));
-					editorUi.showDialog(dlg.container, 300, 80, true, true);
-					dlg.init();
-				}, parent);
-			}
-		}));
+		// 		menu.addItem(mxResources.get('url') + '...', null, function()
+		// 		{
+		// 			var dlg = new FilenameDialog(editorUi, '', mxResources.get('open'), function(fileUrl)
+		// 			{
+		// 				if (fileUrl != null && fileUrl.length > 0)
+		// 				{
+		// 					if (editorUi.getCurrentFile() == null)
+		// 					{
+		// 						window.location.hash = '#U' + encodeURIComponent(fileUrl);
+		// 					}
+		// 					else
+		// 					{
+		// 						window.openWindow(((mxClient.IS_CHROMEAPP) ?
+		// 							'https://www.draw.io/' : 'https://' + location.host + '/') +
+		// 							window.location.search + '#U' + encodeURIComponent(fileUrl));
+		// 					}
+		// 				}
+		// 			}, mxResources.get('url'));
+		// 			editorUi.showDialog(dlg.container, 300, 80, true, true);
+		// 			dlg.init();
+		// 		}, parent);
+		// 	}
+		// }));
 		
-		if (Editor.enableCustomLibraries)
-		{
-			this.put('newLibrary', new Menu(function(menu, parent)
-			{
-				if (typeof(google) != 'undefined' && typeof(google.picker) != 'undefined')
-				{
-					if (editorUi.drive != null)
-					{
-						menu.addItem(mxResources.get('googleDrive') + '...', null, function()
-						{
-							editorUi.showLibraryDialog(null, null, null, null, App.MODE_GOOGLE);
-						}, parent);
-					}
-					else if (googleEnabled && typeof window.DriveClient === 'function')
-					{
-						menu.addItem(mxResources.get('googleDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
-						{
-							// do nothing
-						}, parent, null, false);
-					}
-				}
+		// TEN9: remove menu
+		// if (Editor.enableCustomLibraries)
+		// {
+		// 	this.put('newLibrary', new Menu(function(menu, parent)
+		// 	{
+		// 		if (typeof(google) != 'undefined' && typeof(google.picker) != 'undefined')
+		// 		{
+		// 			if (editorUi.drive != null)
+		// 			{
+		// 				menu.addItem(mxResources.get('googleDrive') + '...', null, function()
+		// 				{
+		// 					editorUi.showLibraryDialog(null, null, null, null, App.MODE_GOOGLE);
+		// 				}, parent);
+		// 			}
+		// 			else if (googleEnabled && typeof window.DriveClient === 'function')
+		// 			{
+		// 				menu.addItem(mxResources.get('googleDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 				{
+		// 					// do nothing
+		// 				}, parent, null, false);
+		// 			}
+		// 		}
 
-				if (editorUi.oneDrive != null)
-				{
-					menu.addItem(mxResources.get('oneDrive') + '...', null, function()
-					{
-						editorUi.showLibraryDialog(null, null, null, null, App.MODE_ONEDRIVE);
-					}, parent);
-				}
-				else if (oneDriveEnabled && typeof window.OneDriveClient === 'function')
-				{
-					menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
-					{
-						// do nothing
-					}, parent, null, false);
-				}
+		// 		if (editorUi.oneDrive != null)
+		// 		{
+		// 			menu.addItem(mxResources.get('oneDrive') + '...', null, function()
+		// 			{
+		// 				editorUi.showLibraryDialog(null, null, null, null, App.MODE_ONEDRIVE);
+		// 			}, parent);
+		// 		}
+		// 		else if (oneDriveEnabled && typeof window.OneDriveClient === 'function')
+		// 		{
+		// 			menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 			{
+		// 				// do nothing
+		// 			}, parent, null, false);
+		// 		}
 
-				if (editorUi.dropbox != null)
-				{
-					menu.addItem(mxResources.get('dropbox') + '...', null, function()
-					{
-						editorUi.showLibraryDialog(null, null, null, null, App.MODE_DROPBOX);
-					}, parent);
-				}
-				else if (dropboxEnabled && typeof window.DropboxClient === 'function')
-				{
-					menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function()
-					{
-						// do nothing
-					}, parent, null, false);
-				}
+		// 		if (editorUi.dropbox != null)
+		// 		{
+		// 			menu.addItem(mxResources.get('dropbox') + '...', null, function()
+		// 			{
+		// 				editorUi.showLibraryDialog(null, null, null, null, App.MODE_DROPBOX);
+		// 			}, parent);
+		// 		}
+		// 		else if (dropboxEnabled && typeof window.DropboxClient === 'function')
+		// 		{
+		// 			menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 			{
+		// 				// do nothing
+		// 			}, parent, null, false);
+		// 		}
 				
-				menu.addSeparator(parent);
+		// 		menu.addSeparator(parent);
 				
-				if (editorUi.gitHub != null)
-				{
-					menu.addItem(mxResources.get('github') + '...', null, function()
-					{
-						editorUi.showLibraryDialog(null, null, null, null, App.MODE_GITHUB);
-					}, parent);
-				}
+		// 		if (editorUi.gitHub != null)
+		// 		{
+		// 			menu.addItem(mxResources.get('github') + '...', null, function()
+		// 			{
+		// 				editorUi.showLibraryDialog(null, null, null, null, App.MODE_GITHUB);
+		// 			}, parent);
+		// 		}
 				
-				if (editorUi.gitLab != null)
-				{
-					menu.addItem(mxResources.get('gitlab') + '...', null, function()
-					{
-						editorUi.showLibraryDialog(null, null, null, null, App.MODE_GITLAB);
-					}, parent);
-				}
+		// 		if (editorUi.gitLab != null)
+		// 		{
+		// 			menu.addItem(mxResources.get('gitlab') + '...', null, function()
+		// 			{
+		// 				editorUi.showLibraryDialog(null, null, null, null, App.MODE_GITLAB);
+		// 			}, parent);
+		// 		}
 				
-				if (editorUi.trello != null)
-				{
-					menu.addItem(mxResources.get('trello') + '...', null, function()
-					{
-						editorUi.showLibraryDialog(null, null, null, null, App.MODE_TRELLO);
-					}, parent);
-				}
-				else if (trelloEnabled && typeof window.TrelloClient === 'function')
-				{
-					menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function()
-					{
-						// do nothing
-					}, parent, null, false);
-				}
+		// 		if (editorUi.trello != null)
+		// 		{
+		// 			menu.addItem(mxResources.get('trello') + '...', null, function()
+		// 			{
+		// 				editorUi.showLibraryDialog(null, null, null, null, App.MODE_TRELLO);
+		// 			}, parent);
+		// 		}
+		// 		else if (trelloEnabled && typeof window.TrelloClient === 'function')
+		// 		{
+		// 			menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 			{
+		// 				// do nothing
+		// 			}, parent, null, false);
+		// 		}
 				
-				menu.addSeparator(parent);
+		// 		menu.addSeparator(parent);
 	
-				if (isLocalStorage && urlParams['browser'] != '0')
-				{
-					menu.addItem(mxResources.get('browser') + '...', null, function()
-					{
-						editorUi.showLibraryDialog(null, null, null, null, App.MODE_BROWSER);
-					}, parent);
-				}
+		// 		if (isLocalStorage && urlParams['browser'] != '0')
+		// 		{
+		// 			menu.addItem(mxResources.get('browser') + '...', null, function()
+		// 			{
+		// 				editorUi.showLibraryDialog(null, null, null, null, App.MODE_BROWSER);
+		// 			}, parent);
+		// 		}
 				
-				//if (!mxClient.IS_IOS)
-				{
-					menu.addItem(mxResources.get('device') + '...', null, function()
-					{
-						editorUi.showLibraryDialog(null, null, null, null, App.MODE_DEVICE);
-					}, parent);
-				}
-			}));
+		// 		//if (!mxClient.IS_IOS)
+		// 		{
+		// 			menu.addItem(mxResources.get('device') + '...', null, function()
+		// 			{
+		// 				editorUi.showLibraryDialog(null, null, null, null, App.MODE_DEVICE);
+		// 			}, parent);
+		// 		}
+		// 	}));
 	
-			this.put('openLibraryFrom', new Menu(function(menu, parent)
-			{
-				if (typeof(google) != 'undefined' && typeof(google.picker) != 'undefined')
-				{
-					if (editorUi.drive != null)
-					{
-						menu.addItem(mxResources.get('googleDrive') + '...', null, function()
-						{
-							editorUi.pickLibrary(App.MODE_GOOGLE);
-						}, parent);
-					}
-					else if (googleEnabled && typeof window.DriveClient === 'function')
-					{
-						menu.addItem(mxResources.get('googleDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
-						{
-							// do nothing
-						}, parent, null, false);
-					}
-				}
+		// 	this.put('openLibraryFrom', new Menu(function(menu, parent)
+		// 	{
+		// 		if (typeof(google) != 'undefined' && typeof(google.picker) != 'undefined')
+		// 		{
+		// 			if (editorUi.drive != null)
+		// 			{
+		// 				menu.addItem(mxResources.get('googleDrive') + '...', null, function()
+		// 				{
+		// 					editorUi.pickLibrary(App.MODE_GOOGLE);
+		// 				}, parent);
+		// 			}
+		// 			else if (googleEnabled && typeof window.DriveClient === 'function')
+		// 			{
+		// 				menu.addItem(mxResources.get('googleDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 				{
+		// 					// do nothing
+		// 				}, parent, null, false);
+		// 			}
+		// 		}
 
-				if (editorUi.oneDrive != null)
-				{
-					menu.addItem(mxResources.get('oneDrive') + '...', null, function()
-					{
-						editorUi.pickLibrary(App.MODE_ONEDRIVE);
-					}, parent);
-				}
-				else if (oneDriveEnabled && typeof window.OneDriveClient === 'function')
-				{
-					menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
-					{
-						// do nothing
-					}, parent, null, false);
-				}
+		// 		if (editorUi.oneDrive != null)
+		// 		{
+		// 			menu.addItem(mxResources.get('oneDrive') + '...', null, function()
+		// 			{
+		// 				editorUi.pickLibrary(App.MODE_ONEDRIVE);
+		// 			}, parent);
+		// 		}
+		// 		else if (oneDriveEnabled && typeof window.OneDriveClient === 'function')
+		// 		{
+		// 			menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 			{
+		// 				// do nothing
+		// 			}, parent, null, false);
+		// 		}
 
-				if (editorUi.dropbox != null)
-				{
-					menu.addItem(mxResources.get('dropbox') + '...', null, function()
-					{
-						editorUi.pickLibrary(App.MODE_DROPBOX);
-					}, parent);
-				}
-				else if (dropboxEnabled && typeof window.DropboxClient === 'function')
-				{
-					menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function()
-					{
-						// do nothing
-					}, parent, null, false);
-				}
+		// 		if (editorUi.dropbox != null)
+		// 		{
+		// 			menu.addItem(mxResources.get('dropbox') + '...', null, function()
+		// 			{
+		// 				editorUi.pickLibrary(App.MODE_DROPBOX);
+		// 			}, parent);
+		// 		}
+		// 		else if (dropboxEnabled && typeof window.DropboxClient === 'function')
+		// 		{
+		// 			menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 			{
+		// 				// do nothing
+		// 			}, parent, null, false);
+		// 		}
 				
-				menu.addSeparator(parent);
+		// 		menu.addSeparator(parent);
 				
-				if (editorUi.gitHub != null)
-				{
-					menu.addItem(mxResources.get('github') + '...', null, function()
-					{
-						editorUi.pickLibrary(App.MODE_GITHUB);
-					}, parent);
-				}
+		// 		if (editorUi.gitHub != null)
+		// 		{
+		// 			menu.addItem(mxResources.get('github') + '...', null, function()
+		// 			{
+		// 				editorUi.pickLibrary(App.MODE_GITHUB);
+		// 			}, parent);
+		// 		}
 				
-				if (editorUi.gitLab != null)
-				{
-					menu.addItem(mxResources.get('gitlab') + '...', null, function()
-					{
-						editorUi.pickLibrary(App.MODE_GITLAB);
-					}, parent);
-				}
+		// 		if (editorUi.gitLab != null)
+		// 		{
+		// 			menu.addItem(mxResources.get('gitlab') + '...', null, function()
+		// 			{
+		// 				editorUi.pickLibrary(App.MODE_GITLAB);
+		// 			}, parent);
+		// 		}
 				
-				if (editorUi.trello != null)
-				{
-					menu.addItem(mxResources.get('trello') + '...', null, function()
-					{
-						editorUi.pickLibrary(App.MODE_TRELLO);
-					}, parent);
-				}
-				else if (trelloEnabled && typeof window.TrelloClient === 'function')
-				{
-					menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function()
-					{
-						// do nothing
-					}, parent, null, false);
-				}
+		// 		if (editorUi.trello != null)
+		// 		{
+		// 			menu.addItem(mxResources.get('trello') + '...', null, function()
+		// 			{
+		// 				editorUi.pickLibrary(App.MODE_TRELLO);
+		// 			}, parent);
+		// 		}
+		// 		else if (trelloEnabled && typeof window.TrelloClient === 'function')
+		// 		{
+		// 			menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function()
+		// 			{
+		// 				// do nothing
+		// 			}, parent, null, false);
+		// 		}
 				
-				menu.addSeparator(parent);
+		// 		menu.addSeparator(parent);
 	
-				if (isLocalStorage && urlParams['browser'] != '0')
-				{
-					menu.addItem(mxResources.get('browser') + '...', null, function()
-					{
-						editorUi.pickLibrary(App.MODE_BROWSER);
-					}, parent);
-				}
+		// 		if (isLocalStorage && urlParams['browser'] != '0')
+		// 		{
+		// 			menu.addItem(mxResources.get('browser') + '...', null, function()
+		// 			{
+		// 				editorUi.pickLibrary(App.MODE_BROWSER);
+		// 			}, parent);
+		// 		}
 				
-				//if (!mxClient.IS_IOS)
-				{
-					menu.addItem(mxResources.get('device') + '...', null, function()
-					{
-						editorUi.pickLibrary(App.MODE_DEVICE);
-					}, parent);
-				}
+		// 		//if (!mxClient.IS_IOS)
+		// 		{
+		// 			menu.addItem(mxResources.get('device') + '...', null, function()
+		// 			{
+		// 				editorUi.pickLibrary(App.MODE_DEVICE);
+		// 			}, parent);
+		// 		}
 	
-				if (!editorUi.isOffline())
-				{
-					menu.addSeparator(parent);
+		// 		if (!editorUi.isOffline())
+		// 		{
+		// 			menu.addSeparator(parent);
 					
-					menu.addItem(mxResources.get('url') + '...', null, function()
-					{
-						var dlg = new FilenameDialog(editorUi, '', mxResources.get('open'), function(fileUrl)
-						{
-							if (fileUrl != null && fileUrl.length > 0 && editorUi.spinner.spin(document.body, mxResources.get('loading')))
-							{
-								var realUrl = fileUrl;
+		// 			menu.addItem(mxResources.get('url') + '...', null, function()
+		// 			{
+		// 				var dlg = new FilenameDialog(editorUi, '', mxResources.get('open'), function(fileUrl)
+		// 				{
+		// 					if (fileUrl != null && fileUrl.length > 0 && editorUi.spinner.spin(document.body, mxResources.get('loading')))
+		// 					{
+		// 						var realUrl = fileUrl;
 								
-								if (!editorUi.editor.isCorsEnabledForUrl(fileUrl))
-								{
-									realUrl = PROXY_URL + '?url=' + encodeURIComponent(fileUrl);
-								}
+		// 						if (!editorUi.editor.isCorsEnabledForUrl(fileUrl))
+		// 						{
+		// 							realUrl = PROXY_URL + '?url=' + encodeURIComponent(fileUrl);
+		// 						}
 								
-								// Uses proxy to avoid CORS issues
-								mxUtils.get(realUrl, function(req)
-								{
-									if (req.getStatus() >= 200 && req.getStatus() <= 299)
-									{
-										editorUi.spinner.stop();
+		// 						// Uses proxy to avoid CORS issues
+		// 						mxUtils.get(realUrl, function(req)
+		// 						{
+		// 							if (req.getStatus() >= 200 && req.getStatus() <= 299)
+		// 							{
+		// 								editorUi.spinner.stop();
 										
-										try
-										{
-											editorUi.loadLibrary(new UrlLibrary(this, req.getText(), fileUrl));
-										}
-										catch (e)
-										{
-											editorUi.handleError(e, mxResources.get('errorLoadingFile'));
-										}
-									}
-									else
-									{
-										editorUi.spinner.stop();
-										editorUi.handleError(null, mxResources.get('errorLoadingFile'));
-									}
-								}, function()
-								{
-									editorUi.spinner.stop();
-									editorUi.handleError(null, mxResources.get('errorLoadingFile'));
-								});
-							}
-						}, mxResources.get('url'));
-						editorUi.showDialog(dlg.container, 300, 80, true, true);
-						dlg.init();
-					}, parent);
-				}
+		// 								try
+		// 								{
+		// 									editorUi.loadLibrary(new UrlLibrary(this, req.getText(), fileUrl));
+		// 								}
+		// 								catch (e)
+		// 								{
+		// 									editorUi.handleError(e, mxResources.get('errorLoadingFile'));
+		// 								}
+		// 							}
+		// 							else
+		// 							{
+		// 								editorUi.spinner.stop();
+		// 								editorUi.handleError(null, mxResources.get('errorLoadingFile'));
+		// 							}
+		// 						}, function()
+		// 						{
+		// 							editorUi.spinner.stop();
+		// 							editorUi.handleError(null, mxResources.get('errorLoadingFile'));
+		// 						});
+		// 					}
+		// 				}, mxResources.get('url'));
+		// 				editorUi.showDialog(dlg.container, 300, 80, true, true);
+		// 				dlg.init();
+		// 			}, parent);
+		// 		}
 				
-				if (urlParams['confLib'] == '1')
-				{
-					menu.addSeparator(parent);
+		// 		if (urlParams['confLib'] == '1')
+		// 		{
+		// 			menu.addSeparator(parent);
 					
-					menu.addItem(mxResources.get('confluenceCloud') + '...', null, function()
-					{
-						editorUi.showRemotelyStoredLibrary(mxResources.get('libraries'));
-					}, parent);
-				}
-			}));
-		}
+		// 			menu.addItem(mxResources.get('confluenceCloud') + '...', null, function()
+		// 			{
+		// 				editorUi.showRemotelyStoredLibrary(mxResources.get('libraries'));
+		// 			}, parent);
+		// 		}
+		// 	}));
+		// }
 
 		// Overrides edit menu to add find and editGeometry
 		this.put('edit', new Menu(mxUtils.bind(this, function(menu, parent)
@@ -3237,8 +3260,11 @@ DriveFile = function() {};
 			
 			this.addMenuItems(menu, ['shapes', '-', 'pageView', 'pageScale']);
 			this.addSubmenu('units', menu, parent);				
-			this.addMenuItems(menu, ['-', 'scrollbars', 'tooltips', 'ruler', '-',
-                'grid', 'guides'], parent);
+			// TEN9: remove ruler from view menu
+			//this.addMenuItems(menu, ['-', 'scrollbars', 'tooltips', 'ruler', '-',
+			   // 'grid', 'guides'], parent);
+			this.addMenuItems(menu, ['-', 'scrollbars', 'tooltips', '-',
+			 'grid', 'guides'], parent);
 			
 			if (mxClient.IS_SVG && (document.documentMode == null || document.documentMode > 9))
 			{
@@ -3276,7 +3302,8 @@ DriveFile = function() {};
 
 			if (urlParams['embed'] != '1')
 			{
-				this.addMenuItems(menu, ['autosave'], parent);
+				// TEN9: remove menu
+				//this.addMenuItems(menu, ['autosave'], parent);
 			}
 			
 			menu.addSeparator(parent);
@@ -3350,171 +3377,186 @@ DriveFile = function() {};
 			}
 		})));
 
-		this.put('file', new Menu(mxUtils.bind(this, function(menu, parent)
-		{
-			if (urlParams['embed'] == '1')
-			{
-				this.addSubmenu('importFrom', menu, parent);
-				this.addSubmenu('exportAs', menu, parent);
-				this.addSubmenu('embed', menu, parent);
+		// TEN9: remove file menu and add old file menu
+		// this.put('file', new Menu(mxUtils.bind(this, function(menu, parent)
+		// {
+		// 	if (urlParams['embed'] == '1')
+		// 	{
+		// 		this.addSubmenu('importFrom', menu, parent);
+		// 		this.addSubmenu('exportAs', menu, parent);
+		// 		this.addSubmenu('embed', menu, parent);
 
-				if (urlParams['libraries'] == '1')
-				{
-					this.addMenuItems(menu, ['-'], parent);
-					this.addSubmenu('newLibrary', menu, parent);
-					this.addSubmenu('openLibraryFrom', menu, parent);
-				}
+		// 		if (urlParams['libraries'] == '1')
+		// 		{
+		// 			this.addMenuItems(menu, ['-'], parent);
+		// 			this.addSubmenu('newLibrary', menu, parent);
+		// 			this.addSubmenu('openLibraryFrom', menu, parent);
+		// 		}
 				
-				if (editorUi.isRevisionHistorySupported())
-				{
-					this.addMenuItems(menu, ['-', 'revisionHistory'], parent);
-				}
+		// 		if (editorUi.isRevisionHistorySupported())
+		// 		{
+		// 			this.addMenuItems(menu, ['-', 'revisionHistory'], parent);
+		// 		}
 				
-				this.addMenuItems(menu, ['-', 'pageSetup', 'print', '-', 'rename'], parent);
+		// 		this.addMenuItems(menu, ['-', 'pageSetup', 'print', '-', 'rename'], parent);
 				
-				if (urlParams['noSaveBtn'] == '1')
-				{
-					if (urlParams['saveAndExit'] != '0')
-					{
-						this.addMenuItems(menu, ['saveAndExit'], parent);
-					}
-				}
-				else
-				{
-					this.addMenuItems(menu, ['save'], parent);
+		// 		if (urlParams['noSaveBtn'] == '1')
+		// 		{
+		// 			if (urlParams['saveAndExit'] != '0')
+		// 			{
+		// 				this.addMenuItems(menu, ['saveAndExit'], parent);
+		// 			}
+		// 		}
+		// 		else
+		// 		{
+		// 			this.addMenuItems(menu, ['save'], parent);
 					
-					if (urlParams['saveAndExit'] == '1')
-					{
-						this.addMenuItems(menu, ['saveAndExit'], parent);
-					}
-				}
+		// 			if (urlParams['saveAndExit'] == '1')
+		// 			{
+		// 				this.addMenuItems(menu, ['saveAndExit'], parent);
+		// 			}
+		// 		}
 				
-				if (urlParams['noExitBtn'] != '1')
-				{
-					this.addMenuItems(menu, ['exit'], parent);
-				}
-			}
-			else
-			{
-				var file = this.editorUi.getCurrentFile();
+		// 		if (urlParams['noExitBtn'] != '1')
+		// 		{
+		// 			this.addMenuItems(menu, ['exit'], parent);
+		// 		}
+		// 	}
+		// 	else
+		// 	{
+		// 		var file = this.editorUi.getCurrentFile();
 				
-				if (file != null && file.constructor == DriveFile)
-				{
-					if (file.isRestricted())
-					{
-						this.addMenuItems(menu, ['exportOptionsDisabled'], parent);
-					}
+		// 		if (file != null && file.constructor == DriveFile)
+		// 		{
+		// 			if (file.isRestricted())
+		// 			{
+		// 				this.addMenuItems(menu, ['exportOptionsDisabled'], parent);
+		// 			}
 					
-					this.addMenuItems(menu, ['save', '-', 'share'], parent);
+		// 			this.addMenuItems(menu, ['save', '-', 'share'], parent);
 					
-					var item = this.addMenuItem(menu, 'synchronize', parent);
+		// 			var item = this.addMenuItem(menu, 'synchronize', parent);
 					
-					if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
-					{
-						this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
-					}
+		// 			if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
+		// 			{
+		// 				this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
+		// 			}
 					
-					menu.addSeparator(parent);
-				}
-				else
-				{
-					this.addMenuItems(menu, ['new'], parent);
-				}
+		// 			menu.addSeparator(parent);
+		// 		}
+		// 		else
+		// 		{
+		// 			// TEN9: remove file new from menu
+		// 			//this.addMenuItems(menu, ['new'], parent);
+		// 		}
 				
-				this.addSubmenu('openFrom', menu, parent);
+		// 		this.addSubmenu('openFrom', menu, parent);
 
-				if (isLocalStorage)
-				{
-					this.addSubmenu('openRecent', menu, parent);
-				}
+		// 		if (isLocalStorage)
+		// 		{
+		// 			this.addSubmenu('openRecent', menu, parent);
+		// 		}
 				
-				if (file != null && file.constructor == DriveFile)
-				{
-					this.addMenuItems(menu, ['new', '-', 'rename', 'makeCopy', 'moveToFolder'], parent);
-				}
-				else
-				{
-					if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
-						file != null && (file.constructor != LocalFile ||
-						file.fileHandle != null))
-					{	
-						menu.addSeparator(parent);
-						var item = this.addMenuItem(menu, 'synchronize', parent);
+		// 		if (file != null && file.constructor == DriveFile)
+		// 		{
+		// 			this.addMenuItems(menu, ['new', '-', 'rename', 'makeCopy', 'moveToFolder'], parent);
+		// 		}
+		// 		else
+		// 		{
+		// 			if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
+		// 				file != null && (file.constructor != LocalFile ||
+		// 				file.fileHandle != null))
+		// 			{	
+		// 				menu.addSeparator(parent);
+		// 				var item = this.addMenuItem(menu, 'synchronize', parent);
 						
-						if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
-						{
-							this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
-						}
-					}
+		// 				if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
+		// 				{
+		// 					this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
+		// 				}
+		// 			}
 					
-					this.addMenuItems(menu, ['-', 'save', 'saveAs', '-'], parent);
+		// 			// TEN9: remove menu
+		// 			//this.addMenuItems(menu, ['-', 'save', 'saveAs', '-'], parent);
 					
-					if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
-						editorUi.getServiceName() == 'draw.io' &&
-						!editorUi.isOfflineApp() && file != null)
-					{
-						this.addMenuItems(menu, ['share', '-'], parent);
-					}
+		// 			if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
+		// 				editorUi.getServiceName() == 'draw.io' &&
+		// 				!editorUi.isOfflineApp() && file != null)
+		// 			{
+		// 				this.addMenuItems(menu, ['share', '-'], parent);
+		// 			}
 					
-					this.addMenuItems(menu, ['rename'], parent);
+		// 			// TEN9: remove menu
+		// 			//this.addMenuItems(menu, ['rename'], parent);
 					
-					if (editorUi.isOfflineApp())
-					{
-						if (navigator.onLine && urlParams['stealth'] != '1')
-						{
-							this.addMenuItems(menu, ['upload'], parent);
-						}
-					}
-					else
-					{
-						this.addMenuItems(menu, ['makeCopy'], parent);
+		// 			if (editorUi.isOfflineApp())
+		// 			{
+		// 				if (navigator.onLine && urlParams['stealth'] != '1')
+		// 				{
+		// 					this.addMenuItems(menu, ['upload'], parent);
+		// 				}
+		// 			}
+		// 			else
+		// 			{
+		// 				this.addMenuItems(menu, ['makeCopy'], parent);
 						
-						if (file != null && file.constructor == OneDriveFile)
-						{
-							this.addMenuItems(menu, ['moveToFolder'], parent);
-						}
-					}
-				}
+		// 				if (file != null && file.constructor == OneDriveFile)
+		// 				{
+		// 					this.addMenuItems(menu, ['moveToFolder'], parent);
+		// 				}
+		// 			}
+		// 		}
 				
-				menu.addSeparator(parent);
-				this.addSubmenu('importFrom', menu, parent);
-				this.addSubmenu('exportAs', menu, parent);
-				menu.addSeparator(parent);
-				this.addSubmenu('embed', menu, parent);
-				this.addSubmenu('publish', menu, parent);
-				menu.addSeparator(parent);
-				this.addSubmenu('newLibrary', menu, parent);
-				this.addSubmenu('openLibraryFrom', menu, parent);
+		// 		menu.addSeparator(parent);
+		// 		this.addSubmenu('importFrom', menu, parent);
+		// 		this.addSubmenu('exportAs', menu, parent);
+		// 		menu.addSeparator(parent);
+		// 		this.addSubmenu('embed', menu, parent);
+		// 		this.addSubmenu('publish', menu, parent);
+		// 		menu.addSeparator(parent);
+		// 		this.addSubmenu('newLibrary', menu, parent);
+		// 		this.addSubmenu('openLibraryFrom', menu, parent);
 				
-				if (editorUi.isRevisionHistorySupported())
-				{
-					this.addMenuItems(menu, ['-', 'revisionHistory'], parent);
-				}
+		// 		if (editorUi.isRevisionHistorySupported())
+		// 		{
+		// 			this.addMenuItems(menu, ['-', 'revisionHistory'], parent);
+		// 		}
 				
-				if (file != null && editorUi.fileNode != null)
-				{
-					var filename = (file.getTitle() != null) ?
-						file.getTitle() : editorUi.defaultFilename;
+		// 		if (file != null && editorUi.fileNode != null)
+		// 		{
+		// 			var filename = (file.getTitle() != null) ?
+		// 				file.getTitle() : editorUi.defaultFilename;
 					
-					if (!/(\.html)$/i.test(filename) &&
-						!/(\.svg)$/i.test(filename))
-					{
-						this.addMenuItems(menu, ['-', 'properties']);
-					}
-				}
+		// 			if (!/(\.html)$/i.test(filename) &&
+		// 				!/(\.svg)$/i.test(filename))
+		// 			{
+		// 				this.addMenuItems(menu, ['-', 'properties']);
+		// 			}
+		// 		}
 				
-				this.addMenuItems(menu, ['-', 'pageSetup'], parent);
+		// 		this.addMenuItems(menu, ['-', 'pageSetup'], parent);
 				
-				// Cannot use print in standalone mode on iOS as we cannot open new windows
-				if (!mxClient.IS_IOS || !navigator.standalone)
-				{
-					this.addMenuItems(menu, ['print'], parent);
-				}
+		// 		// Cannot use print in standalone mode on iOS as we cannot open new windows
+		// 		if (!mxClient.IS_IOS || !navigator.standalone)
+		// 		{
+		// 			this.addMenuItems(menu, ['print'], parent);
+		// 		}
 
-				this.addMenuItems(menu, ['-', 'close']);
-			}
-		})));
+		// 		// TEN9: remove menu
+		// 		//this.addMenuItems(menu, ['-', 'close']);
+		// 	}
+		// })));
 		
+		this.put(
+			'file',
+			new Menu(
+			  mxUtils.bind(this, function (menu, parent) {
+				// TEN9: Pare down the file list to what we need
+				// this.addMenuItems(menu, ['new', 'open', '-', 'save', 'saveAs', '-', 'import', 'export', '-', 'pageSetup', 'print'], parent);
+				this.addMenuItems(menu, ['export', '-', 'pageSetup', 'print'], parent);
+			  }),
+			),
+		  );
 		/**
 		 * External Fonts undoable change
 		 */
