@@ -58,7 +58,7 @@ export default defineComponent({
     type='file',
     value='Open File',
     style='opacity:0;',
-    accept='.draw, .xml',
+    accept='.draw, .drawio, .xml',
     @change='loadFile'
   )
 </template>
