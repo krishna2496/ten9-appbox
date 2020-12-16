@@ -54,17 +54,10 @@ const { Toolbar } = require('./Toolbar.js');
 const { ColorDialog, EditDataDialog, LinkDialog, OpenDialog } = require('./Dialogs.js');
 const { DiagramPage } = require('../diagramly/Diagram.js');
 const graphUtils = require('./graph_utils.js');
-var appPages = [];
-const urlParams = { dev: '1', sync: 'manual' };
-var uiTheme = 'atlas';
-//TEN9: add more sheet
-// const { tabsContainer,
-//   pageChange,
-//   pageRename,
-//   pageMove,
-//    } = require('../diagramly/Pages');
 
 // TEN9: TODO: Centralize all globals
+const appPages = [];
+const urlParams = { dev: '1', sync: 'manual' };
 window.mxStylesheet = mxStylesheet;
 const MAX_REQUEST_SIZE = 10485760;
 
@@ -3895,52 +3888,6 @@ EditorUi.prototype.createDivs = function () {
     this.diagramContainer.style.border = 'none';
   }
 };
-
-// // TEN9: Brought over sidebar footer container from diagramly
-// /**
-//  * Hook for sidebar footer container.
-//  */
-// EditorUi.prototype.createSidebarFooterContainer = function () {
-//   // TEN9: add add more shaep div in footer
-//   //return null;
-//   var div = this.createDiv('geSidebarContainer geSidebarFooter');
-//   div.style.position = 'absolute';
-//   div.style.overflow = 'hidden';
-
-//   var elt2 = document.createElement('a');
-//   elt2.className = 'geTitle';
-// 	// TEN9: Use ten9 Color instead of orange
-// 	// elt2.style.color = '#DF6C0C';
-// 	elt2.style.color = '#124C8B';
-//   elt2.style.fontWeight = 'bold';
-//   elt2.style.height = '100%';
-//   elt2.style.paddingTop = '9px';
-//   elt2.innerHTML = '<span style="font-size:18px;margin-right:5px;">+</span>';
-
-//   mxUtils.write(elt2, mxResources.get('moreShapes') + '...');
-
-//   // Prevents focus
-//   mxEvent.addListener(
-//     elt2,
-//     mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
-//     mxUtils.bind(this, function (evt) {
-//       evt.preventDefault();
-//     }),
-//   );
-
-//   mxEvent.addListener(
-//     elt2,
-//     'click',
-//     mxUtils.bind(this, function (evt) {
-//       this.actions.get('shapes').funct();
-//       mxEvent.consume(evt);
-//     }),
-//   );
-
-//   div.appendChild(elt2);
-
-//   return div;
-// };
 
 /**
  * Creates the required containers.

@@ -1219,6 +1219,7 @@ EditorUi.prototype.createTabContainer = function()
  */
 EditorUi.prototype.updateTabContainer = function()
 {
+	// TEN9: Set this pages to our pages store
     this.pages = appPages;
 
 	if (this.tabContainer != null && this.pages != null)

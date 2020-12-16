@@ -1040,7 +1040,9 @@ var SelectedFile;
 					(nodes.length == 1 && nodes[0].hasAttribute('name')))
 				{
 					this.fileNode = node;
-					this.pages = (this.pages != null) ? this.pages : [];
+					// TEN9: Set pages to our pages store
+					// this.pages = (this.pages != null) ? this.pages : [];
+					this.pages = appPages;
 					
 					// Wraps page nodes
 					for (var i = nodes.length - 1; i >= 0; i--)
@@ -1300,7 +1302,7 @@ var SelectedFile;
 			}
 			else
 			{
-				// TEN9: add pages value
+				// TEN9: Set this pages to our central pages store
 				this.pages = appPages;
 				// Restores order of pages
 				for (var i = 0; i < this.pages.length; i++)
@@ -1779,7 +1781,10 @@ var SelectedFile;
 		data = this.validateFileData(data);
 		this.currentPage = null;
 		this.fileNode = null;
-		this.pages = null;
+
+		// TEN9: Clear pages and reset
+		appPages.splice(0, appPages.length);
+		this.pages = appPages;
 
 		var node = (data != null && data.length > 0) ? mxUtils.parseXml(data).documentElement : null;
 		
@@ -1810,7 +1815,10 @@ var SelectedFile;
 				{
 					var selectedPage = null;
 					this.fileNode = node;
-					this.pages = [];
+
+					// TEN9: Clear pages and set this.store to our central store
+					appPages.splice(0, appPages.length);
+					this.pages = appPages;
 					
 					// Wraps page nodes
 					for (var i = 0; i < nodes.length; i++)
@@ -1830,7 +1838,7 @@ var SelectedFile;
 							page.setName(mxResources.get('pageWithNumber', [i + 1]));
 						}
 						this.pages.push(page);
-						appPages.push(page);
+
 						if (urlParams['page-id'] != null && page.getId() == urlParams['page-id'])
 						{
 							selectedPage = page;
@@ -1849,7 +1857,12 @@ var SelectedFile;
 				this.fileNode = node.ownerDocument.createElement('mxfile');
 				this.currentPage = new DiagramPage(node.ownerDocument.createElement('diagram'));
 				this.currentPage.setName(mxResources.get('pageWithNumber', [1]));
-		 	 	this.pages = [this.currentPage];
+
+				// TEN9: Initialize pages
+				appPages.splice(0, appPages.length);
+				this.pages = appPages;
+		
+		 	 	this.pages.push(this.currentPage);
 			}
 			
 			// Avoids scroll offset when switching page
@@ -14078,107 +14091,6 @@ var SelectedFile;
 		localStorage.setItem('.localStorageMigrated', '1');	
 	};
 
-	// TEN9: save pages function
-	// TEN9: Taken from App.prototype.saveFile
-	// TEN9: TODO: BU: Review
-	EditorUi.prototype.saveFile = function(forceDialog, success)
-	{
-		// TEN9
-		//var file = this.getCurrentFile();
-		var file = SelectedFile;
-		
-		if (file != null)
-		{
-			// FIXME: Invoke for local files
-			var done = mxUtils.bind(this, function()
-			{
-				if (EditorUi.enableDrafts)
-				{
-					file.removeDraft();
-				}
-				
-				if (this.getCurrentFile() != file && !file.isModified())
-				{
-					// Workaround for possible status update while save as dialog is showing
-					// is to show no saved status for device files
-					if (file.getMode() != App.MODE_DEVICE)
-					{
-						this.editor.setStatus(mxUtils.htmlEntities(mxResources.get('allChangesSaved')));
-					}
-					else
-					{
-						this.editor.setStatus('');
-					}
-				}
-				
-				if (success != null)
-				{
-					success();
-				}
-			});		
-				this.save(file.getTitle(), done);
-		}
-	};
-
-	// TEN9: Taken from App.prototype.save
-	// TEN9: TODO: BU: Review
-	EditorUi.prototype.save = function(name, done)
-	{
-		// TEN9
-		//var file = this.getCurrentFile();
-		var file = SelectedFile;
-		
-		// TEN9: remove spinner code
-		//if (file != null && this.spinner.spin(document.body, mxResources.get('saving')))
-		if (file != null )
-		{
-			this.editor.setStatus('');
-			
-			if (this.editor.graph.isEditing())
-			{
-				this.editor.graph.stopEditing();
-			}
-			
-			var success = mxUtils.bind(this, function()
-			{
-				file.handleFileSuccess(true);
-
-				if (done != null)
-				{
-					done();
-				}
-			});
-			
-			var error = mxUtils.bind(this, function(err)
-			{
-				if (file.isModified())
-				{
-					Editor.addRetryToError(err, mxUtils.bind(this, function()
-					{
-						this.save(name, done);
-					}));
-				}
-				
-				file.handleFileError(err, true);
-			});
-			
-			try
-			{
-				if (name == file.getTitle())
-				{
-					file.save(true, success, error);
-				}
-				else
-				{
-					file.saveAs(name, success, error)
-				}
-			}
-			catch (err)
-			{
-				error(err);
-			}
-		}
-	};
 })();
 
 /**
