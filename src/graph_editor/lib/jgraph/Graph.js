@@ -1271,6 +1271,8 @@ Graph.touchStyle =
  * Shortcut for capability check.
  */
 Graph.fileSupport =
+  // TEN9: Disable fileSupport
+  false &&
   window.File != null &&
   window.FileReader != null &&
   window.FileList != null &&
