@@ -2884,8 +2884,8 @@ EditorUi.prototype.toggleSidebarPanel = function (visible) {
 };
 
 // TEN9: add sidebarFooterContainer toggle function
-EditorUi.prototype.toogleSidebarFooterContainer = function (visiable) {
-  if (visiable) {
+EditorUi.prototype.toogleSidebarFooterContainer = function (visible) {
+  if (visible) {
     this.sidebarFooterContainer.style.display = 'block';
   } else {
     this.sidebarFooterContainer.style.display = 'none';
