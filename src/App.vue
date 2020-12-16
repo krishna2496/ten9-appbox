@@ -129,8 +129,6 @@ export default defineComponent({
     }
 
     function saveFile() {
-      // editor.value.editorUi.saveFile();
-
       const xmlData = editor.value.getXmlData();
       saveXmlFile(xmlData);
     }
@@ -234,8 +232,7 @@ export default defineComponent({
     });
 
     function loadFileData(xmlData: string) {
-      editor.value.editorUi.openFiles(xmlData);
-      //editor.value.loadXmlData(xmlData);
+      editor.value.loadXmlData(xmlData);
     }
 
     function getDateString(value: number): string {

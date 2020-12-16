@@ -31,10 +31,11 @@ export default defineComponent({
       //let fileData = null;
       let [selectedFile] = file.value.files;
       let reader = new FileReader();
-      reader.onload = () => {
-        //fileData = e.target.result;
-        //ctx.emit('file-loaded', fileData);
-        ctx.emit('file-loaded', file.value.files);
+      reader.onload = (e) => {
+        debugger;
+        const fileData = e.target.result;
+        ctx.emit('file-loaded', fileData);
+        // ctx.emit('file-loaded', file.value.files);
       };
       reader.readAsText(selectedFile);
     }

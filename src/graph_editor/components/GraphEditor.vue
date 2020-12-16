@@ -168,15 +168,17 @@ export default defineComponent({
     );
 
     function getXmlData(): string {
-      return mxUtils.getXml(editor.value.getGraphXml());
+      if (graph.value.isEditing()) {
+        graph.value.stopEditing();
+      }
+      app.value.currentFile.updateFileData();
+      const xmlData = app.value.currentFile.getData();
+      return xmlData;
     }
 
     function loadXmlData(data: string) {
-      // Import the XML data
-      const doc = mxUtils.parseXml(data);
-      editor.value.setGraphXml(doc.documentElement);
-      editor.value.setModified(false);
-      editor.value.undoManager.clear();
+
+      editorUi.value.openLocalFile(data, null, null, null, null);
 
       // Reset the view after loading a file
       nextTick(() => {
@@ -353,6 +355,7 @@ export default defineComponent({
     );
 
     return {
+      app,
       container,
       editor,
       editorUi,
