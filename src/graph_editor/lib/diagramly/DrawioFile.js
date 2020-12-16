@@ -1531,29 +1531,32 @@ DrawioFile.prototype.addUnsavedStatus = function(err)
 
 			var status = mxUtils.htmlEntities(mxResources.get('unsavedChangesClickHereToSave')) +
 				((msg != null && msg != '') ? ' (' + mxUtils.htmlEntities(msg) + ')' : '');
-			this.ui.editor.setStatus('<div title="'+ status +
-				'" class="geStatusAlertOrange" style="cursor:pointer;overflow:hidden;">' + status + ' <img src="' +
-				Editor.saveImage + '" align="top" style="width:16px;margin-top:' + ((mxClient.IS_FF) ? -3 : -2) + 'px"/></div>');
+
+			// TEN9: We don't want status in the menu bar
+			// this.ui.editor.setStatus('<div title="'+ status +
+			// 	'" class="geStatusAlertOrange" style="cursor:pointer;overflow:hidden;">' + status + ' <img src="' +
+			// 	Editor.saveImage + '" align="top" style="width:16px;margin-top:' + ((mxClient.IS_FF) ? -3 : -2) + 'px"/></div>');
 			
-			// Installs click handler for saving
-			var links = this.ui.statusContainer.getElementsByTagName('div');
+			// TEN9: We don't want status in the menu bar
+			// // Installs click handler for saving
+			// var links = this.ui.statusContainer.getElementsByTagName('div');
 			
-			if (links != null && links.length > 0)
-			{
-				mxEvent.addListener(links[0], 'click', mxUtils.bind(this, function()
-				{
-					this.ui.actions.get((this.ui.mode == null || !this.isEditable()) ?
-						'saveAs' : 'save').funct();
-				}));
-			}
-			else
-			{
-				var status = mxUtils.htmlEntities(mxResources.get('unsavedChanges'));
+			// if (links != null && links.length > 0)
+			// {
+			// 	mxEvent.addListener(links[0], 'click', mxUtils.bind(this, function()
+			// 	{
+			// 		this.ui.actions.get((this.ui.mode == null || !this.isEditable()) ?
+			// 			'saveAs' : 'save').funct();
+			// 	}));
+			// }
+			// else
+			// {
+			// 	var status = mxUtils.htmlEntities(mxResources.get('unsavedChanges'));
 				
-				this.ui.editor.setStatus('<div title="'+ status +
-					'" class="geStatusAlert" style="overflow:hidden;">' + status +
-					' (' + mxUtils.htmlEntities(err.message) + ')</div>');
-			}
+			// 	this.ui.editor.setStatus('<div title="'+ status +
+			// 		'" class="geStatusAlert" style="overflow:hidden;">' + status +
+			// 		' (' + mxUtils.htmlEntities(err.message) + ')</div>');
+			// }
 			
 			if (EditorUi.enableDrafts && (this.getMode() == null || EditorUi.isElectronApp))
 			{
