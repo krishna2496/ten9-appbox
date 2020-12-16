@@ -203,7 +203,7 @@ export default defineComponent({
       // Add our own ctrl+v event listener
       drag.onpaste = (e) => {
         // Don't allow pasting files in Preview Mode
-        if (!previewMode.value) {
+        if (previewMode.value) {
           return;
         }
 
