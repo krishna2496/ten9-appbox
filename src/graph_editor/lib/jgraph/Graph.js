@@ -11451,6 +11451,304 @@ if (typeof mxVertexHandler != 'undefined') {
   })();
 }
 
+// TEN9: add more sheets
+Graph.prototype.createViewState = function (node) {
+  var pv = node.getAttribute('page');
+  var ps = parseFloat(node.getAttribute('pageScale'));
+  var pw = parseFloat(node.getAttribute('pageWidth'));
+  var ph = parseFloat(node.getAttribute('pageHeight'));
+  var bg = node.getAttribute('background');
+  var temp = node.getAttribute('backgroundImage');
+  var bgImg = temp != null && temp.length > 0 ? JSON.parse(temp) : null;
+  var extFonts = node.getAttribute('extFonts');
+
+  if (extFonts) {
+    try {
+      extFonts = extFonts.split('|').map(function (ef) {
+        var parts = ef.split('^');
+        return { name: parts[0], url: parts[1] };
+      });
+    } catch (e) {
+      console.log('ExtFonts format error: ' + e.message);
+    }
+  }
+
+  return {
+    gridEnabled: node.getAttribute('grid') != '0',
+    //gridColor: node.getAttribute('gridColor') || mxSettings.getGridColor(uiTheme == 'dark'),
+    gridSize: parseFloat(node.getAttribute('gridSize')) || mxGraph.prototype.gridSize,
+    guidesEnabled: node.getAttribute('guides') != '0',
+    foldingEnabled: node.getAttribute('fold') != '0',
+    shadowVisible: node.getAttribute('shadow') == '1',
+    pageVisible: this.isLightboxView() ? false : pv != null ? pv != '0' : this.defaultPageVisible,
+    background: bg != null && bg.length > 0 ? bg : null,
+    backgroundImage: bgImg != null ? new mxImage(bgImg.src, bgImg.width, bgImg.height) : null,
+    pageScale: !isNaN(ps) ? ps : mxGraph.prototype.pageScale,
+    pageFormat:
+      !isNaN(pw) && !isNaN(ph)
+        ? new mxRectangle(0, 0, pw, ph)
+        : typeof mxSettings === 'undefined'
+        ? mxGraph.prototype.pageFormat
+        : mxSettings.getPageFormat(),
+    tooltips: node.getAttribute('tooltips') != '0',
+    connect: node.getAttribute('connect') != '0',
+    arrows: node.getAttribute('arrows') != '0',
+    mathEnabled: node.getAttribute('math') == '1',
+    selectionCells: null,
+    defaultParent: null,
+    scrollbars: this.defaultScrollbars,
+    scale: 1,
+    extFonts: extFonts || [],
+  };
+};
+
+/**
+ * Writes the graph properties from the realtime model to the given mxGraphModel node.
+ */
+Graph.prototype.saveViewState = function (vs, node, ignoreTransient) {
+  if (!ignoreTransient) {
+    node.setAttribute('grid', vs == null || vs.gridEnabled ? '1' : '0');
+    node.setAttribute('gridSize', vs != null ? vs.gridSize : mxGraph.prototype.gridSize);
+    node.setAttribute('guides', vs == null || vs.guidesEnabled ? '1' : '0');
+    node.setAttribute('tooltips', vs == null || vs.tooltips ? '1' : '0');
+    node.setAttribute('connect', vs == null || vs.connect ? '1' : '0');
+    node.setAttribute('arrows', vs == null || vs.arrows ? '1' : '0');
+    node.setAttribute(
+      'page',
+      (vs == null && this.defaultPageVisible) || (vs != null && vs.pageVisible) ? '1' : '0',
+    );
+
+    // Ignores fold to avoid checksum errors for lightbox mode
+    node.setAttribute('fold', vs == null || vs.foldingEnabled ? '1' : '0');
+  }
+
+  node.setAttribute(
+    'pageScale',
+    vs != null && vs.pageScale != null ? vs.pageScale : mxGraph.prototype.pageScale,
+  );
+
+  var pf =
+    vs != null
+      ? vs.pageFormat
+      : typeof mxSettings === 'undefined'
+      ? mxGraph.prototype.pageFormat
+      : mxSettings.getPageFormat();
+
+  if (pf != null) {
+    node.setAttribute('pageWidth', pf.width);
+    node.setAttribute('pageHeight', pf.height);
+  }
+
+  if (vs != null && vs.background != null) {
+    node.setAttribute('background', vs.background);
+  }
+
+  if (vs != null && vs.backgroundImage != null) {
+    node.setAttribute('backgroundImage', JSON.stringify(vs.backgroundImage));
+  }
+
+  node.setAttribute('math', vs != null && vs.mathEnabled ? '1' : '0');
+  node.setAttribute('shadow', vs != null && vs.shadowVisible ? '1' : '0');
+
+  if (vs != null && vs.extFonts != null && vs.extFonts.length > 0) {
+    node.setAttribute(
+      'extFonts',
+      vs.extFonts
+        .map(function (ef) {
+          return ef.name + '^' + ef.url;
+        })
+        .join('|'),
+    );
+  }
+};
+
+/**
+ * Overrides setDefaultParent
+ */
+Graph.prototype.getViewState = function () {
+  return {
+    defaultParent: this.defaultParent,
+    currentRoot: this.view.currentRoot,
+    gridEnabled: this.gridEnabled,
+    //gridColor: this.view.gridColor,
+    gridSize: this.gridSize,
+    guidesEnabled: this.graphHandler.guidesEnabled,
+    foldingEnabled: this.foldingEnabled,
+    shadowVisible: this.shadowVisible,
+    scrollbars: this.scrollbars,
+    pageVisible: this.pageVisible,
+    background: this.background,
+    backgroundImage: this.backgroundImage,
+    pageScale: this.pageScale,
+    pageFormat: this.pageFormat,
+    tooltips: this.tooltipHandler.isEnabled(),
+    connect: this.connectionHandler.isEnabled(),
+    arrows: this.connectionArrowsEnabled,
+    scale: this.view.scale,
+    scrollLeft: this.container.scrollLeft - this.view.translate.x * this.view.scale,
+    scrollTop: this.container.scrollTop - this.view.translate.y * this.view.scale,
+    translate: this.view.translate.clone(),
+    lastPasteXml: this.lastPasteXml,
+    pasteCounter: this.pasteCounter,
+    mathEnabled: this.mathEnabled,
+    extFonts: this.extFonts,
+  };
+};
+
+/**
+ * Overrides setDefaultParent
+ */
+Graph.prototype.setViewState = function (state, removeOldExtFonts) {
+  if (state != null) {
+    this.lastPasteXml = state.lastPasteXml;
+    this.pasteCounter = state.pasteCounter || 0;
+    this.mathEnabled = state.mathEnabled;
+    this.gridEnabled = state.gridEnabled;
+    //this.view.gridColor = state.gridColor;
+    this.gridSize = state.gridSize;
+    this.graphHandler.guidesEnabled = state.guidesEnabled;
+    this.foldingEnabled = state.foldingEnabled;
+    this.setShadowVisible(state.shadowVisible, false);
+    this.scrollbars = state.scrollbars;
+    this.pageVisible = !this.isViewer() && state.pageVisible;
+    this.background = state.background;
+    this.backgroundImage = state.backgroundImage;
+    this.pageScale = state.pageScale;
+    this.pageFormat = state.pageFormat;
+    this.view.currentRoot = state.currentRoot;
+    this.defaultParent = state.defaultParent;
+    this.connectionArrowsEnabled = state.arrows;
+    this.setTooltips(state.tooltips);
+    this.setConnectable(state.connect);
+
+    var oldExtFonts = this.extFonts;
+    this.extFonts = state.extFonts || [];
+
+    // Removing old fonts is important for real-time synchronization
+    // But, for page change, it results in undesirable font flicker
+    if (removeOldExtFonts && oldExtFonts != null) {
+      for (var i = 0; i < oldExtFonts.length; i++) {
+        var fontElem = document.getElementById('extFont_' + oldExtFonts[i].name);
+
+        if (fontElem != null) {
+          fontElem.parentNode.removeChild(fontElem);
+        }
+      }
+    }
+
+    for (var i = 0; i < this.extFonts.length; i++) {
+      this.addExtFont(this.extFonts[i].name, this.extFonts[i].url, true);
+    }
+
+    if (state.scale != null) {
+      this.view.scale = state.scale;
+    } else {
+      this.view.scale = 1;
+    }
+
+    // Checks if current root or default parent have been removed
+    if (this.view.currentRoot != null && !this.model.contains(this.view.currentRoot)) {
+      this.view.currentRoot = null;
+    }
+
+    if (this.defaultParent != null && !this.model.contains(this.defaultParent)) {
+      this.setDefaultParent(null);
+      this.selectUnlockedLayer();
+    }
+
+    if (state.translate != null) {
+      this.view.translate = state.translate;
+    }
+  } else {
+    this.view.currentRoot = null;
+    this.view.scale = 1;
+    this.gridEnabled = true;
+    this.gridSize = mxGraph.prototype.gridSize;
+    this.pageScale = mxGraph.prototype.pageScale;
+    this.pageFormat =
+      typeof mxSettings === 'undefined' ? mxGraph.prototype.pageFormat : mxSettings.getPageFormat();
+    this.pageVisible = this.defaultPageVisible;
+    this.background = null;
+    this.backgroundImage = null;
+    this.scrollbars = this.defaultScrollbars;
+    this.graphHandler.guidesEnabled = true;
+    this.foldingEnabled = true;
+    this.setShadowVisible(false, false);
+    this.defaultParent = null;
+    this.setTooltips(true);
+    this.setConnectable(true);
+    this.lastPasteXml = null;
+    this.pasteCounter = 0;
+    this.mathEnabled = false;
+    this.connectionArrowsEnabled = true;
+    this.extFonts = [];
+  }
+
+  // Implicit settings
+  this.pageBreaksVisible = this.pageVisible;
+  this.preferPageSize = this.pageVisible;
+  this.fireEvent(new mxEventObject('viewStateChanged', 'state', state));
+};
+
+Graph.prototype.addExtFont = function (fontName, fontUrl, dontRemember) {
+  // KNOWN: Font not added when pasting cells with custom fonts
+  if (fontName && fontUrl) {
+    if (urlParams['ext-fonts'] != '1') {
+      // Adds inserted fonts to font family menu
+      Graph.recentCustomFonts[fontName.toLowerCase()] = { name: fontName, url: fontUrl };
+    }
+
+    var fontId = 'extFont_' + fontName;
+
+    if (document.getElementById(fontId) == null) {
+      if (fontUrl.indexOf(Editor.GOOGLE_FONTS) == 0) {
+        mxClient.link('stylesheet', fontUrl, null, fontId);
+      } else {
+        var head = document.getElementsByTagName('head')[0];
+
+        // KNOWN: Should load fonts synchronously
+        var style = document.createElement('style');
+
+        style.appendChild(
+          document.createTextNode(
+            '@font-face {\n' +
+              '\tfont-family: "' +
+              fontName +
+              '";\n' +
+              '\tsrc: url("' +
+              fontUrl +
+              '");\n}',
+          ),
+        );
+
+        style.setAttribute('id', fontId);
+        var head = document.getElementsByTagName('head')[0];
+        head.appendChild(style);
+      }
+    }
+
+    if (!dontRemember) {
+      if (this.extFonts == null) {
+        this.extFonts = [];
+      }
+
+      var extFonts = this.extFonts,
+        notFound = true;
+
+      for (var i = 0; i < extFonts.length; i++) {
+        if (extFonts[i].name == fontName) {
+          notFound = false;
+          break;
+        }
+      }
+
+      if (notFound) {
+        this.extFonts.push({ name: fontName, url: fontUrl });
+      }
+    }
+  }
+};
+
 // TEN9: Added exports
 module.exports = {
   Graph,

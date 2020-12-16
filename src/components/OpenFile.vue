@@ -28,11 +28,10 @@ export default defineComponent({
     }
 
     function loadFile() {
-      let fileData = null;
       let [selectedFile] = file.value.files;
       let reader = new FileReader();
       reader.onload = (e) => {
-        fileData = e.target.result;
+        const fileData = e.target.result;
         ctx.emit('file-loaded', fileData);
       };
       reader.readAsText(selectedFile);
@@ -56,7 +55,7 @@ export default defineComponent({
     type='file',
     value='Open File',
     style='opacity:0;',
-    accept='.draw, .xml',
+    accept='.draw, .drawio, .xml',
     @change='loadFile'
   )
 </template>

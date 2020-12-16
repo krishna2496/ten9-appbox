@@ -16,8 +16,17 @@
 
 <script lang="ts">
 import { createEditorUi } from '../lib/jgraph/EditorUi';
+import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
+require('../lib/diagramly/DrawioFile.js');
+require('../lib/diagramly/LocalFile.js');
+require('../lib/diagramly/EditorUi.js');
+require('../lib/diagramly/Editor.js');
+require('../lib/diagramly/App.js');
+require('../lib/diagramly/Menus.js');
+require('../lib/diagramly/Pages.js');
+
 import {
   defineComponent,
   nextTick,
@@ -65,6 +74,8 @@ export default defineComponent({
   },
 
   setup(props, ctx) {
+    const app = ref(null);
+
     const container = ref(null);
 
     const editorUi = ref(null);
@@ -127,6 +138,7 @@ export default defineComponent({
       editor.value = editorUi.value.editor;
       graph.value = editor.value.graph;
       sidebar.value = editorUi.value.sidebar;
+      app.value = createApp(editor.value, container.value);
 
       // Add stencils to the sidebar
       sidebar.value.showEntries(props.shapeLibraries);
@@ -156,15 +168,16 @@ export default defineComponent({
     );
 
     function getXmlData(): string {
-      return mxUtils.getXml(editor.value.getGraphXml());
+      if (graph.value.isEditing()) {
+        graph.value.stopEditing();
+      }
+      app.value.currentFile.updateFileData();
+      const xmlData = app.value.currentFile.getData();
+      return xmlData;
     }
 
     function loadXmlData(data: string) {
-      // Import the XML data
-      const doc = mxUtils.parseXml(data);
-      editor.value.setGraphXml(doc.documentElement);
-      editor.value.setModified(false);
-      editor.value.undoManager.clear();
+      editorUi.value.openLocalFile(data, null, null, null, null);
 
       // Reset the view after loading a file
       nextTick(() => {
@@ -341,6 +354,7 @@ export default defineComponent({
     );
 
     return {
+      app,
       container,
       editor,
       editorUi,
