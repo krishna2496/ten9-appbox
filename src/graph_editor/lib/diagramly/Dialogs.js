@@ -5289,9 +5289,9 @@ var RevisionDialog = function(editorUi, revs, restoreFn)
 		var tbody = document.createElement('tbody');
 		var today = new Date().toDateString();
 
-		if (editorUi.currentPage != null && editorUi.pages != null)
+		if (editorUi.getCurrentPage() != null && editorUi.pages != null)
 		{
-			currentPage = mxUtils.indexOf(editorUi.pages, editorUi.currentPage);
+			currentPage = mxUtils.indexOf(editorUi.pages, editorUi.getCurrentPage());
 		}
 
 		for (var i = revs.length - 1; i >= 0; i--)
@@ -6119,7 +6119,7 @@ var FindWindow = function(ui, x, y, w, h)
 
 				for (var i = 0; i < ui.pages.length; i++)
 				{
-					if (ui.currentPage == ui.pages[i])
+					if (ui.getCurrentPage() == ui.pages[i])
 					{
 						currentPageIndex = i;
 						break;

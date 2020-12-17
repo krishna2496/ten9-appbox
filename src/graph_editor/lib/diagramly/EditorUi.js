@@ -1218,6 +1218,7 @@ var SelectedFile;
 				fileNode.setAttribute('agent', navigator.appVersion);
 				fileNode.setAttribute('version', EditorUi.VERSION);
 				fileNode.setAttribute('etag', Editor.guid());
+				fileNode.setAttribute('selectedPageId', this.getCurrentPage() ? this.getCurrentPage().getId() : '');
 
 				var md = (file != null) ? file.getMode() : this.mode;
 
@@ -1242,6 +1243,7 @@ var SelectedFile;
 				fileNode.removeAttribute('version');
 				fileNode.removeAttribute('editor');
 				fileNode.removeAttribute('type');
+				fileNode.removeAttribute('selectedPageId');
 			}
 
 			var xml = (uncompressed) ? mxUtils.getPrettyXml(fileNode) : mxUtils.getXml(fileNode);
@@ -1836,6 +1838,8 @@ var SelectedFile;
 
 			if (node != null && node.nodeName == 'mxfile')
 			{
+				let selectedPageId = node.getAttribute('selectedPageId') || '';
+
 				var nodes = node.getElementsByTagName('diagram');
 
 				if (urlParams['pages'] != '0' || nodes.length > 1 ||
@@ -1867,8 +1871,12 @@ var SelectedFile;
 						}
 						this.pages.push(page);
 
-						if (urlParams['page-id'] != null && page.getId() == urlParams['page-id'])
-						{
+						// if (urlParams['page-id'] != null && page.getId() == urlParams['page-id'])
+						// {
+						// 	selectedPage = page;
+						// }
+
+						if (selectedPageId && page.getId() === selectedPageId) {
 							selectedPage = page;
 						}
 					}
@@ -8992,9 +9000,9 @@ var SelectedFile;
 			}
 
 			vars['pagecount'] = (ui.pages != null) ? ui.pages.length : 1;
-			vars['page'] = (ui.currentPage != null) ? ui.currentPage.getName() : '';
-			vars['pagenumber'] = (ui.pages != null && ui.currentPage != null) ?
-				mxUtils.indexOf(ui.pages, ui.currentPage) + 1 : 1;
+			vars['page'] = (ui.getCurrentPage() != null) ? ui.getCurrentPage().getName() : '';
+			vars['pagenumber'] = (ui.pages != null && ui.getCurrentPage() != null) ?
+				mxUtils.indexOf(ui.pages, ui.getCurrentPage()) + 1 : 1;
 
 			return vars;
 		};
@@ -9010,15 +9018,15 @@ var SelectedFile;
 			{
 				return file.getTitle();
 			}
-			else if (name == 'page' && ui.currentPage != null)
+			else if (name == 'page' && ui.getCurrentPage() != null)
 			{
-				return ui.currentPage.getName();
+				return ui.getCurrentPage().getName();
 			}
 			else if (name == 'pagenumber')
 			{
-				if (ui.currentPage != null && ui.pages != null)
+				if (ui.getCurrentPage() != null && ui.pages != null)
 				{
-					return mxUtils.indexOf(ui.pages, ui.currentPage) + 1;
+					return mxUtils.indexOf(ui.pages, ui.getCurrentPage()) + 1;
 				}
 				else
 				{
