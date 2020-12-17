@@ -6,6 +6,7 @@
 const {
   mxClient,
   mxClipboard,
+  mxCodec,
   mxCodecRegistry,
   mxConnectionHandler,
   mxConstants,
@@ -53,8 +54,8 @@ var SelectedFile;
 	 * Version
 	 */
 
-	// TEN9: Set default uiTheme
-	var uiTheme = 'atlas'
+	// TEN9: Set default uiTheme to null to avoid download of atlas.css
+	var uiTheme = null;
 	EditorUi.VERSION = '@TEN9-VERSION@';
 
 	/**
@@ -1064,7 +1065,8 @@ var SelectedFile;
 				if (urlParams['pages'] != '0' || nodes.length > 1 ||
 					(nodes.length == 1 && nodes[0].hasAttribute('name')))
 				{
-					this.fileNode = node;
+					this.setFileNode(node);
+
 					// TEN9: Set pages to our pages store
 					// this.pages = (this.pages != null) ? this.pages : [];
 					this.pages = appPages;
@@ -1086,21 +1088,22 @@ var SelectedFile;
 				else
 				{
 					// Creates tabbed file structure if enforced by URL
-					if (urlParams['pages'] != '0' && this.fileNode == null)
+					if (urlParams['pages'] != '0' && this.getFileNode() == null)
 					{
-						this.fileNode = node.ownerDocument.createElement('mxfile');
-						this.currentPage = new DiagramPage(node.ownerDocument.createElement('diagram'));
-						this.currentPage.setName(mxResources.get('pageWithNumber', [1]));
-						graph.model.execute(new ChangePage(this, this.currentPage, this.currentPage, 0));
+						this.setFileNode(node.ownerDocument.createElement('mxfile'));
+
+						this.setCurrentPage(new DiagramPage(node.ownerDocument.createElement('diagram')));
+						this.getCurrentPage().setName(mxResources.get('pageWithNumber', [1]));
+						graph.model.execute(new ChangePage(this, this.getCurrentPage(), this.getCurrentPage(), 0));
 					}
 
 					// Avoids scroll offset when switching page
 					this.editor.setGraphXml(node);
 
 					// Avoids duplicate parsing of the XML stored in the node
-					if (this.currentPage != null)
+					if (this.getCurrentPage() != null)
 					{
-						this.currentPage.root = this.editor.graph.model.root;
+						this.getCurrentPage().root = this.editor.graph.model.root;
 					}
 				}
 
@@ -1278,14 +1281,14 @@ var SelectedFile;
 		// Generats graph model XML node for single page export
 		var node = this.editor.getGraphXml(ignoreSelection);
 
-		if (ignoreSelection && this.fileNode != null && this.currentPage != null)
+		if (ignoreSelection && this.getFileNode() != null && this.getCurrentPage() != null)
 		{
 			// Updates current page XML if selection is ignored
-			EditorUi.removeChildNodes(this.currentPage.node);
-			mxUtils.setTextContent(this.currentPage.node, Graph.compressNode(node));
+			EditorUi.removeChildNodes(this.getCurrentPage().node);
+			mxUtils.setTextContent(this.getCurrentPage().node, Graph.compressNode(node));
 
 			// Creates a clone of the file node for processing
-			node = this.fileNode.cloneNode(false);
+			node = this.getFileNode().cloneNode(false);
 
 			// Appends the node of the page and applies compression
 			function appendPage(pageNode)
@@ -1323,7 +1326,7 @@ var SelectedFile;
 
 			if (currentPage)
 			{
-				appendPage(this.currentPage.node);
+				appendPage(this.getCurrentPage().node);
 			}
 			else
 			{
@@ -1332,7 +1335,7 @@ var SelectedFile;
 				// Restores order of pages
 				for (var i = 0; i < this.pages.length; i++)
 				{
-					if (this.currentPage != this.pages[i])
+					if (this.getCurrentPage() != this.pages[i])
 					{
 						if (this.pages[i].needsUpdate)
 						{
@@ -1632,7 +1635,7 @@ var SelectedFile;
 			// LATER: Add caching for the graph or SVG while not on first page
 			// Dark mode requires a refresh that would destroy all handlers
 			// LATER: Use dark theme here to bypass refresh
-			if (darkTheme || (this.pages != null && this.currentPage != this.pages[0]))
+			if (darkTheme || (this.pages != null && this.getCurrentPage() != this.pages[0]))
 			{
 				var graphGetGlobalVariable = graph.getGlobalVariable;
 				graph = this.createTemporaryGraph(graph.getStylesheet());
@@ -1777,9 +1780,9 @@ var SelectedFile;
 		var data = {highlight: '#0000ff', nav: this.editor.graph.foldingEnabled, resize: true,
 			xml: Graph.zapGremlins(xml), toolbar: 'pages zoom layers lightbox'};
 
-		if (this.pages != null && this.currentPage != null)
+		if (this.pages != null && this.getCurrentPage() != null)
 		{
-			data.page = mxUtils.indexOf(this.pages, this.currentPage);
+			data.page = mxUtils.indexOf(this.pages, this.getCurrentPage());
 		}
 
 		var style = 'max-width:100%;border:1px solid transparent;';
@@ -1804,8 +1807,8 @@ var SelectedFile;
 	EditorUi.prototype.setFileData = function(data)
 	{
 		data = this.validateFileData(data);
-		this.currentPage = null;
-		this.fileNode = null;
+		this.setCurrentPage(null);
+		this.setFileNode(null);
 
 		// TEN9: Clear pages and reset
 		appPages.splice(0, appPages.length);
@@ -1839,7 +1842,7 @@ var SelectedFile;
 					(nodes.length == 1 && nodes[0].hasAttribute('name')))
 				{
 					var selectedPage = null;
-					this.fileNode = node;
+					this.setFileNode(node);
 
 					// TEN9: Clear pages and set this.store to our central store
 					appPages.splice(0, appPages.length);
@@ -1870,33 +1873,33 @@ var SelectedFile;
 						}
 					}
 
-					this.currentPage = (selectedPage != null) ? selectedPage :
-						this.pages[Math.max(0, Math.min(this.pages.length - 1, urlParams['page'] || 0))];
-					node = this.currentPage.node;
+					this.setCurrentPage((selectedPage != null) ? selectedPage :
+						this.pages[Math.max(0, Math.min(this.pages.length - 1, urlParams['page'] || 0))]);
+					node = this.getCurrentPage().node;
 				}
 			}
 
 			// Creates tabbed file structure if enforced by URL
-			if (urlParams['pages'] != '0' && this.fileNode == null && node != null)
+			if (urlParams['pages'] != '0' && this.getFileNode() == null && node != null)
 			{
-				this.fileNode = node.ownerDocument.createElement('mxfile');
-				this.currentPage = new DiagramPage(node.ownerDocument.createElement('diagram'));
-				this.currentPage.setName(mxResources.get('pageWithNumber', [1]));
+				this.setFileNode(node.ownerDocument.createElement('mxfile'));
+				this.setCurrentPage(new DiagramPage(node.ownerDocument.createElement('diagram')));
+				this.getCurrentPage().setName(mxResources.get('pageWithNumber', [1]));
 
 				// TEN9: Initialize pages
 				appPages.splice(0, appPages.length);
 				this.pages = appPages;
 
-		 	 	this.pages.push(this.currentPage);
+		 	 	this.pages.push(this.getCurrentPage());
 			}
 
 			// Avoids scroll offset when switching page
 			this.editor.setGraphXml(node);
 
 			// Avoids duplicate parsing of the XML stored in the node
-			if (this.currentPage != null)
+			if (this.getCurrentPage() != null)
 			{
-				this.currentPage.root = this.editor.graph.model.root;
+				this.getCurrentPage().root = this.editor.graph.model.root;
 			}
 
 			if (urlParams['layer-ids'] != null)
@@ -1945,10 +1948,10 @@ var SelectedFile;
 		}
 
 		if (!ignorePageName && this.pages != null && this.pages.length > 1 &&
-			this.currentPage != null && this.currentPage.node.getAttribute('name') != null &&
-			this.currentPage.getName().length > 0)
+			this.getCurrentPage() != null && this.getCurrentPage().node.getAttribute('name') != null &&
+			this.getCurrentPage().getName().length > 0)
 		{
-			basename = basename + '-' + this.currentPage.getName();
+			basename = basename + '-' + this.getCurrentPage().getName();
 		}
 
 		return basename;
@@ -2118,11 +2121,11 @@ var SelectedFile;
        		format = 'png';
 
        		// Finds the current page number
-       		if (this.pages != null && this.currentPage != null)
+       		if (this.pages != null && this.getCurrentPage() != null)
        		{
        			for (var i = 0; i < this.pages.length; i++)
        			{
-       				if (this.pages[i] == this.currentPage)
+       				if (this.pages[i] == this.getCurrentPage())
        				{
        					range = '&from=' + i;
        					break;
@@ -2234,13 +2237,13 @@ var SelectedFile;
 
 				var doUpdate = mxUtils.bind(this, function()
 				{
-					var page = this.currentPage;
+					var page = this.getCurrentPage();
 
 					mxUtils.post(desc.update, 'xml=' + encodeURIComponent(
 						mxUtils.getXml(this.editor.getGraphXml())),
 						mxUtils.bind(this, function(req)
 					{
-						if (page === this.currentPage)
+						if (page === this.getCurrentPage())
 						{
 							if (req.getStatus() >= 200 && req.getStatus() <= 300)
 							{
@@ -5287,10 +5290,10 @@ var SelectedFile;
 			}
 		}
 
-		if (allPages && this.currentPage != null && this.pages != null &&
-			this.currentPage != this.pages[0])
+		if (allPages && this.getCurrentPage() != null && this.pages != null &&
+			this.getCurrentPage() != this.pages[0])
 		{
-			params.push('page-id=' + this.currentPage.getId());
+			params.push('page-id=' + this.getCurrentPage().getId());
 		}
 
 		return params;
@@ -5379,9 +5382,9 @@ var SelectedFile;
 			tb.push('pages');
 			data.resize = true;
 
-			if (this.pages != null && this.currentPage != null)
+			if (this.pages != null && this.getCurrentPage() != null)
 			{
-				data.page = mxUtils.indexOf(this.pages, this.currentPage);
+				data.page = mxUtils.indexOf(this.pages, this.getCurrentPage());
 			}
 		}
 
@@ -6438,7 +6441,7 @@ var SelectedFile;
 				diagramData = optionalData;
 			}
 			// Exports PNG for first page while other page is showing
-			else if (darkTheme || (this.pages != null && this.currentPage != this.pages[0]))
+			else if (darkTheme || (this.pages != null && this.getCurrentPage() != this.pages[0]))
 			{
 				graph = this.createTemporaryGraph(graph.getStylesheet());
 				var graphGetGlobalVariable = graph.getGlobalVariable;
@@ -6711,9 +6714,9 @@ var SelectedFile;
 						{
 							node = Editor.parseDiagramNode(diagrams[0]);
 
-							if (this.currentPage != null)
+							if (this.getCurrentPage() != null)
 							{
-								mapping[diagrams[0].getAttribute('id')] = this.currentPage.getId();
+								mapping[diagrams[0].getAttribute('id')] = this.getCurrentPage().getId();
 							}
 						}
 						else if (diagrams.length > 1)
@@ -11349,7 +11352,7 @@ var SelectedFile;
 								{
 									// Exports PNG for first/specific page while other page is visible by creating a graph
 									// LATER: Add caching for the graph or SVG while not on first page
-									if (this.pages != null && this.currentPage.getId() != pageId)
+									if (this.pages != null && this.getCurrentPage().getId() != pageId)
 									{
 										var graphGetGlobalVariable = graph.getGlobalVariable;
 										graph = this.createTemporaryGraph(graph.getStylesheet());
@@ -13081,8 +13084,8 @@ var SelectedFile;
 			for (var i = 0; i < this.pages.length; i++)
 			{
 				var pageGraph = graph;
-
-				if (this.currentPage != this.pages[i])
+				
+				if (this.getCurrentPage() != this.pages[i])
 				{
 					pageGraph = this.createTemporaryGraph(graph.getStylesheet());
 					this.updatePageRoot(this.pages[i]);
@@ -16552,7 +16555,10 @@ EditorUi.initMinimalTheme = function()
 (function()
 {
 	var initialized = false;
-	var uiTheme = 'atlas'
+
+	// TEN9: Set theme to null to avoid download of atlass.css
+	var uiTheme = null;
+
 	// ChromeApp has async local storage
 	if (uiTheme == 'min' && !initialized && !mxClient.IS_CHROMEAPP)
 	{

@@ -203,13 +203,13 @@ SelectPage.prototype.execute = function()
 		// TEN9: TODO: BU: Review
 		var page;
 		// TEN9: check if ui current page is available or not
-		if(this.ui.currentPage == undefined)
+		if(this.ui.getCurrentPage() == undefined)
 		{
 			page = this.ui.pages[0];
 		}
 		else
 		{
-			page = this.ui.currentPage;
+			page = this.ui.getCurrentPage();
 		}
 
 
@@ -239,9 +239,9 @@ SelectPage.prototype.execute = function()
 		graph.clearSelection();
 
 		// Switches the current page
-		this.ui.currentPage = this.previousPage;
+		this.ui.setCurrentPage(this.previousPage);
 		this.previousPage = page;
-		page = this.ui.currentPage;
+		page = this.ui.getCurrentPage();
 
 		// Switches the root cell and sets the view state
 		graph.model.prefix = Editor.guid() + '-';
@@ -329,17 +329,17 @@ EditorUi.prototype.getSelectedPageIndex = function()
 {
 	// TEN9: TODO: BU: Review
 	// TEN9: Init curent page
-	if(this.currentPage == undefined)
-	{
-		this.currentPage = this.pages[0];
-	}
+	// if(this.getCurrentPage() == undefined)
+	// {
+	// 	this.setCurrentPage(this.pages[0]);
+	// }
 	var result = null;
 
-	if (this.pages != null && this.currentPage != null)
+	if (this.pages != null && this.getCurrentPage() != null)
 	{
 		for (var i = 0; i < this.pages.length; i++)
 		{
-			if (this.pages[i] == this.currentPage)
+			if (this.pages[i] == this.getCurrentPage())
 			{
 				result = i;
 
@@ -403,7 +403,7 @@ EditorUi.prototype.initPages = function()
 			{
 				var prevHeight = this.tabContainer.style.height;
 
-				if (this.fileNode == null || this.pages == null ||
+				if (this.getFileNode() == null || this.pages == null ||
 					(this.pages.length == 1 && urlParams['pages'] == '0'))
 				{
 					// TEN9: TODO: for testing
@@ -431,7 +431,7 @@ EditorUi.prototype.initPages = function()
 			this.updateTabContainer();
 
 			// Updates scrollbar positions and backgrounds after validation
-			var p = this.currentPage;
+			var p = this.getCurrentPage();
 
 			if (p != null && p != lastPage)
 			{
@@ -525,9 +525,9 @@ EditorUi.prototype.restoreViewState = function(page, viewState, selection)
 	var newPage = (page != null) ? this.getPageById(page.getId()) : null;
 	var graph = this.editor.graph;
 
-	if (newPage != null && this.currentPage != null && this.pages != null)
+	if (newPage != null && this.getCurrentPage() != null && this.pages != null)
 	{
-		if (newPage != this.currentPage)
+		if (newPage != this.getCurrentPage())
 		{
 			this.selectPage(newPage, true, viewState);
 		}
@@ -921,7 +921,7 @@ EditorUi.prototype.selectPage = function(page, quiet, viewState)
 {
 	try
 	{
-		if (page != this.currentPage)
+		if (page != this.getCurrentPage())
 		{
 			if (this.editor.graph.isEditing())
 			{
@@ -961,7 +961,7 @@ EditorUi.prototype.selectPage = function(page, quiet, viewState)
  */
 EditorUi.prototype.selectNextPage = function(forward)
 {
-	var next = this.currentPage;
+	var next = this.getCurrentPage();
 
 	if (next != null && this.pages != null)
 	{
@@ -1022,8 +1022,9 @@ EditorUi.prototype.createPageId = function()
 EditorUi.prototype.createPage = function(name, id)
 {
 	// TEN9: get node value from pages
-	// var page = new DiagramPage(this.fileNode.ownerDocument.createElement('diagram'), id);
-	var page = new DiagramPage(this.pages[0].node.ownerDocument.createElement('diagram'), id);
+	debugger;
+	var page = new DiagramPage(this.getFileNode().ownerDocument.createElement('diagram'), id);
+	// var page = new DiagramPage(this.pages[0].node.ownerDocument.createElement('diagram'), id);
 	page.setName((name != null) ? name : this.createPageName());
 
 	return page;
@@ -1080,7 +1081,7 @@ EditorUi.prototype.removePage = function(page)
 			graph.model.beginUpdate();
 			try
 			{
-				var next = this.currentPage;
+				var next = this.getCurrentPage();
 
 				if (next == page && this.pages.length > 1)
 				{
@@ -1243,16 +1244,18 @@ EditorUi.prototype.updateTabContainer = function()
 
 		for (var i = 0; i < this.pages.length; i++)
 		{
-			// TEN9: Initialize this.currentPage since this.currentPage
-			// is not the same as this.currentPage previously initialized
-			if (!this.currentPage) {
-				this.currentPage = this.pages[0];
-			}
+			// TEN9: Initialize this.setCurrentPage() since this.setCurrentPage()
+			// is not the same as this.getCurrentPage() previously initialized
+
+			// if (this.getCurrentPage() === null) {
+			// 	debugger;
+			// 	// this.setCurrentPage(this.pages[0]);
+			// }
 
 			// Install drag and drop for page reorder
 			(mxUtils.bind(this, function(index, tab)
 			{
-				if (this.pages[index] == this.currentPage)
+				if (this.pages[index] == this.getCurrentPage())
 				{
 					tab.className = 'geActivePage';
 					tab.style.backgroundColor = (uiTheme == 'dark') ? '#2a2a2a' : '#fff';
@@ -1315,7 +1318,7 @@ EditorUi.prototype.updateTabContainer = function()
 				}));
 
 				wrapper.appendChild(tab);
-			}))(i, this.createTabForPage(this.pages[i], tabWidth, this.pages[i] != this.currentPage, i + 1));
+			}))(i, this.createTabForPage(this.pages[i], tabWidth, this.pages[i] != this.getCurrentPage(), i + 1));
 		}
 
 		this.tabContainer.innerHTML = '';
@@ -1486,8 +1489,8 @@ EditorUi.prototype.createPageMenuTab = function()
 
 					// Adds checkmark to current page
 					// TEN9: if currentPage is undefined only one page exists
-					//if (this.pages[index] == this.currentPage)
-					if (this.pages[index] == this.currentPage || this.currentPage == undefined)
+					//if (this.pages[index] == this.getCurrentPage())
+					if (this.pages[index] == this.getCurrentPage() || this.getCurrentPage() == undefined)
 					{
 						menu.addCheckmark(item, Editor.checkmarkImage);
 					}
@@ -1504,16 +1507,16 @@ EditorUi.prototype.createPageMenuTab = function()
 				}), parent);
 
 				// TEN9: if currentPage is undefined we can set page as first page
-				var page;
-				if(this.currentPage == undefined)
-				{
-					page = this.pages[0];
-				}
-				else
-				{
-					page = this.currentPage;
-				}
-
+				// var page;
+				// if(this.getCurrentPage() == undefined)
+				// {
+				// 	page = this.pages[0];
+				// }
+				// else
+				// {
+				// 	page = this.getCurrentPage();
+				// }
+				var page = this.getCurrentPage();
 
 				if (page != null)
 				{
@@ -1636,7 +1639,8 @@ EditorUi.prototype.addTabListeners = function(page, tab)
 	{
 		// Do not consume event here to allow for drag and drop of tabs
 		menuWasVisible = this.currentMenu != null;
-		pageWasActive = page == this.currentPage;
+
+		pageWasActive = page == this.getCurrentPage();
 
 		if (!graph.isMouseDown && !pageWasActive)
 		{

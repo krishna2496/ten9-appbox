@@ -640,7 +640,7 @@ DrawioFile.prototype.reloadFile = function(success, error)
 			// Restores view state and current page
 			var viewState = this.ui.editor.graph.getViewState();
 			var selection = this.ui.editor.graph.getSelectionCells();
-			var page = this.ui.currentPage;
+			var page = this.ui.getCurrentPage();
 
 			this.ui.loadFile(this.getHash(), true, null, mxUtils.bind(this, function()
 			{
@@ -767,7 +767,7 @@ DrawioFile.prototype.patch = function(patches, resolver)
 		}
 
 		// Checks if current page was removed
-		if (mxUtils.indexOf(this.ui.pages, this.ui.currentPage) < 0)
+		if (mxUtils.indexOf(this.ui.pages, this.ui.getCurrentPage()) < 0)
 		{
 			this.ui.selectPage(this.ui.pages[0], true);
 		}
@@ -787,7 +787,7 @@ DrawioFile.prototype.patch = function(patches, resolver)
 		undoMgr.indexOfNextAdd = nextAdd;
 		undoMgr.fireEvent(new mxEventObject(mxEvent.CLEAR));
 
-		if (this.ui.currentPage == null || this.ui.currentPage.needsUpdate)
+		if (this.ui.getCurrentPage() == null || this.ui.getCurrentPage().needsUpdate)
 		{
 			// Updates the graph and background
 			if (math != graph.mathEnabled)

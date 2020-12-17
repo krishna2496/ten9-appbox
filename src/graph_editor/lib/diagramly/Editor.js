@@ -318,7 +318,10 @@ const uiTheme = null;
   /**
    * Specifies if XML files should be compressed. Default is true.
    */
-  Editor.compressXml = true;
+  // TEN9: TODO: Change this back after debugging
+  // TEN9: Don't compress XML... for debugging
+  Editor.compressXml = false;
+  // Editor.compressXml = true;
 
   /**
    * Specifies global variables.
@@ -3532,8 +3535,8 @@ const uiTheme = null;
 
       if (ui.editor.graph.getModel().getParent(cell) != null) {
         id = cell.getId();
-      } else if (ui.currentPage != null) {
-        id = ui.currentPage.getId();
+      } else if (ui.getCurrentPage() != null) {
+        id = ui.getCurrentPage().getId();
       }
 
       return id;
@@ -6834,9 +6837,9 @@ const uiTheme = null;
     if (editorUi.pages != null) {
       pageCount = editorUi.pages.length;
 
-      if (editorUi.currentPage != null) {
+      if (editorUi.getCurrentPage() != null) {
         for (var i = 0; i < editorUi.pages.length; i++) {
-          if (editorUi.currentPage == editorUi.pages[i]) {
+          if (editorUi.getCurrentPage() == editorUi.pages[i]) {
             currentPage = i + 1;
             pagesFromInput.value = currentPage;
             pagesToInput.value = currentPage;
@@ -7273,7 +7276,7 @@ const uiTheme = null;
 
         for (var i = i0; i <= imax; i++) {
           var page = editorUi.pages[i];
-          var tempGraph = page == editorUi.currentPage ? graph : null;
+          var tempGraph = page == editorUi.getCurrentPage() ? graph : null;
 
           if (tempGraph == null) {
             tempGraph = editorUi.createTemporaryGraph(graph.stylesheet); //getStylesheet());
@@ -7425,7 +7428,7 @@ const uiTheme = null;
   {
       if (this.page == null)
       {
-          this.page = this.ui.currentPage;
+          this.page = this.ui.getCurrentPage();
       }
 
       // Workaround for redo existing change with different current page
