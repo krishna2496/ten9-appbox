@@ -498,7 +498,6 @@ EditorUi.prototype.initPages = function()
 
 			for (var i = 0; i < changes.length; i++)
 			{
-				// TEN9: TODO: Fix this
 				if (changes[i] instanceof SelectPage ||
 					changes[i] instanceof RenamePage ||
 					changes[i] instanceof MovePage ||
