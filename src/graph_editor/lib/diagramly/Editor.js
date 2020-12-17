@@ -7432,7 +7432,7 @@ const uiTheme = null;
       }
 
       // Workaround for redo existing change with different current page
-      if (this.page != this.ui.currentPage)
+      if (this.page != this.ui.getCurrentPage())
       {
           if (this.page.viewState != null)
           {

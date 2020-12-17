@@ -988,25 +988,21 @@ mxUtils.extend(EditorUi, mxEventSource);
  */
 EditorUi.compactUi = true;
 
-EditorUi.prototype.getFileNode = function()
-{
+EditorUi.prototype.getFileNode = function () {
   return appFileNode;
-}
+};
 
-EditorUi.prototype.setFileNode = function(node)
-{
+EditorUi.prototype.setFileNode = function (node) {
   appFileNode = node;
-}
+};
 
-EditorUi.prototype.getCurrentPage = function()
-{
+EditorUi.prototype.getCurrentPage = function () {
   return appCurrentPage;
-}
+};
 
-EditorUi.prototype.setCurrentPage = function(page)
-{
+EditorUi.prototype.setCurrentPage = function (page) {
   appCurrentPage = page;
-}
+};
 
 /**
  * Specifies the size of the split bar.
