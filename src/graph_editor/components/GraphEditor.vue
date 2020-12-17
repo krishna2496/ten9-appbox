@@ -171,12 +171,21 @@ export default defineComponent({
     );
 
     function getXmlData(): string {
-      if (graph.value.isEditing()) {
-        graph.value.stopEditing();
-      }
       app.value.currentFile.updateFileData();
       const xmlData = app.value.currentFile.getData();
       return xmlData;
+    }
+
+    async function canLoadFile(file: File) {
+      const ext = file.name.split('.').pop();
+      if (ext === 'draw' || ext === 'drawio' || ext === 'xml' || file.type.startsWith('text/')) {
+        // Read start of file and see if it matches either <mxGraphModel or <
+        const fileData = await file.text();
+        if (fileData.startsWith('<mxfile ') || fileData.startsWith('<mxGraphModel ')) {
+          return true;
+        }
+      }
+      return false;
     }
 
     function loadXmlData(data: string) {
@@ -358,6 +367,7 @@ export default defineComponent({
 
     return {
       app,
+      canLoadFile,
       container,
       editor,
       editorUi,

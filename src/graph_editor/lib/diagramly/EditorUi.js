@@ -10744,8 +10744,11 @@ var SelectedFile;
 			{
 				fn();
 			}
-			else if ((mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) &&
-				currentFile != null && currentFile.isModified())
+			// TEN9: Ask the user even if the file is not modified
+			//       and even if we're in a browser
+			else if (currentFile != null)
+			// else if ((mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) &&
+			// 		currentFile != null && currentFile.isModified())
 			{
 				this.confirm(mxResources.get('allChangesLost'), null, fn,
 					mxResources.get('cancel'), mxResources.get('discardChanges'));
