@@ -176,7 +176,7 @@ export default defineComponent({
       return xmlData;
     }
 
-    async function canLoadFile(file: File) {
+    async function canLoadFile(file: File): Promise<boolean> {
       const ext = file.name.split('.').pop();
       if (ext === 'draw' || ext === 'drawio' || ext === 'xml' || file.type.startsWith('text/')) {
         // Read start of file and see if it matches either <mxGraphModel or <

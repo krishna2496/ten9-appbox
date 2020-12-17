@@ -91,6 +91,10 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
+    function loadFileData(xmlData: string) {
+      editor.value.loadXmlData(xmlData);
+    }
+
     function onFileDropped(event: EventFileInfo) {
       const fileLogEvent: FileLogEvent = {
         title: 'File Dropped',
@@ -182,6 +186,7 @@ export default defineComponent({
         e.preventDefault();
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       drag.addEventListener('drop', async (e: DragEvent) => {
         e.stopPropagation();
         e.preventDefault();
@@ -194,7 +199,7 @@ export default defineComponent({
         let fileOpened = false;
 
         if (e.dataTransfer.items.length === 1) {
-          const item = e.dataTransfer.items[0];
+          const [item] = e.dataTransfer.items;
           if (item.kind === 'file') {
             const file = item.getAsFile();
             if (await editor.value.canLoadFile(file)) {
@@ -250,10 +255,6 @@ export default defineComponent({
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
     });
-
-    function loadFileData(xmlData: string) {
-      editor.value.loadXmlData(xmlData);
-    }
 
     function getDateString(value: number): string {
       return new Date(value).toLocaleString();
