@@ -14,7 +14,7 @@
  * -----
  */
 
-const { mxPoint } = require('./mxClient.js');
+const { mxPoint, mxRectangle } = require('./mxClient.js');
 
 export function getOffset(originEl, el) {
   const originRect = originEl.getBoundingClientRect();
@@ -80,3 +80,33 @@ export function copyTextToClipboard(text) {
 
   document.body.removeChild(textArea);
 }
+
+export function fit(node, container)
+{
+  if (container.offsetHeight === 0) {
+    container = container.offsetParent;
+  }
+
+  var ds = new mxRectangle(0, 0, container.clientWidth, container.clientHeight);
+
+  var left = parseInt(node.offsetLeft);
+  var width = parseInt(node.offsetWidth);
+  var sl = container.scrollLeft;
+  var st = container.scrollTop;
+  var right = (sl) + ds.width;
+
+  if (left + width > right)
+  {
+    node.style.left = Math.max(sl, right - width) + 'px';
+  }
+
+  var top = parseInt(node.offsetTop);
+  var height = parseInt(node.offsetHeight);
+
+  var bottom = st + ds.height;
+
+  if (top + height > bottom)
+  {
+    node.style.top = Math.max(st, bottom - height) + 'px';
+  }
+};
