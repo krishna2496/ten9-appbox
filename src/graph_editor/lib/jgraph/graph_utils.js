@@ -81,8 +81,7 @@ export function copyTextToClipboard(text) {
   document.body.removeChild(textArea);
 }
 
-export function fit(node, container)
-{
+export function fit(node, container) {
   if (container.offsetHeight === 0) {
     container = container.offsetParent;
   }
@@ -93,10 +92,9 @@ export function fit(node, container)
   var width = parseInt(node.offsetWidth);
   var sl = container.scrollLeft;
   var st = container.scrollTop;
-  var right = (sl) + ds.width;
+  var right = sl + ds.width;
 
-  if (left + width > right)
-  {
+  if (left + width > right) {
     node.style.left = Math.max(sl, right - width) + 'px';
   }
 
@@ -105,8 +103,7 @@ export function fit(node, container)
 
   var bottom = st + ds.height;
 
-  if (top + height > bottom)
-  {
+  if (top + height > bottom) {
     node.style.top = Math.max(st, bottom - height) + 'px';
   }
-};
+}
