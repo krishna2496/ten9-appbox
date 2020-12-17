@@ -2532,7 +2532,7 @@ var LayersWindow = function (editorUi, x, y, w, h) {
 
 // TEN9: add more shape dailog
 var MoreShapesDialog = function (editorUi, expanded, entries) {
-  var uiTheme = 'atlas';
+  var uiTheme = null;
   var isLocalStorage = false;
   entries = entries != null ? entries : editorUi.sidebar.entries;
   var div = document.createElement('div');

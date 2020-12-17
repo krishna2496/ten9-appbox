@@ -32,8 +32,12 @@ const {
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
 
+const { mxSettings } = require('./Settings.js');
 const { DiagramPage } = require('./Pages.js');
-const { appPages } = require('../jgraph/EditorUi');
+const { PrintDialog } = require('../jgraph/Editor.js');
+const { appPages, ChangePageSetup } = require('../jgraph/EditorUi.js');
+const { BackgroundImageDialog, ImageDialog, LinkDialog } = require('./Dialogs.js');
+const { Spinner } = require('../spin/spin.js');
 
 // TEN9: TODO: Consolidate all constants
 // const urlParams = {dev: '1', sync: 'manual'};
@@ -501,6 +505,8 @@ var SelectedFile;
 	/**
 	 * Whether template action should be shown in insert menu.
 	 */
+	// TEN9: Disabled for our app
+	// EditorUi.prototype.insertTemplateEnabled = true;
 	EditorUi.prototype.insertTemplateEnabled = true;
 	
 	/**
@@ -654,23 +660,42 @@ var SelectedFile;
 	 * @param {number} dx X-coordinate of the translation.
 	 * @param {number} dy Y-coordinate of the translation.
 	 */
+
 	EditorUi.prototype.createSpinner = function(x, y, size)
 	{
 		size = (size != null) ? size : 24;
 
 		var spinner = new Spinner({
-			lines: 12, // The number of lines to draw
-			length: size, // The length of each line
-			width: Math.round(size / 3), // The line thickness
-			radius: Math.round(size / 2), // The radius of the inner circle
-			rotate: 0, // The rotation offset
-			color: (uiTheme == 'dark') ? '#c0c0c0' : '#000', // #rgb or #rrggbb
-			speed: 1.5, // Rounds per second
+			lines: 14, // The number of lines to draw
+			length: 14, // The length of each line
+			width: 17, // The line thickness
+			radius: 57, // The radius of the inner circle
+			scale: 1.15,
+			speed: 1, // Rounds per second
+			corners: 1,
+			rotate: 0, // The rotation offset			
+			direction: 1,
+			color: (uiTheme == 'dark') ? '#c0c0c0' : '#124c8b', // #rgb or #rrggbb			
+			fadeColor: 'transparent',
 			trail: 60, // Afterglow percentage
 			shadow: false, // Whether to render a shadow
 			hwaccel: false, // Whether to use hardware acceleration
 			zIndex: 2e9 // The z-index (defaults to 2000000000)
 		});
+
+		// var spinner = new Spinner({
+		// 	lines: 12, // The number of lines to draw
+		// 	length: size, // The length of each line
+		// 	width: Math.round(size / 3), // The line thickness
+		// 	radius: Math.round(size / 2), // The radius of the inner circle
+		// 	rotate: 0, // The rotation offset
+		// 	color: (uiTheme == 'dark') ? '#c0c0c0' : '#000', // #rgb or #rrggbb
+		// 	speed: 1.5, // Rounds per second
+		// 	trail: 60, // Afterglow percentage
+		// 	shadow: false, // Whether to render a shadow
+		// 	hwaccel: false, // Whether to use hardware acceleration
+		// 	zIndex: 2e9 // The z-index (defaults to 2000000000)
+		// });
 
 		// Extends spin method to include an optional label
 		var oldSpin = spinner.spin;
@@ -8130,6 +8155,8 @@ var SelectedFile;
 				graph.setSelectionCells(cells);
 			});
 			
+            // TEN9: TODO: BU: Get spinners to work
+			// TEN9: remove spinner code
 			if (this.spinner.spin(document.body, mxResources.get('loading')))
 			{
 				var count = files.length;
@@ -8143,6 +8170,8 @@ var SelectedFile;
 					
 					if (--remain == 0)
 					{
+			            // TEN9: TODO: BU: Get spinners to work
+						// TEN9: remove spinner code
 						this.spinner.stop();
 						
 						if (barrierFn != null)
@@ -9060,7 +9089,8 @@ var SelectedFile;
 			this.keyHandler.bindAction(70, true, 'find'); // Ctrl+F
 			this.keyHandler.bindAction(67, true, 'copyStyle', true); // Ctrl+Shift+C
 			this.keyHandler.bindAction(86, true, 'pasteStyle', true); // Ctrl+Shift+V
-			this.keyHandler.bindAction(77, true, 'editGeometry', true); // Ctrl+Shift+M
+			// TEN9: We don't want Edit Geometry dialog for our app
+			// this.keyHandler.bindAction(77, true, 'editGeometry', true); // Ctrl+Shift+M
 			this.keyHandler.bindAction(88, true, 'insertText', true); // Ctrl+Shift+X
 			this.keyHandler.bindAction(75, true, 'insertRectangle'); // Ctrl+K
 			this.keyHandler.bindAction(75, true, 'insertEllipse', true); // Ctrl+Shift+K
@@ -9077,9 +9107,11 @@ var SelectedFile;
 		var x = document.body.clientWidth / 2 - 2;
 	
 		// Holds the x-coordinate of the point
-	//	this.spinner = this.createSpinner(x, y, 24);
-	// TEN9: TODO: BU: Get spinners to work
-	this.spinner = {}
+		// TEN9: Remove the spinner code
+		this.spinner = this.createSpinner(x, y, 24);
+
+		// TEN9: TODO: BU: Get spinners to work
+		// this.spinner = {};
 		// Installs drag and drop handler for rich text editor
 		if (Graph.fileSupport)
 		{
@@ -10622,8 +10654,8 @@ var SelectedFile;
 	    		}
 				
 				// TEN9: TODO: BU: Get spinners to work
-				// TEB9: remove spinner code
-				// this.spinner.stop();
+				// TEN9: remove spinner code
+				this.spinner.stop();
 				this.openLocalFile(data, name, temp, fileHandle, (fileHandle != null) ? file : null);
 			}
 		}
@@ -10635,8 +10667,8 @@ var SelectedFile;
 	EditorUi.prototype.openFiles = function(files, temp)
 	{
 		// TEN9: TODO: BU: Get spinners to work
-		// if (this.spinner.spin(document.body, mxResources.get('loading')))
-		// {
+		if (this.spinner.spin(document.body, mxResources.get('loading')))
+		{
 			for (var i = 0; i < files.length; i++)
 			{
 				(mxUtils.bind(this, function(file)
@@ -10674,7 +10706,7 @@ var SelectedFile;
 					}
 				}))(files[i]);
 			}
-		//} // TEN9: TODO: BU: Get spinners to work
+		} // TEN9: TODO: BU: Get spinners to work
 	};
 
 	/**
@@ -10712,8 +10744,11 @@ var SelectedFile;
 			{
 				fn();
 			}
-			else if ((mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) &&
-				currentFile != null && currentFile.isModified())
+			// TEN9: Ask the user even if the file is not modified
+			//       and even if we're in a browser
+			else if (currentFile != null)
+			// else if ((mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) &&
+			// 		currentFile != null && currentFile.isModified())
 			{
 				this.confirm(mxResources.get('allChangesLost'), null, fn,
 					mxResources.get('cancel'), mxResources.get('discardChanges'));
@@ -12923,9 +12958,9 @@ var SelectedFile;
 			editorUiUpdateActionStates.apply(this, arguments);
 
 			var graph = this.editor.graph;
-			var active = this.isDiagramActive();
+			// var active = this.isDiagramActive();
+			const active = graph.isEnabled();
 			var file = this.getCurrentFile();
-			var enabled = file != null || urlParams['embed'] == '1';
 			this.actions.get('pageSetup').setEnabled(active);
 			this.actions.get('autosave').setEnabled(file != null && file.isEditable() && file.isAutosaveOptional());
 			this.actions.get('guides').setEnabled(active);
@@ -12933,8 +12968,8 @@ var SelectedFile;
 			this.actions.get('shadowVisible').setEnabled(active);
 			this.actions.get('connectionArrows').setEnabled(active);
 			this.actions.get('connectionPoints').setEnabled(active);
-			//this.actions.get('copyStyle').setEnabled(active && !graph.isSelectionEmpty());
-			//this.actions.get('pasteStyle').setEnabled(active && !graph.isSelectionEmpty());
+			// this.actions.get('copyStyle').setEnabled(active && !graph.isSelectionEmpty());
+			// this.actions.get('pasteStyle').setEnabled(active && !graph.isSelectionEmpty());
 			// this.actions.get('editGeometry').setEnabled(graph.getModel().isVertex(graph.getSelectionCell()));
 			// this.actions.get('createShape').setEnabled(active);
 			// this.actions.get('createRevision').setEnabled(active);
@@ -15569,7 +15604,8 @@ EditorUi.initMinimalTheme = function()
         
         if (graph.getSelectionCount() == 1)
         {
-            this.addMenuItems(menu, ['editTooltip', '-', 'editStyle', 'editGeometry', '-'], null, evt);
+			// TEN9: We don't want Edit Geometry dialog for our app
+            this.addMenuItems(menu, ['editTooltip', '-', 'editStyle', /* 'editGeometry', */ '-'], null, evt);
 
             if (graph.isCellFoldable(graph.getSelectionCell()))
             {

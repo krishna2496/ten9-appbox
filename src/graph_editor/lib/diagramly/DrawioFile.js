@@ -1778,8 +1778,8 @@ DrawioFile.prototype.redirectToNewApp = function(error, details)
 DrawioFile.prototype.handleFileSuccess = function(saved)
 {
 	// TEN9: TODO: BU: Get spinner to work
-	//this.ui.spinner.stop();
-	
+	this.ui.spinner.stop();
+
 	if (this.ui.getCurrentFile() == this)
 	{
 		if (this.isModified())
@@ -1822,7 +1822,7 @@ DrawioFile.prototype.handleFileSuccess = function(saved)
 DrawioFile.prototype.handleFileError = function(err, manual)
 {
 	// TEN9: TODO: BU: Get spinner to work
-	//this.ui.spinner.stop();
+	this.ui.spinner.stop();
 	
 	if (this.ui.getCurrentFile() == this)
 	{

@@ -1079,6 +1079,7 @@ EditorUi.prototype.setEnabled = function (enabled) {
   this.editor.graph.setEnabled(enabled);
   this.toggleSidebarPanel(enabled);
   this.toggleFormatPanel(enabled);
+  this.toogleSidebarFooterContainer(enabled);
 
   this.editor.graph.popupMenuHandler.hideMenu();
   this.editor.graph.tooltipHandler.hideTooltip();
@@ -2882,6 +2883,15 @@ EditorUi.prototype.toggleSidebarPanel = function (visible) {
   }
 };
 
+// TEN9: add sidebarFooterContainer toggle function
+EditorUi.prototype.toogleSidebarFooterContainer = function (visible) {
+  if (visible) {
+    this.sidebarFooterContainer.style.display = 'block';
+  } else {
+    this.sidebarFooterContainer.style.display = 'none';
+  }
+};
+
 /**
  * Adds support for placeholders in labels.
  */
@@ -3765,8 +3775,10 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
     this.sidebarFooterContainer.style.bottom = bottom + 'px';
   }
 
-  this.sidebarContainer.style.height =
-    this.diagramContainer.offsetHeight - this.sidebarFooterHeight + 'px';
+  // TEN9: fix sidebar height
+  // this.sidebarContainer.style.height =
+  //   this.diagramContainer.offsetHeight - this.sidebarFooterHeight + 'px';
+  this.sidebarContainer.style.height = this.diagramContainer.offsetHeight + 'px';
 
   var fw = this.format != null ? this.formatWidth : 0;
   this.sidebarContainer.style.top = tmp + 'px';

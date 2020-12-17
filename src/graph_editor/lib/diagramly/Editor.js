@@ -39,7 +39,7 @@ const {
   mxUtils,
 } = require('../jgraph/mxClient.js');
 
-const { PrintDialog } = require('../jgraph/Editor.js');
+const { PageSetupDialog, PrintDialog } = require('../jgraph/Editor.js');
 const { Sidebar } = require('../jgraph/Sidebar.js');
 const { ChangePageSetup, ChangeGridColor } = require('../jgraph/EditorUi.js');
 // TEN9: Consolidate variables
@@ -48,7 +48,7 @@ const IMAGE_PATH = '/images';
 // const STENCIL_PATH = '../../../../public/stencils';
 const urlParams = {};
 const DRAW_MATH_URL = 'math';
-const uiTheme = 'atlas';
+const uiTheme = null;
 
 (function () {
   if (typeof html4 !== 'undefined') {
@@ -67,7 +67,8 @@ const uiTheme = 'atlas';
   /**
    * Specifies the app name. Default is document.title.
    */
-  Editor.prototype.appName = 'diagrams.net';
+  // TEN9: Customize
+  Editor.prototype.appName = 'ten9';
 
   /**
    * Known file types.
@@ -7379,14 +7380,15 @@ const uiTheme = 'atlas';
       buttons.appendChild(cancelBtn);
     }
 
-    if (!editorUi.isOffline()) {
-      var helpBtn = mxUtils.button(mxResources.get('help'), function () {
-        graph.openLink('https://desk.draw.io/support/solutions/articles/16000048947');
-      });
+    // TEN9: No help button for our app
+    // if (!editorUi.isOffline()) {
+    //   var helpBtn = mxUtils.button(mxResources.get('help'), function () {
+    //     graph.openLink('https://desk.draw.io/support/solutions/articles/16000048947');
+    //   });
 
-      helpBtn.className = 'geBtn';
-      buttons.appendChild(helpBtn);
-    }
+    //   helpBtn.className = 'geBtn';
+    //   buttons.appendChild(helpBtn);
+    // }
 
     if (PrintDialog.previewEnabled) {
       var previewBtn = mxUtils.button(mxResources.get('preview'), function () {

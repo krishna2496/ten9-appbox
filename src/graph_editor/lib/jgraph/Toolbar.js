@@ -1477,7 +1477,13 @@ Toolbar.prototype.addMenuHandler = function (elt, showLabels, funct, showAll) {
 
           // Workaround for scrollbar hiding menu items
           if (!showLabels && menu.div.scrollHeight > menu.div.clientHeight) {
-            menu.div.style.width = '40px';
+            // TEN9: Style tweaks for the table toolbar dropdown
+            // Commenout out any fixed width
+            // menu.div.style.width = '40px';
+            // TEN9: Force overflow to hidden to avoid any scrollbar
+            menu.div.style.overflow = 'hidden';
+            // TEN9: Add a little padding at the bottom to match draw
+            menu.div.querySelector('td.mxPopupMenuIcon').style.paddingBottom = '7px';
           }
 
           menu.hideMenu = mxUtils.bind(this, function () {

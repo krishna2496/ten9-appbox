@@ -55,14 +55,15 @@ const {
 } = require('../jgraph/mxClient.js');
 
 const { mxSettings } = require('./Settings.js');
+
 const urlParams = {dev: "1",sync: "manual"};
 const isLocalStorage = false;
 var IMAGE_PATH = '../../../../public/images';
 const RESOURCE_BASE = '../../../../public/resources/dia';
-var uiTheme = 'atlas';
+var uiTheme = null;
 const STYLE_PATH = 'styles';
 
-App = function(editor, container, lightbox)
+App = function(editorUi, editor, container, lightbox)
 {
 	// TEN9: We already have an editorUi for our app
 	// EditorUi.call(this, editor, container, (lightbox != null) ? lightbox :
@@ -105,7 +106,10 @@ App = function(editor, container, lightbox)
 	}
 
 	// TEN9: make editor and container global
+	this.editorUi = editorUi;
 	this.editor = editor;
+	this.spinner = editorUi.spinner;
+
 	// Logs changes to autosave
 	this.editor.addListener('autosaveChanged', mxUtils.bind(this, function()
 	{
@@ -2659,8 +2663,8 @@ App.prototype.load = function()
 	if (urlParams['embed'] != '1')
 	{
 		// TEN9: TODO: BU: Get Spinner to work
-		// if (this.spinner.spin(document.body, mxResources.get('starting')))
-		// {
+		if (this.spinner.spin(document.body, mxResources.get('starting')))
+		{
 			try
 			{
 				this.stateArg = (urlParams['state'] != null && this.drive != null) ? JSON.parse(decodeURIComponent(urlParams['state'])) : null;
@@ -2705,7 +2709,7 @@ App.prototype.load = function()
 					}));
 				}
 			}
-		//}
+		}
 	}
 	else
 	{
@@ -2719,9 +2723,9 @@ App.prototype.load = function()
 };
 
 // TEN9: Create our app
-function createApp(editor, container)
+function createApp(editorUi, editor, container)
 {
-	return new App(editor, container);
+	return new App(editorUi, editor, container);
 };
 
 /**
@@ -2844,7 +2848,7 @@ App.prototype.start = function()
 	
 	this.restoreLibraries();
 	// TEN9: TODO: BU: Get spinners to work
-	// this.spinner.stop();
+	this.spinner.stop();
 
 	try
 	{
@@ -4410,16 +4414,17 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 {
 	mode = (tempFile) ? null : ((mode != null) ? mode : this.mode);
 
-	// TEN9: TODO: VU: Fix spinner code
-	//if (title != null && this.spinner.spin(document.body, mxResources.get('inserting')))
-	if(title != null)
+	// TEN9: TODO: BU: Fix spinner code
+	if (title != null && this.spinner.spin(document.body, mxResources.get('inserting')))
+	// if(title != null)
 	{
 		data = (data != null) ? data : this.emptyDiagramXml;
 		
 		var complete = mxUtils.bind(this, function()
 		{
+			// TEN9: TODO: BU: Get spinners to work
 			// TEN9: remove spinner code
-			//this.spinner.stop();
+			this.spinner.stop();
 		});
 		
 		var error = mxUtils.bind(this, function(resp)
@@ -4563,9 +4568,9 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 
 	// Makes sure to produce consistent output with finalized files via createFileData this needs
 	// to save the file again since it needs the newly created file ID for redirecting in HTML
-	// TEN9:TODO: BU: Get spinner code to work
-	// if (this.spinner.spin(document.body, mxResources.get('inserting')))
-	// {
+	// TEN9: TODO: BU: Get spinner code to work
+	if (this.spinner.spin(document.body, mxResources.get('inserting')))
+	{
 		var data = file.getData();
 		var dataNode = (data.length > 0) ? this.editor.extractGraphModel(
 			mxUtils.parseXml(data).documentElement, true) : null;
@@ -4591,7 +4596,7 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 		var complete = mxUtils.bind(this, function()
 		{
 			// TEN9: TODO: BU: Get spinner code to work
-			//this.spinner.stop();
+			this.spinner.stop();
 		});
 		
 		var fn = mxUtils.bind(this, function()
@@ -4695,7 +4700,7 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 				this.handleError(resp);
 			}));
 		}
-	//}
+	}
 };
 
 /**

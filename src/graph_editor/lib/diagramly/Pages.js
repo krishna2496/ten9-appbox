@@ -47,8 +47,8 @@ const {
 var { Graph } = require('../jgraph/Graph.js');
 var { FilenameDialog } = require('../jgraph/Editor.js');
 const { appPages } = require('../jgraph/EditorUi.js');
-
-var uiTheme = 'atlas';
+const graphUtils = require('../jgraph/graph_utils.js');
+var uiTheme = null;
 const urlParams = {dev: "1",sync: "manual"};
 
 function DiagramPage(node, id)
@@ -1561,7 +1561,9 @@ EditorUi.prototype.createPageMenuTab = function()
 		var x = mxEvent.getClientX(evt) - offset.x;
 		var y = mxEvent.getClientY(evt) - offset.y;
 		menu.popup(x, y, null, evt);
-		
+
+		graphUtils.fit(menu.div, this.container);
+
 		// Allows hiding by clicking on document
 		this.setCurrentMenu(menu);
 
@@ -1675,6 +1677,9 @@ EditorUi.prototype.addTabListeners = function(page, tab)
 				var x = mxEvent.getClientX(evt) - offset.x;
 				var y = mxEvent.getClientY(evt) - offset.y;
 				menu.popup(x, y, null, evt);
+
+				graphUtils.fit(menu.div, this.container);
+
 				this.setCurrentMenu(menu, tab);
 			}
 			
@@ -1786,16 +1791,17 @@ EditorUi.prototype.createPageMenu = function(page, label)
 		{
 			this.duplicatePage(page, mxResources.get('copyOf', [page.getName()]));
 		}), parent);
-		
-		if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp && this.getServiceName() == 'draw.io')
-		{		
-			menu.addSeparator(parent);
+
+		// TEN9: No open in new window for our app
+		// if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp && this.getServiceName() == 'draw.io')
+		// {		
+		// 	menu.addSeparator(parent);
 			
-			menu.addItem(mxResources.get('openInNewWindow'), null, mxUtils.bind(this, function()
-			{
-				this.editor.editAsNew(this.getFileData(true, null, null, null, true, true));
-			}), parent);
-		}
+		// 	menu.addItem(mxResources.get('openInNewWindow'), null, mxUtils.bind(this, function()
+		// 	{
+		// 		this.editor.editAsNew(this.getFileData(true, null, null, null, true, true));
+		// 	}), parent);
+		// }
 	});
 };
 
