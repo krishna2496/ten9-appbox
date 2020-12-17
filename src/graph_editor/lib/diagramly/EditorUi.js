@@ -8155,8 +8155,6 @@ var SelectedFile;
 				graph.setSelectionCells(cells);
 			});
 
-            // TEN9: TODO: BU: Get spinners to work
-			// TEN9: remove spinner code
 			if (this.spinner.spin(document.body, mxResources.get('loading')))
 			{
 				var count = files.length;
@@ -8170,8 +8168,6 @@ var SelectedFile;
 
 					if (--remain == 0)
 					{
-			            // TEN9: TODO: BU: Get spinners to work
-						// TEN9: remove spinner code
 						this.spinner.stop();
 
 						if (barrierFn != null)
@@ -9110,8 +9106,6 @@ var SelectedFile;
 		// TEN9: Remove the spinner code
 		this.spinner = this.createSpinner(x, y, 24);
 
-		// TEN9: TODO: BU: Get spinners to work
-		// this.spinner = {};
 		// Installs drag and drop handler for rich text editor
 		if (Graph.fileSupport)
 		{
@@ -10653,8 +10647,6 @@ var SelectedFile;
 					}
 	    		}
 
-				// TEN9: TODO: BU: Get spinners to work
-				// TEN9: remove spinner code
 				this.spinner.stop();
 				this.openLocalFile(data, name, temp, fileHandle, (fileHandle != null) ? file : null);
 			}
@@ -10666,7 +10658,6 @@ var SelectedFile;
 	 */
 	EditorUi.prototype.openFiles = function(files, temp)
 	{
-		// TEN9: TODO: BU: Get spinners to work
 		if (this.spinner.spin(document.body, mxResources.get('loading')))
 		{
 			for (var i = 0; i < files.length; i++)
@@ -10706,7 +10697,7 @@ var SelectedFile;
 					}
 				}))(files[i]);
 			}
-		} // TEN9: TODO: BU: Get spinners to work
+		}
 	};
 
 	/**

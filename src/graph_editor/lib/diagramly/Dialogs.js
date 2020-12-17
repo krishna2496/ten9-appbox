@@ -4023,17 +4023,12 @@ var ImageDialog = function(editorUi, title, initialValue, fn, ignoreExisting, co
 
 		if (!editorUi.isOffline() || (dataUri && typeof chrome === 'undefined'))
 		{
-            // TEN9: TODO: BU: Get spinners to work
-            // TEN9: remove spinner code
-            if (newValue.length > 0 && editorUi.spinner.spin(document.body, mxResources.get('inserting')))
-            // if (newValue.length > 0)
+      if (newValue.length > 0 && editorUi.spinner.spin(document.body, mxResources.get('inserting')))
 			{
 				var maxSize = 520;
 
 				editorUi.loadImage(newValue, function(img)
 				{
-		            // TEN9: TODO: BU: Get spinners to work
-                    // TEN9: remove spinner code
 					editorUi.spinner.stop();
 					editorUi.hideDialog();
 					var s = (resize === false) ? 1 :
