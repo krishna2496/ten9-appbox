@@ -327,7 +327,7 @@ export default defineComponent({
         button(@click='saveFile')
           | Save File
         open-file(@file-loaded='loadFileData')
-        input#preview.mt-1(
+        input#preview.mt-1.ml-4(
           type='checkbox',
           name='preview',
           value='preview',

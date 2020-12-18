@@ -28,13 +28,15 @@ export default defineComponent({
     }
 
     function loadFile() {
-      let [selectedFile] = file.value.files;
-      let reader = new FileReader();
-      reader.onload = (e) => {
-        const fileData = e.target.result;
-        ctx.emit('file-loaded', fileData);
-      };
-      reader.readAsText(selectedFile);
+      if (file.value.files.length > 0) {
+        let [selectedFile] = file.value.files;
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          const fileData = e.target.result;
+          ctx.emit('file-loaded', fileData);
+        };
+        reader.readAsText(selectedFile);
+      }
     }
 
     return {
@@ -54,7 +56,7 @@ export default defineComponent({
     ref='file',
     type='file',
     value='Open File',
-    style='opacity:0;',
+    style='display:none;',
     accept='.draw, .drawio, .xml',
     @change='loadFile'
   )

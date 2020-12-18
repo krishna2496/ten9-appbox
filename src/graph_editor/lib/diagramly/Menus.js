@@ -683,6 +683,7 @@ DriveFile = function() {};
 		action = editorUi.actions.put('shadowVisible', new Action(mxResources.get('shadow'), function()
 		{
 			graph.setShadowVisible(!graph.shadowVisible);
+			editorUi.fireEvent(new mxEventObject('shadowVisibleChanged'));
 		}));
 		action.setToggleAction(true);
 		action.setSelectedCallback(function() { return graph.shadowVisible; });

@@ -6107,7 +6107,6 @@ var FindWindow = function(ui, x, y, w, h)
 		}
 
 		var active = lastFound == null;
-
 		if (searchStr.length > 0)
 		{
 			if (allChecked)

@@ -20,6 +20,7 @@
  */
 // TEN9: Added imports
 const {
+  mxCellHighlight,
   mxCodecRegistry,
   mxClient,
   mxCodec,
@@ -42,6 +43,7 @@ const {
 const { Dialog, PageSetupDialog, PrintDialog } = require('../jgraph/Editor.js');
 const { Sidebar } = require('../jgraph/Sidebar.js');
 const { ChangePageSetup, ChangeGridColor } = require('../jgraph/EditorUi.js');
+const { doc } = require('prettier');
 
 // TEN9: Consolidate variables
 const IMAGE_PATH = '/images';
@@ -3823,7 +3825,6 @@ const uiTheme = null;
     				option.getElementsByTagName('input')[0].setAttribute('disabled', 'disabled');
     				mxUtils.setOpacity(option, 60);
     			}
-
     			div.appendChild(option);
     		//}
 

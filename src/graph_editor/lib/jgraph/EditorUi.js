@@ -1087,6 +1087,10 @@ EditorUi.prototype.closeOpenWindows = function () {
   if (this.actions.outlineWindow?.window.isVisible()) {
     this.actions.outlineWindow.window.setVisible(false);
   }
+
+  if (this.menus.findWindow?.window.isVisible()) {
+    this.menus.findWindow.window.setVisible(false);
+  }
 };
 
 EditorUi.prototype.fitToWindow = function () {
