@@ -17,6 +17,7 @@
 .stepper {
   border-radius: 3px;
   border: 1px solid rgb(192, 192, 192);
+
   .arrow {
     position: relative;
     width: 10px;
@@ -25,7 +26,7 @@
     &.up {
       border-bottom: 1px solid rgb(192, 192, 192);
     }
-  
+
     &.down {
       border: none;
       top: 1px;

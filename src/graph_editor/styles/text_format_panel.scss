@@ -58,15 +58,16 @@
     width: 100%;
   }
 
-  .position-panel, .writing-direction-panel {
+  .position-panel,
+  .writing-direction-panel {
     padding: 8px 18px;
     margin-top: 6px;
   }
 
   .spacing-panel {
-    padding: 10px 18px 28px ;
+    padding: 10px 18px 28px;
     font-weight: normal;
-    
+
     .panel-label {
       width: 70px;
       position: absolute;
@@ -78,11 +79,13 @@
       position: absolute;
     }
 
-    .top-spacing, .bottom-spacing {
+    .top-spacing,
+    .bottom-spacing {
       right: 91px;
     }
 
-    .global-spacing, .right-spacing {
+    .global-spacing,
+    .right-spacing {
       right: 18px;
     }
 

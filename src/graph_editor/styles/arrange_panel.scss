@@ -19,6 +19,7 @@
     padding-top: 12px;
     white-space: nowrap;
     text-align: right;
+
     & > div {
       display: flex;
       justify-content: flex-end;
@@ -68,11 +69,13 @@
       position: absolute;
     }
 
-    .xs-input, .xt-input {
+    .xs-input,
+    .xt-input {
       right: 84px;
     }
 
-    .ys-input, .yt-input {
+    .ys-input,
+    .yt-input {
       right: 18px;
     }
   }

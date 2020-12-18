@@ -42,6 +42,7 @@
     position: absolute;
     left: 148px;
     height: 24px;
+
     &.quirks {
       height: 17px;
     }
@@ -96,10 +97,10 @@
 
 .line-color__panel {
   .style__select {
+    width: 80px;
+    height: 24px;
     position: absolute;
     right: 48px;
-    height: 24px;
-    width: 80px;
   }
 }
 
@@ -118,7 +119,7 @@
   &.edge-menu {
     display: flex;
     align-items: center;
-    padding: 0px !important;
+    padding: 0 !important;
     padding-right: 24px !important;
     padding-left: 4px !important;
     margin-right: 5px;
@@ -147,11 +148,13 @@
       left: 18px;
     }
 
-    .end-spacing, .start-spacing {
+    .end-spacing,
+    .start-spacing {
       right: 54px;
     }
 
-    .end-size, .start-size {
+    .end-size,
+    .start-size {
       right: 0;
     }
   }
@@ -167,6 +170,7 @@
     display: flex;
     align-items: center;
   }
+
   .gradient__select {
     position: absolute;
     right: 52px;
