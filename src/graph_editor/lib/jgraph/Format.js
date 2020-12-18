@@ -2321,7 +2321,7 @@ ArrangePanel.prototype.addGeometry = function (container) {
     null,
     this.isFloatUnit(),
   );
-  left.parentElement.classList.add('input__container','position-left__unit-input');
+  left.parentElement.classList.add('input__container', 'position-left__unit-input');
   var top = this.addUnitInput(
     div2,
     this.getUnit(),
@@ -5134,7 +5134,11 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   // TEN9: Add container around stepper.
   const lineWidthInputContainer = document.createElement('div');
-  lineWidthInputContainer.classList.add('line-width__container', 'unit-input-container', 'line-width__container--alt');
+  lineWidthInputContainer.classList.add(
+    'line-width__container',
+    'unit-input-container',
+    'line-width__container--alt',
+  );
 
   // Stroke width
   var input = document.createElement('input');
@@ -5146,7 +5150,7 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   stylePanel.classList.add('edge-style__panel');
   stylePanel.appendChild(lineWidthInputContainer);
-  
+
   const altLineWidthInputContainer = lineWidthInputContainer.cloneNode(false);
   var altInput = input.cloneNode(true);
   // TEN9: Moved styles to styleFormatPanel.scss
