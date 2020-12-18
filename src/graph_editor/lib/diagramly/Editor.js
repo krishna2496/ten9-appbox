@@ -43,7 +43,6 @@ const {
 const { Dialog, PageSetupDialog, PrintDialog } = require('../jgraph/Editor.js');
 const { Sidebar } = require('../jgraph/Sidebar.js');
 const { ChangePageSetup, ChangeGridColor } = require('../jgraph/EditorUi.js');
-const { doc } = require('prettier');
 
 // TEN9: Consolidate variables
 const IMAGE_PATH = '/images';
