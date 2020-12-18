@@ -39,9 +39,10 @@ const {
   mxUtils,
 } = require('../jgraph/mxClient.js');
 
-const { PageSetupDialog, PrintDialog } = require('../jgraph/Editor.js');
+const { Dialog, PageSetupDialog, PrintDialog } = require('../jgraph/Editor.js');
 const { Sidebar } = require('../jgraph/Sidebar.js');
 const { ChangePageSetup, ChangeGridColor } = require('../jgraph/EditorUi.js');
+
 // TEN9: Consolidate variables
 const IMAGE_PATH = '/images';
 // const SHAPES_PATH = '../../../graph_editor/lib/shapes';
