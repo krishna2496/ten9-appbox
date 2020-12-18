@@ -57,6 +57,9 @@ const graphUtils = require('./graph_utils.js');
 
 // TEN9: TODO: Centralize all globals
 const appPages = [];
+let appFileNode = null;
+let appCurrentPage = null;
+
 const urlParams = { dev: '1', sync: 'manual' };
 window.mxStylesheet = mxStylesheet;
 const MAX_REQUEST_SIZE = 10485760;
@@ -73,6 +76,9 @@ function createEditorUi(editor, container) {
  */
 EditorUi = function (editor, container, lightbox) {
   mxEventSource.call(this);
+
+  this.currentPage = null;
+  this.fileNode = null;
 
   this.destroyFunctions = [];
   this.editor = editor || new Editor();
@@ -984,6 +990,26 @@ mxUtils.extend(EditorUi, mxEventSource);
  * Global config that specifies if the compact UI elements should be used.
  */
 EditorUi.compactUi = true;
+
+EditorUi.prototype.getFileNode = function () {
+  return appFileNode;
+  // return this.fileNode;
+};
+
+EditorUi.prototype.setFileNode = function (node) {
+  appFileNode = node;
+  // this.fileNode = node;
+};
+
+EditorUi.prototype.getCurrentPage = function () {
+  return appCurrentPage;
+  // return this.currentPage;
+};
+
+EditorUi.prototype.setCurrentPage = function (page) {
+  appCurrentPage = page;
+  // this.currentPage = page;
+};
 
 /**
  * Specifies the size of the split bar.
@@ -2070,11 +2096,11 @@ EditorUi.prototype.initCanvas = function () {
         );
 
         var updatePageInfo = mxUtils.bind(this, function () {
-          if (this.pages != null && this.pages.length > 1 && this.currentPage != null) {
+          if (this.pages != null && this.pages.length > 1 && this.getCurrentPage() != null) {
             pageInfo.innerHTML = '';
             mxUtils.write(
               pageInfo,
-              mxUtils.indexOf(this.pages, this.currentPage) + 1 + ' / ' + this.pages.length,
+              mxUtils.indexOf(this.pages, this.getCurrentPage()) + 1 + ' / ' + this.pages.length,
             );
           }
         });
@@ -2085,7 +2111,7 @@ EditorUi.prototype.initCanvas = function () {
         nextButton.style.paddingRight = '0px';
 
         var updatePageButtons = mxUtils.bind(this, function () {
-          if (this.pages != null && this.pages.length > 1 && this.currentPage != null) {
+          if (this.pages != null && this.pages.length > 1 && this.getCurrentPage() != null) {
             nextButton.style.display = '';
             prevButton.style.display = '';
             pageInfo.style.display = 'inline-block';
