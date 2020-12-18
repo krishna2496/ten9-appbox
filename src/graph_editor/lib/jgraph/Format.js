@@ -6665,6 +6665,7 @@ DiagramStylePanel.prototype.addView = function (div) {
   var editor = ui.editor;
   var graph = editor.graph;
   var model = graph.getModel();
+  div.classList.add('diagram-view-panel');
 
   div.style.whiteSpace = 'normal';
 
@@ -7268,6 +7269,8 @@ DiagramFormatPanel.prototype.init = function () {
   var ui = this.editorUi;
   var editor = ui.editor;
   var graph = editor.graph;
+
+  this.container.classList.add('diagram-format-panel');
 
   this.container.appendChild(this.addView(this.createPanel()));
 
