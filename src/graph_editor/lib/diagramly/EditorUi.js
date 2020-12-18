@@ -1213,11 +1213,13 @@ var SelectedFile;
 					fileNode.setAttribute('host', window.location.hostname);
 				}
 
+        // TEN9: Comment out some metadata that is unnecessary and volatile.
+        //       These constant changes are not needed.
 				// Adds new metadata
-				fileNode.setAttribute('modified', new Date().toISOString());
-				fileNode.setAttribute('agent', navigator.appVersion);
+				// fileNode.setAttribute('modified', new Date().toISOString());
+				// fileNode.setAttribute('agent', navigator.appVersion);
 				fileNode.setAttribute('version', EditorUi.VERSION);
-				fileNode.setAttribute('etag', Editor.guid());
+				// fileNode.setAttribute('etag', Editor.guid());
 				fileNode.setAttribute('selectedPageId', this.getCurrentPage() ? this.getCurrentPage().getId() : '');
 
 				var md = (file != null) ? file.getMode() : this.mode;
@@ -1234,12 +1236,14 @@ var SelectedFile;
 			}
 			else
 			{
+        // TEN9: Comment out some metadata that is unnecessary and volatile.
+        //       These constant changes are not needed.
 				fileNode = fileNode.cloneNode(true);
-				fileNode.removeAttribute('modified');
-				fileNode.removeAttribute('host');
-				fileNode.removeAttribute('agent');
-				fileNode.removeAttribute('etag');
-				fileNode.removeAttribute('userAgent');
+				// fileNode.removeAttribute('modified');
+				// fileNode.removeAttribute('host');
+				// fileNode.removeAttribute('agent');
+				// fileNode.removeAttribute('etag');
+				// fileNode.removeAttribute('userAgent');
 				fileNode.removeAttribute('version');
 				fileNode.removeAttribute('editor');
 				fileNode.removeAttribute('type');
@@ -1877,7 +1881,7 @@ var SelectedFile;
 						// }
 
 						if (selectedPageId && page.getId() === selectedPageId) {
-							selectedPage = page;
+							// selectedPage = page;
 						}
 					}
 
@@ -13092,7 +13096,7 @@ var SelectedFile;
 			for (var i = 0; i < this.pages.length; i++)
 			{
 				var pageGraph = graph;
-				
+
 				if (this.getCurrentPage() != this.pages[i])
 				{
 					pageGraph = this.createTemporaryGraph(graph.getStylesheet());

@@ -55,6 +55,7 @@ const {
 } = require('../jgraph/mxClient.js');
 
 const { mxSettings } = require('./Settings.js');
+const { appPages } = require('../jgraph/EditorUi.js');
 
 const urlParams = {dev: "1",sync: "manual"};
 const isLocalStorage = false;
@@ -2838,7 +2839,7 @@ App.prototype.showAlert = function(message)
 App.prototype.start = function()
 {
 	// TEN9: Init default filename here before createFile
-	this.defaultFilename = mxResources.get('untitledDiagram');
+  this.defaultFilename = mxResources.get('untitledDiagram');
 
 	if (this.bg != null && this.bg.parentNode != null)
 	{

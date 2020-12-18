@@ -1021,10 +1021,7 @@ EditorUi.prototype.createPageId = function()
  */
 EditorUi.prototype.createPage = function(name, id)
 {
-	// TEN9: get node value from pages
-	debugger;
 	var page = new DiagramPage(this.getFileNode().ownerDocument.createElement('diagram'), id);
-	// var page = new DiagramPage(this.pages[0].node.ownerDocument.createElement('diagram'), id);
 	page.setName((name != null) ? name : this.createPageName());
 
 	return page;
@@ -1248,7 +1245,6 @@ EditorUi.prototype.updateTabContainer = function()
 			// is not the same as this.getCurrentPage() previously initialized
 
 			// if (this.getCurrentPage() === null) {
-			// 	debugger;
 			// 	// this.setCurrentPage(this.pages[0]);
 			// }
 

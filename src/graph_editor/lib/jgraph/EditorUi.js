@@ -77,6 +77,9 @@ function createEditorUi(editor, container) {
 EditorUi = function (editor, container, lightbox) {
   mxEventSource.call(this);
 
+  this.currentPage = null;
+  this.fileNode = null;
+
   this.destroyFunctions = [];
   this.editor = editor || new Editor();
   this.container = container || document.body;
@@ -990,18 +993,22 @@ EditorUi.compactUi = true;
 
 EditorUi.prototype.getFileNode = function () {
   return appFileNode;
+  // return this.fileNode;
 };
 
 EditorUi.prototype.setFileNode = function (node) {
   appFileNode = node;
+  // this.fileNode = node;
 };
 
 EditorUi.prototype.getCurrentPage = function () {
   return appCurrentPage;
+  // return this.currentPage;
 };
 
 EditorUi.prototype.setCurrentPage = function (page) {
   appCurrentPage = page;
+  // this.currentPage = page;
 };
 
 /**
