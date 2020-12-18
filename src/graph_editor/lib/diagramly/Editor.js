@@ -3825,8 +3825,6 @@ const uiTheme = null;
     				option.getElementsByTagName('input')[0].setAttribute('disabled', 'disabled');
     				mxUtils.setOpacity(option, 60);
     			}
-          // TEN9: add id to shadow checkbox
-          option.getElementsByTagName('input')[0].setAttribute('id', 'shadow');
     			div.appendChild(option);
     		//}
 
@@ -6470,8 +6468,6 @@ const uiTheme = null;
       fireEvent = fireEvent != null ? fireEvent : true;
       this.shadowVisible = value;
 
-      // TEN9: setup shdow checkbox value
-      document.getElementById('shadow').checked = this.shadowVisible;
       if (this.shadowVisible) {
         this.view.getDrawPane().setAttribute('filter', 'url(#' + this.shadowId + ')');
       } else {
