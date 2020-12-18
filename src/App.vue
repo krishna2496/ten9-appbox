@@ -91,6 +91,10 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
+    function loadFileData(xmlData: string) {
+      editor.value.loadXmlData(xmlData);
+    }
+
     function onFileDropped(event: EventFileInfo) {
       const fileLogEvent: FileLogEvent = {
         title: 'File Dropped',
@@ -129,6 +133,9 @@ export default defineComponent({
     }
 
     function saveFile() {
+      // if (editor.value.graph.isEditing()) {
+      //   editor.valule.graph.stopEditing();
+      // }
       const xmlData = editor.value.getXmlData();
       saveXmlFile(xmlData);
     }
@@ -179,7 +186,8 @@ export default defineComponent({
         e.preventDefault();
       });
 
-      drag.addEventListener('drop', (e: DragEvent) => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      drag.addEventListener('drop', async (e: DragEvent) => {
         e.stopPropagation();
         e.preventDefault();
 
@@ -188,22 +196,39 @@ export default defineComponent({
           return;
         }
 
-        for (let i = 0; i < e.dataTransfer.items.length; i++) {
-          const file = e.dataTransfer.items[i].getAsFile();
-          const fileInfo: EventFileInfo = {
-            filename: file.name,
-            size: file.size,
-            type: file.type,
-            lastModified: file.lastModified,
-          };
-          onFileDropped(fileInfo);
+        let fileOpened = false;
+
+        if (e.dataTransfer.items.length === 1) {
+          const [item] = e.dataTransfer.items;
+          if (item.kind === 'file') {
+            const file = item.getAsFile();
+            if (await editor.value.canLoadFile(file)) {
+              const fileData = await file.text();
+              loadFileData(fileData);
+              fileOpened = true;
+            }
+          }
+        }
+
+        // If the dropped item was not an editor file, process as attachment
+        if (!fileOpened) {
+          for (let i = 0; i < e.dataTransfer.items.length; i++) {
+            const file = e.dataTransfer.items[i].getAsFile();
+            const fileInfo: EventFileInfo = {
+              filename: file.name,
+              size: file.size,
+              type: file.type,
+              lastModified: file.lastModified,
+            };
+            onFileDropped(fileInfo);
+          }
         }
       });
 
       // Add our own ctrl+v event listener
       drag.onpaste = (e) => {
         // Don't allow pasting files in Preview Mode
-        if (!previewMode.value) {
+        if (previewMode.value) {
           return;
         }
 
@@ -230,10 +255,6 @@ export default defineComponent({
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
     });
-
-    function loadFileData(xmlData: string) {
-      editor.value.loadXmlData(xmlData);
-    }
 
     function getDateString(value: number): string {
       return new Date(value).toLocaleString();

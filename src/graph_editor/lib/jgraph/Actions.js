@@ -2028,4 +2028,5 @@ Action.prototype.isSelected = function () {
 
 module.exports = {
   Actions,
+  Action,
 };

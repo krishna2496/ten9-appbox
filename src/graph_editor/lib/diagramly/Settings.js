@@ -242,7 +242,9 @@ var mxSettings =
 			showStartScreen: true,
 			gridColor: mxGraphView.prototype.defaultGridColor,
 			darkGridColor: mxGraphView.prototype.defaultDarkGridColor,
-			autosave: true,
+			// TEN9: Disable autosave for our app
+			// autosave: true,
+			autosave: false,
 			resizeImages: null,
 			openCounter: 0,
 			version: mxSettings.currentVersion,
