@@ -13,16 +13,40 @@
  * from ten9 Incorporated.
  * -----
  */
- 
+
+.fw-bold {
+  font-weight: bold !important;
+}
+
+.geButton,
+.geLabel {
+  &.ge-dropdown-menu {
+    color: rgb(112, 112, 112);
+    border: 1px solid rgb(160, 160, 160);
+    background-image: none;
+    background-color: white;
+    border-radius: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 0;
+    height: 15px;
+    position: relative;
+    padding: 4px 4px !important;
+    padding-right: 18px !important;
+  }
+}
+
 .dropdown-arrow {
   display: inline-block;
   padding: 6px;
   padding-right: 4px;
   padding-top: 4px;
   padding-bottom: 0px;
+  top: 0;
   right: 0;
   border-left: 1px solid #a0a0a0;
   opacity: 0.7;
+  position: absolute;
 
   img {
     position: relative;
@@ -30,6 +54,94 @@
   }
 }
 
-.panelContainer {
+.panel-container {
   padding: 12px 18px;
 }
+
+.base-format-title {
+  padding: 0;
+  padding-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-weight: bold;
+}
+
+.format-panel {
+  .format-button {
+    border-radius: 3px;
+    opacity: 1;
+    border: 1px solid #a0a0a0;
+    padding: 4px 0 0 4px !important;
+    margin: 1px;
+    width: 29px;
+    height: 29px !important;
+  }
+
+  .format-label {
+    position: absolute;
+    margin-top: 6px;
+    text-align: center;
+  }
+
+  .relative-option-container {
+    padding: 10px 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.color-option-field {
+  white-space: nowrap;
+  height: 30px;
+  position: relative;
+
+  .color-option__checkbox {
+    margin: 0 6px 0 0;
+  }
+
+  .color-option__button {
+    position: absolute;
+    right: 0px;
+    height: 22px;
+  }
+
+  .unit-input-container {
+    position: absolute;
+    width: 44px;
+    top: 0;
+  }
+}
+
+.unit-input-container {
+  display: flex;
+
+  .relative-unit-input {
+    width: 44px;
+    text-align: right;
+  }
+
+  .relative-stepper {
+    position: static;
+  }
+}
+
+.font-size-stepper__container {
+  top: 6px;
+  position: absolute;
+  right: 0;
+}
+
+.font-size-stepper {
+  position: static;
+}
+
+.panel-label {
+  width: 70px;
+}
+
+@import 'text_format_panel';
+@import 'style_format_panel';
+@import 'diagram_format_panel';
+@import 'arrange_panel';

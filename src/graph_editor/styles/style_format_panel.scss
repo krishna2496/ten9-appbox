@@ -14,54 +14,162 @@
  * -----
  */
 
-.geToolbarContainer {
-  &.styleFormatPanel {
-    font-weight: normal;
-    white-space: nowrap;
-    position: relative;
-    padding: 0;
-    margin: 2px 0;
+.style-format-panel {
+  font-weight: normal;
+  white-space: nowrap;
+  position: relative;
+  padding: 0;
+  margin: 2px 0;
 
-    .linewidth__input {
-      text-align: right;
-      margin-top: 2px;
-      width: 41px;
-
+  .line-width__container {
+    &.line-width__container--alt {
       position: absolute;
-      left: 148px;
-      height: 24px;
-
-      &.quirks {
-        height: 17px;
-      }
+      right: 0;
     }
+  }
 
-    .linewidth__stepper {
-      margin-top: 2px;
+  .line-width__input {
+    text-align: right;
+    width: 41px;
+    height: 24px;
 
-      left: 190px;
+    &.quirks {
+      height: 17px;
     }
+  }
 
-    .altInput {
-      position: absolute;
-      left: 148px;
-      height: 24px;
-      &.quirks {
-        height: 17px;
-      }
+  .altInput {
+    position: absolute;
+    left: 148px;
+    height: 24px;
+    &.quirks {
+      height: 17px;
     }
+  }
 
-    .linewidth__altstepper {
-      margin-top: 2px;
-      left: 190px;
-    }
+  .line-width__altstepper {
+    margin-top: 2px;
+    left: 190px;
   }
 }
 
-.edgeStyle__dropdown {
+.edge-style__dropdown {
   .geIcon {
     position: relative;
     top: 3px;
     left: 3px;
+  }
+}
+
+.edge-style__panel {
+  display: flex;
+  justify-content: space-between;
+}
+
+.perimeter-panel {
+  font-weight: normal;
+  position: relative;
+  // padding-left: 16px;
+  margin-bottom: 2px;
+  margin-top: 10px;
+  border-width: 0;
+  padding-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  span {
+    position: absolute;
+    margin-left: 3px;
+    margin-bottom: 12px;
+    margin-top: 1px;
+    font-weight: normal;
+    width: 120px;
+  }
+}
+
+.opacity-panel {
+  padding: 8px 18px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.line-color__panel {
+  .style__select {
+    position: absolute;
+    right: 48px;
+    height: 24px;
+    width: 80px;
+  }
+}
+
+.alt-style-panel,
+.edge-endings-panel {
+  padding-left: 19px;
+}
+
+.alt-style-panel {
+  .line-width__input {
+    width: 45px;
+  }
+}
+
+.ge-dropdown-menu {
+  &.edge-menu {
+    display: flex;
+    align-items: center;
+    padding: 0px !important;
+    padding-right: 24px !important;
+    padding-left: 4px !important;
+    margin-right: 5px;
+    width: 58px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.arrow-panel {
+  padding: 6px 0;
+
+  .line-attributes__container {
+    position: relative;
+    width: 100%;
+
+    .unit-input-container {
+      position: absolute;
+    }
+
+    .line-attributes__label {
+      position: absolute;
+      font-weight: normal;
+      left: 18px;
+    }
+
+    .end-spacing, .start-spacing {
+      right: 54px;
+    }
+
+    .end-size, .start-size {
+      right: 0;
+    }
+  }
+}
+
+.line-jumps-input__container {
+  position: absolute;
+  right: 22px;
+}
+
+.fill-panel {
+  .color-option-field {
+    display: flex;
+    align-items: center;
+  }
+  .gradient__select {
+    position: absolute;
+    right: 52px;
+    width: 70px;
   }
 }

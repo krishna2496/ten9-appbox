@@ -1,0 +1,79 @@
+.arrange-panel {
+  .size-panel {
+    padding-bottom: 8px;
+
+    .size__label {
+      position: absolute;
+    }
+
+    .autosize__button {
+      position: relative;
+      cursor: pointer;
+      border: 0;
+      left: 42px;
+      opacity: 0.5;
+    }
+  }
+
+  .constrain__wrapper {
+    padding-top: 12px;
+    white-space: nowrap;
+    text-align: right;
+    & > div {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+  }
+
+  .input__container {
+    position: absolute;
+  }
+
+  .width-unit-input__container {
+    right: 84px;
+  }
+
+  .height-unit-input__container {
+    right: 18px;
+  }
+
+  .position-label {
+    position: absolute;
+  }
+
+  .position-top__unit-input {
+    right: 84px;
+  }
+
+  .position-left__unit-input {
+    right: 18px;
+  }
+
+  .angle__label {
+    position: absolute;
+  }
+
+  .angle__unit-input {
+    right: 18px;
+  }
+
+  &.edge-geometry__container {
+    .unit-input__label {
+      position: absolute;
+      width: 70px;
+    }
+
+    .unit-input-container {
+      position: absolute;
+    }
+
+    .xs-input, .xt-input {
+      right: 84px;
+    }
+
+    .ys-input, .yt-input {
+      right: 18px;
+    }
+  }
+}

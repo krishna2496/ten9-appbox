@@ -634,7 +634,7 @@ Toolbar.prototype.createTextToolbar = function () {
   styleElt.innerHTML = mxResources.get('style') + this.dropdownImageHtml;
 
   if (EditorUi.compactUi) {
-    styleElt.style.paddingRight = '18px';
+    styleElt.style.paddingRight = '18px !important';
     styleElt.getElementsByTagName('img')[0].style.right = '1px';
     styleElt.getElementsByTagName('img')[0].style.top = '5px';
   }
