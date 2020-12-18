@@ -924,14 +924,7 @@ BaseFormatPanel.prototype.createStepper = function (
  */
 BaseFormatPanel.prototype.createOption = function (label, isCheckedFn, setCheckedFn, listener, fn) {
   var div = document.createElement('div');
-  // TEN9: Remove padding as we account for it in stylesheet
-  // div.style.padding = '6px 0px 1px 0px';
-  div.style.whiteSpace = 'nowrap';
-  div.style.overflow = 'hidden';
-  div.style.width = '200px';
-  // TEN9: Add space between 2 checkbox in format panel
-  // div.style.height = mxClient.IS_QUIRKS ? '27px' : '18px';
-  div.style.height = mxClient.IS_QUIRKS ? '27px' : '25px';
+  div.classList.add('option-pane');
   var cb = document.createElement('input');
   cb.setAttribute('type', 'checkbox');
   cb.style.margin = '0px 6px 0px 0px';
@@ -6665,7 +6658,7 @@ DiagramStylePanel.prototype.addView = function (div) {
   var editor = ui.editor;
   var graph = editor.graph;
   var model = graph.getModel();
-  div.classList.add('diagram-view-panel');
+  div.classList.add('diagram-style-panel');
 
   div.style.whiteSpace = 'normal';
 
@@ -7290,35 +7283,36 @@ DiagramFormatPanel.prototype.addView = function (div) {
   var graph = editor.graph;
 
   div.appendChild(this.createTitle(mxResources.get('view')));
+  div.classList.add('diagram-view-panel');
 
   // Grid
   this.addGridOption(div);
 
   // Page View
   if (DiagramFormatPanel.showPageView) {
-    div.appendChild(
-      this.createOption(
-        mxResources.get('pageView'),
-        function () {
-          return graph.pageVisible;
-        },
-        function (checked) {
-          ui.actions.get('pageView').funct();
-        },
-        {
-          install: function (apply) {
-            this.listener = function () {
-              apply(graph.pageVisible);
-            };
+    const pageView = this.createOption(
+      mxResources.get('pageView'),
+      function () {
+        return graph.pageVisible;
+      },
+      function (checked) {
+        ui.actions.get('pageView').funct();
+      },
+      {
+        install: function (apply) {
+          this.listener = function () {
+            apply(graph.pageVisible);
+          };
 
-            ui.addListener('pageViewChanged', this.listener);
-          },
-          destroy: function () {
-            ui.removeListener(this.listener);
-          },
+          ui.addListener('pageViewChanged', this.listener);
         },
-      ),
+        destroy: function () {
+          ui.removeListener(this.listener);
+        },
+      },
     );
+    pageView.classList.add('page-view-panel');
+    div.appendChild(pageView);
   }
 
   if (graph.isEnabled()) {
@@ -7349,19 +7343,15 @@ DiagramFormatPanel.prototype.addView = function (div) {
       },
     );
 
+    bg.classList.add('background-panel');
+
     if (this.showBackgroundImageOption) {
       var btn = mxUtils.button(mxResources.get('image'), function (evt) {
         ui.showBackgroundImageDialog(null, ui.editor.graph.backgroundImage);
         mxEvent.consume(evt);
       });
 
-      btn.style.position = 'absolute';
-      btn.className = 'geColorBtn';
-      btn.style.marginTop = '-4px';
-      btn.style.paddingBottom = document.documentMode == 11 || mxClient.IS_MT ? '0px' : '2px';
-      btn.style.height = '22px';
-      btn.style.right = '52px';
-      btn.style.width = '56px';
+      btn.classList.add('background-panel__button', 'geColorBtn');
 
       bg.appendChild(btn);
     }

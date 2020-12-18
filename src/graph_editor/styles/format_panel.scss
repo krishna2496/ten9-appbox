@@ -141,6 +141,13 @@
   width: 70px;
 }
 
+.option-pane {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 200px;
+  height: 25px;
+}
+
 @import 'text_format_panel';
 @import 'style_format_panel';
 @import 'diagram_format_panel';
