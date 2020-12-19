@@ -5124,7 +5124,7 @@ StyleFormatPanel.prototype.addStroke = function (container) {
     }),
   );
 
-  altPattern.classList.add('edge-menu');
+  altPattern.classList.add('edge-menu', 'alt-pattern');
 
   var stylePanel2 = stylePanel.cloneNode(false);
   stylePanel2.classList.add('edge-endings-panel');
