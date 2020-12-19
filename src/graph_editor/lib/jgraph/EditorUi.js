@@ -991,24 +991,26 @@ mxUtils.extend(EditorUi, mxEventSource);
  */
 EditorUi.compactUi = true;
 
+EditorUi.prototype.resetPages = function () {
+  appPages.splice(0, appPages.length);
+  this.setFileNode(null);
+  this.setCurrentPage(null);
+};
+
 EditorUi.prototype.getFileNode = function () {
   return appFileNode;
-  // return this.fileNode;
 };
 
 EditorUi.prototype.setFileNode = function (node) {
   appFileNode = node;
-  // this.fileNode = node;
 };
 
 EditorUi.prototype.getCurrentPage = function () {
   return appCurrentPage;
-  // return this.currentPage;
 };
 
 EditorUi.prototype.setCurrentPage = function (page) {
   appCurrentPage = page;
-  // this.currentPage = page;
 };
 
 /**
@@ -1086,6 +1088,10 @@ EditorUi.prototype.closeOpenWindows = function () {
 
   if (this.actions.outlineWindow?.window.isVisible()) {
     this.actions.outlineWindow.window.setVisible(false);
+  }
+
+  if (this.menus.findWindow?.window.isVisible()) {
+    this.menus.findWindow.window.setVisible(false);
   }
 };
 

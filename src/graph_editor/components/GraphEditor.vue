@@ -115,6 +115,7 @@ export default defineComponent({
       graph.value.model.addListener(mxEvent.CHANGE, onGraphChanged);
       graph.value.addListener('gridSizeChanged', onGraphChanged);
       graph.value.addListener('graphChanged', onGraphChanged);
+      editorUi.value.addListener('shadowVisibleChanged', onGraphChanged);
       editorUi.value.addListener('gridEnabledChanged', onGraphChanged);
       editorUi.value.addListener('guidesEnabledChanged', onGraphChanged);
       editorUi.value.addListener('pageViewChanged', onGraphChanged);
@@ -159,6 +160,7 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
+      editorUi.value.resetPages();
       editorUi.value.closeOpenWindows();
       removeGraphChangedListeners();
     });
