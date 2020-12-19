@@ -1875,13 +1875,13 @@ var SelectedFile;
 						}
 						this.pages.push(page);
 
-						// if (urlParams['page-id'] != null && page.getId() == urlParams['page-id'])
-						// {
-						// 	selectedPage = page;
-						// }
+						if (urlParams['page-id'] != null && page.getId() == urlParams['page-id'])
+						{
+							selectedPage = page;
+						}
 
 						if (selectedPageId && page.getId() === selectedPageId) {
-							// selectedPage = page;
+							selectedPage = page;
 						}
 					}
 
