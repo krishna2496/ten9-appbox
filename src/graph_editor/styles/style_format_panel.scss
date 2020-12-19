@@ -1,0 +1,206 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+.style-format-panel {
+  font-weight: normal;
+  white-space: nowrap;
+  position: relative;
+  padding: 0;
+  margin: 2px 0;
+
+  .line-width__input {
+    text-align: right;
+    width: 41px;
+    height: 24px;
+
+    &.quirks {
+      height: 17px;
+    }
+  }
+
+  .altInput {
+    position: absolute;
+    left: 148px;
+    height: 24px;
+
+    &.quirks {
+      height: 17px;
+    }
+  }
+
+  .line-width__altstepper {
+    margin-top: 2px;
+    left: 190px;
+  }
+}
+
+.edge-style__dropdown {
+  .geIcon {
+    position: relative;
+    top: 3px;
+    left: 3px;
+  }
+}
+
+.edge-style__panel {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 18px;
+}
+
+.perimeter-panel {
+  font-weight: normal;
+  position: relative;
+  margin-bottom: 2px;
+  margin-top: 10px;
+  border-width: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+
+  .unit-input-container {
+    position: absolute;
+    right: 18px;
+  }
+
+  span {
+    position: absolute;
+    margin-left: 3px;
+    margin-bottom: 12px;
+    margin-top: 1px;
+    font-weight: normal;
+    width: 120px;
+  }
+}
+
+.opacity-panel {
+  padding: 8px 18px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.stroke-panel {
+  padding-right: 0;
+
+  .color-option__button {
+    right: 18px;
+  }
+}
+
+.line-color__panel {
+  .color-option-field {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .style__select {
+    width: 80px;
+    height: 24px;
+    position: absolute;
+    right: 66px;
+  }
+}
+
+.alt-style-panel,
+.edge-endings-panel {
+  padding-left: 19px;
+}
+
+.alt-style-panel {
+  .line-width__input {
+    width: 45px;
+  }
+}
+
+.ge-dropdown-menu {
+  &.edge-menu {
+    display: flex;
+    align-items: center;
+    padding: 0 !important;
+    padding-right: 24px !important;
+    padding-left: 4px !important;
+    margin-right: 5px;
+    width: 58px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.alt-pattern {
+  .geIcon {
+    position: relative;
+    top: 5px;
+    left: 2px;
+  }
+}
+
+.arrow-panel {
+  padding: 6px 0;
+
+  .line-attributes__container {
+    position: relative;
+    width: 100%;
+
+    .unit-input-container {
+      position: absolute;
+    }
+
+    .line-attributes__label {
+      position: absolute;
+      font-weight: normal;
+      left: 18px;
+    }
+
+    .end-spacing,
+    .start-spacing {
+      right: 72px;
+    }
+
+    .end-size,
+    .start-size {
+      right: 18px;
+    }
+  }
+}
+
+.line-jumps-input__container {
+  position: absolute;
+  right: 18px;
+}
+
+.fill-panel {
+  .color-option-field {
+    display: flex;
+    align-items: center;
+  }
+
+  .gradient__select {
+    position: absolute;
+    right: 52px;
+    width: 70px;
+  }
+}
+
+.gradient-panel {
+  .color-option__label {
+    font-weight: normal;
+  }
+}

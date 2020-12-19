@@ -1,0 +1,41 @@
+.grid-panel {
+  display: flex;
+  align-items: center;
+
+  .color-option__label {
+    font-weight: normal;
+  }
+
+  .unit-input-container {
+    width: auto;
+    right: 48px;
+    top: 3px;
+  }
+}
+
+.diagram-view-panel {
+  padding-right: 18px;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    height: 30px;
+  }
+}
+
+.diagram-style-panel {
+  padding-right: 0;
+}
+
+.background-panel {
+  .color-option__label {
+    font-weight: normal;
+  }
+
+  .background-panel__button {
+    width: 56px;
+    height: 22px;
+    position: absolute;
+    right: 52px;
+  }
+}
