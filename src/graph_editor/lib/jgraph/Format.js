@@ -1566,6 +1566,7 @@ ArrangePanel.prototype.addTable = function (div) {
   var ss = this.format.getSelectionState();
   div.style.paddingTop = '6px';
   div.style.paddingBottom = '10px';
+  div.classList.add('table-panel');
 
   var span = document.createElement('div');
   span.style.marginTop = '2px';

@@ -80,3 +80,19 @@
     }
   }
 }
+
+.table-panel {
+  padding-right: 0;
+
+  .format-button {
+    border-radius: 3px;
+    opacity: 1;
+    border: 1px solid rgb(160, 160, 160);
+    padding: 3px 1px 4px 4px;
+    margin: 1px;
+    width: 31px;
+    height: 29px;
+    background-color: #f5f5f5;
+    background-image: linear-gradient(#f5f5f5 0, #e1e1e1 100%);
+  }
+}
