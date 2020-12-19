@@ -7424,7 +7424,7 @@ const uiTheme = null;
 
   // Execute fit page on page setup changes
   var changePageSetupExecute = ChangePageSetup.prototype.execute;
-    
+
   ChangePageSetup.prototype.execute = function()
   {
       if (this.page == null)
@@ -7441,7 +7441,7 @@ const uiTheme = null;
               {
                   this.page.viewState.background = this.color;
               }
-              
+
               if (!this.ignoreImage)
               {
                   this.page.viewState.backgroundImage = this.image;
@@ -7451,22 +7451,22 @@ const uiTheme = null;
               {
                   this.page.viewState.pageFormat = this.format;
               }
-              
+
               if (this.mathEnabled != null)
               {
                   this.page.viewState.mathEnabled = this.mathEnabled;
               }
-              
+
               if (this.shadowVisible != null)
             {
               this.page.viewState.shadowVisible = this.shadowVisible;
             }
-          }   
+          }
       }
       else
       {
           changePageSetupExecute.apply(this, arguments);
-          
+
           if (this.mathEnabled != null && this.mathEnabled != this.ui.isMathEnabled())
           {
               this.ui.setMathEnabled(this.mathEnabled);

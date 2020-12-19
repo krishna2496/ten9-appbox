@@ -160,6 +160,7 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
+      editorUi.value.resetPages();
       editorUi.value.closeOpenWindows();
       removeGraphChangedListeners();
     });
