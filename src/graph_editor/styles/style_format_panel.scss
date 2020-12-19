@@ -21,13 +21,6 @@
   padding: 0;
   margin: 2px 0;
 
-  .line-width__container {
-    &.line-width__container--alt {
-      position: absolute;
-      right: 0;
-    }
-  }
-
   .line-width__input {
     text-align: right;
     width: 41px;
@@ -65,19 +58,24 @@
 .edge-style__panel {
   display: flex;
   justify-content: space-between;
+  padding-right: 18px;
 }
 
 .perimeter-panel {
   font-weight: normal;
   position: relative;
-  // padding-left: 16px;
   margin-bottom: 2px;
   margin-top: 10px;
   border-width: 0;
-  padding-bottom: 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 30px;
+
+  .unit-input-container {
+    position: absolute;
+    right: 18px;
+  }
 
   span {
     position: absolute;
@@ -95,12 +93,26 @@
   justify-content: space-between;
 }
 
+.stroke-panel {
+  padding-right: 0;
+
+  .color-option__button {
+    right: 18px;
+  }
+}
+
 .line-color__panel {
+  .color-option-field {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
+  }
   .style__select {
     width: 80px;
     height: 24px;
     position: absolute;
-    right: 48px;
+    right: 66px;
   }
 }
 
@@ -150,19 +162,19 @@
 
     .end-spacing,
     .start-spacing {
-      right: 54px;
+      right: 72px;
     }
 
     .end-size,
     .start-size {
-      right: 0;
+      right: 18px;
     }
   }
 }
 
 .line-jumps-input__container {
   position: absolute;
-  right: 22px;
+  right: 18px;
 }
 
 .fill-panel {
@@ -175,5 +187,11 @@
     position: absolute;
     right: 52px;
     width: 70px;
+  }
+}
+
+.gradient-panel {
+  .color-option__label {
+    font-weight: normal;
   }
 }

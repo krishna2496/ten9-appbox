@@ -4678,6 +4678,7 @@ StyleFormatPanel.prototype.addFill = function (container) {
     ss.vertices.length >= 1
       ? graph.stylesheet.getDefaultVertexStyle()
       : graph.stylesheet.getDefaultEdgeStyle();
+
   var gradientPanel = this.createCellColorOption(
     mxResources.get('gradient'),
     mxConstants.STYLE_GRADIENTCOLOR,
@@ -4695,6 +4696,8 @@ StyleFormatPanel.prototype.addFill = function (container) {
       graph.updateCellStyles(mxConstants.STYLE_GRADIENTCOLOR, color, graph.getSelectionCells());
     },
   );
+
+  gradientPanel.classList.add('gradient-panel');
 
   var fillKey =
     ss.style.shape == 'image' ? mxConstants.STYLE_IMAGE_BACKGROUND : mxConstants.STYLE_FILLCOLOR;
@@ -5374,6 +5377,7 @@ StyleFormatPanel.prototype.addStroke = function (container) {
           false,
         );
         item.setAttribute('title', mxResources.get('none'));
+        item.firstChild.firstChild.classList.add('ge-icon--none');
         item.firstChild.firstChild.innerHTML =
           '<font style="font-size:10px;">' +
           mxUtils.htmlEntities(mxResources.get('none')) +
@@ -5719,6 +5723,7 @@ StyleFormatPanel.prototype.addStroke = function (container) {
           false,
         );
         item.setAttribute('title', mxResources.get('none'));
+        item.firstChild.firstChild.classList.add('ge-icon--none');
         item.firstChild.firstChild.innerHTML =
           '<font style="font-size:10px;">' +
           mxUtils.htmlEntities(mxResources.get('none')) +
@@ -6134,8 +6139,8 @@ StyleFormatPanel.prototype.addStroke = function (container) {
   startSize.parentElement.classList.add('start-size');
 
   mxUtils.br(lineAttributesContainer);
-  this.addLabel(lineAttributesContainer, mxResources.get('spacing'), 54, 50);
-  this.addLabel(lineAttributesContainer, mxResources.get('size'), 0, 50);
+  this.addLabel(lineAttributesContainer, mxResources.get('spacing'), 72, 50);
+  this.addLabel(lineAttributesContainer, mxResources.get('size'), 18, 50);
   mxUtils.br(lineAttributesContainer);
 
   var perimeterPanel = colorPanel.cloneNode(false);
