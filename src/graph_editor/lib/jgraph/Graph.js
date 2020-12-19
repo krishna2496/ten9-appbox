@@ -10036,7 +10036,9 @@ if (typeof mxVertexHandler != 'undefined') {
                   graph.setTableColumnWidth(this.state.cell, dx, shiftPressed);
                 } else if (!self.blockDelayedSelection) {
                   var temp = graph.getCellAt(me.getGraphX(), me.getGraphY()) || tableState.cell;
-                  graph.graphHandler.selectCellForEvent(temp, me);
+                  // TEN9: Fix draw bug
+                  // graph.graphHandler.selectCellForEvent(temp, me);
+                  graph.selectCellForEvent(temp, me);
                 }
 
                 dx = 0;
@@ -10092,7 +10094,9 @@ if (typeof mxVertexHandler != 'undefined') {
                   graph.setTableRowHeight(this.state.cell, dy, !mxEvent.isShiftDown(me.getEvent()));
                 } else if (!self.blockDelayedSelection) {
                   var temp = graph.getCellAt(me.getGraphX(), me.getGraphY()) || tableState.cell;
-                  graph.graphHandler.selectCellForEvent(temp, me);
+                  // TEN9: Fix draw bug
+                  // graph.graphHandler.selectCellForEvent(temp, me);
+                  graph.selectCellForEvent(temp, me);
                 }
 
                 dy = 0;
