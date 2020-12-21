@@ -8656,7 +8656,6 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 	// Indirection for overriding
 	this.saveBtnClickHandler = function(name, images, file, mode)
 	{
-		debugger
 		editorUi.saveLibrary(name, images, file, mode);
 	};
 
