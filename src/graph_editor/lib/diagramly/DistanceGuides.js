@@ -1,4 +1,29 @@
 /**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+// TEN9: Added imports
+const {
+	mxCellState,
+	mxConstants,
+	mxGuide,
+	mxPoint,
+	mxPolyline
+} = require('../jgraph/mxClient.js');
+
+/**
  * Copyright (c) 2017, CTI LOGIC
  * Copyright (c) 2006-2017, JGraph Ltd
  * Copyright (c) 2006-2017, Gaudenz Alder
@@ -16,16 +41,6 @@
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-
-// TEN9: Added imports
-const {
-  mxCellState,
-  mxConstants,
-  mxGuide,
-  mxPoint,
-  mxPolyline
-} = require('../jgraph/mxClient.js');
 
 //TODO integrate this code in mxGuide (Especially as this is now affecting the other guides)
 (function()
