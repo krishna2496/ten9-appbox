@@ -433,6 +433,8 @@ Format.prototype.refresh = function () {
   div.style.textAlign = 'left';
   div.style.cursor = 'default';
 
+  // div.classList.add('format-panel')
+
   var label = document.createElement('div');
   // TEN9: Added geFormatSectionHeader to pickup proper styling
   label.className = 'geFormatSection geFormatSectionHeader';
@@ -2722,7 +2724,7 @@ TextFormatPanel.prototype.addFont = function (container) {
   var graph = editor.graph;
   var ss = this.format.getSelectionState();
 
-  container.classList.add('text-format-panel-container', 'format-panel', 'font-format__panel');
+  container.classList.add('text-format-panel-container', 'font-format__panel');
 
   var title = this.createTitle(mxResources.get('font'));
   // TEN9: Added class to toolbar
