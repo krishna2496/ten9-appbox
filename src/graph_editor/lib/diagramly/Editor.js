@@ -320,10 +320,7 @@ const uiTheme = null;
   /**
    * Specifies if XML files should be compressed. Default is true.
    */
-  // TEN9: TODO: Change this back after debugging
-  // TEN9: Don't compress XML... for debugging
-  Editor.compressXml = false;
-  // Editor.compressXml = true;
+  Editor.compressXml = true;
 
   /**
    * Specifies global variables.
