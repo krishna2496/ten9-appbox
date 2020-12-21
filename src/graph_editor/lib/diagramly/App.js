@@ -53,6 +53,8 @@ const {
   mxUtils,
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
+const { StorageFile } = require('./StorageFile.js');
+const { StorageLibrary } = require('./StorageLibrary.js');
 
 const { mxSettings } = require('./Settings.js');
 const { appPages } = require('../jgraph/EditorUi.js');
@@ -5163,7 +5165,9 @@ App.prototype.restoreLibraries = function()
  */
 App.prototype.loadLibraries = function(libs, done)
 {
-	if (this.sidebar != null)
+	// TEN9: check editorUi instead of App
+	//if (this.sidebar != null)
+	if (this.editorUi.sidebar != null)
 	{
 		if (this.pendingLibraries == null)
 		{
@@ -5195,7 +5199,8 @@ App.prototype.loadLibraries = function(libs, done)
 					{
 						if (files[i] != null)
 						{
-							this.loadLibrary(files[i]);
+							//TEN9:
+							this.editorUi.loadLibrary(files[i]);
 						}
 					}
 				}
@@ -5215,8 +5220,9 @@ App.prototype.loadLibraries = function(libs, done)
 
 				(mxUtils.bind(this, function(id, index)
 				{
+		
 					if (id != null && id.length > 0 && this.pendingLibraries[id] == null &&
-						this.sidebar.palettes[id] == null)
+						this.editorUi.sidebar.palettes[id] == null)
 					{
 						// Waits for all libraries to load
 						waiting++;
@@ -5241,16 +5247,18 @@ App.prototype.loadLibraries = function(libs, done)
 
 						if (service == 'L')
 						{
-							if (isLocalStorage || mxClient.IS_CHROMEAPP)
-							{
+							// TEN9:
+							// if (isLocalStorage || mxClient.IS_CHROMEAPP)
+							// {
 								// Make asynchronous for barrier to work
 								window.setTimeout(mxUtils.bind(this, function()
 								{
 									try
 									{
 										var name = decodeURIComponent(id.substring(1));
-
-										StorageFile.getFileContent(this, name, mxUtils.bind(this, function(xml)
+										
+										// TEN9: replace this.editorUi instead of this
+										StorageFile.getFileContent(this.editorUi, name, mxUtils.bind(this, function(xml)
 										{
 											if (name == '.scratchpad' && xml == null)
 											{
@@ -5259,7 +5267,7 @@ App.prototype.loadLibraries = function(libs, done)
 
 											if (xml != null)
 											{
-												onload(new StorageLibrary(this, xml, name));
+												onload(new StorageLibrary(this.editorUi, xml, name));
 											}
 											else
 											{
@@ -5272,7 +5280,7 @@ App.prototype.loadLibraries = function(libs, done)
 										onerror();
 									}
 								}), 0);
-							}
+							//}
 						}
 						else if (service == 'U')
 						{

@@ -32,12 +32,13 @@ const {
   mxUtils,
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
+const { LocalLibrary } = require('./LocalLibrary.js');
 
 const { mxSettings } = require('./Settings.js');
 const { DiagramPage } = require('./Pages.js');
-const { PrintDialog } = require('../jgraph/Editor.js');
+const { Dialog, PrintDialog } = require('../jgraph/Editor.js');
 const { appPages, ChangePageSetup } = require('../jgraph/EditorUi.js');
-const { BackgroundImageDialog, ImageDialog, LinkDialog } = require('./Dialogs.js');
+const { BackgroundImageDialog, CreateDialog, ImageDialog, LibraryDialog, LinkDialog } = require('./Dialogs.js');
 const { Spinner } = require('../spin/spin.js');
 
 // TEN9: TODO: Consolidate all constants
@@ -2984,7 +2985,177 @@ var SelectedFile;
 	/**
 	 * Hook for subclassers.
 	 */
-	EditorUi.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload, fn) { };
+	// TEN9: Override save functionality for scratchpad
+	//EditorUi.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload, fn) { };
+	EditorUi.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload, fn)
+	{
+		try
+		{
+			mode = (mode != null) ? mode : this.mode;
+			noSpin = (noSpin != null) ? noSpin : false;
+			noReload = (noReload != null) ? noReload : false;
+			var xml = this.createLibraryDataFromImages(images);
+
+			var error = mxUtils.bind(this, function(resp)
+			{
+				this.spinner.stop();
+
+				if (fn != null)
+				{
+					fn();
+				}
+
+				this.handleError(resp, (resp != null) ? mxResources.get('errorSavingFile') : null);
+			});
+
+			// Handles special case for local libraries
+			if (file == null && mode == App.MODE_DEVICE)
+			{
+				file = new LocalLibrary(this, xml, name);
+			}
+
+			if (file == null)
+			{
+				this.pickFolder(mode, mxUtils.bind(this, function(folderId)
+				{
+					if (mode == App.MODE_GOOGLE && this.drive != null && this.spinner.spin(document.body, mxResources.get('inserting')))
+					{
+						this.drive.insertFile(name, xml, folderId, mxUtils.bind(this, function(newFile)
+						{
+							this.spinner.stop();
+							this.hideDialog(true);
+							this.libraryLoaded(newFile, images);
+						}), error, this.drive.libraryMimeType);
+					}
+					else if (mode == App.MODE_GITHUB && this.gitHub != null && this.spinner.spin(document.body, mxResources.get('inserting')))
+					{
+						this.gitHub.insertLibrary(name, xml, mxUtils.bind(this, function(newFile)
+						{
+							this.spinner.stop();
+							this.hideDialog(true);
+							this.libraryLoaded(newFile, images);
+						}), error, folderId);
+					}
+					else if (mode == App.MODE_GITLAB && this.gitLab != null && this.spinner.spin(document.body, mxResources.get('inserting')))
+					{
+						this.gitLab.insertLibrary(name, xml, mxUtils.bind(this, function(newFile)
+						{
+							this.spinner.stop();
+							this.hideDialog(true);
+							this.libraryLoaded(newFile, images);
+						}), error, folderId);
+					}
+					else if (mode == App.MODE_TRELLO && this.trello != null && this.spinner.spin(document.body, mxResources.get('inserting')))
+					{
+						this.trello.insertLibrary(name, xml, mxUtils.bind(this, function(newFile)
+						{
+							this.spinner.stop();
+							this.hideDialog(true);
+							this.libraryLoaded(newFile, images);
+						}), error, folderId);
+					}
+					else if (mode == App.MODE_DROPBOX && this.dropbox != null && this.spinner.spin(document.body, mxResources.get('inserting')))
+					{
+						this.dropbox.insertLibrary(name, xml, mxUtils.bind(this, function(newFile)
+						{
+							this.spinner.stop();
+							this.hideDialog(true);
+							this.libraryLoaded(newFile, images);
+						}), error, folderId);
+					}
+					else if (mode == App.MODE_ONEDRIVE && this.oneDrive != null && this.spinner.spin(document.body, mxResources.get('inserting')))
+					{
+						this.oneDrive.insertLibrary(name, xml, mxUtils.bind(this, function(newFile)
+						{
+							this.spinner.stop();
+							this.hideDialog(true);
+							this.libraryLoaded(newFile, images);
+						}), error, folderId);
+					}
+					else if (mode == App.MODE_BROWSER)
+					{
+						var fn = mxUtils.bind(this, function()
+						{
+							var file = new StorageLibrary(this, xml, name);
+
+							// Inserts data into local storage
+							file.saveFile(name, false, mxUtils.bind(this, function()
+							{
+								this.hideDialog(true);
+								this.libraryLoaded(file, images);
+							}), error);
+						});
+
+						if (localStorage.getItem(name) == null)
+						{
+							fn();
+						}
+						else
+						{
+							this.confirm(mxResources.get('replaceIt', [name]), fn);
+						}
+					}
+					else
+					{
+						this.handleError({message: mxResources.get('serviceUnavailableOrBlocked')});
+					}
+				}));
+			}
+			else if (noSpin || this.spinner.spin(document.body, mxResources.get('saving')))
+			{
+				file.setData(xml);
+
+				var doSave = mxUtils.bind(this, function()
+				{
+					file.save(true, mxUtils.bind(this, function(resp)
+					{
+						this.spinner.stop();
+						this.hideDialog(true);
+
+						if (!noReload)
+						{
+							this.libraryLoaded(file, images);
+						}
+
+						if (fn != null)
+						{
+							fn();
+						}
+					}), error);
+				});
+
+				if (name != file.getTitle())
+				{
+					var oldHash = file.getHash();
+
+					file.rename(name, mxUtils.bind(this, function(resp)
+					{
+						// Change hash in stored settings
+						if (file.constructor != LocalLibrary && oldHash != file.getHash())
+						{
+							mxSettings.removeCustomLibrary(oldHash);
+							mxSettings.addCustomLibrary(file.getHash());
+						}
+
+						// Workaround for library files changing hash so
+						// the old library cannot be removed from the
+						// sidebar using the updated file in libraryLoaded
+						this.removeLibrarySidebar(oldHash);
+
+						doSave();
+					}), error)
+				}
+				else
+				{
+					doSave();
+				}
+			}
+		}
+		catch (e)
+		{
+			this.handleError(e);
+		}
+	};
 
 	/**
 	 *
@@ -14131,6 +14302,558 @@ var SelectedFile;
 	EditorUi.prototype.setMigratedFlag = function()
 	{
 		localStorage.setItem('.localStorageMigrated', '1');
+	};
+
+	// TEN9: scratchpad code
+  /**
+	 * Translates this point by the given vector.
+	 * 
+	 * @param {number} dx X-coordinate of the translation.
+	 * @param {number} dy Y-coordinate of the translation.
+	 */
+	EditorUi.prototype.loadLibrary = function(file, expand)
+	{
+		var doc = mxUtils.parseXml(file.getData());
+		if (doc.documentElement.nodeName == 'mxlibrary')
+		{
+			var images = JSON.parse(mxUtils.getTextContent(doc.documentElement));
+			this.libraryLoaded(file, images, doc.documentElement.getAttribute('title'), expand);
+		}
+		else
+		{
+			throw {message: mxResources.get('notALibraryFile')};
+		}
+	};
+	
+	/**
+	 * Translates this point by the given vector.
+	 * 
+	 * @param {number} dx X-coordinate of the translation.
+	 * @param {number} dy Y-coordinate of the translation.
+	 */
+	EditorUi.prototype.getLibraryStorageHint = function(file)
+	{
+		return '';
+	};
+  	/**
+	 * Translates this point by the given vector.
+	 * 
+	 * @param {number} dx X-coordinate of the translation.
+	 * @param {number} dy Y-coordinate of the translation.
+	 */
+	EditorUi.prototype.libraryLoaded = function(file, images, optionalTitle, expand)
+	{
+		if (this.sidebar == null)
+		{
+			return;
+		}
+		
+		if (file.constructor != LocalLibrary)
+		{
+			mxSettings.addCustomLibrary(file.getHash());
+		}
+	
+		if (file.title == '.scratchpad')
+		{
+			this.scratchpad = file;
+		}
+		
+		var elts = this.sidebar.palettes[file.getHash()];
+		var nextSibling = (elts != null) ? elts[elts.length - 1].nextSibling : null;
+	
+		// Removes existing sidebar entry for this library
+		this.removeLibrarySidebar(file.getHash());
+		var dropTarget = null;
+		
+		var addImages = mxUtils.bind(this, function(imgs, content)
+		{
+			if (imgs.length == 0 && file.isEditable())
+			{
+				if (dropTarget == null)
+				{
+					dropTarget = document.createElement('div');
+					dropTarget.className = 'geDropTarget';
+					mxUtils.write(dropTarget, mxResources.get('dragElementsHere'));
+				}
+				
+				content.appendChild(dropTarget);
+			}
+			else
+			{
+				this.addLibraryEntries(imgs, content);
+			}
+		});
+
+		// Adds entries to search index
+		// KNOWN: Existing entries are not replaced after edit of custom library
+		if (this.sidebar != null && images != null)
+		{
+			this.sidebar.addEntries(images);
+		}
+		
+		// Adds new sidebar entry for this library
+		var tmp = (optionalTitle != null && optionalTitle.length > 0) ? optionalTitle : file.getTitle();
+		var contentDiv = this.sidebar.addPalette(file.getHash(), tmp,
+			(expand != null) ? expand : true, mxUtils.bind(this, function(content)
+		{
+			addImages(images, content);
+	    }));
+	
+		this.repositionLibrary(nextSibling);
+		
+		// Adds tooltip for backend
+		var title = contentDiv.parentNode.previousSibling;
+	    var tip = title.getAttribute('title');
+	    
+	    if (tip != null && tip.length > 0 && file.title != '.scratchpad')
+	    {
+	    	title.setAttribute('title', this.getLibraryStorageHint(file) + '\n' + tip);
+	    }
+	    
+	    var buttons = document.createElement('div');
+	    buttons.style.position = 'absolute';
+	    buttons.style.right = '0px';
+	    buttons.style.top = '0px';
+	    buttons.style.padding = '8px'
+	    
+	    // Workaround for CSS error in IE8 (standards and quirks)
+	    if (!mxClient.IS_QUIRKS && document.documentMode != 8)
+	    {
+	    	buttons.style.backgroundColor = 'inherit';
+	    }
+	    
+	    title.style.position = 'relative';
+	    
+	    var btnWidth = 18;
+		var btn = document.createElement('img');
+		btn.setAttribute('src', Dialog.prototype.closeImage);
+		btn.setAttribute('title', mxResources.get('close'));
+		btn.setAttribute('valign', 'absmiddle');
+		btn.setAttribute('border', '0');
+		btn.style.cursor = 'pointer';
+		btn.style.margin = '0 3px';
+		
+		var saveBtn = null;
+		
+	    if (file.title != '.scratchpad' || this.closableScratchpad)
+	    {
+			buttons.appendChild(btn);
+			
+			mxEvent.addListener(btn, 'click', mxUtils.bind(this, function(evt)
+			{
+				// Workaround for close after any button click in IE8/quirks
+				if (!mxEvent.isConsumed(evt))
+				{
+					var fn = mxUtils.bind(this, function()
+					{
+						this.closeLibrary(file);
+					});
+					
+					if (saveBtn != null)
+					{
+						this.confirm(mxResources.get('allChangesLost'), null, fn,
+							mxResources.get('cancel'), mxResources.get('discardChanges'));
+					}
+					else
+					{
+						fn();
+					}
+			
+					mxEvent.consume(evt);
+				}
+			}));
+	    }
+		
+		if (file.isEditable())
+		{
+			var graph = this.editor.graph;
+			var spinBtn = null;
+			
+			var editLibrary = mxUtils.bind(this, function(evt)
+			{
+				this.showLibraryDialog(file.getTitle(), contentDiv, images, file, file.getMode());
+				mxEvent.consume(evt);
+			});
+			
+			var saveLibrary = mxUtils.bind(this, function(evt)
+			{
+				file.setModified(true);
+				
+				if (file.isAutosave())
+				{
+					if (spinBtn != null && spinBtn.parentNode != null)
+					{
+						spinBtn.parentNode.removeChild(spinBtn);
+					}
+					
+					spinBtn = btn.cloneNode(false);
+					spinBtn.setAttribute('src', Editor.spinImage);
+					spinBtn.setAttribute('title', mxResources.get('saving'));
+					spinBtn.style.cursor = 'default';
+					spinBtn.style.marginRight = '2px';
+					spinBtn.style.marginTop = '-2px';
+					buttons.insertBefore(spinBtn, buttons.firstChild);
+					title.style.paddingRight = (buttons.childNodes.length * btnWidth) + 'px';
+					
+					this.saveLibrary(file.getTitle(), images, file, file.getMode(), true, true, function()
+					{
+						if (spinBtn != null && spinBtn.parentNode != null)
+						{
+							spinBtn.parentNode.removeChild(spinBtn);
+							title.style.paddingRight = (buttons.childNodes.length * btnWidth) + 'px';
+						}
+					});
+				}
+				else if (saveBtn == null)
+				{
+					saveBtn = btn.cloneNode(false);
+					saveBtn.setAttribute('src', IMAGE_PATH + '/download.png');
+					saveBtn.setAttribute('title', mxResources.get('save'));
+					buttons.insertBefore(saveBtn, buttons.firstChild);
+					
+					mxEvent.addListener(saveBtn, 'click', mxUtils.bind(this, function(evt)
+					{
+						this.saveLibrary(file.getTitle(), images, file, file.getMode(),
+							file.constructor == LocalLibrary, true, function()
+							{
+								if (saveBtn != null && !file.isModified())
+								{
+									title.style.paddingRight = (buttons.childNodes.length * btnWidth) + 'px';
+									saveBtn.parentNode.removeChild(saveBtn);
+									saveBtn = null;
+								}
+							});
+						
+						mxEvent.consume(evt);
+					}));
+					
+					title.style.paddingRight = (buttons.childNodes.length * btnWidth) + 'px';
+				}
+			});
+			
+			var addCells = mxUtils.bind(this, function(cells, bounds, evt, title)
+			{
+				cells = graph.cloneCells(mxUtils.sortCells(graph.model.getTopmostCells(cells)));
+	
+				// Translates cells to origin
+				for (var i = 0; i < cells.length; i++)
+				{
+					var geo = graph.getCellGeometry(cells[i]);
+					
+					if (geo != null)
+					{
+						geo.translate(-bounds.x, -bounds.y);
+					}
+				}
+	
+				contentDiv.appendChild(this.sidebar.createVertexTemplateFromCells(
+					cells, bounds.width, bounds.height, title || '', true, false, false));
+	
+				var xml = Graph.compress(mxUtils.getXml(this.editor.graph.encodeCells(cells)));
+				var entry = {xml: xml, w: bounds.width, h: bounds.height};
+				
+				if (title != null)
+				{
+					entry.title = title;
+				}
+				
+				images.push(entry);
+				saveLibrary(evt);
+				
+				if (dropTarget != null && dropTarget.parentNode != null && images.length > 0)
+				{
+					dropTarget.parentNode.removeChild(dropTarget);
+					dropTarget = null;
+				}
+			});
+		
+			var addSelection = mxUtils.bind(this, function(evt)
+			{
+				if (!graph.isSelectionEmpty())
+				{
+					var cells = graph.getSelectionCells();
+					var bounds = graph.view.getBounds(cells);
+					
+					var s = graph.view.scale;
+					
+					bounds.x /= s;
+					bounds.y /= s;
+					bounds.width /= s;
+					bounds.height /= s;
+					
+					bounds.x -= graph.view.translate.x;
+					bounds.y -= graph.view.translate.y;
+					
+					addCells(cells, bounds);
+				}
+				else if (graph.getRubberband().isActive())
+				{
+					graph.getRubberband().execute(evt);
+					graph.getRubberband().reset();
+				}
+				else
+				{
+					this.showError(mxResources.get('error'), mxResources.get('nothingIsSelected'), mxResources.get('ok'));
+				}
+				
+				mxEvent.consume(evt);
+			});
+			
+			// Adds drop handler from graph
+			mxEvent.addGestureListeners(contentDiv, function(){}, mxUtils.bind(this, function(evt)
+			{
+				if (graph.isMouseDown && graph.panningManager != null && graph.graphHandler.first != null)
+				{
+					graph.graphHandler.suspend();
+					
+					if (graph.graphHandler.hint != null)
+					{
+						graph.graphHandler.hint.style.visibility = 'hidden';	
+					}
+					
+					contentDiv.style.backgroundColor = '#f1f3f4';
+					contentDiv.style.cursor = 'copy';
+					graph.panningManager.stop();
+					graph.autoScroll = false;
+					
+					mxEvent.consume(evt);
+				}
+			}), mxUtils.bind(this, function(evt)
+			{
+				if (graph.isMouseDown && graph.panningManager != null && graph.graphHandler != null)
+				{
+					contentDiv.style.backgroundColor = '';
+					contentDiv.style.cursor = 'default';
+					this.sidebar.showTooltips = true;
+					graph.panningManager.stop();
+					
+					graph.graphHandler.reset();
+					graph.isMouseDown = false;
+					graph.autoScroll = true;
+					
+					addSelection(evt);
+					mxEvent.consume(evt);
+				}
+			}));
+			
+			// Handles mouse leaving the library and restoring move
+			mxEvent.addListener(contentDiv, 'mouseleave', mxUtils.bind(this, function(evt)
+			{
+				if (graph.isMouseDown && graph.graphHandler.first != null)
+				{
+					graph.graphHandler.resume();
+
+					if (graph.graphHandler.hint != null)
+					{
+						graph.graphHandler.hint.style.visibility = 'visible';	
+					}
+					
+					contentDiv.style.backgroundColor = '';
+					contentDiv.style.cursor = '';
+					graph.autoScroll = true;
+				}
+			}));
+			
+			// Adds drop handler from filesystem
+			if (Graph.fileSupport)
+			{
+				mxEvent.addListener(contentDiv, 'dragover', mxUtils.bind(this, function(evt)
+				{
+					contentDiv.style.backgroundColor = '#f1f3f4';
+					evt.dataTransfer.dropEffect = 'copy';
+					contentDiv.style.cursor = 'copy';
+					this.sidebar.hideTooltip();
+					evt.stopPropagation();
+					evt.preventDefault();
+				}));
+				
+				mxEvent.addListener(contentDiv, 'drop', mxUtils.bind(this, function(evt)
+				{
+					contentDiv.style.cursor = '';
+					contentDiv.style.backgroundColor = '';
+					
+				    if (evt.dataTransfer.files.length > 0)
+				    {	
+				    	this.importFiles(evt.dataTransfer.files, 0, 0, this.maxImageSize, mxUtils.bind(this, function(data, mimeType, x, y, w, h, img, doneFn, file)
+				    	{
+							if (data != null && mimeType.substring(0, 6) == 'image/')
+							{
+								var style = 'shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;aspect=fixed;image=' +
+									this.convertDataUri(data);
+								var cells = [new mxCell('', new mxGeometry(0, 0, w, h), style)];
+								cells[0].vertex = true;
+	
+								addCells(cells, new mxRectangle(0, 0, w, h), evt, (mxEvent.isAltDown(evt)) ? null : img.substring(0, img.lastIndexOf('.')).replace(/_/g, ' '));
+
+								if (dropTarget != null && dropTarget.parentNode != null && images.length > 0)
+								{
+									dropTarget.parentNode.removeChild(dropTarget);
+									dropTarget = null;
+								}
+							}
+							else
+							{
+								var done = false;
+								
+								var doImport = mxUtils.bind(this, function(theData, theMimeType)
+								{
+									if (theData != null && theMimeType == 'application/pdf')
+									{
+										var xml = Editor.extractGraphModelFromPdf(theData);
+					
+										if (xml != null && xml.length > 0)
+										{
+											theMimeType = 'text/xml';
+											theData = xml;
+										}
+									}
+									
+									if (theData != null) //Try to parse the file as xml (can be a library or mxfile). Otherwise, an error will be shown
+									{
+										var doc = mxUtils.parseXml(theData);
+										
+										if (doc.documentElement.nodeName == 'mxlibrary')
+										{
+											try
+											{
+												var temp = JSON.parse(mxUtils.getTextContent(doc.documentElement));
+												addImages(temp, contentDiv);
+												images = images.concat(temp);
+												saveLibrary(evt);
+												this.spinner.stop();
+												done = true;
+											}
+											catch (e)
+											{
+												// ignore
+											}
+										}
+										else if (doc.documentElement.nodeName == 'mxfile')
+										{
+											try
+											{
+												var pages = doc.documentElement.getElementsByTagName('diagram');
+												
+												for (var i = 0; i < pages.length; i++)
+												{
+													var cells = this.stringToCells(Editor.getDiagramNodeXml(pages[i]));
+													var size = this.editor.graph.getBoundingBoxFromGeometry(cells);
+													addCells(cells, new mxRectangle(0, 0, size.width, size.height), evt);
+												}
+												
+												done = true;
+											}
+											catch (e)
+											{
+												if (window.console != null)
+												{
+													console.log('error in drop handler:', e);
+												}
+											}
+										}
+									}
+									
+									if (!done)
+									{
+										this.spinner.stop();
+										this.handleError({message: mxResources.get('errorLoadingFile')})
+									}
+
+									if (dropTarget != null && dropTarget.parentNode != null && images.length > 0)
+									{
+										dropTarget.parentNode.removeChild(dropTarget);
+										dropTarget = null;
+									}
+								});
+								
+								if (file != null && img != null && ((/(\.v(dx|sdx?))($|\?)/i.test(img)) || /(\.vs(x|sx?))($|\?)/i.test(img)))
+								{
+									this.importVisio(file, function(xml)
+									{
+										doImport(xml, 'text/xml');
+									}, null, img);
+								}
+								else if (!this.isOffline() && new XMLHttpRequest().upload && this.isRemoteFileFormat(data, img) && file != null)
+								{
+									this.parseFile(file, mxUtils.bind(this, function(xhr)
+									{
+										if (xhr.readyState == 4)
+										{
+											this.spinner.stop();
+											
+											if (xhr.status >= 200 && xhr.status <= 299)
+											{
+												doImport(xhr.responseText, 'text/xml');
+											}
+											else
+											{
+												this.handleError({message: mxResources.get((xhr.status == 413) ?
+				            						'drawingTooLarge' : 'invalidOrMissingFile')},
+				            						mxResources.get('errorLoadingFile'));
+											}
+										}
+									}));
+								}
+								else
+								{
+									doImport(data, mimeType);
+								}
+							}
+				    	}));
+					}
+				    
+				    evt.stopPropagation();
+				    evt.preventDefault();
+				}));
+	
+				mxEvent.addListener(contentDiv, 'dragleave', function(evt)
+				{
+					contentDiv.style.cursor = '';
+					contentDiv.style.backgroundColor = '';
+					evt.stopPropagation();
+					evt.preventDefault();
+				});
+			}
+	
+			btn = btn.cloneNode(false);
+			btn.setAttribute('src', Editor.editImage);
+			btn.setAttribute('title', mxResources.get('edit'));
+			buttons.insertBefore(btn, buttons.firstChild);
+			
+			mxEvent.addListener(btn, 'click', editLibrary);
+			mxEvent.addListener(contentDiv, 'dblclick', function(evt)
+			{
+				if (mxEvent.getSource(evt) == contentDiv)
+				{
+					editLibrary(evt);
+				}
+			});
+			
+			var btn2 = btn.cloneNode(false);
+			btn2.setAttribute('src', Editor.plusImage);
+			btn2.setAttribute('title', mxResources.get('add'));
+			buttons.insertBefore(btn2, buttons.firstChild);
+			mxEvent.addListener(btn2, 'click', addSelection);
+			
+			if (!this.isOffline() && file.title == '.scratchpad' && EditorUi.scratchpadHelpLink != null)
+			{
+				var link = document.createElement('span');
+				link.setAttribute('title', mxResources.get('help'));
+				link.style.cssText = 'color:#a3a3a3;text-decoration:none;margin-right:2px;';
+				mxUtils.write(link, '?');
+				
+				mxEvent.addGestureListeners(link, mxUtils.bind(this, function(evt)
+				{
+					this.openLink(EditorUi.scratchpadHelpLink);
+					mxEvent.consume(evt);
+				}));
+				
+				buttons.insertBefore(link, buttons.firstChild);
+			}
+		}
+		
+		title.appendChild(buttons);
+		title.style.paddingRight = (buttons.childNodes.length * btnWidth) + 'px';
 	};
 
 })();

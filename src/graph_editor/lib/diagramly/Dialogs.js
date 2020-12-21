@@ -27,7 +27,8 @@ const {
     mxResources,
     mxStackLayout,
     mxStencilRegistry,
-    mxStylesheet,
+	mxStylesheet,
+	mxUrlConverter,
     mxUtils,
     mxXmlRequest,
     mxWindow,
@@ -37,6 +38,7 @@ const { Dialog, FilenameDialog } = require('../jgraph/Editor.js');
 const IMAGE_PATH = '/images';
 var uiTheme = null;
 const urlParams = {dev: "1",sync: "manual"};
+const isLocalStorage = false;
 
 var StorageDialog = function(editorUi, fn, rowLimit)
 {
@@ -8494,10 +8496,11 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 		btns.appendChild(cancelBtn);
 	}
 
-	if (editorUi.getServiceName() == 'draw.io' && file != null &&
-		// Limits button to ibraries which are known to have public URLs
-		(file.constructor == DriveLibrary || file.constructor == GitHubLibrary))
-	{
+	// TEN9: not using github and drive functionality
+	// if (editorUi.getServiceName() == 'draw.io' && file != null &&
+	// 	// Limits button to ibraries which are known to have public URLs
+	// 	(file.constructor == DriveLibrary || file.constructor == GitHubLibrary))
+	// {
 		var btn = mxUtils.button(mxResources.get('link'), function()
 		{
 			if (editorUi.spinner.spin(document.body, mxResources.get('loading')))
@@ -8538,7 +8541,7 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 
 		btn.className = 'geBtn';
 		btns.appendChild(btn);
-	}
+	//}
 
 	var btn = mxUtils.button(mxResources.get('export'), function()
 	{
@@ -8653,6 +8656,7 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 	// Indirection for overriding
 	this.saveBtnClickHandler = function(name, images, file, mode)
 	{
+		debugger
 		editorUi.saveLibrary(name, images, file, mode);
 	};
 
@@ -10612,12 +10616,14 @@ var FilePropertiesDialog = function(editorUi)
 };
 
 module.exports = {
-    BackgroundImageDialog,
+	BackgroundImageDialog,
+	CreateDialog,
     EditGeometryDialog,
     EditShapeDialog,
     CustomDialog,
     FindWindow,
-    ImageDialog,
+	ImageDialog,
+	LibraryDialog,
     LinkDialog,
     NewDialog,
     ParseDialog,

@@ -20,6 +20,7 @@ const {
   mxConstants,
   mxGraph,
   mxGraphView,
+  mxUtils,
 } = require('../jgraph/mxClient.js');
 
 const { Editor } = require('../jgraph/Editor.js');
@@ -166,6 +167,8 @@ var mxSettings =
 	},
 	getCustomLibraries: function()
 	{
+		// TEN9:
+		mxSettings.settings.customLibraries = ["L.scratchpad"];
 		return mxSettings.settings.customLibraries;
 	},
 	getPlugins: function()
