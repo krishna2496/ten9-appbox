@@ -154,6 +154,10 @@ export default defineComponent({
         ctx.emit('shape-libraries-changed', event.detail);
       });
 
+      editorUi.value.container.addEventListener('scratchpadDataChanged', (event: CustomEvent) => {
+        ctx.emit('scratchpad-data-changed', event.detail);
+      });
+
       nextTick(() => {
         setGraphEnabled(props.enabled);
         editorUi.value.fitToWindow();

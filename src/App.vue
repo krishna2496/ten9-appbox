@@ -51,12 +51,18 @@ export default defineComponent({
 
     const shapeLibraries = ref('');
 
+    const scratchpadData = ref('');
+
     function getShapeLibrariesFromStorage() {
       return window.localStorage.getItem('shapeLibraries');
     }
 
     function saveShapeLibrariesToStorage(libraries: string) {
       window.localStorage.setItem('shapeLibraries', libraries);
+    }
+
+    function saveScratchpadDataToStorage(xml: string) {
+      window.localStorage.setItem('scratchpadData', xml);
     }
 
     function updateAppHeight() {
@@ -269,6 +275,11 @@ export default defineComponent({
       shapeLibraries.value = libraries;
     }
 
+    function onScratchpadDataChanged(xml: string) {
+      saveScratchpadDataToStorage(xml);
+      scratchpadData.value = xml;
+    }
+
     return {
       addLog,
       editor,
@@ -282,6 +293,7 @@ export default defineComponent({
       previewMode,
       saveFile,
       shapeLibraries,
+      onScratchpadDataChanged,
     };
   },
 });
@@ -340,7 +352,8 @@ export default defineComponent({
           :enabled='!previewMode',
           :shapeLibraries='shapeLibraries',
           @shape-libraries-changed='onShapeLibrariesChanged',
-          @graph-changed='onGraphChanged'
+          @graph-changed='onGraphChanged',
+          @scratchpad-data-changed='onScratchpadDataChanged'
         )
 </template>
 

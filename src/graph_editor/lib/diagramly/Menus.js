@@ -1902,8 +1902,9 @@ DriveFile = function() {};
 		});
 
 		// Adds plugins menu item only if localStorage is available for storing the plugins
-		if (isLocalStorage || mxClient.IS_CHROMEAPP)
-		{
+		// TEN9: not using isLocalStorage or IS_CHROMEAPP
+		// if (isLocalStorage || mxClient.IS_CHROMEAPP)
+		// {
 			var action = editorUi.actions.addAction('scratchpad', function()
 			{
 				editorUi.toggleScratchpad();
@@ -1916,7 +1917,7 @@ DriveFile = function() {};
 			{
 				editorUi.showDialog(new PluginsDialog(editorUi).container, 360, 170, true, false);
 			});
-		}
+		// }
 		
 		// TEN9: Always show search for our app
 		// var action = editorUi.actions.addAction('search', function()
@@ -3258,16 +3259,16 @@ DriveFile = function() {};
 				['comments', '-'] : ['-']));
 			
 			this.addMenuItems(menu, ['-', 'search'], parent);
-			
-			if (isLocalStorage || mxClient.IS_CHROMEAPP)
-			{
+			// TEN9: not using isLocalStorage or IS_CHROMEAPP
+			// if (isLocalStorage || mxClient.IS_CHROMEAPP)
+			// {
 				var item = this.addMenuItem(menu, 'scratchpad', parent);
-				
-				if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
-				{
+				// TEN9: not using isElectronApp or IS_CHROMEAPP
+				// if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
+				// {
 					this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000042367');
-				}
-			}
+			//  	}
+			// }
 			
 			this.addMenuItems(menu, ['shapes', '-', 'pageView', 'pageScale']);
 			this.addSubmenu('units', menu, parent);				
