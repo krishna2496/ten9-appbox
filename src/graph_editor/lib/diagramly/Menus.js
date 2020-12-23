@@ -3266,7 +3266,7 @@ DriveFile = function() {};
 				// TEN9: not using isElectronApp or IS_CHROMEAPP
 				// if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
 				// {
-					this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000042367');
+					//this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000042367');
 			//  	}
 			// }
 			

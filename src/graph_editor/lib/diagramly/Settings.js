@@ -167,8 +167,6 @@ var mxSettings =
 	},
 	getCustomLibraries: function()
 	{
-		// TEN9:
-		mxSettings.settings.customLibraries = ["L.scratchpad"];
 		return mxSettings.settings.customLibraries;
 	},
 	getPlugins: function()

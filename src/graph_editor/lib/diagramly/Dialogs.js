@@ -8519,18 +8519,18 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 						editorUi.showDialog(dlg.container, 440, 240, true);
 						dlg.init();
 					}
-					else if (file.constructor == DriveLibrary)
-					{
-					    editorUi.showError(mxResources.get('error'), mxResources.get('diagramIsNotPublic'),
-							mxResources.get('share'), mxUtils.bind(this, function()
-							{
-								editorUi.drive.showPermissions(file.getId());
-							}), null, mxResources.get('ok'), mxUtils.bind(this, function()
-							{
-								// Hides dialog
-							})
-						);
-					}
+					// else if (file.constructor == DriveLibrary)
+					// {
+					//     editorUi.showError(mxResources.get('error'), mxResources.get('diagramIsNotPublic'),
+					// 		mxResources.get('share'), mxUtils.bind(this, function()
+					// 		{
+					// 			editorUi.drive.showPermissions(file.getId());
+					// 		}), null, mxResources.get('ok'), mxUtils.bind(this, function()
+					// 		{
+					// 			// Hides dialog
+					// 		})
+					// 	);
+					// }
 					else
 					{
 						editorUi.handleError({message: mxResources.get('diagramIsNotPublic')});
@@ -8666,7 +8666,6 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 			stopEditing();
 			stopEditing = null;
 		}
-
 		this.saveBtnClickHandler(nameInput.value, images, file, mode);
 	}));
 

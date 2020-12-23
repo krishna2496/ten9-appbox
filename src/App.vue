@@ -57,6 +57,10 @@ export default defineComponent({
       return window.localStorage.getItem('shapeLibraries');
     }
 
+    function getScratchpadData() {
+      return window.localStorage.getItem('scratchpadData');
+    }
+
     function saveShapeLibrariesToStorage(libraries: string) {
       window.localStorage.setItem('shapeLibraries', libraries);
     }
@@ -174,6 +178,8 @@ export default defineComponent({
         shapeLibraries.value = DEFAULT_SHAPE_LIBRARIES;
         saveShapeLibrariesToStorage(shapeLibraries.value);
       }
+
+      scratchpadData.value = getScratchpadData();
 
       const drag: HTMLElement = document.querySelector('.geEditor');
 
@@ -293,6 +299,7 @@ export default defineComponent({
       previewMode,
       saveFile,
       shapeLibraries,
+      scratchpadData,
       onScratchpadDataChanged,
     };
   },
@@ -351,6 +358,7 @@ export default defineComponent({
           ref='editor',
           :enabled='!previewMode',
           :shapeLibraries='shapeLibraries',
+          :scratchpadData='scratchpadData',
           @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged',
           @scratchpad-data-changed='onScratchpadDataChanged'

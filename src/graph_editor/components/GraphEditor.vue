@@ -71,6 +71,10 @@ export default defineComponent({
       required: true,
       type: String,
     },
+    scratchpadData: {
+      required: true,
+      type: String,
+    },
     enabled: Boolean,
   },
 
@@ -130,6 +134,10 @@ export default defineComponent({
       editorUi.value.removeListener(onGraphChanged);
     }
 
+    function removeScratchpadDataChangedListners() {
+      editorUi.value.container.removeEventListener('scratchpadDataChanged', '', false);
+    }
+
     onMounted(() => {
       mxResources.loadDefaultBundle = false;
       mxResources.parse(resourcesFile);
@@ -147,6 +155,10 @@ export default defineComponent({
 
       // Add stencils to the sidebar
       sidebar.value.showEntries(props.shapeLibraries);
+      //const scratchpadArray = props.scratchpadData.substr(11).slice(0,-12)
+      //const arr = JSON.parse(scratchpadArray);
+      //debugger
+      editorUi.value.loadScratchpadData(props.shapeLibraries);
 
       addGraphChangedListeners();
 
@@ -168,12 +180,20 @@ export default defineComponent({
       editorUi.value.resetPages();
       editorUi.value.closeOpenWindows();
       removeGraphChangedListeners();
+      removeScratchpadDataChangedListners();
     });
 
     watch(
       () => props.shapeLibraries,
       (val: string) => {
         sidebar.value.showEntries(val);
+      },
+    );
+
+    watch(
+      () => props.scratchpadData,
+      (val: string) => {
+        editorUi.value.loadScratchpadData(val);
       },
     );
 

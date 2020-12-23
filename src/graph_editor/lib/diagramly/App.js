@@ -5152,283 +5152,283 @@ App.prototype.getLibraryStorageHint = function(file)
 /**
  * Updates action states depending on the selection.
  */
-App.prototype.restoreLibraries = function()
-{
-	this.loadLibraries(mxSettings.getCustomLibraries(), mxUtils.bind(this, function()
-	{
-		this.loadLibraries((urlParams['clibs'] || '').split(';'));
-	}));
-};
+// App.prototype.restoreLibraries = function()
+// {
+// 	this.loadLibraries(mxSettings.getCustomLibraries(), mxUtils.bind(this, function()
+// 	{
+// 		this.loadLibraries((urlParams['clibs'] || '').split(';'));
+// 	}));
+// };
 
 /**
  * Updates action states depending on the selection.
  */
-App.prototype.loadLibraries = function(libs, done)
-{
-	// TEN9: check editorUi instead of App
-	//if (this.sidebar != null)
-	if (this.editorUi.sidebar != null)
-	{
-		if (this.pendingLibraries == null)
-		{
-			this.pendingLibraries = new Object();
-		}
+// App.prototype.loadLibraries = function(libs, done)
+// {
+// 	// TEN9: check editorUi instead of App
+// 	//if (this.sidebar != null)
+// 	if (this.editorUi.sidebar != null)
+// 	{
+// 		if (this.pendingLibraries == null)
+// 		{
+// 			this.pendingLibraries = new Object();
+// 		}
 
-		// Ignores this library next time
-		var ignore = mxUtils.bind(this, function(id, keep)
-		{
-			if (!keep)
-			{
-				mxSettings.removeCustomLibrary(id);
-			}
+// 		// Ignores this library next time
+// 		var ignore = mxUtils.bind(this, function(id, keep)
+// 		{
+// 			if (!keep)
+// 			{
+// 				mxSettings.removeCustomLibrary(id);
+// 			}
 
-			delete this.pendingLibraries[id];
-		});
+// 			delete this.pendingLibraries[id];
+// 		});
 
-		var waiting = 0;
-		var files = [];
+// 		var waiting = 0;
+// 		var files = [];
 
-		// Loads in order of libs array
-		var checkDone = mxUtils.bind(this, function()
-		{
-			if (waiting == 0)
-			{
-				if (libs != null)
-				{
-					for (var i = libs.length - 1; i >= 0; i--)
-					{
-						if (files[i] != null)
-						{
-							//TEN9:
-							this.editorUi.loadLibrary(files[i]);
-						}
-					}
-				}
+// 		// Loads in order of libs array
+// 		var checkDone = mxUtils.bind(this, function()
+// 		{
+// 			if (waiting == 0)
+// 			{
+// 				if (libs != null)
+// 				{
+// 					for (var i = libs.length - 1; i >= 0; i--)
+// 					{
+// 						if (files[i] != null)
+// 						{
+// 							//TEN9:
+// 							//this.editorUi.loadLibrary(files[i]);
+// 						}
+// 					}
+// 				}
 
-				if (done != null)
-				{
-					done();
-				}
-			}
-		});
+// 				if (done != null)
+// 				{
+// 					done();
+// 				}
+// 			}
+// 		});
 
-		if (libs != null)
-		{
-			for (var i = 0; i < libs.length; i++)
-			{
-				var name = encodeURIComponent(decodeURIComponent(libs[i]));
+// 		if (libs != null)
+// 		{
+// 			for (var i = 0; i < libs.length; i++)
+// 			{
+// 				var name = encodeURIComponent(decodeURIComponent(libs[i]));
 
-				(mxUtils.bind(this, function(id, index)
-				{
+// 				(mxUtils.bind(this, function(id, index)
+// 				{
 		
-					if (id != null && id.length > 0 && this.pendingLibraries[id] == null &&
-						this.editorUi.sidebar.palettes[id] == null)
-					{
-						// Waits for all libraries to load
-						waiting++;
+// 					if (id != null && id.length > 0 && this.pendingLibraries[id] == null &&
+// 						this.editorUi.sidebar.palettes[id] == null)
+// 					{
+// 						// Waits for all libraries to load
+// 						waiting++;
 
-						var onload = mxUtils.bind(this, function(file)
-						{
-							delete this.pendingLibraries[id];
-							files[index] = file;
-							waiting--;
-							checkDone();
-						});
+// 						var onload = mxUtils.bind(this, function(file)
+// 						{
+// 							delete this.pendingLibraries[id];
+// 							files[index] = file;
+// 							waiting--;
+// 							checkDone();
+// 						});
 
-						var onerror = mxUtils.bind(this, function(keep)
-						{
-							ignore(id, keep);
-							waiting--;
-							checkDone();
-						});
+// 						var onerror = mxUtils.bind(this, function(keep)
+// 						{
+// 							ignore(id, keep);
+// 							waiting--;
+// 							checkDone();
+// 						});
 
-						this.pendingLibraries[id] = true;
-						var service = id.substring(0, 1);
+// 						this.pendingLibraries[id] = true;
+// 						var service = id.substring(0, 1);
 
-						if (service == 'L')
-						{
-							// TEN9:
-							// if (isLocalStorage || mxClient.IS_CHROMEAPP)
-							// {
-								// Make asynchronous for barrier to work
-								window.setTimeout(mxUtils.bind(this, function()
-								{
-									try
-									{
-										var name = decodeURIComponent(id.substring(1));
+// 						if (service == 'L')
+// 						{
+// 							// TEN9:
+// 							// if (isLocalStorage || mxClient.IS_CHROMEAPP)
+// 							// {
+// 								// Make asynchronous for barrier to work
+// 								window.setTimeout(mxUtils.bind(this, function()
+// 								{
+// 									try
+// 									{
+// 										var name = decodeURIComponent(id.substring(1));
 										
-										// TEN9: replace this.editorUi instead of this
-										StorageFile.getFileContent(this.editorUi, name, mxUtils.bind(this, function(xml)
-										{
-											if (name == '.scratchpad' && xml == null)
-											{
-												xml = this.emptyLibraryXml;
-											}
+// 										// TEN9: replace this.editorUi instead of this
+// 										StorageFile.getFileContent(this.editorUi, name, mxUtils.bind(this, function(xml)
+// 										{
+// 											if (name == '.scratchpad' && xml == null)
+// 											{
+// 												xml = this.emptyLibraryXml;
+// 											}
 
-											if (xml != null)
-											{
-												onload(new StorageLibrary(this.editorUi, xml, name));
-											}
-											else
-											{
-												onerror();
-											}
-										}), onerror);
-									}
-									catch (e)
-									{
-										onerror();
-									}
-								}), 0);
-							//}
-						}
-						else if (service == 'U')
-						{
-							var url = decodeURIComponent(id.substring(1));
+// 											if (xml != null)
+// 											{
+// 												onload(new StorageLibrary(this.editorUi, xml, name));
+// 											}
+// 											else
+// 											{
+// 												onerror();
+// 											}
+// 										}), onerror);
+// 									}
+// 									catch (e)
+// 									{
+// 										onerror();
+// 									}
+// 								}), 0);
+// 							//}
+// 						}
+// 						else if (service == 'U')
+// 						{
+// 							var url = decodeURIComponent(id.substring(1));
 
-							if (!this.isOffline())
-							{
-								this.loadTemplate(url, mxUtils.bind(this, function(text)
-								{
-									if (text != null && text.length > 0)
-									{
-										// LATER: Convert mxfile to mxlibrary using code from libraryLoaded
-										onload(new UrlLibrary(this, text, url));
-									}
-									else
-									{
-										onerror();
-									}
-								}), function()
-								{
-									onerror();
-								}, null, true);
-							}
-						}
-						else if (service == 'R')
-						{
-							var libDesc = decodeURIComponent(id.substring(1));
+// 							if (!this.isOffline())
+// 							{
+// 								this.loadTemplate(url, mxUtils.bind(this, function(text)
+// 								{
+// 									if (text != null && text.length > 0)
+// 									{
+// 										// LATER: Convert mxfile to mxlibrary using code from libraryLoaded
+// 										onload(new UrlLibrary(this, text, url));
+// 									}
+// 									else
+// 									{
+// 										onerror();
+// 									}
+// 								}), function()
+// 								{
+// 									onerror();
+// 								}, null, true);
+// 							}
+// 						}
+// 						else if (service == 'R')
+// 						{
+// 							var libDesc = decodeURIComponent(id.substring(1));
 
-							if (!this.isOffline())
-							{
-								try
-								{
-									libDesc = JSON.parse(libDesc);
-									var libObj = {
-										id: libDesc[0],
-				               			title: libDesc[1],
-				               			downloadUrl: libDesc[2]
-									}
+// 							if (!this.isOffline())
+// 							{
+// 								try
+// 								{
+// 									libDesc = JSON.parse(libDesc);
+// 									var libObj = {
+// 										id: libDesc[0],
+// 				               			title: libDesc[1],
+// 				               			downloadUrl: libDesc[2]
+// 									}
 
-									this.remoteInvoke('getFileContent', [libObj.downloadUrl], null, mxUtils.bind(this, function(libContent)
-									{
-										try
-										{
-											onload(new RemoteLibrary(this, libContent, libObj));
-										}
-										catch (e)
-										{
-											onerror();
-										}
-									}), function()
-									{
-										onerror();
-									});
-								}
-								catch (e)
-								{
-									onerror();
-								}
-							}
-						}
-						else if (service == 'S' && this.loadDesktopLib != null)
-						{
-							try
-							{
-								this.loadDesktopLib(decodeURIComponent(id.substring(1)), function(desktopLib)
-								{
-									onload(desktopLib);
-								}, onerror);
-							}
-							catch (e)
-							{
-								onerror();
-							}
-						}
-						else
-						{
-							var peer = null;
+// 									this.remoteInvoke('getFileContent', [libObj.downloadUrl], null, mxUtils.bind(this, function(libContent)
+// 									{
+// 										try
+// 										{
+// 											onload(new RemoteLibrary(this, libContent, libObj));
+// 										}
+// 										catch (e)
+// 										{
+// 											onerror();
+// 										}
+// 									}), function()
+// 									{
+// 										onerror();
+// 									});
+// 								}
+// 								catch (e)
+// 								{
+// 									onerror();
+// 								}
+// 							}
+// 						}
+// 						else if (service == 'S' && this.loadDesktopLib != null)
+// 						{
+// 							try
+// 							{
+// 								this.loadDesktopLib(decodeURIComponent(id.substring(1)), function(desktopLib)
+// 								{
+// 									onload(desktopLib);
+// 								}, onerror);
+// 							}
+// 							catch (e)
+// 							{
+// 								onerror();
+// 							}
+// 						}
+// 						else
+// 						{
+// 							var peer = null;
 
-							if (service == 'G')
-							{
-								if (this.drive != null && this.drive.user != null)
-								{
-									peer = this.drive;
-								}
-							}
-							else if (service == 'H')
-							{
-								if (this.gitHub != null && this.gitHub.getUser() != null)
-								{
-									peer = this.gitHub;
-								}
-							}
-							else if (service == 'T')
-							{
-								if (this.trello != null && this.trello.isAuthorized())
-								{
-									peer = this.trello;
-								}
-							}
-							else if (service == 'D')
-							{
-								if (this.dropbox != null && this.dropbox.getUser() != null)
-								{
-									peer = this.dropbox;
-								}
-							}
-							else if (service == 'W')
-							{
-								if (this.oneDrive != null && this.oneDrive.getUser() != null)
-								{
-									peer = this.oneDrive;
-								}
-							}
+// 							if (service == 'G')
+// 							{
+// 								if (this.drive != null && this.drive.user != null)
+// 								{
+// 									peer = this.drive;
+// 								}
+// 							}
+// 							else if (service == 'H')
+// 							{
+// 								if (this.gitHub != null && this.gitHub.getUser() != null)
+// 								{
+// 									peer = this.gitHub;
+// 								}
+// 							}
+// 							else if (service == 'T')
+// 							{
+// 								if (this.trello != null && this.trello.isAuthorized())
+// 								{
+// 									peer = this.trello;
+// 								}
+// 							}
+// 							else if (service == 'D')
+// 							{
+// 								if (this.dropbox != null && this.dropbox.getUser() != null)
+// 								{
+// 									peer = this.dropbox;
+// 								}
+// 							}
+// 							else if (service == 'W')
+// 							{
+// 								if (this.oneDrive != null && this.oneDrive.getUser() != null)
+// 								{
+// 									peer = this.oneDrive;
+// 								}
+// 							}
 
-							if (peer != null)
-							{
-								peer.getLibrary(decodeURIComponent(id.substring(1)), mxUtils.bind(this, function(file)
-								{
-									try
-									{
-										onload(file);
-									}
-									catch (e)
-									{
-										onerror();
-									}
-								}), function(resp)
-								{
-									onerror();
-								});
-							}
-							else
-							{
-								onerror(true);
-							}
-						}
-					}
-				}))(name, i);
-			}
+// 							if (peer != null)
+// 							{
+// 								peer.getLibrary(decodeURIComponent(id.substring(1)), mxUtils.bind(this, function(file)
+// 								{
+// 									try
+// 									{
+// 										onload(file);
+// 									}
+// 									catch (e)
+// 									{
+// 										onerror();
+// 									}
+// 								}), function(resp)
+// 								{
+// 									onerror();
+// 								});
+// 							}
+// 							else
+// 							{
+// 								onerror(true);
+// 							}
+// 						}
+// 					}
+// 				}))(name, i);
+// 			}
 
-			checkDone();
-		}
-		else
-		{
-			checkDone();
-		}
-	}
-};
+// 			checkDone();
+// 		}
+// 		else
+// 		{
+// 			checkDone();
+// 		}
+// 	}
+// };
 
 /**
  * Translates this point by the given vector.
