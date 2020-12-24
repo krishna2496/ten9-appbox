@@ -26,6 +26,7 @@ const {
 } = require('../../jgraph/mxClient.js');
 
 const { Sidebar } = require('../../jgraph/Sidebar.js');
+const { Dialog } = require('../../jgraph/Editor.js');
 
 const { mxSettings } = require('../Settings.js');
 

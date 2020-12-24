@@ -2986,182 +2986,12 @@ var SelectedFile;
 	 * Hook for subclassers.
 	 */
 	// TEN9: Override save functionality for scratchpad
-	//EditorUi.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload, fn) { };
-	EditorUi.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload, fn)
-	{
-		try
-		{
-			mode = (mode != null) ? mode : this.mode;
-			noSpin = (noSpin != null) ? noSpin : false;
-			noReload = (noReload != null) ? noReload : false;
-			var xml = this.createLibraryDataFromImages(images);
-
-			var error = mxUtils.bind(this, function(resp)
-			{
-				this.spinner.stop();
-
-				if (fn != null)
-				{
-					fn();
-				}
-
-				this.handleError(resp, (resp != null) ? mxResources.get('errorSavingFile') : null);
-			});
-
-			// Handles special case for local libraries
-			if (file == null && mode == App.MODE_DEVICE)
-			{
-				file = new LocalLibrary(this, xml, name);
-			}
-
-			if (file == null)
-			{
-				this.pickFolder(mode, mxUtils.bind(this, function(folderId)
-				{
-					if (mode == App.MODE_GOOGLE && this.drive != null && this.spinner.spin(document.body, mxResources.get('inserting')))
-					{
-						this.drive.insertFile(name, xml, folderId, mxUtils.bind(this, function(newFile)
-						{
-							this.spinner.stop();
-							this.hideDialog(true);
-							this.libraryLoaded(newFile, images);
-						}), error, this.drive.libraryMimeType);
-					}
-					else if (mode == App.MODE_GITHUB && this.gitHub != null && this.spinner.spin(document.body, mxResources.get('inserting')))
-					{
-						this.gitHub.insertLibrary(name, xml, mxUtils.bind(this, function(newFile)
-						{
-							this.spinner.stop();
-							this.hideDialog(true);
-							this.libraryLoaded(newFile, images);
-						}), error, folderId);
-					}
-					else if (mode == App.MODE_GITLAB && this.gitLab != null && this.spinner.spin(document.body, mxResources.get('inserting')))
-					{
-						this.gitLab.insertLibrary(name, xml, mxUtils.bind(this, function(newFile)
-						{
-							this.spinner.stop();
-							this.hideDialog(true);
-							this.libraryLoaded(newFile, images);
-						}), error, folderId);
-					}
-					else if (mode == App.MODE_TRELLO && this.trello != null && this.spinner.spin(document.body, mxResources.get('inserting')))
-					{
-						this.trello.insertLibrary(name, xml, mxUtils.bind(this, function(newFile)
-						{
-							this.spinner.stop();
-							this.hideDialog(true);
-							this.libraryLoaded(newFile, images);
-						}), error, folderId);
-					}
-					else if (mode == App.MODE_DROPBOX && this.dropbox != null && this.spinner.spin(document.body, mxResources.get('inserting')))
-					{
-						this.dropbox.insertLibrary(name, xml, mxUtils.bind(this, function(newFile)
-						{
-							this.spinner.stop();
-							this.hideDialog(true);
-							this.libraryLoaded(newFile, images);
-						}), error, folderId);
-					}
-					else if (mode == App.MODE_ONEDRIVE && this.oneDrive != null && this.spinner.spin(document.body, mxResources.get('inserting')))
-					{
-						this.oneDrive.insertLibrary(name, xml, mxUtils.bind(this, function(newFile)
-						{
-							this.spinner.stop();
-							this.hideDialog(true);
-							this.libraryLoaded(newFile, images);
-						}), error, folderId);
-					}
-					else if (mode == App.MODE_BROWSER)
-					{
-						var fn = mxUtils.bind(this, function()
-						{
-							var file = new StorageLibrary(this, xml, name);
-
-							// Inserts data into local storage
-							file.saveFile(name, false, mxUtils.bind(this, function()
-							{
-								this.hideDialog(true);
-								this.libraryLoaded(file, images);
-							}), error);
-						});
-
-						if (localStorage.getItem(name) == null)
-						{
-							fn();
-						}
-						else
-						{
-							this.confirm(mxResources.get('replaceIt', [name]), fn);
-						}
-					}
-					else
-					{
-						this.handleError({message: mxResources.get('serviceUnavailableOrBlocked')});
-					}
-				}));
-			}
-			else if (noSpin || this.spinner.spin(document.body, mxResources.get('saving')))
-			{
-				// TEN9: add custom event for scratchpad data
-				var event = new CustomEvent('scratchpadDataChanged', { detail: xml });
-				this.container.dispatchEvent(event);
-				// TEN9: disable the storing scratchpad data into indexDb 
-				//file.setData(xml);
-
-				var doSave = mxUtils.bind(this, function()
-				{
-					file.save(true, mxUtils.bind(this, function(resp)
-					{
-						this.spinner.stop();
-						this.hideDialog(true);
-
-						if (!noReload)
-						{
-							// TEN9: disable the loading scratchpad data from indexDb 
-							//this.libraryLoaded(file, images);
-						}
-
-						if (fn != null)
-						{
-							fn();
-						}
-					}), error);
-				});
-
-				if (name != file.getTitle())
-				{
-					var oldHash = file.getHash();
-
-					file.rename(name, mxUtils.bind(this, function(resp)
-					{
-						// Change hash in stored settings
-						if (file.constructor != LocalLibrary && oldHash != file.getHash())
-						{
-							mxSettings.removeCustomLibrary(oldHash);
-							mxSettings.addCustomLibrary(file.getHash());
-						}
-
-						// Workaround for library files changing hash so
-						// the old library cannot be removed from the
-						// sidebar using the updated file in libraryLoaded
-						this.removeLibrarySidebar(oldHash);
-
-						doSave();
-					}), error)
-				}
-				else
-				{
-					doSave();
-				}
-			}
-		}
-		catch (e)
-		{
-			this.handleError(e);
-		}
-	};
-
+	EditorUi.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload, fn) {
+		var xml = this.createLibraryDataFromImages(images);
+		var event = new CustomEvent('scratchpadDataChanged', { detail: xml });
+		this.container.dispatchEvent(event);
+		this.hideDialog(true);
+	 };
 	/**
 	 *
 	 */
@@ -3342,6 +3172,9 @@ var SelectedFile;
 			{
 				this.scratchpad = file;
 			}
+			var elts = this.sidebar.palettes[file.getHash()];
+			var nextSibling = (elts != null) ? elts[elts.length - 1].nextSibling : null;
+
 			const scratchdata = xml.substr(11).slice(0,-12)
 			const images = JSON.parse(scratchdata);
 			this.removeLibrarySidebar(file.getHash());
@@ -3357,7 +3190,6 @@ var SelectedFile;
 						dropTarget.className = 'geDropTarget';
 						mxUtils.write(dropTarget, mxResources.get('dragElementsHere'));
 					}
-
 					content.appendChild(dropTarget);
 				}
 				else
@@ -3380,6 +3212,8 @@ var SelectedFile;
 			{
 				addImages(images, content);
 			}));
+
+			this.repositionLibrary(nextSibling);
 
 			// Adds tooltip for backend
 			var title = contentDiv.parentNode.previousSibling;
@@ -3474,7 +3308,7 @@ var SelectedFile;
 						spinBtn.style.marginTop = '-2px';
 						buttons.insertBefore(spinBtn, buttons.firstChild);
 						title.style.paddingRight = (buttons.childNodes.length * btnWidth) + 'px';
-
+						debugger
 						this.saveLibrary(file.getTitle(), images, file, file.getMode(), true, true, function()
 						{
 							if (spinBtn != null && spinBtn.parentNode != null)
@@ -3538,7 +3372,10 @@ var SelectedFile;
 					}
 
 					images.push(entry);
-					saveLibrary(evt);
+					var xml = this.createLibraryDataFromImages(images);
+					var event = new CustomEvent('scratchpadDataChanged', { detail: xml });
+					this.container.dispatchEvent(event);
+					//saveLibrary(evt);
 
 					if (dropTarget != null && dropTarget.parentNode != null && images.length > 0)
 					{

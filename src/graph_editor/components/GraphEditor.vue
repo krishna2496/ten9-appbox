@@ -134,7 +134,7 @@ export default defineComponent({
       editorUi.value.removeListener(onGraphChanged);
     }
 
-    function removeScratchpadDataChangedListners() {
+    function removeScratchpadDataChangedListeners() {
       editorUi.value.container.removeEventListener('scratchpadDataChanged', '', false);
     }
 
@@ -153,12 +153,11 @@ export default defineComponent({
       sidebar.value = editorUi.value.sidebar;
       app.value = createApp(editorUi.value, editor.value, container.value);
 
+      // Add scratchpad to the sidebar
+      editorUi.value.loadScratchpadData(props.shapeLibraries);
+
       // Add stencils to the sidebar
       sidebar.value.showEntries(props.shapeLibraries);
-      //const scratchpadArray = props.scratchpadData.substr(11).slice(0,-12)
-      //const arr = JSON.parse(scratchpadArray);
-      //debugger
-      editorUi.value.loadScratchpadData(props.shapeLibraries);
 
       addGraphChangedListeners();
 
@@ -166,9 +165,17 @@ export default defineComponent({
         ctx.emit('shape-libraries-changed', event.detail);
       });
 
-      editorUi.value.container.addEventListener('scratchpadDataChanged', (event: CustomEvent) => {
-        ctx.emit('scratchpad-data-changed', event.detail);
-      });
+      // editorUi.value.container.addEventListener('scratchpadDataChanged', (event: CustomEvent) => {
+      //   ctx.emit('scratchpad-data-changed', event.detail);
+      // });
+
+      mxEvent.addListener(
+        editorUi.value.container,
+        'scratchpadDataChanged',
+        (event: CustomEvent) => {
+          ctx.emit('scratchpad-data-changed', event.detail);
+        },
+      );
 
       nextTick(() => {
         setGraphEnabled(props.enabled);
@@ -180,20 +187,20 @@ export default defineComponent({
       editorUi.value.resetPages();
       editorUi.value.closeOpenWindows();
       removeGraphChangedListeners();
-      removeScratchpadDataChangedListners();
+      removeScratchpadDataChangedListeners();
     });
-
-    watch(
-      () => props.shapeLibraries,
-      (val: string) => {
-        sidebar.value.showEntries(val);
-      },
-    );
 
     watch(
       () => props.scratchpadData,
       (val: string) => {
         editorUi.value.loadScratchpadData(val);
+      },
+    );
+
+    watch(
+      () => props.shapeLibraries,
+      (val: string) => {
+        sidebar.value.showEntries(val);
       },
     );
 

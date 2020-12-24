@@ -34,6 +34,7 @@ interface FileLogEvent extends EventFileInfo {
 }
 
 const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows;clipart;flowchart';
+const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
 
 export default defineComponent({
   name: 'App',
@@ -180,6 +181,10 @@ export default defineComponent({
       }
 
       scratchpadData.value = getScratchpadData();
+      if (!scratchpadData.value) {
+        scratchpadData.value = DEFAULT_SCRATCHPAD_DATA;
+        saveScratchpadDataToStorage(scratchpadData.value);
+      }
 
       const drag: HTMLElement = document.querySelector('.geEditor');
 
