@@ -1,3 +1,12 @@
+// TEN9: Added imports
+const {
+    mxEvent,
+    mxResources,
+    mxUtils,
+  } = require('../jgraph/mxClient.js');
+
+const { DrawioFile } = require('./DrawioFile.js'); 
+
 /**
  * Copyright (c) 2006-2017, JGraph Ltd
  * Copyright (c) 2006-2017, Gaudenz Alder
@@ -10,14 +19,6 @@
  * @param {number} x X-coordinate of the point.
  * @param {number} y Y-coordinate of the point.
  */
-
-// TEN9: Added imports
-const {
-    mxEvent,
-    mxResources,
-    mxUtils,
-  } = require('../jgraph/mxClient.js');
-const { DrawioFile } = require('./DrawioFile.js'); 
 
 StorageFile = function(ui, data, title)
 {

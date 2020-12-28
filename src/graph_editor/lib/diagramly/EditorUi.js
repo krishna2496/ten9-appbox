@@ -2997,7 +2997,7 @@ var SelectedFile;
 	 */
 	EditorUi.prototype.isScratchpadEnabled = function()
 	{
-		// TEN9: make scratcgpad enable
+		// TEN9: make scratchpad enable
 		return true;
 		//return isLocalStorage || mxClient.IS_CHROMEAPP;
 	};
@@ -3011,17 +3011,19 @@ var SelectedFile;
 		{
 			if (this.scratchpad == null)
 			{
-				StorageFile.getFileContent(this, '.scratchpad', mxUtils.bind(this, function(xml)
-				{
-					if (xml == null)
-					{
-						xml = this.emptyLibraryXml;
-					}
+				// StorageFile.getFileContent(this, '.scratchpad', mxUtils.bind(this, function(xml)
+				// {
+				// 	if (xml == null)
+				// 	{
+				// 		xml = this.emptyLibraryXml;
+				// 	}
 					
-					// TEN9: load scratchpaddata function instead of loadlibrary
-					//this.loadLibrary(new StorageLibrary(this, xml, '.scratchpad'));
-					this.loadScratchpadData(xml);
-				}));
+				// 	// TEN9: load scratchpaddata function instead of loadlibrary
+				// 	//this.loadLibrary(new StorageLibrary(this, xml, '.scratchpad'));
+				// 	this.loadScratchpadData(xml);
+				// }));
+				// TEN9: reload the scratchpadData with localStorage
+				this.loadScratchpadData(window.localStorage.getItem('scratchpadData'));
 			}
 			else
 			{
@@ -3374,6 +3376,8 @@ var SelectedFile;
 					images.push(entry);
 					var xml = this.createLibraryDataFromImages(images);
 					var event = new CustomEvent('scratchpadDataChanged', { detail: xml });
+					// TEN9: fire scratchpadDataChanged event
+					this.fireEvent(new mxEventObject('scratchpad-data-changed'));
 					this.container.dispatchEvent(event);
 					//saveLibrary(evt);
 
