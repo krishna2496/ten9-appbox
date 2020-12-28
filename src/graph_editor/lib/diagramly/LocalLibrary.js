@@ -1,3 +1,9 @@
+// TEN9: Added imports
+const {
+    mxUtils,
+  } = require('../jgraph/mxClient.js');
+
+const { StorageFile } = require('./StorageFile.js');
 // $Id = DriveFile.js,v 1.12 2010-01-02 09 =45 =14 gaudenz Exp $
 // Copyright (c) 2006-2014, JGraph Ltd
 /**
@@ -8,11 +14,6 @@
  * @param {number} x X-coordinate of the point.
  * @param {number} y Y-coordinate of the point.
  */
-// TEN9: Added imports
-const {
-    mxUtils,
-  } = require('../jgraph/mxClient.js');
-const { StorageFile } = require('./StorageFile.js');
 
 LocalLibrary = function(ui, data, title)
 {

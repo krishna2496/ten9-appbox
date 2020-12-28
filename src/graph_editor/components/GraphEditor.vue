@@ -126,6 +126,8 @@ export default defineComponent({
       editorUi.value.addListener('pageViewChanged', onGraphChanged);
       editorUi.value.addListener('connectionArrowsChanged', onGraphChanged);
       editorUi.value.addListener('connectionPointsChanged', onGraphChanged);
+      editorUi.value.addListener('scratchpad-data-changed', onGraphChanged);
+      editorUi.value.addListener('shape-libraries-changed', onGraphChanged);
     }
 
     function removeGraphChangedListeners() {
@@ -154,7 +156,7 @@ export default defineComponent({
       app.value = createApp(editorUi.value, editor.value, container.value);
 
       // Add scratchpad to the sidebar
-      editorUi.value.loadScratchpadData(props.shapeLibraries);
+      editorUi.value.loadScratchpadData(props.scratchpadData);
 
       // Add stencils to the sidebar
       sidebar.value.showEntries(props.shapeLibraries);

@@ -1912,6 +1912,8 @@ DriveFile = function() {};
 			
 			action.setToggleAction(true);
 			action.setSelectedCallback(function() { return editorUi.scratchpad != null; });
+			// TEN9: disable scratchpad on preview mode
+			action.isEnabled = isGraphEnabled;
 
 			editorUi.actions.addAction('plugins...', function()
 			{

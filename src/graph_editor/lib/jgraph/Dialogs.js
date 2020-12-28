@@ -2789,6 +2789,8 @@ var MoreShapesDialog = function (editorUi, expanded, entries) {
       }
 
       editorUi.sidebar.showEntries(libs.join(';'), cb.checked, true);
+      // TEN9: fire shape-libraries-changed event
+      editorUi.fireEvent(new mxEventObject('shape-libraries-changed'));
     });
     applyBtn.className = 'geBtn gePrimaryBtn';
 
@@ -2916,6 +2918,8 @@ var MoreShapesDialog = function (editorUi, expanded, entries) {
 
       editorUi.sidebar.showEntries(libs.length > 0 ? libs.join(';') : '', cb.checked);
       editorUi.hideDialog();
+      // TEN9: fire shape-libraries-changed event
+      editorUi.fireEvent(new mxEventObject('shape-libraries-changed'));
     });
     applyBtn.className = 'geBtn gePrimaryBtn';
 
