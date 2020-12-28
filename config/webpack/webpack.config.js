@@ -44,6 +44,8 @@ const devtool = IS_PRODUCTION ? false : 'source-map';
 const TEMP_PATH = path.join(ROOT_PATH, './node_modules/.tmp');
 
 module.exports = {
+  name: 'graph-editor',
+
   mode: IS_PRODUCTION ? 'production' : 'development',
 
   devtool,
@@ -68,6 +70,13 @@ module.exports = {
       vue$: 'vue/dist/vue.runtime.esm.js',
     },
     modules: ['node_modules', path.resolve(ROOT_PATH, 'node_modules')],
+  },
+
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename],
+    },
   },
 
   module: {
