@@ -2988,10 +2988,11 @@ var SelectedFile;
 	// TEN9: Override save functionality for scratchpad
 	EditorUi.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload, fn) {
 		var xml = this.createLibraryDataFromImages(images);
-		var event = new CustomEvent('scratchpadDataChanged', { detail: xml });
-		this.container.dispatchEvent(event);
+		this.fireEvent(new mxEventObject('scratchpadDataChanged', 'detail', xml));
+		// var event = new CustomEvent('scratchpadDataChanged', { detail: xml });
+		// this.container.dispatchEvent(event);
 		this.hideDialog(true);
-	 };
+	};
 	/**
 	 *
 	 */
@@ -3375,8 +3376,8 @@ var SelectedFile;
 
 					images.push(entry);
 					var xml = this.createLibraryDataFromImages(images);
-					var event = new CustomEvent('scratchpadDataChanged', { detail: xml });
-					this.container.dispatchEvent(event);
+					// TEN9: Add event to update listeners when scratchpad changes
+					this.fireEvent(new mxEventObject('scratchpadDataChanged', 'detail', xml));
 					//saveLibrary(evt);
 
 					if (dropTarget != null && dropTarget.parentNode != null && images.length > 0)

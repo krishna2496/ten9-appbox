@@ -284,11 +284,25 @@ export default defineComponent({
     function onShapeLibrariesChanged(libraries: string) {
       saveShapeLibrariesToStorage(libraries);
       shapeLibraries.value = libraries;
+
+      const fileLogEvent: FileLogEvent = {
+        title: 'Shape Libraries Changed',
+        size: libraries.length,
+        lastModified: Date.now(),
+      };
+      addLog(fileLogEvent);
     }
 
     function onScratchpadDataChanged(xml: string) {
       saveScratchpadDataToStorage(xml);
       scratchpadData.value = xml;
+
+      const fileLogEvent: FileLogEvent = {
+        title: 'Scratchpad Data Changed',
+        size: xml.length,
+        lastModified: Date.now(),
+      };
+      addLog(fileLogEvent);
     }
 
     return {
@@ -300,12 +314,12 @@ export default defineComponent({
       logs,
       onGraphChanged,
       onPreviewModeChanged,
+      onScratchpadDataChanged,
       onShapeLibrariesChanged,
       previewMode,
       saveFile,
-      shapeLibraries,
       scratchpadData,
-      onScratchpadDataChanged,
+      shapeLibraries,
     };
   },
 });

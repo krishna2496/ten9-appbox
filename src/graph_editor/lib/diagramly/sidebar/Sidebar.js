@@ -18,6 +18,7 @@ const {
   mxClient,
   mxConstants,
   mxEvent,
+  mxEventObject,
   mxGraph,
   mxResources,
   mxStencilRegistry,
@@ -462,9 +463,9 @@ const urlParams = {};
 	{
     // TEN9: fire custom event with updated libraries
     if (entries != undefined && mxSettings.getLibraries() !== entries) {
-      // Fire an event if libraries changed
-      var event = new CustomEvent('librariesChanged', { detail: entries });
-      this.editorUi.container.dispatchEvent(event);
+        // Fire an event if libraries changed
+        //   var event = new CustomEvent('librariesChanged', { detail: entries });
+        this.editorUi.fireEvent(new mxEventObject('librariesChanged', 'detail', entries));
     }
 
 		var all = [];
