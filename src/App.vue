@@ -249,6 +249,10 @@ export default defineComponent({
           return;
         }
 
+        if (e.clipboardData.types.indexOf('text/plain') > -1) {
+          return;
+        }
+
         // check if default clipboard have files or not
         if (e.clipboardData.files.length > 0) {
           for (let i = 0; i < e.clipboardData.files.length; i++) {
