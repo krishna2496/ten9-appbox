@@ -8482,10 +8482,11 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 		evt.preventDefault();
 	};
 
-	mxEvent.addListener(div, 'dragover', dragOver);
-	mxEvent.addListener(div, 'drop', dropHandler);
-	mxEvent.addListener(bg, 'dragover', dragOver);
-	mxEvent.addListener(bg, 'drop', dropHandler);
+	// TEN9: stop drag and drop functionality
+	// mxEvent.addListener(div, 'dragover', dragOver);
+	// mxEvent.addListener(div, 'drop', dropHandler);
+	// mxEvent.addListener(bg, 'dragover', dragOver);
+	// mxEvent.addListener(bg, 'drop', dropHandler);
 
 	outer.appendChild(div);
 
