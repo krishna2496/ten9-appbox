@@ -3376,8 +3376,6 @@ var SelectedFile;
 					images.push(entry);
 					var xml = this.createLibraryDataFromImages(images);
 					var event = new CustomEvent('scratchpadDataChanged', { detail: xml });
-					// TEN9: fire scratchpadDataChanged event
-					this.fireEvent(new mxEventObject('scratchpad-data-changed'));
 					this.container.dispatchEvent(event);
 					//saveLibrary(evt);
 
