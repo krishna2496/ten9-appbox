@@ -14,12 +14,12 @@
  * -----
  */
 
-
 // TEN9: Added imports
 const {
   mxConstants,
   mxGraph,
   mxGraphView,
+  mxUtils,
 } = require('../jgraph/mxClient.js');
 
 const { Editor } = require('../jgraph/Editor.js');

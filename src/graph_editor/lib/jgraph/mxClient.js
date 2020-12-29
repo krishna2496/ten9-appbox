@@ -85281,6 +85281,7 @@ module.exports = {
   mxToolbar,
   mxTriangle,
   mxUndoManager,
+  mxUrlConverter,
   mxUtils,
   mxValueChange,
   mxVertexHandler,

@@ -27,7 +27,8 @@ const {
     mxResources,
     mxStackLayout,
     mxStencilRegistry,
-    mxStylesheet,
+	mxStylesheet,
+	mxUrlConverter,
     mxUtils,
     mxXmlRequest,
     mxWindow,
@@ -37,6 +38,7 @@ const { Dialog, FilenameDialog } = require('../jgraph/Editor.js');
 const IMAGE_PATH = '/images';
 var uiTheme = null;
 const urlParams = {dev: "1",sync: "manual"};
+const isLocalStorage = false;
 
 var StorageDialog = function(editorUi, fn, rowLimit)
 {
@@ -7861,7 +7863,8 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 	header.style.height = '40px';
 	outer.appendChild(header);
 
-	mxUtils.write(header, mxResources.get('filename') + ':');
+	// TEN9: remove filename placeholder
+	//mxUtils.write(header, mxResources.get('filename') + ':');
 
 	var nameValue = name;
 
@@ -7898,10 +7901,13 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 		}
 	};
 
-	header.appendChild(nameInput);
+	//TEN9: remove the Filename: Scratchpad
+	//header.appendChild(nameInput);
 
 	var div = document.createElement('div');
-	div.style.borderWidth = '1px 0px 1px 0px';
+	// TEN9: remove the top border of the box
+	// div.style.borderWidth = '1px 0px 1px 0px';
+	div.style.borderWidth = '0px 0px 1px 0px';
 	div.style.borderColor = '#d3d3d3';
 	div.style.borderStyle = 'solid';
 	div.style.marginTop = '6px';
@@ -7922,7 +7928,9 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 	bg.style.textAlign = 'center';
 	bg.style.fontSize = '22px';
 	bg.style.color = '#a0c3ff';
-	mxUtils.write(bg, mxResources.get('dragImagesHere'));
+	// TEN9: change placeholder text for the scratchpad save dailog
+	//mxUtils.write(bg, mxResources.get('dragImagesHere'));
+	mxUtils.write(bg, "Scratchpad is empty");
 	outer.appendChild(bg);
 
 	var entries = {};
@@ -8017,10 +8025,12 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 					}
 
 					var wrapper = document.createElement('div');
-					wrapper.setAttribute('draggable', 'true');
+					// TEN9: remove drag
+					//wrapper.setAttribute('draggable', 'true');
 					wrapper.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
 					wrapper.style.position = 'relative';
-					wrapper.style.cursor = 'move';
+					// TEN9: remove drag
+					//wrapper.style.cursor = 'move';
 					mxUtils.setPrefixedStyle(wrapper.style, 'transition', 'transform .1s ease-in-out');
 
 					if (data != null)
@@ -8238,49 +8248,50 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 
 					div.appendChild(wrapper);
 
-					mxEvent.addListener(wrapper, 'dragstart', function(evt)
-					{
-						if (data == null && img != null)
-						{
-							rem.style.visibility = 'hidden';
-							label.style.visibility = 'hidden';
-						}
+					// TEN9: remove drag
+					// mxEvent.addListener(wrapper, 'dragstart', function(evt)
+					// {
+					// 	if (data == null && img != null)
+					// 	{
+					// 		rem.style.visibility = 'hidden';
+					// 		label.style.visibility = 'hidden';
+					// 	}
 
-						// Workaround for no DnD on DIV in FF
-						if (mxClient.IS_FF && img.xml != null)
-						{
-							evt.dataTransfer.setData('Text', img.xml);
-						}
+					// 	// Workaround for no DnD on DIV in FF
+					// 	if (mxClient.IS_FF && img.xml != null)
+					// 	{
+					// 		evt.dataTransfer.setData('Text', img.xml);
+					// 	}
 
-						dragSourceIndex = getIndexForEvent(evt);
+					// 	dragSourceIndex = getIndexForEvent(evt);
 
-						// Workaround for missing drag preview in Google Chrome
-						if (mxClient.IS_GC)
-						{
-							wrapper.style.opacity = '0.9';
-						}
+					// 	// Workaround for missing drag preview in Google Chrome
+					// 	if (mxClient.IS_GC)
+					// 	{
+					// 		wrapper.style.opacity = '0.9';
+					// 	}
 
-						window.setTimeout(function()
-						{
-							mxUtils.setPrefixedStyle(wrapper.style, 'transform', 'scale(0.5,0.5)');
-							mxUtils.setOpacity(wrapper, 30);
-							rem.style.visibility = '';
-							label.style.visibility = '';
-						}, 0);
-					});
+					// 	window.setTimeout(function()
+					// 	{
+					// 		mxUtils.setPrefixedStyle(wrapper.style, 'transform', 'scale(0.5,0.5)');
+					// 		mxUtils.setOpacity(wrapper, 30);
+					// 		rem.style.visibility = '';
+					// 		label.style.visibility = '';
+					// 	}, 0);
+					// });
 
-					mxEvent.addListener(wrapper, 'dragend', function(evt)
-					{
-						if (rem.style.visibility == 'hidden')
-						{
-							rem.style.visibility = '';
-							label.style.visibility = '';
-						}
+					// mxEvent.addListener(wrapper, 'dragend', function(evt)
+					// {
+					// 	if (rem.style.visibility == 'hidden')
+					// 	{
+					// 		rem.style.visibility = '';
+					// 		label.style.visibility = '';
+					// 	}
 
-						dragSourceIndex = null;
-						mxUtils.setOpacity(wrapper, 100);
-						mxUtils.setPrefixedStyle(wrapper.style, 'transform', null);
-					});
+					// 	dragSourceIndex = null;
+					// 	mxUtils.setOpacity(wrapper, 100);
+					// 	mxUtils.setPrefixedStyle(wrapper.style, 'transform', null);
+					// });
 				}
 				else if (!errorShowed)
 				{
@@ -8460,7 +8471,8 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 			{
 				editorUi.loadImage(uri, function(img)
 				{
-					addButton(uri, null, 0, 0, img.width, img.height);
+					// TEN9: remove dop image functionality
+					//addButton(uri, null, 0, 0, img.width, img.height);
 					div.scrollTop = div.scrollHeight;
 				});
 			}
@@ -8470,10 +8482,11 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 		evt.preventDefault();
 	};
 
-	mxEvent.addListener(div, 'dragover', dragOver);
-	mxEvent.addListener(div, 'drop', dropHandler);
-	mxEvent.addListener(bg, 'dragover', dragOver);
-	mxEvent.addListener(bg, 'drop', dropHandler);
+	// TEN9: stop drag and drop functionality
+	// mxEvent.addListener(div, 'dragover', dragOver);
+	// mxEvent.addListener(div, 'drop', dropHandler);
+	// mxEvent.addListener(bg, 'dragover', dragOver);
+	// mxEvent.addListener(bg, 'drop', dropHandler);
 
 	outer.appendChild(div);
 
@@ -8494,76 +8507,78 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 		btns.appendChild(cancelBtn);
 	}
 
-	if (editorUi.getServiceName() == 'draw.io' && file != null &&
-		// Limits button to ibraries which are known to have public URLs
-		(file.constructor == DriveLibrary || file.constructor == GitHubLibrary))
-	{
-		var btn = mxUtils.button(mxResources.get('link'), function()
-		{
-			if (editorUi.spinner.spin(document.body, mxResources.get('loading')))
-			{
-		    	file.getPublicUrl(function(url)
-				{
-					editorUi.spinner.stop();
+	// TEN9: remove link button
+	// if (editorUi.getServiceName() == 'draw.io' && file != null &&
+	// 	// Limits button to ibraries which are known to have public URLs
+	// 	(file.constructor == DriveLibrary || file.constructor == GitHubLibrary))
+	// {
+		// var btn = mxUtils.button(mxResources.get('link'), function()
+		// {
+		// 	if (editorUi.spinner.spin(document.body, mxResources.get('loading')))
+		// 	{
+		//     	file.getPublicUrl(function(url)
+		// 		{
+		// 			editorUi.spinner.stop();
 
-					if (url != null)
-					{
-						var search = editorUi.getSearch(['create', 'title', 'mode', 'url', 'drive', 'splash', 'state', 'clibs', 'ui']);
-						search += ((search.length == 0) ? '?' : '&') + 'splash=0&clibs=U' + encodeURIComponent(url);
-						var dlg = new EmbedDialog(editorUi, window.location.protocol + '//' +
-							window.location.host + '/' + search, null, null, null, null,
-							'Check out the library I made using @drawio');
-						editorUi.showDialog(dlg.container, 440, 240, true);
-						dlg.init();
-					}
-					else if (file.constructor == DriveLibrary)
-					{
-					    editorUi.showError(mxResources.get('error'), mxResources.get('diagramIsNotPublic'),
-							mxResources.get('share'), mxUtils.bind(this, function()
-							{
-								editorUi.drive.showPermissions(file.getId());
-							}), null, mxResources.get('ok'), mxUtils.bind(this, function()
-							{
-								// Hides dialog
-							})
-						);
-					}
-					else
-					{
-						editorUi.handleError({message: mxResources.get('diagramIsNotPublic')});
-					}
-				});
-			}
-		});
+		// 			if (url != null)
+		// 			{
+		// 				var search = editorUi.getSearch(['create', 'title', 'mode', 'url', 'drive', 'splash', 'state', 'clibs', 'ui']);
+		// 				search += ((search.length == 0) ? '?' : '&') + 'splash=0&clibs=U' + encodeURIComponent(url);
+		// 				var dlg = new EmbedDialog(editorUi, window.location.protocol + '//' +
+		// 					window.location.host + '/' + search, null, null, null, null,
+		// 					'Check out the library I made using @drawio');
+		// 				editorUi.showDialog(dlg.container, 440, 240, true);
+		// 				dlg.init();
+		// 			}
+		// 			// else if (file.constructor == DriveLibrary)
+		// 			// {
+		// 			//     editorUi.showError(mxResources.get('error'), mxResources.get('diagramIsNotPublic'),
+		// 			// 		mxResources.get('share'), mxUtils.bind(this, function()
+		// 			// 		{
+		// 			// 			editorUi.drive.showPermissions(file.getId());
+		// 			// 		}), null, mxResources.get('ok'), mxUtils.bind(this, function()
+		// 			// 		{
+		// 			// 			// Hides dialog
+		// 			// 		})
+		// 			// 	);
+		// 			// }
+		// 			else
+		// 			{
+		// 				editorUi.handleError({message: mxResources.get('diagramIsNotPublic')});
+		// 			}
+		// 		});
+		// 	}
+		// });
 
-		btn.className = 'geBtn';
-		btns.appendChild(btn);
-	}
+		// btn.className = 'geBtn';
+		// btns.appendChild(btn);
+	//}
 
-	var btn = mxUtils.button(mxResources.get('export'), function()
-	{
-    	var data = editorUi.createLibraryDataFromImages(images);
-    	var filename = nameInput.value;
+	// TEn9: remove export button
+	// var btn = mxUtils.button(mxResources.get('export'), function()
+	// {
+    // 	var data = editorUi.createLibraryDataFromImages(images);
+    // 	var filename = nameInput.value;
 
-		if (!/(\.xml)$/i.test(filename))
-		{
-			filename += '.xml';
-		}
+	// 	if (!/(\.xml)$/i.test(filename))
+	// 	{
+	// 		filename += '.xml';
+	// 	}
 
-    	if (editorUi.isLocalFileSave())
-    	{
-    		editorUi.saveLocalFile(data, filename, 'text/xml', null, null, true, null, 'xml');
-    	}
-    	else
-    	{
-    		new mxXmlRequest(SAVE_URL, 'filename=' + encodeURIComponent(filename) +
-    			'&format=xml&xml=' + encodeURIComponent(data)).simulate(document, '_blank');
-    	}
-	});
+    // 	if (editorUi.isLocalFileSave())
+    // 	{
+    // 		editorUi.saveLocalFile(data, filename, 'text/xml', null, null, true, null, 'xml');
+    // 	}
+    // 	else
+    // 	{
+    // 		new mxXmlRequest(SAVE_URL, 'filename=' + encodeURIComponent(filename) +
+    // 			'&format=xml&xml=' + encodeURIComponent(data)).simulate(document, '_blank');
+    // 	}
+	// });
 
-	btn.setAttribute('id', 'btnDownload');
-	btn.className = 'geBtn';
-	btns.appendChild(btn);
+	// btn.setAttribute('id', 'btnDownload');
+	// btn.className = 'geBtn';
+	// btns.appendChild(btn);
 
 	if (Graph.fileSupport)
 	{
@@ -8614,41 +8629,42 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 		btns.appendChild(btn);
 	}
 
-	var btn = mxUtils.button(mxResources.get('addImages'), function()
-	{
-		if (stopEditing != null)
-		{
-			stopEditing();
-			stopEditing = null;
-		}
+	// TEN9: remove add images button
+	// var btn = mxUtils.button(mxResources.get('addImages'), function()
+	// {
+	// 	if (stopEditing != null)
+	// 	{
+	// 		stopEditing();
+	// 		stopEditing = null;
+	// 	}
 
-		editorUi.showImageDialog(mxResources.get('addImageUrl'), '', function(url, w, h)
-		{
-			errorShowed = false;
+	// 	editorUi.showImageDialog(mxResources.get('addImageUrl'), '', function(url, w, h)
+	// 	{
+	// 		errorShowed = false;
 
-			if (url != null)
-			{
-				// Image dialog returns modified data URLs which
-				// must be converted back to real data URL
-				if (url.substring(0, 11) == 'data:image/')
-				{
-					var comma = url.indexOf(',');
+	// 		if (url != null)
+	// 		{
+	// 			// Image dialog returns modified data URLs which
+	// 			// must be converted back to real data URL
+	// 			if (url.substring(0, 11) == 'data:image/')
+	// 			{
+	// 				var comma = url.indexOf(',');
 
-					if (comma > 0)
-					{
-						url = url.substring(0, comma) + ';base64,' + url.substring(comma + 1);
-					}
-				}
+	// 				if (comma > 0)
+	// 				{
+	// 					url = url.substring(0, comma) + ';base64,' + url.substring(comma + 1);
+	// 				}
+	// 			}
 
-				addButton(url, null, 0, 0, w, h);
-				div.scrollTop = div.scrollHeight;
-			}
-		});
-	});
+	// 			addButton(url, null, 0, 0, w, h);
+	// 			div.scrollTop = div.scrollHeight;
+	// 		}
+	// 	});
+	// });
 
-	btn.setAttribute('id', 'btnAddImageUrl');
-	btn.className = 'geBtn';
-	btns.appendChild(btn);
+	// btn.setAttribute('id', 'btnAddImageUrl');
+	// btn.className = 'geBtn';
+	// btns.appendChild(btn);
 
 	// Indirection for overriding
 	this.saveBtnClickHandler = function(name, images, file, mode)
@@ -8663,7 +8679,6 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 			stopEditing();
 			stopEditing = null;
 		}
-
 		this.saveBtnClickHandler(nameInput.value, images, file, mode);
 	}));
 
@@ -10612,12 +10627,14 @@ var FilePropertiesDialog = function(editorUi)
 };
 
 module.exports = {
-    BackgroundImageDialog,
+	BackgroundImageDialog,
+	CreateDialog,
     EditGeometryDialog,
     EditShapeDialog,
     CustomDialog,
     FindWindow,
-    ImageDialog,
+	ImageDialog,
+	LibraryDialog,
     LinkDialog,
     NewDialog,
     ParseDialog,

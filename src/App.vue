@@ -34,6 +34,7 @@ interface FileLogEvent extends EventFileInfo {
 }
 
 const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows;clipart;flowchart';
+const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
 
 export default defineComponent({
   name: 'App',
@@ -51,12 +52,22 @@ export default defineComponent({
 
     const shapeLibraries = ref('');
 
+    const scratchpadData = ref('');
+
     function getShapeLibrariesFromStorage() {
       return window.localStorage.getItem('shapeLibraries');
     }
 
+    function getScratchpadData() {
+      return window.localStorage.getItem('scratchpadData');
+    }
+
     function saveShapeLibrariesToStorage(libraries: string) {
       window.localStorage.setItem('shapeLibraries', libraries);
+    }
+
+    function saveScratchpadDataToStorage(xml: string) {
+      window.localStorage.setItem('scratchpadData', xml);
     }
 
     function updateAppHeight() {
@@ -169,6 +180,12 @@ export default defineComponent({
         saveShapeLibrariesToStorage(shapeLibraries.value);
       }
 
+      scratchpadData.value = getScratchpadData();
+      if (!scratchpadData.value) {
+        scratchpadData.value = DEFAULT_SCRATCHPAD_DATA;
+        saveScratchpadDataToStorage(scratchpadData.value);
+      }
+
       const drag: HTMLElement = document.querySelector('.geEditor');
 
       drag.addEventListener('dragenter', (e: DragEvent) => {
@@ -232,6 +249,10 @@ export default defineComponent({
           return;
         }
 
+        if (e.clipboardData.types.indexOf('text/plain') >= 0) {
+          return;
+        }
+
         // check if default clipboard have files or not
         if (e.clipboardData.files.length > 0) {
           for (let i = 0; i < e.clipboardData.files.length; i++) {
@@ -267,6 +288,25 @@ export default defineComponent({
     function onShapeLibrariesChanged(libraries: string) {
       saveShapeLibrariesToStorage(libraries);
       shapeLibraries.value = libraries;
+
+      const fileLogEvent: FileLogEvent = {
+        title: 'Shape Libraries Changed',
+        size: libraries.length,
+        lastModified: Date.now(),
+      };
+      addLog(fileLogEvent);
+    }
+
+    function onScratchpadDataChanged(xml: string) {
+      saveScratchpadDataToStorage(xml);
+      scratchpadData.value = xml;
+
+      const fileLogEvent: FileLogEvent = {
+        title: 'Scratchpad Data Changed',
+        size: xml.length,
+        lastModified: Date.now(),
+      };
+      addLog(fileLogEvent);
     }
 
     return {
@@ -278,9 +318,11 @@ export default defineComponent({
       logs,
       onGraphChanged,
       onPreviewModeChanged,
+      onScratchpadDataChanged,
       onShapeLibrariesChanged,
       previewMode,
       saveFile,
+      scratchpadData,
       shapeLibraries,
     };
   },
@@ -339,8 +381,10 @@ export default defineComponent({
           ref='editor',
           :enabled='!previewMode',
           :shapeLibraries='shapeLibraries',
+          :scratchpadData='scratchpadData',
           @shape-libraries-changed='onShapeLibrariesChanged',
-          @graph-changed='onGraphChanged'
+          @graph-changed='onGraphChanged',
+          @scratchpad-data-changed='onScratchpadDataChanged'
         )
 </template>
 

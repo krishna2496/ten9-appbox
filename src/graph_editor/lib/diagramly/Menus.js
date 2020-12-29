@@ -1,4 +1,20 @@
 /**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+/**
  * Copyright (c) 2006-2020, JGraph Ltd
  * Copyright (c) 2006-2020, draw.io AG
  */
@@ -1902,8 +1918,9 @@ DriveFile = function() {};
 		});
 
 		// Adds plugins menu item only if localStorage is available for storing the plugins
-		if (isLocalStorage || mxClient.IS_CHROMEAPP)
-		{
+		// TEN9: not using isLocalStorage or IS_CHROMEAPP
+		// if (isLocalStorage || mxClient.IS_CHROMEAPP)
+		// {
 			var action = editorUi.actions.addAction('scratchpad', function()
 			{
 				editorUi.toggleScratchpad();
@@ -1911,12 +1928,14 @@ DriveFile = function() {};
 			
 			action.setToggleAction(true);
 			action.setSelectedCallback(function() { return editorUi.scratchpad != null; });
+			// TEN9: disable scratchpad on preview mode
+			action.isEnabled = isGraphEnabled;
 
 			editorUi.actions.addAction('plugins...', function()
 			{
 				editorUi.showDialog(new PluginsDialog(editorUi).container, 360, 170, true, false);
 			});
-		}
+		// }
 		
 		// TEN9: Always show search for our app
 		// var action = editorUi.actions.addAction('search', function()
@@ -3258,16 +3277,16 @@ DriveFile = function() {};
 				['comments', '-'] : ['-']));
 			
 			this.addMenuItems(menu, ['-', 'search'], parent);
-			
-			if (isLocalStorage || mxClient.IS_CHROMEAPP)
-			{
+			// TEN9: not using isLocalStorage or IS_CHROMEAPP
+			// if (isLocalStorage || mxClient.IS_CHROMEAPP)
+			// {
 				var item = this.addMenuItem(menu, 'scratchpad', parent);
-				
-				if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
-				{
-					this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000042367');
-				}
-			}
+				// TEN9: not using isElectronApp or IS_CHROMEAPP
+				// if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
+				// {
+					//this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000042367');
+			//  	}
+			// }
 			
 			this.addMenuItems(menu, ['shapes', '-', 'pageView', 'pageScale']);
 			this.addSubmenu('units', menu, parent);				

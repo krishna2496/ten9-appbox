@@ -71,6 +71,10 @@ export default defineComponent({
       required: true,
       type: String,
     },
+    scratchpadData: {
+      required: true,
+      type: String,
+    },
     enabled: Boolean,
   },
 
@@ -112,7 +116,15 @@ export default defineComponent({
       ctx.emit('graph-changed', event.name);
     }
 
-    function addGraphChangedListeners() {
+    function onLibrariesChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
+      ctx.emit('shape-libraries-changed', event.getProperty('detail'));
+    }
+
+    function onScratchpadDataChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
+      ctx.emit('scratchpad-data-changed', event.getProperty('detail'));
+    }
+
+    function addListeners() {
       graph.value.model.addListener(mxEvent.CHANGE, onGraphChanged);
       graph.value.addListener('gridSizeChanged', onGraphChanged);
       graph.value.addListener('graphChanged', onGraphChanged);
@@ -122,12 +134,16 @@ export default defineComponent({
       editorUi.value.addListener('pageViewChanged', onGraphChanged);
       editorUi.value.addListener('connectionArrowsChanged', onGraphChanged);
       editorUi.value.addListener('connectionPointsChanged', onGraphChanged);
+      editorUi.value.addListener('librariesChanged', onLibrariesChanged);
+      editorUi.value.addListener('scratchpadDataChanged', onScratchpadDataChanged);
     }
 
-    function removeGraphChangedListeners() {
+    function removeListeners() {
       graph.value.model.removeListener(onGraphChanged);
       graph.value.removeListener(onGraphChanged);
       editorUi.value.removeListener(onGraphChanged);
+      editorUi.value.removeListener(onLibrariesChanged);
+      editorUi.value.removeListener(onScratchpadDataChanged);
     }
 
     onMounted(() => {
@@ -145,14 +161,13 @@ export default defineComponent({
       sidebar.value = editorUi.value.sidebar;
       app.value = createApp(editorUi.value, editor.value, container.value);
 
+      // Add scratchpad to the sidebar
+      editorUi.value.loadScratchpadData(props.scratchpadData);
+
       // Add stencils to the sidebar
       sidebar.value.showEntries(props.shapeLibraries);
 
-      addGraphChangedListeners();
-
-      editorUi.value.container.addEventListener('librariesChanged', (event: CustomEvent) => {
-        ctx.emit('shape-libraries-changed', event.detail);
-      });
+      addListeners();
 
       nextTick(() => {
         setGraphEnabled(props.enabled);
@@ -163,8 +178,15 @@ export default defineComponent({
     onBeforeUnmount(() => {
       editorUi.value.resetPages();
       editorUi.value.closeOpenWindows();
-      removeGraphChangedListeners();
+      removeListeners();
     });
+
+    watch(
+      () => props.scratchpadData,
+      (val: string) => {
+        editorUi.value.loadScratchpadData(val);
+      },
+    );
 
     watch(
       () => props.shapeLibraries,
