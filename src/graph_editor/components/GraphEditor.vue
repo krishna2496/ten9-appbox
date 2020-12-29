@@ -171,13 +171,10 @@ export default defineComponent({
       //   ctx.emit('scratchpad-data-changed', event.detail);
       // });
 
-      mxEvent.addListener(
-        editorUi.value.container,
-        'scratchpadDataChanged',
-        (event: CustomEvent) => {
-          ctx.emit('scratchpad-data-changed', event.detail);
-        },
-      );
+      editorUi.value.container.addEventListener('scratchpadDataChanged', (event: CustomEvent) => {
+        ctx.emit('scratchpad-data-changed', event.detail);
+        editorUi.value.fireEvent(new mxEventObject('scratchpad-data-changed'));
+      });
 
       nextTick(() => {
         setGraphEnabled(props.enabled);

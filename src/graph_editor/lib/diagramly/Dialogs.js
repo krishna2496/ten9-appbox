@@ -7863,7 +7863,8 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 	header.style.height = '40px';
 	outer.appendChild(header);
 
-	mxUtils.write(header, mxResources.get('filename') + ':');
+	// TEN9: remove filename placeholder
+	//mxUtils.write(header, mxResources.get('filename') + ':');
 
 	var nameValue = name;
 
@@ -8024,10 +8025,12 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 					}
 
 					var wrapper = document.createElement('div');
-					wrapper.setAttribute('draggable', 'true');
+					// TEN9: remove drag
+					//wrapper.setAttribute('draggable', 'true');
 					wrapper.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
 					wrapper.style.position = 'relative';
-					wrapper.style.cursor = 'move';
+					// TEN9: remove drag
+					//wrapper.style.cursor = 'move';
 					mxUtils.setPrefixedStyle(wrapper.style, 'transition', 'transform .1s ease-in-out');
 
 					if (data != null)
@@ -8245,49 +8248,50 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 
 					div.appendChild(wrapper);
 
-					mxEvent.addListener(wrapper, 'dragstart', function(evt)
-					{
-						if (data == null && img != null)
-						{
-							rem.style.visibility = 'hidden';
-							label.style.visibility = 'hidden';
-						}
+					// TEN9: remove drag
+					// mxEvent.addListener(wrapper, 'dragstart', function(evt)
+					// {
+					// 	if (data == null && img != null)
+					// 	{
+					// 		rem.style.visibility = 'hidden';
+					// 		label.style.visibility = 'hidden';
+					// 	}
 
-						// Workaround for no DnD on DIV in FF
-						if (mxClient.IS_FF && img.xml != null)
-						{
-							evt.dataTransfer.setData('Text', img.xml);
-						}
+					// 	// Workaround for no DnD on DIV in FF
+					// 	if (mxClient.IS_FF && img.xml != null)
+					// 	{
+					// 		evt.dataTransfer.setData('Text', img.xml);
+					// 	}
 
-						dragSourceIndex = getIndexForEvent(evt);
+					// 	dragSourceIndex = getIndexForEvent(evt);
 
-						// Workaround for missing drag preview in Google Chrome
-						if (mxClient.IS_GC)
-						{
-							wrapper.style.opacity = '0.9';
-						}
+					// 	// Workaround for missing drag preview in Google Chrome
+					// 	if (mxClient.IS_GC)
+					// 	{
+					// 		wrapper.style.opacity = '0.9';
+					// 	}
 
-						window.setTimeout(function()
-						{
-							mxUtils.setPrefixedStyle(wrapper.style, 'transform', 'scale(0.5,0.5)');
-							mxUtils.setOpacity(wrapper, 30);
-							rem.style.visibility = '';
-							label.style.visibility = '';
-						}, 0);
-					});
+					// 	window.setTimeout(function()
+					// 	{
+					// 		mxUtils.setPrefixedStyle(wrapper.style, 'transform', 'scale(0.5,0.5)');
+					// 		mxUtils.setOpacity(wrapper, 30);
+					// 		rem.style.visibility = '';
+					// 		label.style.visibility = '';
+					// 	}, 0);
+					// });
 
-					mxEvent.addListener(wrapper, 'dragend', function(evt)
-					{
-						if (rem.style.visibility == 'hidden')
-						{
-							rem.style.visibility = '';
-							label.style.visibility = '';
-						}
+					// mxEvent.addListener(wrapper, 'dragend', function(evt)
+					// {
+					// 	if (rem.style.visibility == 'hidden')
+					// 	{
+					// 		rem.style.visibility = '';
+					// 		label.style.visibility = '';
+					// 	}
 
-						dragSourceIndex = null;
-						mxUtils.setOpacity(wrapper, 100);
-						mxUtils.setPrefixedStyle(wrapper.style, 'transform', null);
-					});
+					// 	dragSourceIndex = null;
+					// 	mxUtils.setOpacity(wrapper, 100);
+					// 	mxUtils.setPrefixedStyle(wrapper.style, 'transform', null);
+					// });
 				}
 				else if (!errorShowed)
 				{
@@ -8675,8 +8679,6 @@ var LibraryDialog = function(editorUi, name, library, initialImages, file, mode)
 			stopEditing = null;
 		}
 		this.saveBtnClickHandler(nameInput.value, images, file, mode);
-		// TEN9: fire scratchpadDataChanged event
-		editorUi.fireEvent(new mxEventObject('scratchpad-data-changed'));
 	}));
 
 	btn.setAttribute('id', 'btnSave');

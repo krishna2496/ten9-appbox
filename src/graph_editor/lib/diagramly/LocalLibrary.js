@@ -3,7 +3,6 @@ const {
     mxUtils,
   } = require('../jgraph/mxClient.js');
 
-const { StorageFile } = require('./StorageFile.js');
 // $Id = DriveFile.js,v 1.12 2010-01-02 09 =45 =14 gaudenz Exp $
 // Copyright (c) 2006-2014, JGraph Ltd
 /**
