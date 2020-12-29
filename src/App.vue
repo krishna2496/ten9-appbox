@@ -249,7 +249,7 @@ export default defineComponent({
           return;
         }
 
-        if (e.clipboardData.types.indexOf('text/plain') > -1) {
+        if (e.clipboardData.types.indexOf('text/plain') >= 0) {
           return;
         }
 
