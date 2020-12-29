@@ -10102,7 +10102,8 @@ var SelectedFile;
 
 		// Focused but invisible textarea during control or meta key events
 		// LATER: Disable text rendering to avoid delay while keeping focus
-		var textInput = document.createElement('div');
+    var textInput = document.createElement('div');
+    textInput.setAttribute('id', 'clipboardBox');
 		textInput.setAttribute('autocomplete', 'off');
 		textInput.setAttribute('autocorrect', 'off');
 		textInput.setAttribute('autocapitalize', 'off');
@@ -10194,8 +10195,8 @@ var SelectedFile;
 			// Ctrl-key is not pressed for long enough in FF on Windows
 			window.setTimeout(mxUtils.bind(this, function()
 			{
-				if (restoreFocus && (keyCode == 224 /* FF */ || keyCode == 17 /* Control */ ||
-					keyCode == 91 /* Meta */))
+				if (restoreFocus && (keyCode == 224 /* FF */ || (!mxClient.IS_MAC && keyCode == 17 /* Control */) ||
+					(mxClient.IS_MAC && (keyCode == 91 || keyCode == 93)) /* Left/Right Meta */))
 				{
 					restoreFocus = false;
 
