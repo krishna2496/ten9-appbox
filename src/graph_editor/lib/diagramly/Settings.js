@@ -14,7 +14,6 @@
  * -----
  */
 
-
 // TEN9: Added imports
 const {
   mxConstants,
