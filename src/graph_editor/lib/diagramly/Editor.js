@@ -34,6 +34,7 @@ const {
   mxRectangle,
   mxResources,
   mxShape,
+  mxStackLayout,
   mxStencilRegistry,
   mxSvgCanvas2D,
   mxText,
