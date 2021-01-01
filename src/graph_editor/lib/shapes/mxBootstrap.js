@@ -17,6 +17,7 @@
 const {
 	mxActor,
 	mxCellRenderer,
+	mxConnectionConstraint,
 	mxConstants,
 	mxShape,
 	mxUtils,
