@@ -309,6 +309,10 @@ export default defineComponent({
       addLog(fileLogEvent);
     }
 
+    function onDocumentTitleChanged(title: string) {
+      document.title = title;
+    }
+
     return {
       addLog,
       editor,
@@ -320,6 +324,7 @@ export default defineComponent({
       onPreviewModeChanged,
       onScratchpadDataChanged,
       onShapeLibrariesChanged,
+      onDocumentTitleChanged,
       previewMode,
       saveFile,
       scratchpadData,
@@ -384,7 +389,8 @@ export default defineComponent({
           :scratchpadData='scratchpadData',
           @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged',
-          @scratchpad-data-changed='onScratchpadDataChanged'
+          @scratchpad-data-changed='onScratchpadDataChanged',
+          @document-title-changed='onDocumentTitleChanged'
         )
 </template>
 

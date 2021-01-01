@@ -3098,8 +3098,9 @@ EditorUi.prototype.updateDocumentTitle = function () {
   if (this.editor.appName != null) {
     title += ' - ' + this.editor.appName;
   }
-
-  document.title = title;
+  // TEN9: remove seting document title from grapheditor
+  //document.title = title;
+  this.fireEvent(new mxEventObject('documentTitleChanged', 'detail', title));
 };
 
 /**
