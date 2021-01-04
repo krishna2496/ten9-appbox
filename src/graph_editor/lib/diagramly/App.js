@@ -2112,8 +2112,8 @@ App.prototype.updateDocumentTitle = function()
 
 		if (document.title != title)
 		{
-			// TEN9: remove seting document title from grapheditor
-			//document.title = title;
+			// TEN9: remove setting document title from grapheditor
+			// document.title = title;
 			var graph = this.editor.graph;
 			graph.invalidateDescendantsWithPlaceholders(graph.model.getRoot());
 			graph.view.validate();
