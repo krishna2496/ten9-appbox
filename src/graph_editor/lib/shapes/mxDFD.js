@@ -16,6 +16,7 @@
 
 const {
 	mxCellRenderer,
+	mxConnectionConstraint,
 	mxShape,
 	mxUtils,
 	} = require('../jgraph/mxClient.js');
