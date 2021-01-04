@@ -220,6 +220,7 @@ export default defineComponent({
       nextTick(() => {
         setGraphEnabled(props.enabled);
         editorUi.value.fitToWindow();
+        editorUi.value.isFullGraphShown();
       });
     }
 
