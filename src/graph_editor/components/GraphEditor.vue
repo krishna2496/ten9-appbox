@@ -124,10 +124,6 @@ export default defineComponent({
       ctx.emit('scratchpad-data-changed', event.getProperty('detail'));
     }
 
-    function onDocumentTitleChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      ctx.emit('document-title-changed', event.getProperty('detail'));
-    }
-
     function addListeners() {
       graph.value.model.addListener(mxEvent.CHANGE, onGraphChanged);
       graph.value.addListener('gridSizeChanged', onGraphChanged);
@@ -140,7 +136,6 @@ export default defineComponent({
       editorUi.value.addListener('connectionPointsChanged', onGraphChanged);
       editorUi.value.addListener('librariesChanged', onLibrariesChanged);
       editorUi.value.addListener('scratchpadDataChanged', onScratchpadDataChanged);
-      editorUi.value.addListener('documentTitleChanged', onDocumentTitleChanged);
     }
 
     function removeListeners() {
@@ -149,7 +144,6 @@ export default defineComponent({
       editorUi.value.removeListener(onGraphChanged);
       editorUi.value.removeListener(onLibrariesChanged);
       editorUi.value.removeListener(onScratchpadDataChanged);
-      editorUi.value.removeListener(onDocumentTitleChanged);
     }
 
     onMounted(() => {
