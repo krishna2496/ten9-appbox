@@ -11078,7 +11078,10 @@ function mxWindow(title, content, x, y, width, height, minimizable, movable, rep
     if (replaceNode != null && replaceNode.parentNode != null) {
       replaceNode.parentNode.replaceChild(this.div, replaceNode);
     } else {
-      document.body.appendChild(this.div);
+      // TEN9: append submenu pop to container div rather then document.body
+      //document.body.appendChild(this.div);
+      mxClient.getDocumentContainer().appendChild(this.div);
+      this.div.style.zIndex = '2';
     }
   }
 }

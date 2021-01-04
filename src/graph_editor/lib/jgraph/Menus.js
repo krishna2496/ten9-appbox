@@ -1714,4 +1714,5 @@ Menu.prototype.execute = function (menu, parent) {
 module.exports = {
   Menus,
   Menu,
+  Menubar,
 };

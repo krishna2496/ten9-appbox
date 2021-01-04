@@ -27,6 +27,7 @@ require('../lib/diagramly/App.js');
 require('../lib/diagramly/Menus.js');
 require('../lib/diagramly/Pages.js');
 require('../lib/diagramly/DistanceGuides.js');
+require('../lib/diagramly/Minimal.js');
 
 import {
   defineComponent,

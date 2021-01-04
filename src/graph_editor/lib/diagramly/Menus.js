@@ -2315,73 +2315,73 @@ DriveFile = function() {};
 		// }))).isEnabled = isGraphEnabled;
 
 		// TEN9: remove theme menu
-		// this.put('theme', new Menu(mxUtils.bind(this, function(menu, parent)
-		// {
-		// 	var theme = mxSettings.getUi();
+		this.put('theme', new Menu(mxUtils.bind(this, function(menu, parent)
+		{
+			var theme = 'min';
 
-		// 	var item = menu.addItem(mxResources.get('automatic'), null, function()
-		// 	{
-		// 		mxSettings.setUi('');
-		// 		mxSettings.save();
-		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-		// 	}, parent);
+			var item = menu.addItem(mxResources.get('automatic'), null, function()
+			{
+				mxSettings.setUi('');
+				mxSettings.save();
+				editorUi.alert(mxResources.get('restartForChangeRequired'));
+			}, parent);
 			
-		// 	if (theme != 'kennedy' && theme != 'atlas' &&
-		// 		theme != 'dark' && theme != 'min')
-		// 	{
-		// 		menu.addCheckmark(item, Editor.checkmarkImage);
-		// 	}
+			if (theme != 'kennedy' && theme != 'atlas' &&
+				theme != 'dark' && theme != 'min')
+			{
+				menu.addCheckmark(item, Editor.checkmarkImage);
+			}
 
-		// 	menu.addSeparator(parent);
+			// menu.addSeparator(parent);
 			
-		// 	item = menu.addItem(mxResources.get('kennedy'), null, function()
-		// 	{
-		// 		mxSettings.setUi('kennedy');
-		// 		mxSettings.save();
-		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-		// 	}, parent);
+			// item = menu.addItem(mxResources.get('kennedy'), null, function()
+			// {
+			// 	mxSettings.setUi('kennedy');
+			// 	mxSettings.save();
+			// 	editorUi.alert(mxResources.get('restartForChangeRequired'));
+			// }, parent);
 
-		// 	if (theme == 'kennedy')
-		// 	{
-		// 		menu.addCheckmark(item, Editor.checkmarkImage);
-		// 	}
+			// if (theme == 'kennedy')
+			// {
+			// 	menu.addCheckmark(item, Editor.checkmarkImage);
+			// }
 
-		// 	item = menu.addItem(mxResources.get('minimal'), null, function()
-		// 	{
-		// 		mxSettings.setUi('min');
-		// 		mxSettings.save();
-		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-		// 	}, parent);
+			 item = menu.addItem(mxResources.get('minimal'), null, function()
+			{
+				mxSettings.setUi('min');
+				mxSettings.save();
+				editorUi.alert(mxResources.get('restartForChangeRequired'));
+			}, parent);
+
+			if (theme == 'min')
+			{
+				menu.addCheckmark(item, Editor.checkmarkImage);
+			}
 			
-		// 	if (theme == 'min')
-		// 	{
-		// 		menu.addCheckmark(item, Editor.checkmarkImage);
-		// 	}
+			// item = menu.addItem(mxResources.get('atlas'), null, function()
+			// {
+			// 	mxSettings.setUi('atlas');
+			// 	mxSettings.save();
+			// 	editorUi.alert(mxResources.get('restartForChangeRequired'));
+			// }, parent);
 			
-		// 	item = menu.addItem(mxResources.get('atlas'), null, function()
-		// 	{
-		// 		mxSettings.setUi('atlas');
-		// 		mxSettings.save();
-		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-		// 	}, parent);
+			// if (theme == 'atlas')
+			// {
+			// 	menu.addCheckmark(item, Editor.checkmarkImage);
+			// }
 			
-		// 	if (theme == 'atlas')
-		// 	{
-		// 		menu.addCheckmark(item, Editor.checkmarkImage);
-		// 	}
+			// item = menu.addItem(mxResources.get('dark'), null, function()
+			// {
+			// 	mxSettings.setUi('dark');
+			// 	mxSettings.save();
+			// 	editorUi.alert(mxResources.get('restartForChangeRequired'));
+			// }, parent);
 			
-		// 	item = menu.addItem(mxResources.get('dark'), null, function()
-		// 	{
-		// 		mxSettings.setUi('dark');
-		// 		mxSettings.save();
-		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-		// 	}, parent);
-			
-		// 	if (theme == 'dark')
-		// 	{
-		// 		menu.addCheckmark(item, Editor.checkmarkImage);
-		// 	}
-		// })));
+			// if (theme == 'dark')
+			// {
+			// 	menu.addCheckmark(item, Editor.checkmarkImage);
+			// }
+		})));
 
 		var renameAction = this.editorUi.actions.addAction('rename...', mxUtils.bind(this, function()
 		{
