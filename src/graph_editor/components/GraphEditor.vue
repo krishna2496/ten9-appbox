@@ -171,7 +171,7 @@ export default defineComponent({
 
       nextTick(() => {
         setGraphEnabled(props.enabled);
-        editorUi.value.fitToWindow();
+        editorUi.value.resetViewToShowFullGraph();
       });
     });
 
@@ -385,7 +385,7 @@ export default defineComponent({
       (val) => {
         nextTick(() => {
           setGraphEnabled(val);
-          editorUi.value.fitToWindow();
+          editorUi.value.resetViewToShowFullGraph();
         });
       },
     );
