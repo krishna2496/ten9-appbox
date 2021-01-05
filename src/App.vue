@@ -35,6 +35,7 @@ interface FileLogEvent extends EventFileInfo {
 
 const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows;clipart;flowchart';
 const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
+const DEFAULT_THEME = 'kennedy';
 
 export default defineComponent({
   name: 'App',
@@ -54,12 +55,18 @@ export default defineComponent({
 
     const scratchpadData = ref('');
 
+    const theme = ref('');
+
     function getShapeLibrariesFromStorage() {
       return window.localStorage.getItem('shapeLibraries');
     }
 
     function getScratchpadData() {
       return window.localStorage.getItem('scratchpadData');
+    }
+
+    function getThemeData() {
+      return window.localStorage.getItem('theme');
     }
 
     function saveShapeLibrariesToStorage(libraries: string) {
@@ -169,6 +176,10 @@ export default defineComponent({
       addLog(fileLogEvent);
     }
 
+    function onThemeChange(themeName: string) {
+      window.localStorage.setItem('theme', themeName);
+    }
+
     onMounted(() => {
       updateAppHeight();
       window.addEventListener('resize', onResize);
@@ -184,6 +195,12 @@ export default defineComponent({
       if (!scratchpadData.value) {
         scratchpadData.value = DEFAULT_SCRATCHPAD_DATA;
         saveScratchpadDataToStorage(scratchpadData.value);
+      }
+
+      theme.value = getThemeData();
+      if (!theme.value) {
+        theme.value = DEFAULT_THEME;
+        onThemeChange(theme.value);
       }
 
       const drag: HTMLElement = document.querySelector('.geEditor');
@@ -320,6 +337,7 @@ export default defineComponent({
       onPreviewModeChanged,
       onScratchpadDataChanged,
       onShapeLibrariesChanged,
+      onThemeChange,
       previewMode,
       saveFile,
       scratchpadData,
@@ -384,7 +402,8 @@ export default defineComponent({
           :scratchpadData='scratchpadData',
           @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged',
-          @scratchpad-data-changed='onScratchpadDataChanged'
+          @scratchpad-data-changed='onScratchpadDataChanged',
+          @theme-changed='onThemeChange'
         )
 </template>
 

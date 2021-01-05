@@ -182,9 +182,15 @@ EditorUi.initMinimalTheme = function()
 	    
 	    if (ui.formatWindow == null)
 	    {
+			// TEN9: to calculate the container height
+			const container = document.getElementById('container');
+			const rect = container.getBoundingClientRect();
+			const contentPadding = 20;
+			const bottomMargin = 5;
+			const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
 	        ui.formatWindow = new WrapperWindow(ui, mxResources.get('format'),
-	           Math.max(20, ui.diagramContainer.clientWidth - 240 - 12), 56,
-	           240, Math.min(566, graph.container.clientHeight - 10), function(container)
+	           Math.max(20, ui.diagramContainer.clientWidth + 240 - 12), 56,
+	           240, Math.min(566, newHeight), function(container)
 	        {
 	            var format = ui.createFormat(container);
 	            format.init();
@@ -209,6 +215,13 @@ EditorUi.initMinimalTheme = function()
 
 	function toggleShapes(ui, visible)
 	{
+		// TEN9: to calculate the container height
+		const container = document.getElementById('container');
+		const recta = container.getBoundingClientRect();
+		const contentPadding = 20;
+		const bottomMargin = 5;
+		const newHeight = window.innerHeight - recta.top - contentPadding - bottomMargin;
+
 		var graph = ui.editor.graph;
 	    graph.popupMenuHandler.hideMenu();
 	    var rect = new mxRectangle();
@@ -217,7 +230,7 @@ EditorUi.initMinimalTheme = function()
 	        var w = Math.min(graph.container.clientWidth - 10, 218);
 	        
 	        ui.sidebarWindow = new WrapperWindow(ui, mxResources.get('shapes'), 10, 56,
-	           w - 6, Math.min(650, graph.container.clientHeight - 30),
+	           w - 6, Math.min(650, newHeight),
 	           function(container)
 	        {
 	            var div = document.createElement('div');
@@ -307,7 +320,6 @@ EditorUi.initMinimalTheme = function()
 
 	            container.appendChild(ui.sidebar.container);
 	            container.style.overflow = 'hidden';
-	            
 	            return container;
 	        });
 	        
@@ -319,14 +331,14 @@ EditorUi.initMinimalTheme = function()
 	            ui.sidebar.showEntries(value, null, true);
 	        });
 	        
-	        ui.restoreLibraries();
+			ui.restoreLibraries();
 	    }
 	    else
 	    {
     		ui.sidebarWindow.window.setVisible((visible != null) ?
     			visible : !ui.sidebarWindow.window.isVisible());
 	    }
-        
+		
         if (ui.sidebarWindow.window.isVisible())
         {
             ui.sidebarWindow.window.fit();
@@ -414,7 +426,7 @@ EditorUi.initMinimalTheme = function()
 	{
 		editorUiUpdateActionStates.apply(this, arguments);
 
-        // TEN9
+        // TEN9: remove beacuse we are not using
 		//this.menus.get('save').setEnabled(this.getCurrentFile() != null || urlParams['embed'] == '1');
 	};
 
@@ -627,9 +639,11 @@ EditorUi.initMinimalTheme = function()
         {
         	this.formatWindow.window.setVisible((visible != null) ?
 				visible : !this.formatWindow.window.isVisible());
-				// TEN9:
+			// TEN9: Remove for format panel when theme is minimal 
 			this.formatWidth = 0;
 			this.formatContainer.style.display = 'none';
+			this.refresh();
+			this.format.refresh();		
         }
         else
         {
@@ -1072,7 +1086,7 @@ EditorUi.initMinimalTheme = function()
 		ui.defaultLibraryName = mxResources.get('untitledLibrary');
 
         var menubar = document.createElement('div');
-        // TEN9:
+        // TEN9: Increase the hight of menubar
 		menubar.style.cssText = 'position:absolute;left:0px;right:0px;top:0px;height:40px;padding:8px;border-bottom:1px solid lightgray;background-color:#ffffff;text-align:left;white-space:nowrap;';
 
 		var before = null;
@@ -1313,8 +1327,9 @@ EditorUi.initMinimalTheme = function()
 
         ui.tabContainer = document.createElement('div');
         ui.tabContainer.style.cssText = 'position:absolute;left:0px;right:0px;bottom:0px;height:30px;white-space:nowrap;' +
-            'border-bottom:1px solid lightgray;background-color:#ffffff;border-top:1px solid lightgray;margin-bottom:-2px;' +
-            'visibility:hidden;';
+			'border-bottom:1px solid lightgray;background-color:#ffffff;border-top:1px solid lightgray;margin-bottom:-2px;' ;
+			// TEN9: remove hidden visibility to show tab container
+            //'visibility:hidden;';
 
         var previousParent = ui.diagramContainer.parentNode;
 
@@ -1322,7 +1337,7 @@ EditorUi.initMinimalTheme = function()
         wrapper.style.cssText = 'position:absolute;top:0px;left:0px;right:0px;bottom:0px;overflow:hidden;';
         ui.diagramContainer.style.top = '47px';
 
-        var viewZoomMenu = ui.menus.get('viewZoom');
+		var viewZoomMenu = ui.menus.get('viewZoom');
         var viewZoomMenuElt = null;
 		
 		if (viewZoomMenu != null)
@@ -1343,7 +1358,8 @@ EditorUi.initMinimalTheme = function()
 			elt.style.right = '0px';
 			elt.style.bottom = '0px';
 			elt.style.overflow = 'hidden';
-			elt.style.visibility = 'hidden';
+			// TEN9: remove visibility to show zoom functionality
+			//elt.style.visibility = 'hidden';
 			elt.style.textAlign = 'center';
 			elt.style.color = '#000';
 			elt.style.fontSize = '12px';
@@ -1551,8 +1567,8 @@ EditorUi.initMinimalTheme = function()
 (function()
 {
 	var initialized = false;
-    // TEN9:
-    var uiTheme = 'min';
+    // TEN9: Get theme form localstorage
+    var uiTheme = window.localStorage.getItem('theme');
 	// ChromeApp has async local storage
 	if (uiTheme == 'min' && !initialized && !mxClient.IS_CHROMEAPP)
 	{

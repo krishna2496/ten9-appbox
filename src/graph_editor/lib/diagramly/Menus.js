@@ -2317,39 +2317,41 @@ DriveFile = function() {};
 		// TEN9: remove theme menu
 		this.put('theme', new Menu(mxUtils.bind(this, function(menu, parent)
 		{
-			var theme = 'min';
+			var theme = window.localStorage.getItem('theme');
 
-			var item = menu.addItem(mxResources.get('automatic'), null, function()
-			{
-				mxSettings.setUi('');
-				mxSettings.save();
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
-			
-			if (theme != 'kennedy' && theme != 'atlas' &&
-				theme != 'dark' && theme != 'min')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
-
-			// menu.addSeparator(parent);
-			
-			// item = menu.addItem(mxResources.get('kennedy'), null, function()
+			// var item = menu.addItem('Default', null, function()
 			// {
-			// 	mxSettings.setUi('kennedy');
+			// 	mxSettings.setUi('');
 			// 	mxSettings.save();
 			// 	editorUi.alert(mxResources.get('restartForChangeRequired'));
 			// }, parent);
-
-			// if (theme == 'kennedy')
+			
+			// if (theme != 'kennedy' && theme != 'atlas' &&
+			// 	theme != 'dark' && theme != 'min')
 			// {
 			// 	menu.addCheckmark(item, Editor.checkmarkImage);
 			// }
 
-			 item = menu.addItem(mxResources.get('minimal'), null, function()
+			// menu.addSeparator(parent);
+			
+			item = menu.addItem('default', null, function()
+			{
+				mxSettings.setUi('kennedy');
+				mxSettings.save();
+				editorUi.fireEvent(new mxEventObject('themeChange', 'detail', 'kennedy'));
+				editorUi.alert(mxResources.get('restartForChangeRequired'));
+			}, parent);
+
+			if (theme == 'kennedy')
+			{
+				menu.addCheckmark(item, Editor.checkmarkImage);
+			}
+
+			 item = menu.addItem('mobile', null, function()
 			{
 				mxSettings.setUi('min');
 				mxSettings.save();
+				editorUi.fireEvent(new mxEventObject('themeChange', 'detail', 'min'));
 				editorUi.alert(mxResources.get('restartForChangeRequired'));
 			}, parent);
 
