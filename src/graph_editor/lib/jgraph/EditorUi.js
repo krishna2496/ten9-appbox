@@ -5194,28 +5194,11 @@ EditorUi.prototype.destroy = function () {
 };
 
 // TEN9: Check the graph is shown in one page or not
-EditorUi.prototype.isFullGraphShown = function () {
+EditorUi.prototype.resetViewToShowFullGraph = function () {
   var graph = this.editor.graph;
   if (graph.getPageLayout().width > 1 || graph.getPageLayout().height > 1) {
-    var bounds = graph.getGraphBounds().clone();
-    var t = graph.view.translate;
-    var s = graph.view.scale;
-
-    bounds.x = bounds.x / s - t.x;
-    bounds.y = bounds.y / s - t.y;
-    bounds.width /= s;
-    bounds.height /= s;
-
-    if (graph.backgroundImage != null) {
-      bounds.add(new mxRectangle(0, 0, graph.backgroundImage.width, graph.backgroundImage.height));
-    }
-
-    if (bounds.width == 0 || bounds.height == 0) {
-      graph.zoomTo(1);
-      ui.resetScrollbars();
-    } else {
-      graph.fitWindow(bounds);
-    }
+    var fitWindow = this.actions.get('fitWindow');
+    fitWindow.funct();
   }
 };
 
