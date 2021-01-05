@@ -626,7 +626,10 @@ EditorUi.initMinimalTheme = function()
         if (this.formatWindow != null)
         {
         	this.formatWindow.window.setVisible((visible != null) ?
-        		visible : !this.formatWindow.window.isVisible());
+				visible : !this.formatWindow.window.isVisible());
+				// TEN9:
+			this.formatWidth = 0;
+			this.formatContainer.style.display = 'none';
         }
         else
         {
