@@ -77,6 +77,10 @@ export default defineComponent({
       type: String,
     },
     enabled: Boolean,
+    theme: {
+      required: true,
+      type: String,
+    },
   },
 
   setup(props, ctx) {
@@ -199,6 +203,19 @@ export default defineComponent({
       () => props.shapeLibraries,
       (val: string) => {
         sidebar.value.showEntries(val);
+      },
+    );
+
+    watch(
+      () => props.theme,
+      (val: string) => {
+        if (val == 'min') {
+          editorUi.value.initTheme();
+          editorUi.value.setEnabled(true);
+          editorUi.value.menus.init();
+          editorUi.value.init();
+          editorUi.value.fitToWindow();
+        }
       },
     );
 

@@ -41,7 +41,9 @@ const isLocalStorage = false;
 /**
  * Code for the minimal UI theme.
  */
-EditorUi.initMinimalTheme = function()
+(function ()
+{
+	EditorUi.prototype.initMinimalTheme = function()
 {
 	// Disabled in lightbox and chromeless mode
 	if (urlParams['lightbox'] == '1' || urlParams['chrome'] == '0' || typeof window.Format === 'undefined' || typeof window.Menus === 'undefined')
@@ -225,6 +227,7 @@ EditorUi.initMinimalTheme = function()
 		var graph = ui.editor.graph;
 	    graph.popupMenuHandler.hideMenu();
 	    var rect = new mxRectangle();
+		
 	    if (ui.sidebarWindow == null)
 	    {
 	        var w = Math.min(graph.container.clientWidth - 10, 218);
@@ -251,7 +254,6 @@ EditorUi.initMinimalTheme = function()
 	            function addMenu(id, label)
 	            {
 	                var menu = ui.menus.get(id);
-	                
 	                var elt = menuObj.addMenu(label, mxUtils.bind(this, function()
 	                {
 	                    // Allows extensions of menu.functid
@@ -323,10 +325,14 @@ EditorUi.initMinimalTheme = function()
 	            return container;
 			});
 			
-			setTimeout(()=> {
+			// TEN9: remove sideabr section
 				ui.hsplit.style.display = 'none';
 				ui.diagramContainer.style.left = '0px';
-			},1000);
+				ui.tabContainer.style.left = '0px';
+				ui.toolbarContainer.style.display = 'none';
+				ui.fitToWindow();
+				
+
 
 	        ui.sidebarWindow.window.minimumSize = new mxRectangle(0, 0, 90, 90);
 	        ui.sidebarWindow.window.setVisible(true);
@@ -451,9 +457,9 @@ EditorUi.initMinimalTheme = function()
         }
     };
 
-    var appUpdateUserElement = App.prototype.updateUserElement;
+    var appUpdateUserElement = EditorUi.prototype.updateUserElement;
     
-    App.prototype.updateUserElement = function()
+    EditorUi.prototype.updateUserElement = function()
     {
     	appUpdateUserElement.apply(this, arguments);
     	
@@ -479,9 +485,9 @@ EditorUi.initMinimalTheme = function()
 		}
     };
     
-    var appUpdateButtonContainer = App.prototype.updateButtonContainer;
+    var appUpdateButtonContainer = EditorUi.prototype.updateButtonContainer;
     
-    App.prototype.updateButtonContainer = function()
+    EditorUi.prototype.updateButtonContainer = function()
     {
     	appUpdateButtonContainer.apply(this, arguments);
     	
@@ -639,21 +645,21 @@ EditorUi.initMinimalTheme = function()
     
     // Overridden to toggle window instead
     EditorUi.prototype.toggleFormatPanel = function(visible)
-    {
+    {	
         if (this.formatWindow != null)
         {
         	this.formatWindow.window.setVisible((visible != null) ?
-				visible : !this.formatWindow.window.isVisible());
-			// TEN9: Remove for format panel when theme is minimal 
-			this.formatWidth = 0;
-			this.formatContainer.style.display = 'none';
-			this.refresh();
-			this.format.refresh();		
+				visible : !this.formatWindow.window.isVisible());		
         }
         else
         {
         	toggleFormat(this);
-        }
+		}
+		// TEN9: Remove for format panel when theme is minimal 
+		this.formatWidth = 0;
+		this.formatContainer.style.display = 'none';
+		this.refresh();
+		this.format.refresh();
     };
 
     DiagramFormatPanel.prototype.isMathOptionVisible = function()
@@ -1100,7 +1106,6 @@ EditorUi.initMinimalTheme = function()
 		function addMenu(id, small, img)
 		{
 			var menu = ui.menus.get(id);
-
 			var elt = menuObj.addMenu(mxResources.get(id), mxUtils.bind(this, function()
 			{
 				// Allows extensions of menu.functid
@@ -1331,7 +1336,7 @@ EditorUi.initMinimalTheme = function()
 		ui.menubarContainer = ui.buttonContainer;
 
         ui.tabContainer = document.createElement('div');
-        ui.tabContainer.style.cssText = 'position:absolute;left:0px;right:0px;bottom:0px;height:30px;white-space:nowrap;' +
+        ui.tabContainer.style.cssText = 'position:absolute;left:0px;right:0px;bottom:0px;height:40px;white-space:nowrap;' +
 			'border-bottom:1px solid lightgray;background-color:#ffffff;border-top:1px solid lightgray;margin-bottom:-2px;' ;
 			// TEN9: remove hidden visibility to show tab container
             //'visibility:hidden;';
@@ -1344,7 +1349,7 @@ EditorUi.initMinimalTheme = function()
 
 		var viewZoomMenu = ui.menus.get('viewZoom');
         var viewZoomMenuElt = null;
-		
+    
 		if (viewZoomMenu != null)
 		{
 			this.tabContainer.style.right = '70px';
@@ -1369,7 +1374,7 @@ EditorUi.initMinimalTheme = function()
 			elt.style.color = '#000';
 			elt.style.fontSize = '12px';
 			elt.style.color = '#707070';
-			elt.style.width = '59px';
+			elt.style.width = '70px';
 			elt.style.cursor = 'pointer';
 			elt.style.borderTop = '1px solid lightgray';
 			elt.style.borderLeft = '1px solid lightgray';
@@ -1569,29 +1574,33 @@ EditorUi.initMinimalTheme = function()
 	};	
 };
 
+})();
+
+
 (function()
 {
-	var initialized = false;
-    // TEN9: Get theme form localstorage
-    var uiTheme = window.localStorage.getItem('theme');
-	// ChromeApp has async local storage
-	if (uiTheme == 'min' && !initialized && !mxClient.IS_CHROMEAPP)
-	{
-		EditorUi.initMinimalTheme();
-		initialized = true;
-	}
+	// var initialized = false;
+	// // TEN9: Get theme form localstorage
+    // var uiTheme = window.localStorage.getItem('theme');
+	// // ChromeApp has async local storage
+	// if (uiTheme == 'min' && !initialized && !mxClient.IS_CHROMEAPP)
+	// {
+	// 	EditorUi.initMinimalTheme();
+	// 	initialized = true;
+	// }
 	
 	var uiInitTheme = EditorUi.initTheme;
 	
 	// For async startup like chromeos
-	EditorUi.initTheme = function()
+	EditorUi.prototype.initTheme = function()
 	{
 		uiInitTheme.apply(this, arguments);
 		
-		if (uiTheme == 'min' && !initialized)
-		{
+
+		// if (uiTheme == 'min' && !initialized)
+		// {
 			this.initMinimalTheme();
-			initialized = true;
-		}
+			//initialized = true;
+		//}
 	};
 })();

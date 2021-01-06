@@ -342,6 +342,7 @@ export default defineComponent({
       saveFile,
       scratchpadData,
       shapeLibraries,
+      theme,
     };
   },
 });
@@ -400,6 +401,7 @@ export default defineComponent({
           :enabled='!previewMode',
           :shapeLibraries='shapeLibraries',
           :scratchpadData='scratchpadData',
+          :theme='theme',
           @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged',
           @scratchpad-data-changed='onScratchpadDataChanged',
