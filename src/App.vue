@@ -176,7 +176,7 @@ export default defineComponent({
       addLog(fileLogEvent);
     }
 
-    function onThemeChange(themeName: string) {
+    function onThemeChanged(themeName: string) {
       window.localStorage.setItem('theme', themeName);
     }
 
@@ -200,7 +200,7 @@ export default defineComponent({
       theme.value = getThemeData();
       if (!theme.value) {
         theme.value = DEFAULT_THEME;
-        onThemeChange(theme.value);
+        onThemeChanged(theme.value);
       }
 
       const drag: HTMLElement = document.querySelector('.geEditor');
@@ -337,7 +337,7 @@ export default defineComponent({
       onPreviewModeChanged,
       onScratchpadDataChanged,
       onShapeLibrariesChanged,
-      onThemeChange,
+      onThemeChanged,
       previewMode,
       saveFile,
       scratchpadData,
@@ -403,7 +403,7 @@ export default defineComponent({
           @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged',
           @scratchpad-data-changed='onScratchpadDataChanged',
-          @theme-changed='onThemeChange'
+          @theme-changed='onThemeChanged'
         )
 </template>
 

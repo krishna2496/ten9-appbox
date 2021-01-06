@@ -125,7 +125,7 @@ export default defineComponent({
       ctx.emit('scratchpad-data-changed', event.getProperty('detail'));
     }
 
-    function onThemeChange(_sender: typeof mxEventSource, event: typeof mxEventObject) {
+    function onThemeChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
       ctx.emit('theme-changed', event.getProperty('detail'));
     }
 
@@ -141,7 +141,7 @@ export default defineComponent({
       editorUi.value.addListener('connectionPointsChanged', onGraphChanged);
       editorUi.value.addListener('librariesChanged', onLibrariesChanged);
       editorUi.value.addListener('scratchpadDataChanged', onScratchpadDataChanged);
-      editorUi.value.addListener('themeChange', onThemeChange);
+      editorUi.value.addListener('themeChanged', onThemeChanged);
     }
 
     function removeListeners() {
@@ -150,7 +150,7 @@ export default defineComponent({
       editorUi.value.removeListener(onGraphChanged);
       editorUi.value.removeListener(onLibrariesChanged);
       editorUi.value.removeListener(onScratchpadDataChanged);
-      editorUi.value.removeListener(onThemeChange);
+      editorUi.value.removeListener(onThemeChanged);
     }
 
     onMounted(() => {

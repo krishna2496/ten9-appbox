@@ -321,8 +321,13 @@ EditorUi.initMinimalTheme = function()
 	            container.appendChild(ui.sidebar.container);
 	            container.style.overflow = 'hidden';
 	            return container;
-	        });
-	        
+			});
+			
+			setTimeout(()=> {
+				ui.hsplit.style.display = 'none';
+				ui.diagramContainer.style.left = '0px';
+			},1000);
+
 	        ui.sidebarWindow.window.minimumSize = new mxRectangle(0, 0, 90, 90);
 	        ui.sidebarWindow.window.setVisible(true);
 	        
