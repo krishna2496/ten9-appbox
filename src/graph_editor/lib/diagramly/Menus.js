@@ -2317,8 +2317,7 @@ DriveFile = function() {};
 		// TEN9: remove theme menu that we are not using
 		this.put('theme', new Menu(mxUtils.bind(this, function(menu, parent)
 		{
-			var theme = window.localStorage.getItem('theme');
-
+			var theme = editorUi.theme;
 			// var item = menu.addItem('Default', null, function()
 			// {
 			// 	mxSettings.setUi('');

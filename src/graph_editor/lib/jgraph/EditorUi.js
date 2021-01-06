@@ -1081,6 +1081,9 @@ EditorUi.prototype.hsplitClickEnabled = false;
 // TEN9: Add Preview Mode to check the diagram position
 EditorUi.prototype.enabled = true;
 
+// TEN9: Add theme value
+EditorUi.prototype.theme = '';
+
 EditorUi.prototype.closeOpenWindows = function () {
   if (this.actions.layersWindow?.window.isVisible()) {
     this.actions.layersWindow.window.setVisible(false);

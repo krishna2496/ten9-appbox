@@ -209,7 +209,9 @@ export default defineComponent({
     watch(
       () => props.theme,
       (val: string) => {
+        editorUi.value.theme = val;
         if (val == 'min') {
+          editorUi.value.theme = val;
           editorUi.value.initTheme();
           editorUi.value.setEnabled(true);
           editorUi.value.menus.init();
