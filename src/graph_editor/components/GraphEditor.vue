@@ -107,6 +107,12 @@ export default defineComponent({
 
     function setGraphEnabled(enabled: boolean) {
       editorUi.value.setEnabled(enabled);
+
+      /**
+       * When scratchpad is enabled, open it when toggling from preview and
+       * edit modes.
+       */
+      editorUi.value.openScratchpad();
       if (!enabled) {
         graph.value.clearSelection();
       }

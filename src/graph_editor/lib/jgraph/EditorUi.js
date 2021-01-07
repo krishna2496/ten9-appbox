@@ -1126,6 +1126,13 @@ EditorUi.prototype.setEnabled = function (enabled) {
 
   const redo = this.actions.get('redo');
   redo.setEnabled(enabled);
+
+  // TEN9: Add class to denote preview or edit modes.
+  if (!enabled) {
+    mxClient.getDocumentContainer().classList.add('preview-mode');
+  } else {
+    mxClient.getDocumentContainer().classList.remove('preview-mode');
+  }
 };
 
 /**

@@ -3397,30 +3397,22 @@ const {
   });
 
   // Registers and defines the custom marker
-  mxMarker.addMarker('cross', function (
-    c,
-    shape,
-    type,
-    pe,
-    unitX,
-    unitY,
-    size,
-    source,
-    sw,
-    filled,
-  ) {
-    var nx = unitX * (size + sw + 1);
-    var ny = unitY * (size + sw + 1);
+  mxMarker.addMarker(
+    'cross',
+    function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+      var nx = unitX * (size + sw + 1);
+      var ny = unitY * (size + sw + 1);
 
-    return function () {
-      c.begin();
-      c.moveTo(pe.x - nx / 2 - ny / 2, pe.y - ny / 2 + nx / 2);
-      c.lineTo(pe.x + ny / 2 - (3 * nx) / 2, pe.y - (3 * ny) / 2 - nx / 2);
-      c.moveTo(pe.x - nx / 2 + ny / 2, pe.y - ny / 2 - nx / 2);
-      c.lineTo(pe.x - ny / 2 - (3 * nx) / 2, pe.y - (3 * ny) / 2 + nx / 2);
-      c.stroke();
-    };
-  });
+      return function () {
+        c.begin();
+        c.moveTo(pe.x - nx / 2 - ny / 2, pe.y - ny / 2 + nx / 2);
+        c.lineTo(pe.x + ny / 2 - (3 * nx) / 2, pe.y - (3 * ny) / 2 - nx / 2);
+        c.moveTo(pe.x - nx / 2 + ny / 2, pe.y - ny / 2 - nx / 2);
+        c.lineTo(pe.x - ny / 2 - (3 * nx) / 2, pe.y - (3 * ny) / 2 + nx / 2);
+        c.stroke();
+      };
+    },
+  );
 
   function circleMarker(c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
     var a = size / 2;
@@ -3446,113 +3438,89 @@ const {
   }
 
   mxMarker.addMarker('circle', circleMarker);
-  mxMarker.addMarker('circlePlus', function (
-    c,
-    shape,
-    type,
-    pe,
-    unitX,
-    unitY,
-    size,
-    source,
-    sw,
-    filled,
-  ) {
-    var pt = pe.clone();
-    var fn = circleMarker.apply(this, arguments);
-    var nx = unitX * (size + 2 * sw); // (size + sw + 1);
-    var ny = unitY * (size + 2 * sw); //(size + sw + 1);
+  mxMarker.addMarker(
+    'circlePlus',
+    function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+      var pt = pe.clone();
+      var fn = circleMarker.apply(this, arguments);
+      var nx = unitX * (size + 2 * sw); // (size + sw + 1);
+      var ny = unitY * (size + 2 * sw); //(size + sw + 1);
 
-    return function () {
-      fn.apply(this, arguments);
+      return function () {
+        fn.apply(this, arguments);
 
-      c.begin();
-      c.moveTo(pt.x - unitX * sw, pt.y - unitY * sw);
-      c.lineTo(pt.x - 2 * nx + unitX * sw, pt.y - 2 * ny + unitY * sw);
-      c.moveTo(pt.x - nx - ny + unitY * sw, pt.y - ny + nx - unitX * sw);
-      c.lineTo(pt.x + ny - nx - unitY * sw, pt.y - ny - nx + unitX * sw);
-      c.stroke();
-    };
-  });
+        c.begin();
+        c.moveTo(pt.x - unitX * sw, pt.y - unitY * sw);
+        c.lineTo(pt.x - 2 * nx + unitX * sw, pt.y - 2 * ny + unitY * sw);
+        c.moveTo(pt.x - nx - ny + unitY * sw, pt.y - ny + nx - unitX * sw);
+        c.lineTo(pt.x + ny - nx - unitY * sw, pt.y - ny - nx + unitX * sw);
+        c.stroke();
+      };
+    },
+  );
 
   // Registers and defines the custom marker
-  mxMarker.addMarker('halfCircle', function (
-    c,
-    shape,
-    type,
-    pe,
-    unitX,
-    unitY,
-    size,
-    source,
-    sw,
-    filled,
-  ) {
-    var nx = unitX * (size + sw + 1);
-    var ny = unitY * (size + sw + 1);
-    var pt = pe.clone();
+  mxMarker.addMarker(
+    'halfCircle',
+    function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+      var nx = unitX * (size + sw + 1);
+      var ny = unitY * (size + sw + 1);
+      var pt = pe.clone();
 
-    pe.x -= nx;
-    pe.y -= ny;
+      pe.x -= nx;
+      pe.y -= ny;
 
-    return function () {
-      c.begin();
-      c.moveTo(pt.x - ny, pt.y + nx);
-      c.quadTo(pe.x - ny, pe.y + nx, pe.x, pe.y);
-      c.quadTo(pe.x + ny, pe.y - nx, pt.x + ny, pt.y - nx);
-      c.stroke();
-    };
-  });
-
-  mxMarker.addMarker('async', function (
-    c,
-    shape,
-    type,
-    pe,
-    unitX,
-    unitY,
-    size,
-    source,
-    sw,
-    filled,
-  ) {
-    // The angle of the forward facing arrow sides against the x axis is
-    // 26.565 degrees, 1/sin(26.565) = 2.236 / 2 = 1.118 ( / 2 allows for
-    // only half the strokewidth is processed ).
-    var endOffsetX = unitX * sw * 1.118;
-    var endOffsetY = unitY * sw * 1.118;
-
-    unitX = unitX * (size + sw);
-    unitY = unitY * (size + sw);
-
-    var pt = pe.clone();
-    pt.x -= endOffsetX;
-    pt.y -= endOffsetY;
-
-    var f = 1;
-    pe.x += -unitX * f - endOffsetX;
-    pe.y += -unitY * f - endOffsetY;
-
-    return function () {
-      c.begin();
-      c.moveTo(pt.x, pt.y);
-
-      if (source) {
-        c.lineTo(pt.x - unitX - unitY / 2, pt.y - unitY + unitX / 2);
-      } else {
-        c.lineTo(pt.x + unitY / 2 - unitX, pt.y - unitY - unitX / 2);
-      }
-
-      c.lineTo(pt.x - unitX, pt.y - unitY);
-      c.close();
-
-      if (filled) {
-        c.fillAndStroke();
-      } else {
+      return function () {
+        c.begin();
+        c.moveTo(pt.x - ny, pt.y + nx);
+        c.quadTo(pe.x - ny, pe.y + nx, pe.x, pe.y);
+        c.quadTo(pe.x + ny, pe.y - nx, pt.x + ny, pt.y - nx);
         c.stroke();
-      }
-    };
-  });
+      };
+    },
+  );
+
+  mxMarker.addMarker(
+    'async',
+    function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+      // The angle of the forward facing arrow sides against the x axis is
+      // 26.565 degrees, 1/sin(26.565) = 2.236 / 2 = 1.118 ( / 2 allows for
+      // only half the strokewidth is processed ).
+      var endOffsetX = unitX * sw * 1.118;
+      var endOffsetY = unitY * sw * 1.118;
+
+      unitX = unitX * (size + sw);
+      unitY = unitY * (size + sw);
+
+      var pt = pe.clone();
+      pt.x -= endOffsetX;
+      pt.y -= endOffsetY;
+
+      var f = 1;
+      pe.x += -unitX * f - endOffsetX;
+      pe.y += -unitY * f - endOffsetY;
+
+      return function () {
+        c.begin();
+        c.moveTo(pt.x, pt.y);
+
+        if (source) {
+          c.lineTo(pt.x - unitX - unitY / 2, pt.y - unitY + unitX / 2);
+        } else {
+          c.lineTo(pt.x + unitY / 2 - unitX, pt.y - unitY - unitX / 2);
+        }
+
+        c.lineTo(pt.x - unitX, pt.y - unitY);
+        c.close();
+
+        if (filled) {
+          c.fillAndStroke();
+        } else {
+          c.stroke();
+        }
+      };
+    },
+  );
 
   function createOpenAsyncArrow(widthFactor) {
     widthFactor = widthFactor != null ? widthFactor : 2;
