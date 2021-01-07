@@ -1095,15 +1095,6 @@ EditorUi.prototype.closeOpenWindows = function () {
   }
 };
 
-EditorUi.prototype.fitToWindow = function () {
-  // TODO: use fitWindow instead of resetView when debugged and working
-
-  // const actionName = 'fitWindow';
-  const actionName = 'resetView';
-  const action = this.actions.get(actionName);
-  action.funct();
-};
-
 // TEN9: Add enable/disable function
 EditorUi.prototype.setEnabled = function (enabled) {
   this.enabled = enabled;
@@ -5197,6 +5188,15 @@ EditorUi.prototype.destroy = function () {
     if (c[i] != null && c[i].parentNode != null) {
       c[i].parentNode.removeChild(c[i]);
     }
+  }
+};
+
+// TEN9: Check the graph is shown in one page or not
+EditorUi.prototype.resetViewToShowFullGraph = function () {
+  var graph = this.editor.graph;
+  if (graph.getPageLayout().width > 1 || graph.getPageLayout().height > 1) {
+    var fitWindow = this.actions.get('fitWindow');
+    fitWindow.funct();
   }
 };
 
