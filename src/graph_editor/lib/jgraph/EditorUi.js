@@ -3825,19 +3825,24 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
   var diagContOffset = this.getDiagramContainerOffset();
   var contLeft = this.hsplit.parentNode != null ? effHsplitPosition + this.splitSize : 0;
 
-  // TEN9: check if preview mode is on then don't change the diagramContainer position
-  if (this.enabled) {
+  // TEN9: check if preview mode is on then don't change the diagramContainer position and same for minimal theme
+  if (this.enabled && this.theme != 'min') {
     this.diagramContainer.style.left = contLeft + diagContOffset.x + 'px';
   }
 
-  this.diagramContainer.style.top = tmp + diagContOffset.y + 'px';
+  // TEN9: check if preview mode is on then don't change diagramContainer position
+  if (this.theme != 'min') {
+    this.diagramContainer.style.top = tmp + diagContOffset.y + 'px';
+  }
+
   this.footerContainer.style.height = this.footerHeight + 'px';
   this.hsplit.style.top = this.sidebarContainer.style.top;
   this.hsplit.style.bottom = this.footerHeight + off + 'px';
   this.hsplit.style.left = effHsplitPosition + 'px';
   this.footerContainer.style.display = this.footerHeight == 0 ? 'none' : '';
 
-  if (this.tabContainer != null) {
+  // TEN9: check if minimal theme is on then don't change the tabContainer position
+  if (this.tabContainer != null && this.theme != 'min') {
     this.tabContainer.style.left = contLeft + 'px';
   }
 

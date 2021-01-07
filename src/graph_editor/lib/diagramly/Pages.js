@@ -436,7 +436,6 @@ EditorUi.prototype.initPages = function()
 					this.refresh(false);
 				}
 			}
-
 			graphViewValidateBackground.apply(graph.view, arguments);
 		});
 

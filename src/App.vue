@@ -18,7 +18,14 @@
 import GraphEditor from './graph_editor/components/GraphEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
+import {
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from '@vue/composition-api';
 import { debounce } from 'lodash';
 
 interface EventFileInfo {
@@ -326,6 +333,16 @@ export default defineComponent({
       addLog(fileLogEvent);
     }
 
+    watch(
+      () => theme.value,
+      (val: string) => {
+        if (val == 'min') {
+          document.getElementById('page').classList.remove('col-md-10');
+          document.getElementById('page').classList.add('col-md-12');
+        }
+      },
+    );
+
     return {
       addLog,
       editor,
@@ -351,7 +368,7 @@ export default defineComponent({
 <template lang="pug">
 #app
   .row
-    .col-md-2
+    .col-md-2(v-if='theme != "min"')
       b-list-group#logs-list.custom-list-group
         template(v-for='(log, index) in logs')
           table.custom-table(:key='index')
@@ -383,8 +400,8 @@ export default defineComponent({
                 b Modified
               td.table-details
                 | {{ getDateString(log.lastModified) }}
-    .col-md-10
-      .row-btn
+    #page.col-md-10
+      .row-btn(v-if='theme != "min"')
         button(@click='saveFile')
           | Save File
         open-file(@file-loaded='loadFileData')

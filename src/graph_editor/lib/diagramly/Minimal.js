@@ -38,6 +38,7 @@ const { Action } = require('../jgraph/Actions.js');
 const { Menu, Menubar } = require('../jgraph/Menus.js');
 const urlParams = {};
 const isLocalStorage = false;
+const IMAGE_PATH = '/images';
 /**
  * Code for the minimal UI theme.
  */
@@ -192,7 +193,7 @@ const isLocalStorage = false;
 			const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
 	        ui.formatWindow = new WrapperWindow(ui, mxResources.get('format'),
 	           Math.max(20, ui.diagramContainer.clientWidth + 240 - 12), 56,
-	           240, Math.min(566, newHeight), function(container)
+	           260, Math.min(566, newHeight), function(container)
 	        {
 	            var format = ui.createFormat(container);
 	            format.init();
@@ -267,58 +268,59 @@ const isLocalStorage = false;
 	                
 	                return elt;
 	            }
-	            
-				if (Editor.enableCustomLibraries && (urlParams['embed'] != '1' || urlParams['libraries'] == '1'))
-	            {
-					// Defined in native apps together with openLibrary
-					if (ui.actions.get('newLibrary') != null)
-					{
-			            var div = document.createElement('div');
-			            div.style.cssText = 'position:absolute;left:0px;width:50%;border-top:1px solid lightgray;' +
-			                'height:30px;bottom:0px;text-align:center;cursor:pointer;padding:0px;';
-			            div.className = 'geTitle';
-			            var span = document.createElement('span');
-			            span.style.cssText = 'position:relative;top:6px;';
-			            mxUtils.write(span, mxResources.get('newLibrary'));
-			            div.appendChild(span);
-			            container.appendChild(div);
+				
+				// TEN9: remove new library and open library button as we are not using it
+				// if (Editor.enableCustomLibraries && (urlParams['embed'] != '1' || urlParams['libraries'] == '1'))
+	            // {
+				// 	// Defined in native apps together with openLibrary
+				// 	if (ui.actions.get('newLibrary') != null)
+				// 	{
+			    //         var div = document.createElement('div');
+			    //         div.style.cssText = 'position:absolute;left:0px;width:50%;border-top:1px solid lightgray;' +
+			    //             'height:30px;bottom:0px;text-align:center;cursor:pointer;padding:0px;';
+			    //         div.className = 'geTitle';
+			    //         var span = document.createElement('span');
+			    //         span.style.cssText = 'position:relative;top:6px;';
+			    //         mxUtils.write(span, mxResources.get('newLibrary'));
+			    //         div.appendChild(span);
+			    //         container.appendChild(div);
 			            
-			            mxEvent.addListener(div, 'click', ui.actions.get('newLibrary').funct);
+			    //         mxEvent.addListener(div, 'click', ui.actions.get('newLibrary').funct);
 
-			            var div = document.createElement('div');
-			            div.style.cssText = 'position:absolute;left:50%;width:50%;border-top:1px solid lightgray;' +
-			                'height:30px;bottom:0px;text-align:center;cursor:pointer;padding:0px;border-left: 1px solid lightgray;';
-			            div.className = 'geTitle';
-			            var span = document.createElement('span');
-			            span.style.cssText = 'position:relative;top:6px;';
-			            mxUtils.write(span, mxResources.get('openLibrary'));
-			            div.appendChild(span);
-			            container.appendChild(div);
+			    //         var div = document.createElement('div');
+			    //         div.style.cssText = 'position:absolute;left:50%;width:50%;border-top:1px solid lightgray;' +
+			    //             'height:30px;bottom:0px;text-align:center;cursor:pointer;padding:0px;border-left: 1px solid lightgray;';
+			    //         div.className = 'geTitle';
+			    //         var span = document.createElement('span');
+			    //         span.style.cssText = 'position:relative;top:6px;';
+			    //         mxUtils.write(span, mxResources.get('openLibrary'));
+			    //         div.appendChild(span);
+			    //         container.appendChild(div);
 			            
-			            mxEvent.addListener(div, 'click', ui.actions.get('openLibrary').funct);
-					}
-					else
-					{
-						var elt = addMenu('newLibrary', mxResources.get('newLibrary'));
-						elt.style.boxSizing = 'border-box';
-						elt.style.paddingRight = '6px';
-						elt.style.paddingLeft = '6px';
-						elt.style.height = '32px';
-			            elt.style.left = '0';
+			    //         mxEvent.addListener(div, 'click', ui.actions.get('openLibrary').funct);
+				// 	}
+				// 	else
+				// 	{
+				// 		var elt = addMenu('newLibrary', mxResources.get('newLibrary'));
+				// 		elt.style.boxSizing = 'border-box';
+				// 		elt.style.paddingRight = '6px';
+				// 		elt.style.paddingLeft = '6px';
+				// 		elt.style.height = '32px';
+			    //         elt.style.left = '0';
 			            
-			            var elt = addMenu('openLibraryFrom', mxResources.get('openLibraryFrom'));
-			            elt.style.borderLeft = '1px solid lightgray';
-						elt.style.boxSizing = 'border-box';
-						elt.style.paddingRight = '6px';
-						elt.style.paddingLeft = '6px';
-						elt.style.height = '32px';
-			            elt.style.left = '50%';
-					}
-	            }
-				else
-				{
-					div.style.bottom = '0';
-				}
+			    //         var elt = addMenu('openLibraryFrom', mxResources.get('openLibraryFrom'));
+			    //         elt.style.borderLeft = '1px solid lightgray';
+				// 		elt.style.boxSizing = 'border-box';
+				// 		elt.style.paddingRight = '6px';
+				// 		elt.style.paddingLeft = '6px';
+				// 		elt.style.height = '32px';
+			    //         elt.style.left = '50%';
+				// 	}
+	            // }
+				// else
+				// {
+				//	div.style.bottom = '0';
+				//}
 
 	            container.appendChild(ui.sidebar.container);
 	            container.style.overflow = 'hidden';
@@ -820,50 +822,51 @@ const isLocalStorage = false;
         	ui.menus.addSubmenu('extras', menu, parent, mxResources.get('preferences'));
 			menu.addSeparator(parent);
 			
-			if (mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
-			{
-				ui.menus.addMenuItems(menu, ['new', 'open', '-', 'synchronize',
-					'-', 'save', 'saveAs', '-'], parent);
-			}
-			else if (urlParams['embed'] == '1')
-			{
-				ui.menus.addMenuItems(menu, ['-', 'save'], parent);
+			// if (mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
+			// {
+			// 	ui.menus.addMenuItems(menu, ['new', 'open', '-', 'synchronize',
+			// 		'-', 'save', 'saveAs', '-'], parent);
+			// }
+			// else if (urlParams['embed'] == '1')
+			// {
+			// 	ui.menus.addMenuItems(menu, ['-', 'save'], parent);
 
-				if (urlParams['saveAndExit'] == '1')
-				{
-					ui.menus.addMenuItems(menu, ['saveAndExit'], parent);
-				}
+			// 	if (urlParams['saveAndExit'] == '1')
+			// 	{
+			// 		ui.menus.addMenuItems(menu, ['saveAndExit'], parent);
+			// 	}
 				
-				menu.addSeparator(parent);
-			}
-			else
-			{
-	        	ui.menus.addMenuItems(menu, ['new'], parent);
-				ui.menus.addSubmenu('openFrom', menu, parent);
+			// 	menu.addSeparator(parent);
+			// }
+			// else
+			// {
+	        // 	ui.menus.addMenuItems(menu, ['new'], parent);
+			// 	ui.menus.addSubmenu('openFrom', menu, parent);
 			
-				if (isLocalStorage)
-				{
-					this.addSubmenu('openRecent', menu, parent);
-				}
+			// 	if (isLocalStorage)
+			// 	{
+			// 		this.addSubmenu('openRecent', menu, parent);
+			// 	}
 				
-				menu.addSeparator(parent);
+			// 	menu.addSeparator(parent);
 				
-				if (file != null && file.constructor == DriveFile)
-				{
-					ui.menus.addMenuItems(menu, ['share'], parent);
-				}
+			// 	if (file != null && file.constructor == DriveFile)
+			// 	{
+			// 		ui.menus.addMenuItems(menu, ['share'], parent);
+			// 	}
 				
-				if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
-					file != null && file.constructor != LocalFile)
-				{
-					ui.menus.addMenuItems(menu, ['synchronize'], parent);
-				}
+			// 	if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
+			// 		file != null && file.constructor != LocalFile)
+			// 	{
+			// 		ui.menus.addMenuItems(menu, ['synchronize'], parent);
+			// 	}
 				
-				menu.addSeparator(parent);
-				ui.menus.addSubmenu('save', menu, parent);
-			}
+			// 	menu.addSeparator(parent);
+			// 	ui.menus.addSubmenu('save', menu, parent);
+			// }
 			
-			ui.menus.addSubmenu('exportAs', menu, parent);
+			// TEN9: remove exportAs menu as we are not using it
+			//ui.menus.addSubmenu('exportAs', menu, parent);
 			    
             if (mxClient.IS_CHROMEAPP || EditorUi.isElectronApp)
             {
@@ -900,8 +903,8 @@ const isLocalStorage = false;
 			{
 				ui.menus.addMenuItems(menu, ['-', 'print', '-'], parent);
 			}
-			
-			ui.menus.addSubmenu('help', menu, parent);
+			// TEN9: remove help menu as we are not using it
+			//ui.menus.addSubmenu('help', menu, parent);
 
             if (urlParams['embed'] == '1')
 			{
@@ -1098,7 +1101,7 @@ const isLocalStorage = false;
 
         var menubar = document.createElement('div');
         // TEN9: Increase the hight of menubar
-		menubar.style.cssText = 'position:absolute;left:0px;right:0px;top:0px;height:40px;padding:8px;border-bottom:1px solid lightgray;background-color:#ffffff;text-align:left;white-space:nowrap;';
+		menubar.style.cssText = 'position:absolute;left:0px;right:0px;top:0px;height:50px;padding:8px;border-bottom:1px solid lightgray;background-color:#ffffff;text-align:left;white-space:nowrap;';
 
 		var before = null;
 		var menuObj = new Menubar(ui, menubar);

@@ -216,6 +216,7 @@ export default defineComponent({
           editorUi.value.setEnabled(true);
           editorUi.value.menus.init();
           editorUi.value.init();
+          editorUi.value.loadScratchpadData(props.scratchpadData);
           editorUi.value.fitToWindow();
         }
       },
