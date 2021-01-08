@@ -1769,7 +1769,8 @@ var BackgroundImageDialog = function(editorUi, applyFn, img)
 	};
 
 	var btns = document.createElement('div');
-	btns.style.marginTop = '40px';
+	// TEN9: remove scrollbar form dailogbox
+	btns.style.marginTop = '39px';
 	btns.style.textAlign = 'right';
 
 	var cancelBtn = mxUtils.button(mxResources.get('cancel'), function()

@@ -58,6 +58,7 @@ const {
   ParseDialog,
   TagsWindow,
 } = require('./Dialogs.js');
+const { mxDualRuler } = require('./mxRuler.js');
 const urlParams = {dev: "1",sync: "manual"};
 const isLocalStorage = false;
 const RESOURCE_BASE = '../../../../public/resources/dia';
@@ -3291,11 +3292,9 @@ DriveFile = function() {};
 			
 			this.addMenuItems(menu, ['shapes', '-', 'pageView', 'pageScale']);
 			this.addSubmenu('units', menu, parent);				
-			// TEN9: remove ruler from view menu
-			//this.addMenuItems(menu, ['-', 'scrollbars', 'tooltips', 'ruler', '-',
-			   // 'grid', 'guides'], parent);
-			this.addMenuItems(menu, ['-', 'scrollbars', 'tooltips', '-',
-			 'grid', 'guides'], parent);
+
+			this.addMenuItems(menu, ['-', 'scrollbars', 'tooltips', 'ruler', '-',
+			    'grid', 'guides'], parent);
 			
 			if (mxClient.IS_SVG && (document.documentMode == null || document.documentMode > 9))
 			{

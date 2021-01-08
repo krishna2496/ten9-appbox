@@ -355,8 +355,9 @@ const IMAGE_PATH = '/images';
         if (ui.sidebarWindow.window.isVisible())
         {
             ui.sidebarWindow.window.fit();
-        }
-        
+		}
+		// TEN9: to make sidebar at top position
+        ui.sidebarWindow.window.div.style.top = '56px';
 	};
 	
     // Changes colors for some UI elements
@@ -905,15 +906,15 @@ const IMAGE_PATH = '/images';
 			}
 			// TEN9: remove help menu as we are not using it
 			//ui.menus.addSubmenu('help', menu, parent);
-
-            if (urlParams['embed'] == '1')
-			{
-				ui.menus.addMenuItems(menu, ['-', 'exit'], parent);
-			}
-			else
-			{
-				ui.menus.addMenuItems(menu, ['-', 'close']);
-			}
+			// TEN9: remove exit menu as we are not using it
+            // if (urlParams['embed'] == '1')
+			// {
+			// 	ui.menus.addMenuItems(menu, ['-', 'exit'], parent);
+			// }
+			// else
+			// {
+			// 	ui.menus.addMenuItems(menu, ['-', 'close']);
+			// }
         })));
 
 		this.put('save', new Menu(mxUtils.bind(this, function(menu, parent)
@@ -1101,7 +1102,7 @@ const IMAGE_PATH = '/images';
 
         var menubar = document.createElement('div');
         // TEN9: Increase the hight of menubar
-		menubar.style.cssText = 'position:absolute;left:0px;right:0px;top:0px;height:50px;padding:8px;border-bottom:1px solid lightgray;background-color:#ffffff;text-align:left;white-space:nowrap;';
+		menubar.style.cssText = 'position:absolute;left:0px;right:0px;top:0px;height:47px;padding:8px;border-bottom:1px solid lightgray;background-color:#ffffff;text-align:left;white-space:nowrap;';
 
 		var before = null;
 		var menuObj = new Menubar(ui, menubar);
