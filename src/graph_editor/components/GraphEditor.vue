@@ -19,6 +19,7 @@ import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
+import { debounce } from 'lodash';
 require('../lib/diagramly/DrawioFile.js');
 require('../lib/diagramly/LocalFile.js');
 require('../lib/diagramly/EditorUi.js');
@@ -152,6 +153,26 @@ export default defineComponent({
       editorUi.value.removeListener(onScratchpadDataChanged);
     }
 
+    function getXmlData(): string {
+      app.value.currentFile.updateFileData();
+      const xmlData = app.value.currentFile.getData();
+      return xmlData;
+    }
+
+    function registerUndoListeners() {
+      const debounceDelay = 200;
+      const undoListener = debounce(() => {
+        ctx.emit('on-undo', getXmlData());
+      }, debounceDelay);
+
+      const redoListener = debounce(() => {
+        ctx.emit('on-redo', getXmlData());
+      }, debounceDelay);
+
+      editor.value.undoManager.addListener(mxEvent.UNDO, undoListener);
+      editor.value.undoManager.addListener(mxEvent.REDO, redoListener);
+    }
+
     onMounted(() => {
       mxResources.loadDefaultBundle = false;
       mxResources.parse(resourcesFile);
@@ -179,6 +200,8 @@ export default defineComponent({
         setGraphEnabled(props.enabled);
         editorUi.value.resetViewToShowFullGraph();
       });
+
+      registerUndoListeners();
     });
 
     onBeforeUnmount(() => {
@@ -200,12 +223,6 @@ export default defineComponent({
         sidebar.value.showEntries(val);
       },
     );
-
-    function getXmlData(): string {
-      app.value.currentFile.updateFileData();
-      const xmlData = app.value.currentFile.getData();
-      return xmlData;
-    }
 
     async function canLoadFile(file: File): Promise<boolean> {
       const ext = file.name.split('.').pop();

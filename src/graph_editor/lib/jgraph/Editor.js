@@ -791,10 +791,11 @@ Editor.prototype.createUndoManager = function () {
   var undoHandler = function (sender, evt) {
     var cand = graph.getSelectionCellsForChanges(
       evt.getProperty('edit').changes,
-      function (change) {
-        // Only selects changes to the cell hierarchy
-        return !(change instanceof mxChildChange);
-      },
+      // TEN9: Prevent ignore function that hinders event listeners.
+      // function () {
+      //   // Only selects changes to the cell hierarchy
+      //   return !(change instanceof mxChildChange);
+      // },
     );
 
     if (cand.length > 0) {

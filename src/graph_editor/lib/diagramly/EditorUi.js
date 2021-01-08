@@ -43,7 +43,7 @@ const { Spinner } = require('../spin/spin.js');
 
 // TEN9: TODO: Consolidate all constants
 // const urlParams = {dev: '1', sync: 'manual'};
-const urlParams = {};
+const urlParams = { 'ext-fonts': '1' };
 const isLocalStorage = false;
 const STYLE_PATH = 'styles';
 
