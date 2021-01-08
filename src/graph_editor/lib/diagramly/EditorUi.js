@@ -43,7 +43,7 @@ const { Spinner } = require('../spin/spin.js');
 
 // TEN9: TODO: Consolidate all constants
 // const urlParams = {dev: '1', sync: 'manual'};
-const urlParams = {};
+const urlParams = { 'ext-fonts': '1' };
 const isLocalStorage = false;
 const STYLE_PATH = 'styles';
 
@@ -424,7 +424,13 @@ var SelectedFile;
 	/**
 	 *
 	 */
-	EditorUi.prototype.emptyLibraryXml = '<mxlibrary>[]</mxlibrary>';
+  EditorUi.prototype.emptyLibraryXml = '<mxlibrary>[]</mxlibrary>';
+
+  /**
+   * In memory scratchpad library to save when toggling the scratchpad.
+   * See toggleScratchpad().
+   */
+  EditorUi.prototype.scratchpadData = EditorUi.prototype.emptyLibraryXml;
 
 	/**
 	 * Sets the delay for autosave in milliseconds. Default is 2000.
@@ -3001,7 +3007,16 @@ var SelectedFile;
 		// TEN9: make scratchpad enable
 		return true;
 		//return isLocalStorage || mxClient.IS_CHROMEAPP;
-	};
+  };
+
+  // TEN9: Open the scratchpad instead of toggle.
+  EditorUi.prototype.openScratchpad = function() {
+    if (this.isScratchpadEnabled()) {
+      if (!this.scratchpad) {
+        this.loadScratchpadData(this.scratchpadData || this.emptyLibraryXml);
+      }
+    }
+  }
 
 	/**
 	 * Shows or hides the scratchpad library.
@@ -3018,13 +3033,13 @@ var SelectedFile;
 				// 	{
 				// 		xml = this.emptyLibraryXml;
 				// 	}
-					
+
 				// 	// TEN9: load scratchpaddata function instead of loadlibrary
 				// 	//this.loadLibrary(new StorageLibrary(this, xml, '.scratchpad'));
 				// 	this.loadScratchpadData(xml);
 				// }));
-				// TEN9: reload the scratchpadData with localStorage
-				this.loadScratchpadData(window.localStorage.getItem('scratchpadData'));
+        // TEN9: reload the scratchpadData with localStorage
+        this.openScratchpad();
 			}
 			else
 			{
@@ -3168,8 +3183,9 @@ var SelectedFile;
 	// TEN9: load scratchpad data from the localstorage
 	EditorUi.prototype.loadScratchpadData = function(xml)
 	{
-		if(xml != '')
+		if(xml)
 		{
+      this.scratchpadData = xml;
 			var file = new StorageLibrary(this, xml, '.scratchpad');
 			if (file.title == '.scratchpad')
 			{
@@ -3311,7 +3327,6 @@ var SelectedFile;
 						spinBtn.style.marginTop = '-2px';
 						buttons.insertBefore(spinBtn, buttons.firstChild);
 						title.style.paddingRight = (buttons.childNodes.length * btnWidth) + 'px';
-						debugger
 						this.saveLibrary(file.getTitle(), images, file, file.getMode(), true, true, function()
 						{
 							if (spinBtn != null && spinBtn.parentNode != null)
@@ -3658,8 +3673,8 @@ var SelectedFile;
 
 		title.appendChild(buttons);
 		title.style.paddingRight = (buttons.childNodes.length * btnWidth) + 'px';
-		}	
-		
+		}
+
 	};
 
 	EditorUi.prototype.libraryLoaded = function(file, images, optionalTitle, expand)
@@ -9619,7 +9634,9 @@ var SelectedFile;
 			this.keyHandler.bindAction(75, true, 'insertEllipse', true); // Ctrl+Shift+K
 			this.altShiftActions[83] = 'synchronize'; // Alt+Shift+S
 
-			this.installImagePasteHandler();
+			// TEN9: Remove the default image paste handler.
+			//       We'll let the application handle it.
+			// this.installImagePasteHandler();
 
 			// TEN9: Save the handler so we can use it in some actions
 			// this.installNativeClipboardHandler();
@@ -10582,13 +10599,15 @@ var SelectedFile;
 						img.nodeType == mxConstants.NODETYPE_ELEMENT &&
 						img.nodeName == 'IMG')
 					{
-						var temp = img.getAttribute('src');
+            // TEN9: If paste is an image, do nothing.
+            return;
+						// var temp = img.getAttribute('src');
 
-						if (temp != null)
-						{
-							mxUtils.setTextContent(elt, temp);
-							asHtml = false;
-						}
+						// if (temp != null)
+						// {
+						// 	mxUtils.setTextContent(elt, temp);
+						// 	asHtml = false;
+						// }
 					}
 
 					if (asHtml)
