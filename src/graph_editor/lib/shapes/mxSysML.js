@@ -934,87 +934,63 @@ mxCellRenderer.registerShape(
 //**********************************************************************************************************************************************************
 //Package Containment
 //**********************************************************************************************************************************************************
-mxMarker.addMarker('sysMLPackCont', function (
-  c,
-  shape,
-  type,
-  pe,
-  unitX,
-  unitY,
-  size,
-  source,
-  sw,
-  filled,
-) {
-  var nx = unitX * (size + sw + 1);
-  var ny = unitY * (size + sw + 1);
-  var a = size / 2;
+mxMarker.addMarker(
+  'sysMLPackCont',
+  function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+    var nx = unitX * (size + sw + 1);
+    var ny = unitY * (size + sw + 1);
+    var a = size / 2;
 
-  return function () {
-    c.begin();
-    c.moveTo(pe.x - nx / 2 - ny / 2, pe.y - ny / 2 + nx / 2);
-    c.lineTo(pe.x - nx / 2 + ny / 2, pe.y - ny / 2 - nx / 2);
-    c.stroke();
-    c.ellipse(pe.x - 0.5 * nx - a, pe.y - 0.5 * ny - a, 2 * a, 2 * a);
-    c.stroke();
-  };
-});
+    return function () {
+      c.begin();
+      c.moveTo(pe.x - nx / 2 - ny / 2, pe.y - ny / 2 + nx / 2);
+      c.lineTo(pe.x - nx / 2 + ny / 2, pe.y - ny / 2 - nx / 2);
+      c.stroke();
+      c.ellipse(pe.x - 0.5 * nx - a, pe.y - 0.5 * ny - a, 2 * a, 2 * a);
+      c.stroke();
+    };
+  },
+);
 
 //**********************************************************************************************************************************************************
 //Required Interface
 //**********************************************************************************************************************************************************
-mxMarker.addMarker('sysMLReqInt', function (
-  c,
-  shape,
-  type,
-  pe,
-  unitX,
-  unitY,
-  size,
-  source,
-  sw,
-  filled,
-) {
-  var nx = unitX * (size + sw + 1);
-  var ny = unitY * (size + sw + 1);
-  var a = size / 2;
+mxMarker.addMarker(
+  'sysMLReqInt',
+  function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+    var nx = unitX * (size + sw + 1);
+    var ny = unitY * (size + sw + 1);
+    var a = size / 2;
 
-  return function () {
-    var fillColor = mxUtils.getValue(shape.style, mxConstants.STYLE_FILLCOLOR, 'none');
-    c.setFillColor(fillColor);
-    c.ellipse(pe.x - 0.5 * nx - a, pe.y - 0.5 * ny - a, 2 * a, 2 * a);
-    c.fillAndStroke();
-  };
-});
+    return function () {
+      var fillColor = mxUtils.getValue(shape.style, mxConstants.STYLE_FILLCOLOR, 'none');
+      c.setFillColor(fillColor);
+      c.ellipse(pe.x - 0.5 * nx - a, pe.y - 0.5 * ny - a, 2 * a, 2 * a);
+      c.fillAndStroke();
+    };
+  },
+);
 
 //**********************************************************************************************************************************************************
 //Provided Interface
 //**********************************************************************************************************************************************************
-mxMarker.addMarker('sysMLProvInt', function (
-  c,
-  shape,
-  type,
-  pe,
-  unitX,
-  unitY,
-  size,
-  source,
-  sw,
-  filled,
-) {
-  var nx = unitX * (size + sw + 1);
-  var ny = unitY * (size + sw + 1);
-  var a = size / 2;
+mxMarker.addMarker(
+  'sysMLProvInt',
+  function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+    var nx = unitX * (size + sw + 1);
+    var ny = unitY * (size + sw + 1);
+    var a = size / 2;
 
-  return function () {
-    var fillColor = mxUtils.getValue(shape.style, mxConstants.STYLE_FILLCOLOR, 'none');
-    c.setFillColor(fillColor);
-    c.begin();
-    c.moveTo(pe.x - ny / 2, pe.y + nx / 2);
-    c.arcTo(a, a, 0, 0, 1, pe.x + ny / 2, pe.y - nx / 2);
-    c.fillAndStroke();
-  };
-});
+    return function () {
+      var fillColor = mxUtils.getValue(shape.style, mxConstants.STYLE_FILLCOLOR, 'none');
+      c.setFillColor(fillColor);
+      c.begin();
+      c.moveTo(pe.x - ny / 2, pe.y + nx / 2);
+      c.arcTo(a, a, 0, 0, 1, pe.x + ny / 2, pe.y - nx / 2);
+      c.fillAndStroke();
+    };
+  },
+);
 
 //**********************************************************************************************************************************************************
 //Parametric Diagram
@@ -2525,64 +2501,48 @@ mxCellRenderer.registerShape(mxShapeSysMLDimension.prototype.cst.DIMENSION, mxSh
 //**********************************************************************************************************************************************************
 //Lost marker
 //**********************************************************************************************************************************************************
-mxMarker.addMarker('sysMLLost', function (
-  c,
-  shape,
-  type,
-  pe,
-  unitX,
-  unitY,
-  size,
-  source,
-  sw,
-  filled,
-) {
-  var nx = unitX * (size + sw + 1);
-  var ny = unitY * (size + sw + 1);
-  var a = size / 2;
+mxMarker.addMarker(
+  'sysMLLost',
+  function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+    var nx = unitX * (size + sw + 1);
+    var ny = unitY * (size + sw + 1);
+    var a = size / 2;
 
-  return function () {
-    c.begin();
-    c.moveTo(pe.x - 1.5 * nx - ny / 2, pe.y - 1.5 * ny + nx / 2);
-    c.lineTo(pe.x - nx / 2, pe.y - ny / 2);
-    c.lineTo(pe.x - 1.5 * nx + ny / 2, pe.y - 1.5 * ny - nx / 2);
-    c.stroke();
+    return function () {
+      c.begin();
+      c.moveTo(pe.x - 1.5 * nx - ny / 2, pe.y - 1.5 * ny + nx / 2);
+      c.lineTo(pe.x - nx / 2, pe.y - ny / 2);
+      c.lineTo(pe.x - 1.5 * nx + ny / 2, pe.y - 1.5 * ny - nx / 2);
+      c.stroke();
 
-    c.ellipse(pe.x - 0.5 * nx - a, pe.y - 0.5 * ny - a, 2 * a, 2 * a);
+      c.ellipse(pe.x - 0.5 * nx - a, pe.y - 0.5 * ny - a, 2 * a, 2 * a);
 
-    var strokeColor = mxUtils.getValue(shape.style, mxConstants.STYLE_STROKECOLOR, '#000000');
-    c.setFillColor(strokeColor);
-    c.fillAndStroke();
-  };
-});
+      var strokeColor = mxUtils.getValue(shape.style, mxConstants.STYLE_STROKECOLOR, '#000000');
+      c.setFillColor(strokeColor);
+      c.fillAndStroke();
+    };
+  },
+);
 
 //**********************************************************************************************************************************************************
 //Found marker
 //**********************************************************************************************************************************************************
-mxMarker.addMarker('sysMLFound', function (
-  c,
-  shape,
-  type,
-  pe,
-  unitX,
-  unitY,
-  size,
-  source,
-  sw,
-  filled,
-) {
-  var nx = unitX * (size + sw + 1);
-  var ny = unitY * (size + sw + 1);
-  var a = size / 2;
+mxMarker.addMarker(
+  'sysMLFound',
+  function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+    var nx = unitX * (size + sw + 1);
+    var ny = unitY * (size + sw + 1);
+    var a = size / 2;
 
-  return function () {
-    c.ellipse(pe.x - 0.5 * nx - a, pe.y - 0.5 * ny - a, 2 * a, 2 * a);
+    return function () {
+      c.ellipse(pe.x - 0.5 * nx - a, pe.y - 0.5 * ny - a, 2 * a, 2 * a);
 
-    var strokeColor = mxUtils.getValue(shape.style, mxConstants.STYLE_STROKECOLOR, '#000000');
-    c.setFillColor(strokeColor);
-    c.fillAndStroke();
-  };
-});
+      var strokeColor = mxUtils.getValue(shape.style, mxConstants.STYLE_STROKECOLOR, '#000000');
+      c.setFillColor(strokeColor);
+      c.fillAndStroke();
+    };
+  },
+);
 
 //**********************************************************************************************************************************************************
 //Composite State
