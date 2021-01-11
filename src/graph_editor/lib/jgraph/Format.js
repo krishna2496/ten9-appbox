@@ -6910,70 +6910,73 @@ DiagramStylePanel.prototype.addView = function (div) {
   btn.style.maxWidth = '90px';
   right.appendChild(btn);
 
-  var createPreview = mxUtils.bind(
-    this,
-    function (commonStyle, vertexStyle, edgeStyle, graphStyle, container) {
-      // Wrapper needed to catch events
-      var div = document.createElement('div');
-      div.style.cssText =
-        'position:absolute;display:inline-block;width:100%;height:100%;overflow:hidden;pointer-events:none;';
-      container.appendChild(div);
+  var createPreview = mxUtils.bind(this, function (
+    commonStyle,
+    vertexStyle,
+    edgeStyle,
+    graphStyle,
+    container,
+  ) {
+    // Wrapper needed to catch events
+    var div = document.createElement('div');
+    div.style.cssText =
+      'position:absolute;display:inline-block;width:100%;height:100%;overflow:hidden;pointer-events:none;';
+    container.appendChild(div);
 
-      var graph2 = new Graph(div, null, null, graph.getStylesheet());
-      graph2.resetViewOnRootChange = false;
-      graph2.foldingEnabled = false;
-      graph2.gridEnabled = false;
-      graph2.autoScroll = false;
-      graph2.setTooltips(false);
-      graph2.setConnectable(false);
-      graph2.setPanning(false);
-      graph2.setEnabled(false);
+    var graph2 = new Graph(div, null, null, graph.getStylesheet());
+    graph2.resetViewOnRootChange = false;
+    graph2.foldingEnabled = false;
+    graph2.gridEnabled = false;
+    graph2.autoScroll = false;
+    graph2.setTooltips(false);
+    graph2.setConnectable(false);
+    graph2.setPanning(false);
+    graph2.setEnabled(false);
 
-      graph2.getCellStyle = function (cell) {
-        var result = mxUtils.clone(Graph.prototype.getCellStyle.apply(this, arguments));
-        var defaultStyle = graph.stylesheet.getDefaultVertexStyle();
-        var appliedStyle = vertexStyle;
+    graph2.getCellStyle = function (cell) {
+      var result = mxUtils.clone(Graph.prototype.getCellStyle.apply(this, arguments));
+      var defaultStyle = graph.stylesheet.getDefaultVertexStyle();
+      var appliedStyle = vertexStyle;
 
-        if (model.isEdge(cell)) {
-          defaultStyle = graph.stylesheet.getDefaultEdgeStyle();
-          appliedStyle = edgeStyle;
-        }
-
-        removeStyles(result, defaultStyles, defaultStyle);
-        applyStyle(commonStyle, result, cell, graphStyle, graph2);
-        applyStyle(appliedStyle, result, cell, graphStyle, graph2);
-
-        return result;
-      };
-
-      // Avoid HTML labels to capture events in bubble phase
-      graph2.model.beginUpdate();
-      try {
-        var v1 = graph2.insertVertex(
-          graph2.getDefaultParent(),
-          null,
-          'Shape',
-          14,
-          8,
-          70,
-          40,
-          'strokeWidth=2;',
-        );
-        var e1 = graph2.insertEdge(
-          graph2.getDefaultParent(),
-          null,
-          'Connector',
-          v1,
-          v1,
-          'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endSize=5;strokeWidth=2;',
-        );
-        e1.geometry.points = [new mxPoint(32, 70)];
-        e1.geometry.offset = new mxPoint(0, 8);
-      } finally {
-        graph2.model.endUpdate();
+      if (model.isEdge(cell)) {
+        defaultStyle = graph.stylesheet.getDefaultEdgeStyle();
+        appliedStyle = edgeStyle;
       }
-    },
-  );
+
+      removeStyles(result, defaultStyles, defaultStyle);
+      applyStyle(commonStyle, result, cell, graphStyle, graph2);
+      applyStyle(appliedStyle, result, cell, graphStyle, graph2);
+
+      return result;
+    };
+
+    // Avoid HTML labels to capture events in bubble phase
+    graph2.model.beginUpdate();
+    try {
+      var v1 = graph2.insertVertex(
+        graph2.getDefaultParent(),
+        null,
+        'Shape',
+        14,
+        8,
+        70,
+        40,
+        'strokeWidth=2;',
+      );
+      var e1 = graph2.insertEdge(
+        graph2.getDefaultParent(),
+        null,
+        'Connector',
+        v1,
+        v1,
+        'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endSize=5;strokeWidth=2;',
+      );
+      e1.geometry.points = [new mxPoint(32, 70)];
+      e1.geometry.offset = new mxPoint(0, 8);
+    } finally {
+      graph2.model.endUpdate();
+    }
+  });
 
   // Entries
   var entries = document.createElement('div');
@@ -6985,140 +6988,140 @@ DiagramStylePanel.prototype.addView = function (div) {
     this.format.cachedStyleEntries = [];
   }
 
-  var addEntry = mxUtils.bind(
-    this,
-    function (commonStyle, vertexStyle, edgeStyle, graphStyle, index) {
-      var panel = this.format.cachedStyleEntries[index];
+  var addEntry = mxUtils.bind(this, function (
+    commonStyle,
+    vertexStyle,
+    edgeStyle,
+    graphStyle,
+    index,
+  ) {
+    var panel = this.format.cachedStyleEntries[index];
 
-      if (panel == null) {
-        panel = document.createElement('div');
-        panel.style.cssText =
-          'display:inline-block;position:relative;width:96px;height:90px;' +
-          'cursor:pointer;border:1px solid gray;margin:2px;overflow:hidden;';
+    if (panel == null) {
+      panel = document.createElement('div');
+      panel.style.cssText =
+        'display:inline-block;position:relative;width:96px;height:90px;' +
+        'cursor:pointer;border:1px solid gray;margin:2px;overflow:hidden;';
 
-        if (graphStyle != null && graphStyle.background != null) {
-          panel.style.backgroundColor = graphStyle.background;
-        }
-
-        createPreview(commonStyle, vertexStyle, edgeStyle, graphStyle, panel);
-
-        mxEvent.addGestureListeners(
-          panel,
-          mxUtils.bind(this, function (evt) {
-            panel.style.opacity = 0.5;
-          }),
-          null,
-          mxUtils.bind(this, function (evt) {
-            panel.style.opacity = 1;
-            graph.defaultVertexStyle = mxUtils.clone(ui.initialDefaultVertexStyle);
-            graph.defaultEdgeStyle = mxUtils.clone(ui.initialDefaultEdgeStyle);
-
-            applyStyle(commonStyle, graph.defaultVertexStyle);
-            applyStyle(commonStyle, graph.defaultEdgeStyle);
-            applyStyle(vertexStyle, graph.defaultVertexStyle);
-            applyStyle(edgeStyle, graph.defaultEdgeStyle);
-            ui.clearDefaultStyle();
-
-            if (sketch) {
-              graph.currentEdgeStyle['sketch'] = '1';
-              graph.currentVertexStyle['sketch'] = '1';
-            } else {
-              graph.currentEdgeStyle['sketch'] = '0';
-              graph.currentVertexStyle['sketch'] = '0';
-            }
-
-            if (rounded) {
-              graph.currentVertexStyle['rounded'] = '1';
-              graph.currentEdgeStyle['rounded'] = '1';
-            } else {
-              graph.currentVertexStyle['rounded'] = '0';
-              graph.currentEdgeStyle['rounded'] = '1';
-            }
-
-            if (curved) {
-              graph.currentEdgeStyle['curved'] = '1';
-            } else {
-              graph.currentEdgeStyle['curved'] = '0';
-            }
-
-            model.beginUpdate();
-            try {
-              updateCells(defaultStyles, graphStyle);
-
-              var change = new ChangePageSetup(
-                ui,
-                graphStyle != null ? graphStyle.background : null,
-              );
-              change.ignoreImage = true;
-              model.execute(change);
-
-              model.execute(
-                new ChangeGridColor(
-                  ui,
-                  graphStyle != null && graphStyle.gridColor != null
-                    ? graphStyle.gridColor
-                    : graph.view.defaultGridColor,
-                ),
-              );
-            } finally {
-              model.endUpdate();
-            }
-          }),
-        );
-
-        mxEvent.addListener(
-          panel,
-          'mouseenter',
-          mxUtils.bind(this, function (evt) {
-            var prev = graph.getCellStyle;
-            var prevBg = graph.background;
-            var prevGrid = graph.view.gridColor;
-
-            graph.background = graphStyle != null ? graphStyle.background : null;
-            graph.view.gridColor =
-              graphStyle != null && graphStyle.gridColor != null
-                ? graphStyle.gridColor
-                : graph.view.defaultGridColor;
-
-            graph.getCellStyle = function (cell) {
-              var result = mxUtils.clone(prev.apply(this, arguments));
-
-              var defaultStyle = graph.stylesheet.getDefaultVertexStyle();
-              var appliedStyle = vertexStyle;
-
-              if (model.isEdge(cell)) {
-                defaultStyle = graph.stylesheet.getDefaultEdgeStyle();
-                appliedStyle = edgeStyle;
-              }
-
-              removeStyles(result, defaultStyles, defaultStyle);
-              applyStyle(commonStyle, result, cell, graphStyle);
-              applyStyle(appliedStyle, result, cell, graphStyle);
-
-              return result;
-            };
-
-            graph.refresh();
-            graph.getCellStyle = prev;
-            graph.background = prevBg;
-            graph.view.gridColor = prevGrid;
-          }),
-        );
-
-        mxEvent.addListener(
-          panel,
-          'mouseleave',
-          mxUtils.bind(this, function (evt) {
-            graph.refresh();
-          }),
-        );
-
-        this.format.cachedStyleEntries[index] = panel;
+      if (graphStyle != null && graphStyle.background != null) {
+        panel.style.backgroundColor = graphStyle.background;
       }
 
-      entries.appendChild(panel);
-    },
-  );
+      createPreview(commonStyle, vertexStyle, edgeStyle, graphStyle, panel);
+
+      mxEvent.addGestureListeners(
+        panel,
+        mxUtils.bind(this, function (evt) {
+          panel.style.opacity = 0.5;
+        }),
+        null,
+        mxUtils.bind(this, function (evt) {
+          panel.style.opacity = 1;
+          graph.defaultVertexStyle = mxUtils.clone(ui.initialDefaultVertexStyle);
+          graph.defaultEdgeStyle = mxUtils.clone(ui.initialDefaultEdgeStyle);
+
+          applyStyle(commonStyle, graph.defaultVertexStyle);
+          applyStyle(commonStyle, graph.defaultEdgeStyle);
+          applyStyle(vertexStyle, graph.defaultVertexStyle);
+          applyStyle(edgeStyle, graph.defaultEdgeStyle);
+          ui.clearDefaultStyle();
+
+          if (sketch) {
+            graph.currentEdgeStyle['sketch'] = '1';
+            graph.currentVertexStyle['sketch'] = '1';
+          } else {
+            graph.currentEdgeStyle['sketch'] = '0';
+            graph.currentVertexStyle['sketch'] = '0';
+          }
+
+          if (rounded) {
+            graph.currentVertexStyle['rounded'] = '1';
+            graph.currentEdgeStyle['rounded'] = '1';
+          } else {
+            graph.currentVertexStyle['rounded'] = '0';
+            graph.currentEdgeStyle['rounded'] = '1';
+          }
+
+          if (curved) {
+            graph.currentEdgeStyle['curved'] = '1';
+          } else {
+            graph.currentEdgeStyle['curved'] = '0';
+          }
+
+          model.beginUpdate();
+          try {
+            updateCells(defaultStyles, graphStyle);
+
+            var change = new ChangePageSetup(ui, graphStyle != null ? graphStyle.background : null);
+            change.ignoreImage = true;
+            model.execute(change);
+
+            model.execute(
+              new ChangeGridColor(
+                ui,
+                graphStyle != null && graphStyle.gridColor != null
+                  ? graphStyle.gridColor
+                  : graph.view.defaultGridColor,
+              ),
+            );
+          } finally {
+            model.endUpdate();
+          }
+        }),
+      );
+
+      mxEvent.addListener(
+        panel,
+        'mouseenter',
+        mxUtils.bind(this, function (evt) {
+          var prev = graph.getCellStyle;
+          var prevBg = graph.background;
+          var prevGrid = graph.view.gridColor;
+
+          graph.background = graphStyle != null ? graphStyle.background : null;
+          graph.view.gridColor =
+            graphStyle != null && graphStyle.gridColor != null
+              ? graphStyle.gridColor
+              : graph.view.defaultGridColor;
+
+          graph.getCellStyle = function (cell) {
+            var result = mxUtils.clone(prev.apply(this, arguments));
+
+            var defaultStyle = graph.stylesheet.getDefaultVertexStyle();
+            var appliedStyle = vertexStyle;
+
+            if (model.isEdge(cell)) {
+              defaultStyle = graph.stylesheet.getDefaultEdgeStyle();
+              appliedStyle = edgeStyle;
+            }
+
+            removeStyles(result, defaultStyles, defaultStyle);
+            applyStyle(commonStyle, result, cell, graphStyle);
+            applyStyle(appliedStyle, result, cell, graphStyle);
+
+            return result;
+          };
+
+          graph.refresh();
+          graph.getCellStyle = prev;
+          graph.background = prevBg;
+          graph.view.gridColor = prevGrid;
+        }),
+      );
+
+      mxEvent.addListener(
+        panel,
+        'mouseleave',
+        mxUtils.bind(this, function (evt) {
+          graph.refresh();
+        }),
+      );
+
+      this.format.cachedStyleEntries[index] = panel;
+    }
+
+    entries.appendChild(panel);
+  });
 
   // Maximum palettes to switch the switcher
   var maxEntries = 10;
@@ -7638,24 +7641,21 @@ DiagramFormatPanel.prototype.addPaperSize = function (div) {
 
   div.appendChild(this.createTitle(mxResources.get('paperSize')));
 
-  var accessor = PageSetupDialog.addPageFormatPanel(
-    div,
-    'formatpanel',
-    graph.pageFormat,
-    function (pageFormat) {
-      if (
-        graph.pageFormat == null ||
-        graph.pageFormat.width != pageFormat.width ||
-        graph.pageFormat.height != pageFormat.height
-      ) {
-        var change = new ChangePageSetup(ui, null, null, pageFormat);
-        change.ignoreColor = true;
-        change.ignoreImage = true;
+  var accessor = PageSetupDialog.addPageFormatPanel(div, 'formatpanel', graph.pageFormat, function (
+    pageFormat,
+  ) {
+    if (
+      graph.pageFormat == null ||
+      graph.pageFormat.width != pageFormat.width ||
+      graph.pageFormat.height != pageFormat.height
+    ) {
+      var change = new ChangePageSetup(ui, null, null, pageFormat);
+      change.ignoreColor = true;
+      change.ignoreImage = true;
 
-        graph.model.execute(change);
-      }
-    },
-  );
+      graph.model.execute(change);
+    }
+  });
 
   this.addKeyHandler(accessor.widthInput, function () {
     accessor.set(graph.pageFormat);

@@ -651,14 +651,11 @@ Actions.prototype.init = function () {
           }
         }
 
-        var dlg = new TextareaDialog(
-          ui,
-          mxResources.get('editTooltip') + ':',
-          tooltip,
-          function (newValue) {
-            graph.setTooltipForCell(cell, newValue);
-          },
-        );
+        var dlg = new TextareaDialog(ui, mxResources.get('editTooltip') + ':', tooltip, function (
+          newValue,
+        ) {
+          graph.setTooltipForCell(cell, newValue);
+        });
         ui.showDialog(dlg.container, 320, 200, true, true);
         dlg.init();
       }

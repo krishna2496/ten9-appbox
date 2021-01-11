@@ -1060,6 +1060,13 @@ Menus.prototype.addInsertTableItem = function (menu, insertFn, parent) {
     }),
   );
   mxEvent.addListener(picker, 'mouseover', mouseover);
+  // TEN9: remove extra space from the table menu
+  if (this.editorUi.theme == 'min') {
+    let firstTd = elt2.lastChild;
+    let secondTd = firstTd.previousSibling;
+    firstTd.style.display = 'none';
+    secondTd.style.display = 'none';
+  }
 };
 
 /**

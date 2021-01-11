@@ -332,7 +332,7 @@ const IMAGE_PATH = '/images';
 				ui.diagramContainer.style.left = '0px';
 				ui.tabContainer.style.left = '0px';
 				ui.toolbarContainer.style.display = 'none';
-				ui.fitToWindow();
+				ui.actions.get('fitWindow').funct();
 				
 
 
