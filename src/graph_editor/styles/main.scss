@@ -17,3 +17,11 @@
 @import 'grapheditor';
 @import 'format_panel';
 @import 'stepper';
+
+.geEditor {
+  &.preview-mode {
+    .geTabContainer {
+      left: 0 !important;
+    }
+  }
+}

@@ -19,6 +19,7 @@ import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
+import { debounce } from 'lodash';
 require('../lib/diagramly/DrawioFile.js');
 require('../lib/diagramly/LocalFile.js');
 require('../lib/diagramly/EditorUi.js');
@@ -112,6 +113,12 @@ export default defineComponent({
 
     function setGraphEnabled(enabled: boolean) {
       editorUi.value.setEnabled(enabled);
+
+      /**
+       * When scratchpad is enabled, open it when toggling from preview and
+       * edit modes.
+       */
+      editorUi.value.openScratchpad();
       if (!enabled) {
         graph.value.clearSelection();
       }
@@ -157,6 +164,26 @@ export default defineComponent({
       editorUi.value.removeListener(onThemeChanged);
     }
 
+    function getXmlData(): string {
+      app.value.currentFile.updateFileData();
+      const xmlData = app.value.currentFile.getData();
+      return xmlData;
+    }
+
+    function registerUndoListeners() {
+      const debounceDelay = 200;
+      const undoListener = debounce(() => {
+        ctx.emit('on-undo', getXmlData());
+      }, debounceDelay);
+
+      const redoListener = debounce(() => {
+        ctx.emit('on-redo', getXmlData());
+      }, debounceDelay);
+
+      editor.value.undoManager.addListener(mxEvent.UNDO, undoListener);
+      editor.value.undoManager.addListener(mxEvent.REDO, redoListener);
+    }
+
     onMounted(() => {
       mxResources.loadDefaultBundle = false;
       mxResources.parse(resourcesFile);
@@ -182,8 +209,10 @@ export default defineComponent({
 
       nextTick(() => {
         setGraphEnabled(props.enabled);
-        editorUi.value.fitToWindow();
+        editorUi.value.resetViewToShowFullGraph();
       });
+
+      registerUndoListeners();
     });
 
     onBeforeUnmount(() => {
@@ -222,12 +251,6 @@ export default defineComponent({
       },
     );
 
-    function getXmlData(): string {
-      app.value.currentFile.updateFileData();
-      const xmlData = app.value.currentFile.getData();
-      return xmlData;
-    }
-
     async function canLoadFile(file: File): Promise<boolean> {
       const ext = file.name.split('.').pop();
       if (ext === 'draw' || ext === 'drawio' || ext === 'xml' || file.type.startsWith('text/')) {
@@ -246,7 +269,7 @@ export default defineComponent({
       // Reset the view after loading a file
       nextTick(() => {
         setGraphEnabled(props.enabled);
-        editorUi.value.fitToWindow();
+        editorUi.value.resetViewToShowFullGraph();
       });
     }
 
@@ -412,7 +435,7 @@ export default defineComponent({
       (val) => {
         nextTick(() => {
           setGraphEnabled(val);
-          editorUi.value.fitToWindow();
+          editorUi.value.resetViewToShowFullGraph();
         });
       },
     );
