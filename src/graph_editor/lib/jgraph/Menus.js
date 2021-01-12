@@ -999,6 +999,9 @@ Menus.prototype.addInsertTableItem = function (menu, insertFn, parent, isformatP
   label.style.padding = '4px';
   label.style.fontSize = Menus.prototype.defaultFontSize + 'px';
   label.innerHTML = '1x1';
+  if (this.editorUi.theme == 'min' && isformatPanel == undefined) {
+    label.style.paddingBottom = '17px';
+  }
   elt2.firstChild.appendChild(label);
 
   function mouseover(e) {

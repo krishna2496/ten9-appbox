@@ -412,6 +412,14 @@ export default defineComponent({
           @change='onPreviewModeChanged'
         )
         label.ml-1(for='preview') Preview Mode
+      .row-btn(v-else)
+        input#preview.mt-1.ml-4(
+          type='checkbox',
+          name='preview',
+          value='preview',
+          @change='onPreviewModeChanged'
+        )
+        label.ml-1(for='preview') Preview Mode
       #container.ge-container
         graph-editor(
           ref='editor',

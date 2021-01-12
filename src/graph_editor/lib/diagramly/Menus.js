@@ -341,30 +341,29 @@ DriveFile = function () {};
     editorUi.actions.put(
       'exportUrl',
       new Action(mxResources.get('url') + '...', function () {
-        editorUi.showPublishLinkDialog(mxResources.get('url'), true, null, null, function (
-          linkTarget,
-          linkColor,
-          allPages,
-          lightbox,
-          editLink,
-          layers,
-        ) {
-          var dlg = new EmbedDialog(
-            editorUi,
-            editorUi.createLink(
-              linkTarget,
-              linkColor,
-              allPages,
-              lightbox,
-              editLink,
-              layers,
-              null,
-              true,
-            ),
-          );
-          editorUi.showDialog(dlg.container, 440, 240, true, true);
-          dlg.init();
-        });
+        editorUi.showPublishLinkDialog(
+          mxResources.get('url'),
+          true,
+          null,
+          null,
+          function (linkTarget, linkColor, allPages, lightbox, editLink, layers) {
+            var dlg = new EmbedDialog(
+              editorUi,
+              editorUi.createLink(
+                linkTarget,
+                linkColor,
+                allPages,
+                lightbox,
+                editLink,
+                layers,
+                null,
+                true,
+              ),
+            );
+            editorUi.showDialog(dlg.container, 440, 240, true, true);
+            dlg.init();
+          },
+        );
       }),
     );
 
@@ -375,19 +374,11 @@ DriveFile = function () {};
           editorUi.getPublicUrl(editorUi.getCurrentFile(), function (url) {
             editorUi.spinner.stop();
 
-            editorUi.showHtmlDialog(mxResources.get('export'), null, url, function (
-              publicUrl,
-              zoomEnabled,
-              initialZoom,
-              linkTarget,
-              linkColor,
-              fit,
-              allPages,
-              layers,
-              lightbox,
-              editLink,
-            ) {
-              editorUi.createHtml(
+            editorUi.showHtmlDialog(
+              mxResources.get('export'),
+              null,
+              url,
+              function (
                 publicUrl,
                 zoomEnabled,
                 initialZoom,
@@ -398,22 +389,35 @@ DriveFile = function () {};
                 layers,
                 lightbox,
                 editLink,
-                mxUtils.bind(this, function (html, scriptTag) {
-                  var basename = editorUi.getBaseFilename(allPages);
-                  var result =
-                    '<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=5,IE=9" ><![endif]-->\n' +
-                    '<!DOCTYPE html>\n<html>\n<head>\n<title>' +
-                    mxUtils.htmlEntities(basename) +
-                    '</title>\n' +
-                    '<meta charset="utf-8"/>\n</head>\n<body>' +
-                    html +
-                    '\n' +
-                    scriptTag +
-                    '\n</body>\n</html>';
-                  editorUi.saveData(basename + '.html', 'html', result, 'text/html');
-                }),
-              );
-            });
+              ) {
+                editorUi.createHtml(
+                  publicUrl,
+                  zoomEnabled,
+                  initialZoom,
+                  linkTarget,
+                  linkColor,
+                  fit,
+                  allPages,
+                  layers,
+                  lightbox,
+                  editLink,
+                  mxUtils.bind(this, function (html, scriptTag) {
+                    var basename = editorUi.getBaseFilename(allPages);
+                    var result =
+                      '<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=5,IE=9" ><![endif]-->\n' +
+                      '<!DOCTYPE html>\n<html>\n<head>\n<title>' +
+                      mxUtils.htmlEntities(basename) +
+                      '</title>\n' +
+                      '<meta charset="utf-8"/>\n</head>\n<body>' +
+                      html +
+                      '\n' +
+                      scriptTag +
+                      '\n</body>\n</html>';
+                    editorUi.saveData(basename + '.html', 'html', result, 'text/html');
+                  }),
+                );
+              },
+            );
           });
         }
       }),
@@ -776,38 +780,41 @@ DriveFile = function () {};
           true,
           mxResources.get('export'),
           'https://desk.draw.io/support/solutions/articles/16000067785',
-          mxUtils.bind(this, function (
-            scale,
-            transparentBackground,
-            ignoreSelection,
-            addShadow,
-            editable,
-            embedImages,
-            border,
-            cropImage,
-            currentPage,
-            linkTarget,
-            grid,
-            keepTheme,
-          ) {
-            var val = parseInt(scale);
+          mxUtils.bind(
+            this,
+            function (
+              scale,
+              transparentBackground,
+              ignoreSelection,
+              addShadow,
+              editable,
+              embedImages,
+              border,
+              cropImage,
+              currentPage,
+              linkTarget,
+              grid,
+              keepTheme,
+            ) {
+              var val = parseInt(scale);
 
-            if (!isNaN(val) && val > 0) {
-              editorUi.exportSvg(
-                val / 100,
-                transparentBackground,
-                ignoreSelection,
-                addShadow,
-                editable,
-                embedImages,
-                border,
-                !cropImage,
-                false,
-                linkTarget,
-                keepTheme,
-              );
-            }
-          }),
+              if (!isNaN(val) && val > 0) {
+                editorUi.exportSvg(
+                  val / 100,
+                  transparentBackground,
+                  ignoreSelection,
+                  addShadow,
+                  editable,
+                  embedImages,
+                  border,
+                  !cropImage,
+                  false,
+                  linkTarget,
+                  keepTheme,
+                );
+              }
+            },
+          ),
           true,
           null,
           'svg',
@@ -824,39 +831,42 @@ DriveFile = function () {};
             false,
             mxResources.get('export'),
             'https://desk.draw.io/support/solutions/articles/16000067785',
-            mxUtils.bind(this, function (
-              scale,
-              transparentBackground,
-              ignoreSelection,
-              addShadow,
-              editable,
-              embedImages,
-              border,
-              cropImage,
-              currentPage,
-              dummy,
-              grid,
-              keepTheme,
-            ) {
-              var val = parseInt(scale);
+            mxUtils.bind(
+              this,
+              function (
+                scale,
+                transparentBackground,
+                ignoreSelection,
+                addShadow,
+                editable,
+                embedImages,
+                border,
+                cropImage,
+                currentPage,
+                dummy,
+                grid,
+                keepTheme,
+              ) {
+                var val = parseInt(scale);
 
-              if (!isNaN(val) && val > 0) {
-                editorUi.exportImage(
-                  val / 100,
-                  transparentBackground,
-                  ignoreSelection,
-                  addShadow,
-                  editable,
-                  border,
-                  !cropImage,
-                  currentPage,
-                  null,
-                  grid,
-                  null,
-                  keepTheme,
-                );
-              }
-            }),
+                if (!isNaN(val) && val > 0) {
+                  editorUi.exportImage(
+                    val / 100,
+                    transparentBackground,
+                    ignoreSelection,
+                    addShadow,
+                    editable,
+                    border,
+                    !cropImage,
+                    currentPage,
+                    null,
+                    grid,
+                    null,
+                    keepTheme,
+                  );
+                }
+              },
+            ),
             true,
             true,
             'png',
@@ -894,39 +904,42 @@ DriveFile = function () {};
             false,
             mxResources.get('export'),
             'https://desk.draw.io/support/solutions/articles/16000067785',
-            mxUtils.bind(this, function (
-              scale,
-              transparentBackground,
-              ignoreSelection,
-              addShadow,
-              editable,
-              embedImages,
-              border,
-              cropImage,
-              currentPage,
-              dummy,
-              grid,
-              keepTheme,
-            ) {
-              var val = parseInt(scale);
+            mxUtils.bind(
+              this,
+              function (
+                scale,
+                transparentBackground,
+                ignoreSelection,
+                addShadow,
+                editable,
+                embedImages,
+                border,
+                cropImage,
+                currentPage,
+                dummy,
+                grid,
+                keepTheme,
+              ) {
+                var val = parseInt(scale);
 
-              if (!isNaN(val) && val > 0) {
-                editorUi.exportImage(
-                  val / 100,
-                  false,
-                  ignoreSelection,
-                  addShadow,
-                  false,
-                  border,
-                  !cropImage,
-                  false,
-                  'jpeg',
-                  grid,
-                  null,
-                  keepTheme,
-                );
-              }
-            }),
+                if (!isNaN(val) && val > 0) {
+                  editorUi.exportImage(
+                    val / 100,
+                    false,
+                    ignoreSelection,
+                    addShadow,
+                    false,
+                    border,
+                    !cropImage,
+                    false,
+                    'jpeg',
+                    grid,
+                    null,
+                    keepTheme,
+                  );
+                }
+              },
+            ),
             true,
             false,
             'jpeg',
@@ -2247,34 +2260,33 @@ DriveFile = function () {};
     editorUi.actions.put(
       'publishLink',
       new Action(mxResources.get('link') + '...', function () {
-        editorUi.showPublishLinkDialog(null, null, null, null, function (
-          linkTarget,
-          linkColor,
-          allPages,
-          lightbox,
-          editLink,
-          layers,
-        ) {
-          if (editorUi.spinner.spin(document.body, mxResources.get('loading'))) {
-            editorUi.getPublicUrl(editorUi.getCurrentFile(), function (url) {
-              editorUi.spinner.stop();
-              var dlg = new EmbedDialog(
-                editorUi,
-                editorUi.createLink(
-                  linkTarget,
-                  linkColor,
-                  allPages,
-                  lightbox,
-                  editLink,
-                  layers,
-                  url,
-                ),
-              );
-              editorUi.showDialog(dlg.container, 440, 240, true, true);
-              dlg.init();
-            });
-          }
-        });
+        editorUi.showPublishLinkDialog(
+          null,
+          null,
+          null,
+          null,
+          function (linkTarget, linkColor, allPages, lightbox, editLink, layers) {
+            if (editorUi.spinner.spin(document.body, mxResources.get('loading'))) {
+              editorUi.getPublicUrl(editorUi.getCurrentFile(), function (url) {
+                editorUi.spinner.stop();
+                var dlg = new EmbedDialog(
+                  editorUi,
+                  editorUi.createLink(
+                    linkTarget,
+                    linkColor,
+                    allPages,
+                    lightbox,
+                    editLink,
+                    layers,
+                    url,
+                  ),
+                );
+                editorUi.showDialog(dlg.container, 440, 240, true, true);
+                dlg.init();
+              });
+            }
+          },
+        );
       }),
     );
 
@@ -2704,73 +2716,85 @@ DriveFile = function () {};
     // }))).isEnabled = isGraphEnabled;
 
     // TEN9: remove theme menu
-    // this.put('theme', new Menu(mxUtils.bind(this, function(menu, parent)
-    // {
-    // 	var theme = mxSettings.getUi();
+    this.put(
+      'theme',
+      new Menu(
+        mxUtils.bind(this, function (menu, parent) {
+          var theme = this.editorUi.theme;
 
-    // 	var item = menu.addItem(mxResources.get('automatic'), null, function()
-    // 	{
-    // 		mxSettings.setUi('');
-    // 		mxSettings.save();
-    // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-    // 	}, parent);
+          // 	var item = menu.addItem(mxResources.get('automatic'), null, function()
+          // 	{
+          // 		mxSettings.setUi('');
+          // 		mxSettings.save();
+          // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+          // 	}, parent);
 
-    // 	if (theme != 'kennedy' && theme != 'atlas' &&
-    // 		theme != 'dark' && theme != 'min')
-    // 	{
-    // 		menu.addCheckmark(item, Editor.checkmarkImage);
-    // 	}
+          // 	if (theme != 'kennedy' && theme != 'atlas' &&
+          // 		theme != 'dark' && theme != 'min')
+          // 	{
+          // 		menu.addCheckmark(item, Editor.checkmarkImage);
+          // 	}
 
-    // 	menu.addSeparator(parent);
+          // 	menu.addSeparator(parent);
 
-    // 	item = menu.addItem(mxResources.get('kennedy'), null, function()
-    // 	{
-    // 		mxSettings.setUi('kennedy');
-    // 		mxSettings.save();
-    // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-    // 	}, parent);
+          item = menu.addItem(
+            'Default',
+            null,
+            function () {
+              mxSettings.setUi('kennedy');
+              mxSettings.save();
+              editorUi.fireEvent(new mxEventObject('themeChanged', 'detail', 'kennedy'));
+              editorUi.alert(mxResources.get('restartForChangeRequired'));
+            },
+            parent,
+          );
 
-    // 	if (theme == 'kennedy')
-    // 	{
-    // 		menu.addCheckmark(item, Editor.checkmarkImage);
-    // 	}
+          if (theme == 'kennedy') {
+            menu.addCheckmark(item, Editor.checkmarkImage);
+          }
 
-    // 	item = menu.addItem(mxResources.get('minimal'), null, function()
-    // 	{
-    // 		mxSettings.setUi('min');
-    // 		mxSettings.save();
-    // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-    // 	}, parent);
+          item = menu.addItem(
+            'Mobile',
+            null,
+            function () {
+              mxSettings.setUi('min');
+              mxSettings.save();
+              editorUi.fireEvent(new mxEventObject('themeChanged', 'detail', 'min'));
+              editorUi.alert(mxResources.get('restartForChangeRequired'));
+            },
+            parent,
+          );
 
-    // 	if (theme == 'min')
-    // 	{
-    // 		menu.addCheckmark(item, Editor.checkmarkImage);
-    // 	}
+          if (theme == 'min') {
+            menu.addCheckmark(item, Editor.checkmarkImage);
+          }
 
-    // 	item = menu.addItem(mxResources.get('atlas'), null, function()
-    // 	{
-    // 		mxSettings.setUi('atlas');
-    // 		mxSettings.save();
-    // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-    // 	}, parent);
+          // 	item = menu.addItem(mxResources.get('atlas'), null, function()
+          // 	{
+          // 		mxSettings.setUi('atlas');
+          // 		mxSettings.save();
+          // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+          // 	}, parent);
 
-    // 	if (theme == 'atlas')
-    // 	{
-    // 		menu.addCheckmark(item, Editor.checkmarkImage);
-    // 	}
+          // 	if (theme == 'atlas')
+          // 	{
+          // 		menu.addCheckmark(item, Editor.checkmarkImage);
+          // 	}
 
-    // 	item = menu.addItem(mxResources.get('dark'), null, function()
-    // 	{
-    // 		mxSettings.setUi('dark');
-    // 		mxSettings.save();
-    // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-    // 	}, parent);
+          // 	item = menu.addItem(mxResources.get('dark'), null, function()
+          // 	{
+          // 		mxSettings.setUi('dark');
+          // 		mxSettings.save();
+          // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+          // 	}, parent);
 
-    // 	if (theme == 'dark')
-    // 	{
-    // 		menu.addCheckmark(item, Editor.checkmarkImage);
-    // 	}
-    // })));
+          // 	if (theme == 'dark')
+          // 	{
+          // 		menu.addCheckmark(item, Editor.checkmarkImage);
+          // 	}
+        }),
+      ),
+    );
 
     var renameAction = this.editorUi.actions.addAction(
       'rename...',
@@ -4185,115 +4209,112 @@ DriveFile = function () {};
       'fontFamily',
       new Menu(
         mxUtils.bind(this, function (menu, parent) {
-          var addItem = mxUtils.bind(this, function (
-            fontName,
-            fontUrl,
-            deletable,
-            fontLabel,
-            tooltip,
-          ) {
-            var graph = this.editorUi.editor.graph;
+          var addItem = mxUtils.bind(
+            this,
+            function (fontName, fontUrl, deletable, fontLabel, tooltip) {
+              var graph = this.editorUi.editor.graph;
 
-            var tr = this.styleChange(
-              menu,
-              fontLabel || fontName,
-              urlParams['ext-fonts'] != '1'
-                ? [mxConstants.STYLE_FONTFAMILY, 'fontSource', 'FType']
-                : [mxConstants.STYLE_FONTFAMILY],
-              urlParams['ext-fonts'] != '1'
-                ? [fontName, fontUrl != null ? encodeURIComponent(fontUrl) : null, null]
-                : [fontName],
-              null,
-              parent,
-              function () {
-                if (urlParams['ext-fonts'] != '1') {
-                  graph.setFont(fontName, fontUrl);
-                } else {
-                  document.execCommand('fontname', false, fontName);
-                  //Add the font to the file in case it was a previous font from the settings
-                  graph.addExtFont(fontName, fontUrl);
-                }
-              },
-              function () {
-                graph.updateLabelElements(graph.getSelectionCells(), function (elt) {
-                  elt.removeAttribute('face');
-                  elt.style.fontFamily = null;
-
-                  if (elt.nodeName == 'PRE') {
-                    graph.replaceElement(elt, 'div');
-                  }
-                });
-
-                //Add the font to the file in case it was a previous font from the settings
-                if (urlParams['ext-fonts'] == '1') {
-                  graph.addExtFont(fontName, fontUrl);
-                }
-              },
-            );
-
-            if (deletable) {
-              var img = document.createElement('span');
-              img.className = 'geSprite geSprite-delete';
-              img.style.cursor = 'pointer';
-              img.style.display = 'inline-block';
-              tr.firstChild.nextSibling.nextSibling.appendChild(img);
-
-              mxEvent.addListener(
-                img,
-                mxClient.IS_POINTER ? 'pointerup' : 'mouseup',
-                mxUtils.bind(this, function (evt) {
+              var tr = this.styleChange(
+                menu,
+                fontLabel || fontName,
+                urlParams['ext-fonts'] != '1'
+                  ? [mxConstants.STYLE_FONTFAMILY, 'fontSource', 'FType']
+                  : [mxConstants.STYLE_FONTFAMILY],
+                urlParams['ext-fonts'] != '1'
+                  ? [fontName, fontUrl != null ? encodeURIComponent(fontUrl) : null, null]
+                  : [fontName],
+                null,
+                parent,
+                function () {
                   if (urlParams['ext-fonts'] != '1') {
-                    delete Graph.recentCustomFonts[fontName.toLowerCase()];
-
-                    for (var i = 0; i < this.customFonts.length; i++) {
-                      if (
-                        this.customFonts[i].name == fontName &&
-                        this.customFonts[i].url == fontUrl
-                      ) {
-                        this.customFonts.splice(i, 1);
-                        editorUi.fireEvent(new mxEventObject('customFontsChanged'));
-
-                        break;
-                      }
-                    }
+                    graph.setFont(fontName, fontUrl);
                   } else {
-                    var extFonts = mxUtils.clone(this.editorUi.editor.graph.extFonts);
+                    document.execCommand('fontname', false, fontName);
+                    //Add the font to the file in case it was a previous font from the settings
+                    graph.addExtFont(fontName, fontUrl);
+                  }
+                },
+                function () {
+                  graph.updateLabelElements(graph.getSelectionCells(), function (elt) {
+                    elt.removeAttribute('face');
+                    elt.style.fontFamily = null;
 
-                    if (extFonts != null && extFonts.length > 0) {
-                      for (var i = 0; i < extFonts.length; i++) {
-                        if (extFonts[i].name == fontName) {
-                          extFonts.splice(i, 1);
+                    if (elt.nodeName == 'PRE') {
+                      graph.replaceElement(elt, 'div');
+                    }
+                  });
+
+                  //Add the font to the file in case it was a previous font from the settings
+                  if (urlParams['ext-fonts'] == '1') {
+                    graph.addExtFont(fontName, fontUrl);
+                  }
+                },
+              );
+
+              if (deletable) {
+                var img = document.createElement('span');
+                img.className = 'geSprite geSprite-delete';
+                img.style.cursor = 'pointer';
+                img.style.display = 'inline-block';
+                tr.firstChild.nextSibling.nextSibling.appendChild(img);
+
+                mxEvent.addListener(
+                  img,
+                  mxClient.IS_POINTER ? 'pointerup' : 'mouseup',
+                  mxUtils.bind(this, function (evt) {
+                    if (urlParams['ext-fonts'] != '1') {
+                      delete Graph.recentCustomFonts[fontName.toLowerCase()];
+
+                      for (var i = 0; i < this.customFonts.length; i++) {
+                        if (
+                          this.customFonts[i].name == fontName &&
+                          this.customFonts[i].url == fontUrl
+                        ) {
+                          this.customFonts.splice(i, 1);
+                          editorUi.fireEvent(new mxEventObject('customFontsChanged'));
+
                           break;
                         }
                       }
-                    }
+                    } else {
+                      var extFonts = mxUtils.clone(this.editorUi.editor.graph.extFonts);
 
-                    var customFonts = mxUtils.clone(this.customFonts);
-
-                    for (var i = 0; i < customFonts.length; i++) {
-                      if (customFonts[i].name == fontName) {
-                        customFonts.splice(i, 1);
-                        break;
+                      if (extFonts != null && extFonts.length > 0) {
+                        for (var i = 0; i < extFonts.length; i++) {
+                          if (extFonts[i].name == fontName) {
+                            extFonts.splice(i, 1);
+                            break;
+                          }
+                        }
                       }
+
+                      var customFonts = mxUtils.clone(this.customFonts);
+
+                      for (var i = 0; i < customFonts.length; i++) {
+                        if (customFonts[i].name == fontName) {
+                          customFonts.splice(i, 1);
+                          break;
+                        }
+                      }
+
+                      var change = new ChangeExtFonts(this.editorUi, extFonts, customFonts);
+                      this.editorUi.editor.graph.model.execute(change);
                     }
 
-                    var change = new ChangeExtFonts(this.editorUi, extFonts, customFonts);
-                    this.editorUi.editor.graph.model.execute(change);
-                  }
+                    this.editorUi.menubar.hideMenu();
+                    mxEvent.consume(evt);
+                  }),
+                );
+              }
 
-                  this.editorUi.menubar.hideMenu();
-                  mxEvent.consume(evt);
-                }),
-              );
-            }
+              Graph.addFont(fontName, fontUrl);
+              tr.firstChild.nextSibling.style.fontFamily = fontName;
 
-            Graph.addFont(fontName, fontUrl);
-            tr.firstChild.nextSibling.style.fontFamily = fontName;
-
-            if (tooltip != null) {
-              tr.setAttribute('title', tooltip);
-            }
-          });
+              if (tooltip != null) {
+                tr.setAttribute('title', tooltip);
+              }
+            },
+          );
 
           for (var i = 0; i < this.defaultFonts.length; i++) {
             addItem(this.defaultFonts[i]);

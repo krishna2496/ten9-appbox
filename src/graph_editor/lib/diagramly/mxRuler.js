@@ -88,11 +88,8 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
 
   function resizeRulerContainer() {
     var diagCont = editorUi.diagramContainer;
-
     container.style.top = diagCont.offsetTop - RULER_THICKNESS + 'px';
     container.style.left = diagCont.offsetLeft - RULER_THICKNESS + 'px';
-    // container.style.top = (diagCont.offsetTop + offset.y - RULER_THICKNESS) + 'px';
-    // container.style.left = (diagCont.offsetLeft + offset.x) + 'px';
     container.style.width = (isVertical ? 0 : diagCont.offsetWidth) + RULER_THICKNESS + 'px';
     container.style.height = (isVertical ? diagCont.offsetHeight : 0) + RULER_THICKNESS + 'px';
   }

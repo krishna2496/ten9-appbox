@@ -1103,8 +1103,8 @@ EditorUi.prototype.setEnabled = function (enabled) {
   this.enabled = enabled;
   // Set the graph enabled state before anything else
   this.editor.graph.setEnabled(enabled);
-  this.toggleSidebarPanel(enabled);
   this.toggleFormatPanel(enabled);
+  this.toggleSidebarPanel(enabled);
   this.toogleSidebarFooterContainer(enabled);
 
   this.editor.graph.popupMenuHandler.hideMenu();
@@ -2913,6 +2913,14 @@ EditorUi.prototype.toggleSidebarPanel = function (visible) {
     this.sidebar.container.style.display = 'block';
     this.hsplit.style.display = 'block';
     this.diagramContainer.style.left = '224px';
+  }
+};
+
+EditorUi.prototype.toggleSidebarWindow = function (visible) {
+  if (!visible) {
+    document.getElementById('sidebar').style.display = 'none';
+  } else {
+    document.getElementById('sidebar').style.display = 'block';
   }
 };
 

@@ -128,7 +128,7 @@ const IMAGE_PATH = '/images';
     /**
      *
      */
-    var WrapperWindow = function (editorUi, title, x, y, w, h, fn) {
+    var WrapperWindow = function (editorUi, title, x, y, w, h, fn, id) {
       var graph = editorUi.editor.graph;
 
       var div = document.createElement('div');
@@ -141,8 +141,7 @@ const IMAGE_PATH = '/images';
       div.style.overflowY = 'auto';
 
       fn(div);
-
-      this.window = new mxWindow(title, div, x, y, w, h, true, true);
+      this.window = new mxWindow(title, div, x, y, w, h, true, true, null, null, id);
       this.window.destroyOnClose = false;
       this.window.setMaximizable(false);
       this.window.setResizable(true);
@@ -187,6 +186,7 @@ const IMAGE_PATH = '/images';
         const contentPadding = 20;
         const bottomMargin = 5;
         const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
+        console.log('gdf ', Math.max(20, ui.diagramContainer.clientWidth + 240 - 12));
         ui.formatWindow = new WrapperWindow(
           ui,
           mxResources.get('format'),
@@ -329,6 +329,7 @@ const IMAGE_PATH = '/images';
             container.style.overflow = 'hidden';
             return container;
           },
+          true,
         );
 
         // TEN9: remove sideabr section
@@ -675,6 +676,24 @@ const IMAGE_PATH = '/images';
       this.formatContainer.style.display = 'none';
       this.refresh();
       this.format.refresh();
+    };
+
+    // TEN9: Override to sidebar toggle panel
+    // TEN9: Add sidebar toggle window function
+    EditorUi.prototype.toggleSidebarPanel = function (visible) {
+      this.hsplit.style.display = 'none';
+      this.diagramContainer.style.left = '0px';
+      this.tabContainer.style.left = '0px';
+      this.toolbarContainer.style.display = 'none';
+      this.actions.get('fitWindow').funct();
+
+      if (document.getElementById('sidebar') != undefined) {
+        if (!visible) {
+          document.getElementById('sidebar').style.display = 'none';
+        } else {
+          document.getElementById('sidebar').style.display = 'block';
+        }
+      }
     };
 
     DiagramFormatPanel.prototype.isMathOptionVisible = function () {

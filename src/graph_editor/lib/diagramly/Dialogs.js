@@ -1173,11 +1173,13 @@ var CreateGraphDialog = function (editorUi, title, type) {
     graph.cellRenderer.installCellOverlayListeners = function (state, overlay, shape) {
       mxCellRenderer.prototype.installCellOverlayListeners.apply(this, arguments);
 
-      mxEvent.addListener(shape.node, mxClient.IS_POINTER ? 'pointerdown' : 'mousedown', function (
-        evt,
-      ) {
-        overlay.fireEvent(new mxEventObject('pointerdown', 'event', evt, 'state', state));
-      });
+      mxEvent.addListener(
+        shape.node,
+        mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
+        function (evt) {
+          overlay.fireEvent(new mxEventObject('pointerdown', 'event', evt, 'state', state));
+        },
+      );
 
       if (!mxClient.IS_POINTER && mxClient.IS_TOUCH) {
         mxEvent.addListener(shape.node, 'touchstart', function (evt) {
@@ -7971,26 +7973,22 @@ var LibraryDialog = function (editorUi, name, library, initialImages, file, mode
       mxEvent.addListener(fileInput, 'change', function (evt) {
         errorShowed = false;
 
-        editorUi.importFiles(fileInput.files, 0, 0, editorUi.maxImageSize, function (
-          data,
-          mimeType,
-          x,
-          y,
-          w,
-          h,
-          img,
-          doneFn,
-          file,
-        ) {
-          if (fileInput.files != null) {
-            createImportHandler(evt)(data, mimeType, x, y, w, h, img, doneFn, file);
+        editorUi.importFiles(
+          fileInput.files,
+          0,
+          0,
+          editorUi.maxImageSize,
+          function (data, mimeType, x, y, w, h, img, doneFn, file) {
+            if (fileInput.files != null) {
+              createImportHandler(evt)(data, mimeType, x, y, w, h, img, doneFn, file);
 
-            // Resets input to force change event for same file (type reset required for IE)
-            fileInput.type = '';
-            fileInput.type = 'file';
-            fileInput.value = '';
-          }
-        });
+              // Resets input to force change event for same file (type reset required for IE)
+              fileInput.type = '';
+              fileInput.type = 'file';
+              fileInput.value = '';
+            }
+          },
+        );
 
         div.scrollTop = div.scrollHeight;
       });

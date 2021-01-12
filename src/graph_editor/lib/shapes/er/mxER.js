@@ -1713,30 +1713,22 @@ mxMarker.addMarker('ERone', function (c, shape, type, pe, unitX, unitY, size, so
   };
 });
 
-mxMarker.addMarker('ERmandOne', function (
-  c,
-  shape,
-  type,
-  pe,
-  unitX,
-  unitY,
-  size,
-  source,
-  sw,
-  filled,
-) {
-  var nx = unitX * (size + sw + 1);
-  var ny = unitY * (size + sw + 1);
+mxMarker.addMarker(
+  'ERmandOne',
+  function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+    var nx = unitX * (size + sw + 1);
+    var ny = unitY * (size + sw + 1);
 
-  return function () {
-    c.begin();
-    c.moveTo(pe.x - nx / 2 - ny / 2, pe.y - ny / 2 + nx / 2);
-    c.lineTo(pe.x - nx / 2 + ny / 2, pe.y - ny / 2 - nx / 2);
-    c.moveTo(pe.x - nx - ny / 2, pe.y - ny + nx / 2);
-    c.lineTo(pe.x - nx + ny / 2, pe.y - ny - nx / 2);
-    c.stroke();
-  };
-});
+    return function () {
+      c.begin();
+      c.moveTo(pe.x - nx / 2 - ny / 2, pe.y - ny / 2 + nx / 2);
+      c.lineTo(pe.x - nx / 2 + ny / 2, pe.y - ny / 2 - nx / 2);
+      c.moveTo(pe.x - nx - ny / 2, pe.y - ny + nx / 2);
+      c.lineTo(pe.x - nx + ny / 2, pe.y - ny - nx / 2);
+      c.stroke();
+    };
+  },
+);
 
 mxMarker.addMarker('ERmany', function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
   var nx = unitX * (size + sw + 1);
@@ -1751,108 +1743,84 @@ mxMarker.addMarker('ERmany', function (c, shape, type, pe, unitX, unitY, size, s
   };
 });
 
-mxMarker.addMarker('ERoneToMany', function (
-  c,
-  shape,
-  type,
-  pe,
-  unitX,
-  unitY,
-  size,
-  source,
-  sw,
-  filled,
-) {
-  var nx = unitX * (size + sw + 1);
-  var ny = unitY * (size + sw + 1);
+mxMarker.addMarker(
+  'ERoneToMany',
+  function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+    var nx = unitX * (size + sw + 1);
+    var ny = unitY * (size + sw + 1);
 
-  return function () {
-    c.begin();
-    c.moveTo(pe.x - nx - ny / 2, pe.y - ny + nx / 2);
-    c.lineTo(pe.x - nx + ny / 2, pe.y - ny - nx / 2);
-    c.moveTo(pe.x + ny / 2, pe.y - nx / 2);
-    c.lineTo(pe.x - nx, pe.y - ny);
-    c.lineTo(pe.x - ny / 2, pe.y + nx / 2);
-    c.stroke();
-  };
-});
-
-mxMarker.addMarker('ERzeroToMany', function (
-  c,
-  shape,
-  type,
-  pe,
-  unitX,
-  unitY,
-  size,
-  source,
-  sw,
-  filled,
-) {
-  var nx = unitX * (size + sw + 1);
-  var ny = unitY * (size + sw + 1);
-  var a = size / 2;
-
-  return function () {
-    c.begin();
-    c.ellipse(pe.x - 1.5 * nx - a, pe.y - 1.5 * ny - a, 2 * a, 2 * a);
-
-    if (filled) {
-      // TODO not sure if this is ok, because by default, markers use strokeColor for filling
-      var oldColor = mxUtils.getValue(shape.style, mxConstants.STYLE_STROKECOLOR, '#666666');
-
-      c.setFillColor('#ffffff');
-      c.fillAndStroke();
-      c.setFillColor(oldColor);
-    } else {
+    return function () {
+      c.begin();
+      c.moveTo(pe.x - nx - ny / 2, pe.y - ny + nx / 2);
+      c.lineTo(pe.x - nx + ny / 2, pe.y - ny - nx / 2);
+      c.moveTo(pe.x + ny / 2, pe.y - nx / 2);
+      c.lineTo(pe.x - nx, pe.y - ny);
+      c.lineTo(pe.x - ny / 2, pe.y + nx / 2);
       c.stroke();
-    }
+    };
+  },
+);
 
-    c.begin();
-    c.moveTo(pe.x + ny / 2, pe.y - nx / 2);
-    c.lineTo(pe.x - nx, pe.y - ny);
-    c.lineTo(pe.x - ny / 2, pe.y + nx / 2);
-    c.stroke();
-  };
-});
+mxMarker.addMarker(
+  'ERzeroToMany',
+  function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+    var nx = unitX * (size + sw + 1);
+    var ny = unitY * (size + sw + 1);
+    var a = size / 2;
 
-mxMarker.addMarker('ERzeroToOne', function (
-  c,
-  shape,
-  type,
-  pe,
-  unitX,
-  unitY,
-  size,
-  source,
-  sw,
-  filled,
-) {
-  var nx = unitX * (size + sw + 1);
-  var ny = unitY * (size + sw + 1);
-  var a = size / 2;
+    return function () {
+      c.begin();
+      c.ellipse(pe.x - 1.5 * nx - a, pe.y - 1.5 * ny - a, 2 * a, 2 * a);
 
-  return function () {
-    c.begin();
-    c.ellipse(pe.x - 1.5 * nx - a, pe.y - 1.5 * ny - a, 2 * a, 2 * a);
+      if (filled) {
+        // TODO not sure if this is ok, because by default, markers use strokeColor for filling
+        var oldColor = mxUtils.getValue(shape.style, mxConstants.STYLE_STROKECOLOR, '#666666');
 
-    if (filled) {
-      // TODO not sure if this is ok, because by default, markers use strokeColor for filling
-      var oldColor = mxUtils.getValue(shape.style, mxConstants.STYLE_STROKECOLOR, '#666666');
+        c.setFillColor('#ffffff');
+        c.fillAndStroke();
+        c.setFillColor(oldColor);
+      } else {
+        c.stroke();
+      }
 
-      c.setFillColor('#ffffff');
-      c.fillAndStroke();
-      c.setFillColor(oldColor);
-    } else {
+      c.begin();
+      c.moveTo(pe.x + ny / 2, pe.y - nx / 2);
+      c.lineTo(pe.x - nx, pe.y - ny);
+      c.lineTo(pe.x - ny / 2, pe.y + nx / 2);
       c.stroke();
-    }
+    };
+  },
+);
 
-    c.begin();
-    c.moveTo(pe.x - nx / 2 - ny / 2, pe.y - ny / 2 + nx / 2);
-    c.lineTo(pe.x - nx / 2 + ny / 2, pe.y - ny / 2 - nx / 2);
-    c.stroke();
-  };
-});
+mxMarker.addMarker(
+  'ERzeroToOne',
+  function (c, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+    var nx = unitX * (size + sw + 1);
+    var ny = unitY * (size + sw + 1);
+    var a = size / 2;
+
+    return function () {
+      c.begin();
+      c.ellipse(pe.x - 1.5 * nx - a, pe.y - 1.5 * ny - a, 2 * a, 2 * a);
+
+      if (filled) {
+        // TODO not sure if this is ok, because by default, markers use strokeColor for filling
+        var oldColor = mxUtils.getValue(shape.style, mxConstants.STYLE_STROKECOLOR, '#666666');
+
+        c.setFillColor('#ffffff');
+        c.fillAndStroke();
+        c.setFillColor(oldColor);
+      } else {
+        c.stroke();
+      }
+
+      c.begin();
+      c.moveTo(pe.x - nx / 2 - ny / 2, pe.y - ny / 2 + nx / 2);
+      c.lineTo(pe.x - nx / 2 + ny / 2, pe.y - ny / 2 - nx / 2);
+      c.stroke();
+    };
+  },
+);
 
 //**********************************************************************************************************************************************************
 //Rounded rectangle (adjustable rounding)

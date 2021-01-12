@@ -11059,7 +11059,19 @@ var mxClipboard = {
  * style - Optional base classname for the window elements. Default is
  * mxWindow.
  */
-function mxWindow(title, content, x, y, width, height, minimizable, movable, replaceNode, style) {
+function mxWindow(
+  title,
+  content,
+  x,
+  y,
+  width,
+  height,
+  minimizable,
+  movable,
+  replaceNode,
+  style,
+  id,
+) {
   if (content != null) {
     minimizable = minimizable != null ? minimizable : true;
     this.content = content;
@@ -11082,6 +11094,11 @@ function mxWindow(title, content, x, y, width, height, minimizable, movable, rep
       //document.body.appendChild(this.div);
       mxClient.getDocumentContainer().appendChild(this.div);
       this.div.style.zIndex = '2';
+    }
+    // TEN9:
+    //debugger
+    if (id != undefined) {
+      this.div.setAttribute('id', 'sidebar');
     }
   }
 }
@@ -23220,34 +23237,26 @@ var mxMarker = {
   mxMarker.addMarker('open', createOpenArrow(2));
   mxMarker.addMarker('openThin', createOpenArrow(3));
 
-  mxMarker.addMarker('oval', function (
-    canvas,
-    shape,
-    type,
-    pe,
-    unitX,
-    unitY,
-    size,
-    source,
-    sw,
-    filled,
-  ) {
-    var a = size / 2;
+  mxMarker.addMarker(
+    'oval',
+    function (canvas, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+      var a = size / 2;
 
-    var pt = pe.clone();
-    pe.x -= unitX * a;
-    pe.y -= unitY * a;
+      var pt = pe.clone();
+      pe.x -= unitX * a;
+      pe.y -= unitY * a;
 
-    return function () {
-      canvas.ellipse(pt.x - a, pt.y - a, size, size);
+      return function () {
+        canvas.ellipse(pt.x - a, pt.y - a, size, size);
 
-      if (filled) {
-        canvas.fillAndStroke();
-      } else {
-        canvas.stroke();
-      }
-    };
-  });
+        if (filled) {
+          canvas.fillAndStroke();
+        } else {
+          canvas.stroke();
+        }
+      };
+    },
+  );
 
   function diamond(canvas, shape, type, pe, unitX, unitY, size, source, sw, filled) {
     // The angle of the forward facing arrow sides against the x axis is

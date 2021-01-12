@@ -981,7 +981,8 @@ function Dialog(
   document.body.appendChild(div);
 
   // Adds vertical scrollbars if needed
-  if (!noScroll && elt.clientHeight > div.clientHeight - 64) {
+  // TEN9: remove overflowY on minimal theme
+  if (!noScroll && elt.clientHeight > div.clientHeight - 64 && editorUi.theme != 'min') {
     elt.style.overflowY = 'auto';
   }
 

@@ -7688,13 +7688,16 @@ if (typeof mxVertexHandler != 'undefined') {
 
           // Gets topmost intersecting cell with link
           if (tmp == null || graph.getLinkForCell(tmp.cell) == null) {
-            var cell = graph.getCellAt(me.getGraphX(), me.getGraphY(), null, null, null, function (
-              state,
-              x,
-              y,
-            ) {
-              return graph.getLinkForCell(state.cell) == null;
-            });
+            var cell = graph.getCellAt(
+              me.getGraphX(),
+              me.getGraphY(),
+              null,
+              null,
+              null,
+              function (state, x, y) {
+                return graph.getLinkForCell(state.cell) == null;
+              },
+            );
 
             tmp = graph.view.getState(cell);
           }
