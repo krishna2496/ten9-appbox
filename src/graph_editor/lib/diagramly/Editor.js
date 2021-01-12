@@ -3731,40 +3731,37 @@ const uiTheme = null;
   };
 
   if (window.StyleFormatPanel != null) {
-    	var formatInit = Format.prototype.init;
+    var formatInit = Format.prototype.init;
 
-    	Format.prototype.init = function()
-    	{
-    		formatInit.apply(this, arguments);
+    Format.prototype.init = function () {
+      formatInit.apply(this, arguments);
 
-    		this.editorUi.editor.addListener('fileLoaded', this.update);
-    	};
+      this.editorUi.editor.addListener('fileLoaded', this.update);
+    };
 
-    	var formatRefresh = Format.prototype.refresh;
+    var formatRefresh = Format.prototype.refresh;
 
-    	Format.prototype.refresh = function()
-    	{
-        // TEN9: feresh format panel with checkong urlParams
-    		// if (this.editorUi.getCurrentFile() != null || urlParams['embed'] == '1' ||
-    		// 	this.editorUi.editor.chromeless)
-    		// {
-    			formatRefresh.apply(this, arguments);
-    		// }
-    		// else
-    		// {
-    		// 	this.clear();
-    		// }
-    	};
+    Format.prototype.refresh = function () {
+      // TEN9: feresh format panel with checkong urlParams
+      // if (this.editorUi.getCurrentFile() != null || urlParams['embed'] == '1' ||
+      // 	this.editorUi.editor.chromeless)
+      // {
+      formatRefresh.apply(this, arguments);
+      // }
+      // else
+      // {
+      // 	this.clear();
+      // }
+    };
 
     // 	/**
     // 	 * Hook for subclassers.
     // 	 */
-    	DiagramFormatPanel.prototype.isShadowOptionVisible = function()
-    	{
-    		var file = this.editorUi.getCurrentFile();
+    DiagramFormatPanel.prototype.isShadowOptionVisible = function () {
+      var file = this.editorUi.getCurrentFile();
 
-    		return urlParams['embed'] == '1' || (file != null && file.isEditable());
-    	};
+      return urlParams['embed'] == '1' || (file != null && file.isEditable());
+    };
 
     // 	/**
     // 	 * Option is not visible in default theme.
@@ -3777,145 +3774,142 @@ const uiTheme = null;
     // 	/**
     // 	 * Add global shadow option.
     // 	 */
-    	var diagramFormatPanelAddView = DiagramFormatPanel.prototype.addView;
+    var diagramFormatPanelAddView = DiagramFormatPanel.prototype.addView;
 
-    	DiagramFormatPanel.prototype.addView = function(div)
-    	{
-    		var div = diagramFormatPanelAddView.apply(this, arguments);
-    		var file = this.editorUi.getCurrentFile();
+    DiagramFormatPanel.prototype.addView = function (div) {
+      var div = diagramFormatPanelAddView.apply(this, arguments);
+      var file = this.editorUi.getCurrentFile();
 
-    		// if (mxClient.IS_SVG && this.isShadowOptionVisible())
-    		// {
-    			var ui = this.editorUi;
-    			var editor = ui.editor;
-    			var graph = editor.graph;
+      // if (mxClient.IS_SVG && this.isShadowOptionVisible())
+      // {
+      var ui = this.editorUi;
+      var editor = ui.editor;
+      var graph = editor.graph;
 
-    			var option = this.createOption(mxResources.get('shadow'), function()
-    			{
-    				return graph.shadowVisible;
-    			}, function(checked)
-    			{
-    				var change = new ChangePageSetup(ui);
-    				change.ignoreColor = true;
-    				change.ignoreImage = true;
-            change.shadowVisible = checked;
-    				graph.model.execute(change);
-    			},
-    			{
-    				install: function(apply)
-    				{
-    					this.listener = function()
-    					{
-    						apply(graph.shadowVisible);
-    					};
+      var option = this.createOption(
+        mxResources.get('shadow'),
+        function () {
+          return graph.shadowVisible;
+        },
+        function (checked) {
+          var change = new ChangePageSetup(ui);
+          change.ignoreColor = true;
+          change.ignoreImage = true;
+          change.shadowVisible = checked;
+          graph.model.execute(change);
+        },
+        {
+          install: function (apply) {
+            this.listener = function () {
+              apply(graph.shadowVisible);
+            };
 
-    					ui.addListener('shadowVisibleChanged', this.listener);
-    				},
-    				destroy: function()
-    				{
-    					ui.removeListener(this.listener);
-    				}
-    			});
+            ui.addListener('shadowVisibleChanged', this.listener);
+          },
+          destroy: function () {
+            ui.removeListener(this.listener);
+          },
+        },
+      );
 
-    			if (!Editor.shadowOptionEnabled)
-    			{
-    				option.getElementsByTagName('input')[0].setAttribute('disabled', 'disabled');
-    				mxUtils.setOpacity(option, 60);
-    			}
-    			div.appendChild(option);
-    		//}
+      if (!Editor.shadowOptionEnabled) {
+        option.getElementsByTagName('input')[0].setAttribute('disabled', 'disabled');
+        mxUtils.setOpacity(option, 60);
+      }
+      div.appendChild(option);
+      //}
 
-    		return div;
-    	};
+      return div;
+    };
 
     // 	/**
     // 	 * Adds autosave and math typesetting options.
     // 	 */
-    	// var diagramFormatPanelAddOptions = DiagramFormatPanel.prototype.addOptions;
-    	// DiagramFormatPanel.prototype.addOptions = function(div)
-    	// {
-    	// 	div = diagramFormatPanelAddOptions.apply(this, arguments);
+    // var diagramFormatPanelAddOptions = DiagramFormatPanel.prototype.addOptions;
+    // DiagramFormatPanel.prototype.addOptions = function(div)
+    // {
+    // 	div = diagramFormatPanelAddOptions.apply(this, arguments);
 
-    	// 	var ui = this.editorUi;
-    	// 	var editor = ui.editor;
-    	// 	var graph = editor.graph;
+    // 	var ui = this.editorUi;
+    // 	var editor = ui.editor;
+    // 	var graph = editor.graph;
 
-    	// 	if (graph.isEnabled())
-    	// 	{
-    	// 		var file = ui.getCurrentFile();
+    // 	if (graph.isEnabled())
+    // 	{
+    // 		var file = ui.getCurrentFile();
 
-    	// 		if (file != null && file.isAutosaveOptional())
-    	// 		{
-    	// 			var opt = this.createOption(mxResources.get('autosave'), function()
-    	// 			{
-    	// 				return ui.editor.autosave;
-    	// 			}, function(checked)
-    	// 			{
-    	// 				ui.editor.setAutosave(checked);
+    // 		if (file != null && file.isAutosaveOptional())
+    // 		{
+    // 			var opt = this.createOption(mxResources.get('autosave'), function()
+    // 			{
+    // 				return ui.editor.autosave;
+    // 			}, function(checked)
+    // 			{
+    // 				ui.editor.setAutosave(checked);
 
-    	// 				if (ui.editor.autosave && file.isModified())
-    	// 				{
-    	// 					file.fileChanged();
-    	// 				}
-    	// 			},
-    	// 			{
-    	// 				install: function(apply)
-    	// 				{
-    	// 					this.listener = function()
-    	// 					{
-    	// 						apply(ui.editor.autosave);
-    	// 					};
+    // 				if (ui.editor.autosave && file.isModified())
+    // 				{
+    // 					file.fileChanged();
+    // 				}
+    // 			},
+    // 			{
+    // 				install: function(apply)
+    // 				{
+    // 					this.listener = function()
+    // 					{
+    // 						apply(ui.editor.autosave);
+    // 					};
 
-    	// 					ui.editor.addListener('autosaveChanged', this.listener);
-    	// 				},
-    	// 				destroy: function()
-    	// 				{
-    	// 					ui.editor.removeListener(this.listener);
-    	// 				}
-    	// 			});
+    // 					ui.editor.addListener('autosaveChanged', this.listener);
+    // 				},
+    // 				destroy: function()
+    // 				{
+    // 					ui.editor.removeListener(this.listener);
+    // 				}
+    // 			});
 
-    	// 			div.appendChild(opt);
-    	// 		}
-    	// 	}
+    // 			div.appendChild(opt);
+    // 		}
+    // 	}
 
-      //       if (this.isMathOptionVisible() && graph.isEnabled() && typeof(MathJax) !== 'undefined')
-      //       {
-      //           // Math
-      //           var option = this.createOption(mxResources.get('mathematicalTypesetting'), function()
-      //           {
-      //               return graph.mathEnabled;
-      //           }, function(checked)
-      //           {
-      //               ui.actions.get('mathematicalTypesetting').funct();
-      //           },
-      //           {
-      //               install: function(apply)
-      //               {
-      //                   this.listener = function()
-      //                   {
-      //                       apply(graph.mathEnabled);
-      //                   };
+    //       if (this.isMathOptionVisible() && graph.isEnabled() && typeof(MathJax) !== 'undefined')
+    //       {
+    //           // Math
+    //           var option = this.createOption(mxResources.get('mathematicalTypesetting'), function()
+    //           {
+    //               return graph.mathEnabled;
+    //           }, function(checked)
+    //           {
+    //               ui.actions.get('mathematicalTypesetting').funct();
+    //           },
+    //           {
+    //               install: function(apply)
+    //               {
+    //                   this.listener = function()
+    //                   {
+    //                       apply(graph.mathEnabled);
+    //                   };
 
-      //                   ui.addListener('mathEnabledChanged', this.listener);
-      //               },
-      //               destroy: function()
-      //               {
-      //                   ui.removeListener(this.listener);
-      //               }
-      //           });
+    //                   ui.addListener('mathEnabledChanged', this.listener);
+    //               },
+    //               destroy: function()
+    //               {
+    //                   ui.removeListener(this.listener);
+    //               }
+    //           });
 
-      //           option.style.paddingTop = '5px';
-      //           div.appendChild(option);
+    //           option.style.paddingTop = '5px';
+    //           div.appendChild(option);
 
-      //           var help = ui.menus.createHelpLink('https://desk.draw.io/support/solutions/articles/16000032875');
-      //           help.style.position = 'relative';
-      //           help.style.marginLeft = '6px';
-      //           help.style.top = '2px';
-      //           option.appendChild(help);
-      //       }
+    //           var help = ui.menus.createHelpLink('https://desk.draw.io/support/solutions/articles/16000032875');
+    //           help.style.position = 'relative';
+    //           help.style.marginLeft = '6px';
+    //           help.style.top = '2px';
+    //           option.appendChild(help);
+    //       }
 
-    	// 	return div;
-    	// };
+    // 	return div;
+    // };
 
     // 	mxCellRenderer.prototype.defaultVertexShape.prototype.customProperties = [
     //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: mxConstants.LINE_ARCSIZE},
@@ -7423,60 +7417,47 @@ const uiTheme = null;
   // Execute fit page on page setup changes
   var changePageSetupExecute = ChangePageSetup.prototype.execute;
 
-  ChangePageSetup.prototype.execute = function()
-  {
-      if (this.page == null)
-      {
-          this.page = this.ui.getCurrentPage();
+  ChangePageSetup.prototype.execute = function () {
+    if (this.page == null) {
+      this.page = this.ui.getCurrentPage();
+    }
+
+    // Workaround for redo existing change with different current page
+    if (this.page != this.ui.getCurrentPage()) {
+      if (this.page.viewState != null) {
+        if (!this.ignoreColor) {
+          this.page.viewState.background = this.color;
+        }
+
+        if (!this.ignoreImage) {
+          this.page.viewState.backgroundImage = this.image;
+        }
+
+        if (this.format != null) {
+          this.page.viewState.pageFormat = this.format;
+        }
+
+        if (this.mathEnabled != null) {
+          this.page.viewState.mathEnabled = this.mathEnabled;
+        }
+
+        if (this.shadowVisible != null) {
+          this.page.viewState.shadowVisible = this.shadowVisible;
+        }
+      }
+    } else {
+      changePageSetupExecute.apply(this, arguments);
+
+      if (this.mathEnabled != null && this.mathEnabled != this.ui.isMathEnabled()) {
+        this.ui.setMathEnabled(this.mathEnabled);
+        this.mathEnabled = !this.mathEnabled;
       }
 
-      // Workaround for redo existing change with different current page
-      if (this.page != this.ui.getCurrentPage())
-      {
-          if (this.page.viewState != null)
-          {
-              if (!this.ignoreColor)
-              {
-                  this.page.viewState.background = this.color;
-              }
-
-              if (!this.ignoreImage)
-              {
-                  this.page.viewState.backgroundImage = this.image;
-              }
-
-              if (this.format != null)
-              {
-                  this.page.viewState.pageFormat = this.format;
-              }
-
-              if (this.mathEnabled != null)
-              {
-                  this.page.viewState.mathEnabled = this.mathEnabled;
-              }
-
-              if (this.shadowVisible != null)
-            {
-              this.page.viewState.shadowVisible = this.shadowVisible;
-            }
-          }
+      if (this.shadowVisible != null && this.shadowVisible != this.ui.editor.graph.shadowVisible) {
+        this.ui.editor.graph.setShadowVisible(this.shadowVisible);
+        this.shadowVisible = !this.shadowVisible;
       }
-      else
-      {
-          changePageSetupExecute.apply(this, arguments);
-
-          if (this.mathEnabled != null && this.mathEnabled != this.ui.isMathEnabled())
-          {
-              this.ui.setMathEnabled(this.mathEnabled);
-              this.mathEnabled = !this.mathEnabled;
-          }
-
-          if (this.shadowVisible != null && this.shadowVisible != this.ui.editor.graph.shadowVisible)
-          {
-            this.ui.editor.graph.setShadowVisible(this.shadowVisible);
-              this.shadowVisible = !this.shadowVisible;
-          }
-      }
+    }
   };
 
   /**
@@ -7512,55 +7493,52 @@ const uiTheme = null;
 })();
 
 //Extends codec for ChangePageSetup
-(function()
-{
-	var codec = new mxObjectCodec(new ChangePageSetup(),  ['ui', 'previousColor', 'previousImage', 'previousFormat']);
+(function () {
+  var codec = new mxObjectCodec(new ChangePageSetup(), [
+    'ui',
+    'previousColor',
+    'previousImage',
+    'previousFormat',
+  ]);
 
-	codec.beforeDecode = function(dec, node, obj)
-	{
-		obj.ui = dec.ui;
+  codec.beforeDecode = function (dec, node, obj) {
+    obj.ui = dec.ui;
 
-		return node;
-	};
+    return node;
+  };
 
-	codec.afterDecode = function(dec, node, obj)
-	{
-		obj.previousColor = obj.color;
-		obj.previousImage = obj.image;
-		obj.previousFormat = obj.format;
+  codec.afterDecode = function (dec, node, obj) {
+    obj.previousColor = obj.color;
+    obj.previousImage = obj.image;
+    obj.previousFormat = obj.format;
 
-        if (obj.foldingEnabled != null)
-        {
-        		obj.foldingEnabled = !obj.foldingEnabled;
-        }
+    if (obj.foldingEnabled != null) {
+      obj.foldingEnabled = !obj.foldingEnabled;
+    }
 
-        if (obj.mathEnabled != null)
-        {
-        		obj.mathEnabled = !obj.mathEnabled;
-        }
+    if (obj.mathEnabled != null) {
+      obj.mathEnabled = !obj.mathEnabled;
+    }
 
-        if (obj.shadowVisible != null)
-        {
-        		obj.shadowVisible = !obj.shadowVisible;
-        }
+    if (obj.shadowVisible != null) {
+      obj.shadowVisible = !obj.shadowVisible;
+    }
 
-		return obj;
-	};
+    return obj;
+  };
 
-	mxCodecRegistry.register(codec);
+  mxCodecRegistry.register(codec);
 })();
 
 // //Extends codec for ChangeGridColor
-(function()
-{
-	var codec = new mxObjectCodec(new ChangeGridColor(),  ['ui']);
+(function () {
+  var codec = new mxObjectCodec(new ChangeGridColor(), ['ui']);
 
-	codec.beforeDecode = function(dec, node, obj)
-	{
-		obj.ui = dec.ui;
+  codec.beforeDecode = function (dec, node, obj) {
+    obj.ui = dec.ui;
 
-		return node;
-	};
+    return node;
+  };
 
-	mxCodecRegistry.register(codec);
+  mxCodecRegistry.register(codec);
 })();

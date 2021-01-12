@@ -15,9 +15,7 @@
  */
 
 // TEN9: Added imports
-const {
-    mxUtils,
-} = require('../jgraph/mxClient.js');
+const { mxUtils } = require('../jgraph/mxClient.js');
 
 // $Id = DriveFile.js,v 1.12 2010-01-02 09 =45 =14 gaudenz Exp $
 // Copyright (c) 2006-2014, JGraph Ltd
@@ -30,9 +28,8 @@ const {
  * @param {number} y Y-coordinate of the point.
  */
 
-LocalLibrary = function(ui, data, title)
-{
-	LocalFile.call(this, ui, data, title);
+LocalLibrary = function (ui, data, title) {
+  LocalFile.call(this, ui, data, title);
 };
 
 //Extends mxEventSource
@@ -40,57 +37,52 @@ mxUtils.extend(LocalLibrary, LocalFile);
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
-LocalLibrary.prototype.getHash = function()
-{
-	return 'F' + this.getTitle();
+LocalLibrary.prototype.getHash = function () {
+  return 'F' + this.getTitle();
 };
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
-LocalLibrary.prototype.isAutosave = function()
-{
-	return false;
+LocalLibrary.prototype.isAutosave = function () {
+  return false;
 };
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
-LocalLibrary.prototype.saveAs = function(title, success, error)
-{
-	this.saveFile(title, false, success, error);
+LocalLibrary.prototype.saveAs = function (title, success, error) {
+  this.saveFile(title, false, success, error);
 };
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
-LocalLibrary.prototype.updateFileData = function()
-{
-	// Do nothing
+LocalLibrary.prototype.updateFileData = function () {
+  // Do nothing
 };
 
 /**
  * Returns the location as a new object.
  * @type mx.Point
  */
-LocalLibrary.prototype.open = function()
-{
-	// Do nothing - this should never be called
+LocalLibrary.prototype.open = function () {
+  // Do nothing - this should never be called
 };
 
 module.exports = {
-    LocalLibrary,
-}
+  LocalLibrary,
+};

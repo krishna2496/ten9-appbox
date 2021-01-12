@@ -3715,7 +3715,9 @@ TextFormatPanel.prototype.addFont = function (container) {
         mxResources.get('table'),
         false,
         mxUtils.bind(this, function (menu) {
-          this.editorUi.menus.addInsertTableItem(menu);
+          // TEN9: make div visible when table open from format panel
+          //this.editorUi.menus.addInsertTableItem(menu)
+          this.editorUi.menus.addInsertTableItem(menu, null, null, true);
         }),
       ),
     ];

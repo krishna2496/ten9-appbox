@@ -871,7 +871,7 @@ Menus.prototype.addInsertTableCellItem = function (menu, parent) {
 /**
  * Adds a menu item to insert a table.
  */
-Menus.prototype.addInsertTableItem = function (menu, insertFn, parent) {
+Menus.prototype.addInsertTableItem = function (menu, insertFn, parent, isformatPanel) {
   insertFn =
     insertFn != null
       ? insertFn
@@ -1061,7 +1061,7 @@ Menus.prototype.addInsertTableItem = function (menu, insertFn, parent) {
   );
   mxEvent.addListener(picker, 'mouseover', mouseover);
   // TEN9: remove extra space from the table menu
-  if (this.editorUi.theme == 'min') {
+  if (this.editorUi.theme == 'min' && isformatPanel == undefined) {
     let firstTd = elt2.lastChild;
     let secondTd = firstTd.previousSibling;
     firstTd.style.display = 'none';
