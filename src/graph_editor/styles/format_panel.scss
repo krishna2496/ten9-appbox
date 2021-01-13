@@ -71,10 +71,14 @@
     border-radius: 3px;
     opacity: 1;
     border: 1px solid #a0a0a0;
-    padding: 4px 0 0 4px !important;
+    // TEN9: make format panel align box center
+    //padding: 4px 0 0 4px !important;
     margin: 1px;
     width: 29px;
+    display: flex;
     height: 29px !important;
+    justify-content: center;
+    align-items: center;
   }
 
   .format-label {

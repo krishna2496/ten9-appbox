@@ -186,7 +186,6 @@ const IMAGE_PATH = '/images';
         const contentPadding = 20;
         const bottomMargin = 5;
         const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
-        console.log('gdf ', Math.max(20, ui.diagramContainer.clientWidth + 240 - 12));
         ui.formatWindow = new WrapperWindow(
           ui,
           mxResources.get('format'),
@@ -442,6 +441,8 @@ const IMAGE_PATH = '/images';
       if (this.tabContainer != null) {
         // Makes room for view zoom menu
         this.tabContainer.style.right = '70px';
+        // TEN9: to show tab container over ruler
+        this.tabContainer.style.zIndex = '1';
         this.diagramContainer.style.bottom = this.tabContainerHeight + 'px';
       }
 

@@ -88,10 +88,26 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
 
   function resizeRulerContainer() {
     var diagCont = editorUi.diagramContainer;
-    container.style.top = diagCont.offsetTop - RULER_THICKNESS + 'px';
-    container.style.left = diagCont.offsetLeft - RULER_THICKNESS + 'px';
-    container.style.width = (isVertical ? 0 : diagCont.offsetWidth) + RULER_THICKNESS + 'px';
-    container.style.height = (isVertical ? diagCont.offsetHeight : 0) + RULER_THICKNESS + 'px';
+
+    if (editorUi.theme == 'min') {
+      // TEN9: check if canvas is vertical or horizontal
+      container.style.height = (isVertical ? diagCont.offsetHeight : 0) + RULER_THICKNESS + 'px';
+
+      if (isVertical) {
+        container.style.width = (isVertical ? 0 : diagCont.offsetWidth) + RULER_THICKNESS + 'px';
+        container.style.top = diagCont.offsetTop + 'px';
+        container.style.left = diagCont.offsetLeft + 'px';
+      } else {
+        container.style.width = (isVertical ? 0 : diagCont.offsetWidth) - RULER_THICKNESS + 'px';
+        container.style.top = diagCont.offsetTop + 'px';
+        container.style.left = diagCont.offsetLeft - RULER_THICKNESS + 'px';
+      }
+    } else {
+      container.style.top = diagCont.offsetTop - RULER_THICKNESS + 'px';
+      container.style.left = diagCont.offsetLeft - RULER_THICKNESS + 'px';
+      container.style.width = (isVertical ? 0 : diagCont.offsetWidth) + RULER_THICKNESS + 'px';
+      container.style.height = (isVertical ? diagCont.offsetHeight : 0) + RULER_THICKNESS + 'px';
+    }
   }
 
   this.editorUiRefresh = editorUi.refresh;

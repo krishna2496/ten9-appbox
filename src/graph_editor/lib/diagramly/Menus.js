@@ -3800,9 +3800,11 @@ DriveFile = function () {};
           this.addMenuItems(menu, ['shapes', '-', 'pageView', 'pageScale']);
           this.addSubmenu('units', menu, parent);
           // TEN9: remove ruler from view menu
-          //this.addMenuItems(menu, ['-', 'scrollbars', 'tooltips', 'ruler', '-',
-          // 'grid', 'guides'], parent);
-          this.addMenuItems(menu, ['-', 'scrollbars', 'tooltips', '-', 'grid', 'guides'], parent);
+          this.addMenuItems(
+            menu,
+            ['-', 'scrollbars', 'tooltips', 'ruler', '-', 'grid', 'guides'],
+            parent,
+          );
 
           if (mxClient.IS_SVG && (document.documentMode == null || document.documentMode > 9)) {
             this.addMenuItem(menu, 'shadowVisible', parent);

@@ -76,7 +76,8 @@
 
   .geToolbarContainer .geLabel {
     width: 180px !important;
-    height: 26px !important;
+    // TEN9: fix format panel drop down
+    height: auto !important;
   }
 
   .position-panel,
