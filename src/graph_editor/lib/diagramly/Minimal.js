@@ -36,6 +36,7 @@ const { EditorUi } = require('../jgraph/EditorUi.js');
 const { Sidebar } = require('../jgraph/Sidebar.js');
 const { Action } = require('../jgraph/Actions.js');
 const { Menu, Menubar } = require('../jgraph/Menus.js');
+const graphUtils = require('../jgraph/graph_utils.js');
 const urlParams = {};
 const isLocalStorage = false;
 const IMAGE_PATH = '/images';
@@ -157,8 +158,19 @@ const IMAGE_PATH = '/images';
         x = Math.max(0, Math.min(x, iiw - this.table.clientWidth));
         y = Math.max(0, Math.min(y, ih - this.table.clientHeight - 48));
 
+        let containerHeight = document.getElementById('container').style.height;
+        let containerWidth = document.getElementById('container').clientWidth;
+        containerHeight = containerHeight.substring(0, containerHeight.length - 2);
+
+        let windowHeight = this.table.clientHeight + y;
         if (this.getX() != x || this.getY() != y) {
-          mxWindow.prototype.setLocation.apply(this, arguments);
+          // TEn9: check the window is not going outside container
+          if (
+            containerHeight >= y + this.table.clientHeight &&
+            containerWidth >= x + this.table.clientWidth
+          ) {
+            mxWindow.prototype.setLocation.apply(this, arguments);
+          }
         }
       };
 

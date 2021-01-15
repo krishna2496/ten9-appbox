@@ -1631,12 +1631,7 @@ Menubar.prototype.addMenuHandler = function (elt, funct) {
         menu.popup(offset.x, offset.y + elt.offsetHeight, null, evt);
         // TEN9: fix minimal zoom popup menu
         if (elt.title == 'Zoom (Alt+Mousewheel)') {
-          let left = menu.div.style.left;
-          left = left.substring(0, left.length - 2);
-          // TEN9: remove padding around the container
-          let paddingRight = 15;
-          let paddingLeft = 15;
-          menu.div.style.left = left - paddingRight - paddingLeft + 'px';
+          graphUtils.fit(menu.div, this.editorUi.container);
         }
         this.editorUi.setCurrentMenu(menu, elt);
       }
