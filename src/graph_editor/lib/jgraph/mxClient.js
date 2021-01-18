@@ -11205,7 +11205,8 @@ mxWindow.prototype.init = function (x, y, width, height, style) {
   this.div.style.top = y + 'px';
   this.table = document.createElement('table');
   this.table.className = style;
-
+  // TEN9: make min width of sidebar window for minmal theme
+  this.table.style.minWidth = width + 'px';
   // Disables built-in pan and zoom in IE10 and later
   if (mxClient.IS_POINTER) {
     this.div.style.touchAction = 'none';

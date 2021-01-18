@@ -1407,6 +1407,7 @@ CreateGraphDialog.prototype.connectImage = new mxImage(
 var BackgroundImageDialog = function (editorUi, applyFn, img) {
   var div = document.createElement('div');
   div.style.whiteSpace = 'nowrap';
+  div.style.overflowY = 'hidden';
 
   var h3 = document.createElement('h2');
   mxUtils.write(h3, mxResources.get('backgroundImage'));

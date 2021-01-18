@@ -143,6 +143,7 @@ const IMAGE_PATH = '/images';
 
       fn(div);
       this.window = new mxWindow(title, div, x, y, w, h, true, true, null, null, id);
+      this.window.div.style.bottom = '0px';
       this.window.destroyOnClose = false;
       this.window.setMaximizable(false);
       this.window.setResizable(true);
@@ -162,9 +163,8 @@ const IMAGE_PATH = '/images';
         let containerWidth = document.getElementById('container').clientWidth;
         containerHeight = containerHeight.substring(0, containerHeight.length - 2);
 
-        let windowHeight = this.table.clientHeight + y;
         if (this.getX() != x || this.getY() != y) {
-          // TEn9: check the window is not going outside container
+          // TEN9: check the window is not going outside container
           if (
             containerHeight >= y + this.table.clientHeight &&
             containerWidth >= x + this.table.clientWidth
@@ -188,6 +188,10 @@ const IMAGE_PATH = '/images';
     };
 
     function toggleFormat(ui, visible) {
+      // TEN9: toggle fomat menu button won't work on preview mode
+      if (!ui.editor.graph.isEnabled()) {
+        return;
+      }
       var graph = ui.editor.graph;
       graph.popupMenuHandler.hideMenu();
 
@@ -227,6 +231,10 @@ const IMAGE_PATH = '/images';
     }
 
     function toggleShapes(ui, visible) {
+      // TEN9: toggle shape menu button won't work on preview mode
+      if (!ui.editor.graph.isEnabled()) {
+        return;
+      }
       // TEN9: to calculate the container height
       const container = document.getElementById('container');
       const recta = container.getBoundingClientRect();
@@ -698,7 +706,6 @@ const IMAGE_PATH = '/images';
       this.diagramContainer.style.left = '0px';
       this.tabContainer.style.left = '0px';
       this.toolbarContainer.style.display = 'none';
-      this.actions.get('fitWindow').funct();
 
       if (document.getElementById('sidebar') != undefined) {
         if (!visible) {

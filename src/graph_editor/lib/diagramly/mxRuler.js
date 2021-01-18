@@ -95,10 +95,10 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
 
       if (isVertical) {
         container.style.width = (isVertical ? 0 : diagCont.offsetWidth) + RULER_THICKNESS + 'px';
-        container.style.top = diagCont.offsetTop + 'px';
+        container.style.top = diagCont.offsetTop - RULER_THICKNESS + 'px';
         container.style.left = diagCont.offsetLeft + 'px';
       } else {
-        container.style.width = (isVertical ? 0 : diagCont.offsetWidth) - RULER_THICKNESS + 'px';
+        container.style.width = (isVertical ? 0 : diagCont.offsetWidth) + RULER_THICKNESS + 'px';
         container.style.top = diagCont.offsetTop + 'px';
         container.style.left = diagCont.offsetLeft - RULER_THICKNESS + 'px';
       }

@@ -1056,7 +1056,9 @@ function Dialog(
 
     // Adds vertical scrollbars if needed
     if (!noScroll && elt.clientHeight > div.clientHeight - 64) {
-      elt.style.overflowY = 'auto';
+      // TEN9: remove overflowY from backgroundImage Dialog
+      //elt.style.overflowY = 'auto';
+      elt.style.overflowY = 'hidden';
     }
 
     if (this.dialogImg != null) {
