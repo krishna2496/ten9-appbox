@@ -143,7 +143,6 @@ const IMAGE_PATH = '/images';
 
       fn(div);
       this.window = new mxWindow(title, div, x, y, w, h, true, true, null, null, id);
-      this.window.div.style.bottom = '0px';
       this.window.destroyOnClose = false;
       this.window.setMaximizable(false);
       this.window.setResizable(true);
@@ -163,15 +162,17 @@ const IMAGE_PATH = '/images';
         let containerWidth = document.getElementById('container').clientWidth;
         containerHeight = containerHeight.substring(0, containerHeight.length - 2);
 
-        if (this.getX() != x || this.getY() != y) {
-          // TEN9: check the window is not going outside container
-          if (
-            containerHeight >= y + this.table.clientHeight &&
-            containerWidth >= x + this.table.clientWidth
-          ) {
-            mxWindow.prototype.setLocation.apply(this, arguments);
-          }
+        // TEN9: check the window is not going outside container
+        if (containerHeight <= y + this.table.clientHeight) {
+          y = containerHeight - this.table.clientHeight;
         }
+        if (containerWidth <= x + this.table.clientWidth) {
+          x = containerWidth - this.table.clientWidth;
+        }
+        mxWindow.prototype.setLocation.apply(this, arguments);
+        // if (this.getX() != x || this.getY() != y) {
+        //     mxWindow.prototype.setLocation.apply(this, arguments);
+        // }
       };
 
       // Workaround for text selection starting in Safari
@@ -1195,9 +1196,9 @@ const IMAGE_PATH = '/images';
       ui.defaultLibraryName = mxResources.get('untitledLibrary');
 
       var menubar = document.createElement('div');
-      // TEN9: Increase the hight of menubar
+      // TEN9: Increase the hight of menubar and add z-index
       menubar.style.cssText =
-        'position:absolute;left:0px;right:0px;top:0px;height:47px;padding:8px;border-bottom:1px solid lightgray;background-color:#ffffff;text-align:left;white-space:nowrap;';
+        'position:absolute;left:0px;right:0px;top:0px;height:47px;padding:8px;border-bottom:1px solid lightgray;background-color:#ffffff;text-align:left;white-space:nowrap;z-index:2;';
 
       var before = null;
       var menuObj = new Menubar(ui, menubar);

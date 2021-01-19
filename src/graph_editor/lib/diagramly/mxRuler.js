@@ -98,9 +98,9 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
         container.style.top = diagCont.offsetTop - RULER_THICKNESS + 'px';
         container.style.left = diagCont.offsetLeft + 'px';
       } else {
-        container.style.width = (isVertical ? 0 : diagCont.offsetWidth) + RULER_THICKNESS + 'px';
+        container.style.width = (isVertical ? 0 : diagCont.offsetWidth) + 'px';
         container.style.top = diagCont.offsetTop + 'px';
-        container.style.left = diagCont.offsetLeft - RULER_THICKNESS + 'px';
+        container.style.left = diagCont.offsetLeft + 'px';
       }
     } else {
       container.style.top = diagCont.offsetTop - RULER_THICKNESS + 'px';
@@ -258,7 +258,13 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
           ctx.fillRect(0, rEnd, RULER_THICKNESS, canvas.height);
         }
       } else {
-        var ow = rStart - RULER_THICKNESS;
+        // TEN9: change the ruler startig and ending position
+        if (editorUi.theme == 'min') {
+          var ow = rStart - 2 * RULER_THICKNESS;
+          rEnd = rEnd - RULER_THICKNESS;
+        } else {
+          var ow = rStart - RULER_THICKNESS;
+        }
 
         if (ow > 0) {
           ctx.fillRect(RULER_THICKNESS, 0, ow, RULER_THICKNESS);
@@ -333,6 +339,7 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
         listenersDrawRuler();
       }
     } else {
+      // TEN9:
       var newW = div.offsetWidth + RULER_THICKNESS;
 
       if (canvas.width != newW) {
