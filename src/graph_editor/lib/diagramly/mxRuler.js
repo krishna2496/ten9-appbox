@@ -123,7 +123,7 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
   var canvas = document.createElement('canvas');
   //initial sizing which is corrected by the graph size event
   canvas.width = container.offsetWidth;
-  canvas.height = container.offsetHeight;
+  canvas.height = container.offsetHeight + 1;
   container.style.overflow = 'hidden';
   canvas.style.position = 'relative';
   container.appendChild(canvas);

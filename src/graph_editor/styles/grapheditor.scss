@@ -810,6 +810,8 @@ div.mxWindow {
     no-repeat;
   width: 21px;
   height: 21px;
+  // TEN9: to center the format panel icons
+  transform: translate(10%, 10%);
 }
 
 .geBaseButton {

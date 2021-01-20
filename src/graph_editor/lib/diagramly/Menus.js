@@ -2744,7 +2744,9 @@ DriveFile = function () {};
               mxSettings.setUi('kennedy');
               mxSettings.save();
               editorUi.fireEvent(new mxEventObject('themeChanged', 'detail', 'kennedy'));
-              editorUi.alert(mxResources.get('restartForChangeRequired'));
+              if (theme != 'kennedy') {
+                editorUi.alert(mxResources.get('restartForChangeRequired'));
+              }
             },
             parent,
           );
@@ -2760,7 +2762,9 @@ DriveFile = function () {};
               mxSettings.setUi('min');
               mxSettings.save();
               editorUi.fireEvent(new mxEventObject('themeChanged', 'detail', 'min'));
-              editorUi.alert(mxResources.get('restartForChangeRequired'));
+              if (theme != 'min') {
+                editorUi.alert(mxResources.get('restartForChangeRequired'));
+              }
             },
             parent,
           );

@@ -143,6 +143,11 @@ const IMAGE_PATH = '/images';
 
       fn(div);
       this.window = new mxWindow(title, div, x, y, w, h, true, true, null, null, id);
+      // TEN9: set min-width for format panel
+      if (id == undefined) {
+        this.window.div.style.minWidth = w + 'px';
+      }
+
       this.window.destroyOnClose = false;
       this.window.setMaximizable(false);
       this.window.setResizable(true);
@@ -206,7 +211,7 @@ const IMAGE_PATH = '/images';
         ui.formatWindow = new WrapperWindow(
           ui,
           mxResources.get('format'),
-          Math.max(20, ui.diagramContainer.clientWidth + 240 - 12),
+          Math.max(20, ui.diagramContainer.clientWidth + 220 - 12),
           56,
           260,
           Math.min(566, newHeight),
