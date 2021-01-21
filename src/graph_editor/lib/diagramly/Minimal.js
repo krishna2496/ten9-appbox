@@ -1514,7 +1514,7 @@ const IMAGE_PATH = '/images';
 
         createGroup(
           [
-            small ? addMenu('diagram', null, IMAGE_PATH + '/drawlogo.svg') : null,
+            small ? addMenu('diagram', null, IMAGE_PATH + '/ten9_stamp.png') : null,
             addMenuItem(
               mxResources.get('shapes'),
               ui.actions.get('toggleShapes').funct,

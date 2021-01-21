@@ -2811,102 +2811,6 @@ FilenameDialog.createFileTypes = function (editorUi, nameInput, types) {
   };
 })();
 
-function mxDualRuler(editorUi, unit) {
-  var rulerOffset = new mxPoint(
-    mxRuler.prototype.RULER_THICKNESS,
-    mxRuler.prototype.RULER_THICKNESS,
-  );
-  this.editorUiGetDiagContOffset = editorUi.getDiagramContainerOffset;
-
-  editorUi.getDiagramContainerOffset = function () {
-    return rulerOffset;
-  };
-
-  this.editorUiRefresh = editorUi.refresh;
-  this.ui = editorUi;
-  this.origGuideMove = mxGuide.prototype.move;
-  this.origGuideDestroy = mxGuide.prototype.destroy;
-
-  this.vRuler = new mxRuler(editorUi, unit, true);
-  this.hRuler = new mxRuler(editorUi, unit, false, true);
-
-  // Adds units context menu
-  var installMenu = mxUtils.bind(this, function (node) {
-    var menuWasVisible = false;
-
-    mxEvent.addGestureListeners(
-      node,
-      mxUtils.bind(this, function (evt) {
-        menuWasVisible = editorUi.currentMenu != null;
-        mxEvent.consume(evt);
-      }),
-      null,
-      mxUtils.bind(this, function (evt) {
-        if (
-          editorUi.editor.graph.isEnabled() &&
-          !editorUi.editor.graph.isMouseDown &&
-          (mxEvent.isTouchEvent(evt) || mxEvent.isPopupTrigger(evt))
-        ) {
-          editorUi.editor.graph.popupMenuHandler.hideMenu();
-          editorUi.hideCurrentMenu();
-
-          if (!mxEvent.isTouchEvent(evt) || !menuWasVisible) {
-            var menu = new mxPopupMenu(
-              mxUtils.bind(this, function (menu, parent) {
-                editorUi.menus.addMenuItems(menu, ['points', /*'inches',*/ 'millimeters'], parent);
-              }),
-            );
-
-            menu.div.className += ' geMenubarMenu';
-            menu.smartSeparators = true;
-            menu.showDisabled = true;
-            menu.autoExpand = true;
-
-            // Disables autoexpand and destroys menu when hidden
-            menu.hideMenu = mxUtils.bind(this, function () {
-              mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
-              editorUi.resetCurrentMenu();
-              menu.destroy();
-            });
-
-            var x = mxEvent.getClientX(evt);
-            var y = mxEvent.getClientY(evt);
-            menu.popup(x, y, null, evt);
-            editorUi.setCurrentMenu(menu, node);
-          }
-
-          mxEvent.consume(evt);
-        }
-      }),
-    );
-  });
-
-  installMenu(this.hRuler.container);
-  installMenu(this.vRuler.container);
-
-  this.vRuler.drawRuler();
-  this.hRuler.drawRuler();
-}
-
-mxDualRuler.prototype.setUnit = function (unit) {
-  this.vRuler.setUnit(unit);
-  this.hRuler.setUnit(unit);
-};
-
-mxDualRuler.prototype.setStyle = function (newStyle) {
-  this.vRuler.setStyle(newStyle);
-  this.hRuler.setStyle(newStyle);
-};
-
-mxDualRuler.prototype.destroy = function () {
-  this.vRuler.destroy();
-  this.hRuler.destroy();
-  this.ui.refresh = this.editorUiRefresh;
-  mxGuide.prototype.move = this.origGuideMove;
-  mxGuide.prototype.destroy = this.origGuideDestroy;
-  this.ui.getDiagramContainerOffset = this.editorUiGetDiagContOffset;
-};
-
 // TEN9: Added exports
 module.exports = {
   createEditor,
@@ -2916,5 +2820,4 @@ module.exports = {
   PageSetupDialog,
   FilenameDialog,
   PrintDialog,
-  mxDualRuler,
 };

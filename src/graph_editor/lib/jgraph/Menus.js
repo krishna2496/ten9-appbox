@@ -999,7 +999,7 @@ Menus.prototype.addInsertTableItem = function (menu, insertFn, parent, isformatP
   label.style.padding = '4px';
   label.style.fontSize = Menus.prototype.defaultFontSize + 'px';
   label.innerHTML = '1x1';
-  if (this.editorUi.theme == 'min' && isformatPanel == undefined) {
+  if (this.editorUi.theme === 'min' && isformatPanel == undefined) {
     label.style.paddingBottom = '17px';
   }
   elt2.firstChild.appendChild(label);
@@ -1064,7 +1064,7 @@ Menus.prototype.addInsertTableItem = function (menu, insertFn, parent, isformatP
   );
   mxEvent.addListener(picker, 'mouseover', mouseover);
   // TEN9: remove extra space from the table menu
-  if (this.editorUi.theme == 'min' && isformatPanel == undefined) {
+  if (this.editorUi.theme === 'min' && isformatPanel == undefined) {
     let firstTd = elt2.lastChild;
     let secondTd = firstTd.previousSibling;
     firstTd.style.display = 'none';
@@ -1630,9 +1630,7 @@ Menubar.prototype.addMenuHandler = function (elt, funct) {
         var offset = graphUtils.getOffset(this.editorUi.container, elt);
         menu.popup(offset.x, offset.y + elt.offsetHeight, null, evt);
         // TEN9: fix minimal zoom popup menu
-        if (elt.title == 'Zoom (Alt+Mousewheel)') {
-          graphUtils.fit(menu.div, this.editorUi.container);
-        }
+        graphUtils.fit(menu.div, this.editorUi.container);
         this.editorUi.setCurrentMenu(menu, elt);
       }
 

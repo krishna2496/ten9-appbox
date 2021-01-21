@@ -6597,8 +6597,8 @@ StyleFormatPanel.prototype.addEffects = function (div) {
     if (ss.glass) {
       addOption(mxResources.get('glass'), mxConstants.STYLE_GLASS, 0);
     }
-
-    addOption(mxResources.get('sketch'), 'sketch', 0);
+    // TEN9: hide sketch option
+    // addOption(mxResources.get('sketch'), 'sketch', 0);
   });
 
   graph.getModel().addListener(mxEvent.CHANGE, listener);

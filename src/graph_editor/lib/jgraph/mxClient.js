@@ -11095,8 +11095,7 @@ function mxWindow(
       mxClient.getDocumentContainer().appendChild(this.div);
       this.div.style.zIndex = '2';
     }
-    // TEN9:
-    //debugger
+    // TEN9: set id to sidebar window
     if (id != undefined) {
       this.div.setAttribute('id', 'sidebar');
     }

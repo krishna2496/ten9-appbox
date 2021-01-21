@@ -113,7 +113,6 @@ export default defineComponent({
 
     function setGraphEnabled(enabled: boolean) {
       editorUi.value.setEnabled(enabled);
-
       /**
        * When scratchpad is enabled, open it when toggling from preview and
        * edit modes.
@@ -239,8 +238,7 @@ export default defineComponent({
       () => props.theme,
       (val: string) => {
         editorUi.value.theme = val;
-        if (val == 'min') {
-          editorUi.value.theme = val;
+        if (val === 'min') {
           editorUi.value.initTheme();
           editorUi.value.setEnabled(true);
           editorUi.value.menus.init();

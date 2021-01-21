@@ -1236,6 +1236,9 @@ EditorUi.prototype.updateTabContainer = function () {
     if (this.isPageInsertTabVisible()) {
       insertTab = this.createPageInsertTab();
       this.tabContainer.appendChild(insertTab);
+      // TEN9: set insert tab icon position
+      insertTab.style.paddingLeft = '1px';
+      insertTab.style.paddingTop = '3px';
     }
 
     if (wrapper.clientWidth > this.tabContainer.clientWidth - btnWidth) {
@@ -1389,6 +1392,9 @@ EditorUi.prototype.createPageMenuTab = function () {
   tab.style.marginLeft = '0px';
   tab.style.top = '0px';
   tab.style.left = '1px';
+  // TEN9: make dots position in center
+  tab.style.paddingTop = '0px';
+  tab.style.paddingLeft = '1px';
 
   mxEvent.addListener(
     tab,

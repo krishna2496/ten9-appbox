@@ -1620,7 +1620,7 @@ var BackgroundImageDialog = function (editorUi, applyFn, img) {
   };
 
   var btns = document.createElement('div');
-  // TEN9: remove scrollbar form dailogbox
+  // TEN9: remove scrollbar form dialogbox
   btns.style.marginTop = '39px';
   btns.style.textAlign = 'right';
 

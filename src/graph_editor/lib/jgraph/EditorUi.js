@@ -54,6 +54,7 @@ const { Toolbar } = require('./Toolbar.js');
 const { ColorDialog, EditDataDialog, LinkDialog, OpenDialog } = require('./Dialogs.js');
 const { DiagramPage } = require('../diagramly/Diagram.js');
 const graphUtils = require('./graph_utils.js');
+const { doc } = require('prettier');
 
 // TEN9: TODO: Centralize all globals
 const appPages = [];
@@ -1122,9 +1123,26 @@ EditorUi.prototype.setEnabled = function (enabled) {
   redo.setEnabled(enabled);
 
   // TEN9: Add class to denote preview or edit modes.
+  var tools = document.getElementsByClassName('geMenuItem');
   if (!enabled) {
     mxClient.getDocumentContainer().classList.add('preview-mode');
+    // TEN9: disable all menu is in preview mode
+    if (this.theme === 'min') {
+      for (var i = 0; i < tools.length; i++) {
+        tools[i].setAttribute('disabled', 'disabled');
+        tools[i].style.cursor = 'default';
+        tools[i].style.pointerEvents = 'none';
+      }
+    }
   } else {
+    // TEN9: activate all menu is in preview mode
+    if (this.theme === 'min') {
+      for (var i = 0; i < tools.length; i++) {
+        tools[i].removeAttribute('disabled');
+        tools[i].style.cursor = 'pointer';
+        tools[i].style.pointerEvents = 'all';
+      }
+    }
     mxClient.getDocumentContainer().classList.remove('preview-mode');
   }
 };
@@ -3837,7 +3855,7 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
   }
 
   // TEN9: check if preview mode is on then don't change diagramContainer position
-  if (this.theme != 'min') {
+  if (this.theme !== 'min') {
     this.diagramContainer.style.top = tmp + diagContOffset.y + 'px';
   }
 
@@ -3848,7 +3866,7 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
   this.footerContainer.style.display = this.footerHeight == 0 ? 'none' : '';
 
   // TEN9: check if minimal theme is on then don't change the tabContainer position
-  if (this.tabContainer != null && this.theme != 'min') {
+  if (this.tabContainer !== null && this.theme !== 'min') {
     this.tabContainer.style.left = contLeft + 'px';
   }
 

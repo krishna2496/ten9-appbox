@@ -1289,7 +1289,8 @@ Actions.prototype.init = function () {
   });
   action.isEnabled = isGraphEnabled;
   action.visible = false;
-
+  //
+  action = this.addAction('toggleShapes', function () {});
   // TEN9: Disable Help and About
   // // Help actions
   // this.addAction('help', function()
