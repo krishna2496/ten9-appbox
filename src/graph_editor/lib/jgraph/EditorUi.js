@@ -54,7 +54,6 @@ const { Toolbar } = require('./Toolbar.js');
 const { ColorDialog, EditDataDialog, LinkDialog, OpenDialog } = require('./Dialogs.js');
 const { DiagramPage } = require('../diagramly/Diagram.js');
 const graphUtils = require('./graph_utils.js');
-const { doc } = require('prettier');
 
 // TEN9: TODO: Centralize all globals
 const appPages = [];
@@ -1106,7 +1105,12 @@ EditorUi.prototype.setEnabled = function (enabled) {
   this.editor.graph.setEnabled(enabled);
   this.toggleFormatPanel(enabled);
   this.toggleSidebarPanel(enabled);
-  this.toogleSidebarFooterContainer(enabled);
+  // TEN9: disable all menu is in preview mode
+  if (this.theme === 'min') {
+    this.toogleSidebarFooterContainer(!enabled);
+  } else {
+    this.toogleSidebarFooterContainer(enabled);
+  }
 
   this.editor.graph.popupMenuHandler.hideMenu();
   this.editor.graph.tooltipHandler.hideTooltip();

@@ -1410,9 +1410,13 @@ const IMAGE_PATH = '/images';
       ui.menubarContainer = ui.buttonContainer;
 
       ui.tabContainer = document.createElement('div');
+      // TEN9: remove margin bottom from tab container
+      // ui.tabContainer.style.cssText =
+      //   'position:absolute;left:0px;right:0px;bottom:0px;height:40px;white-space:nowrap;' +
+      //   'border-bottom:1px solid lightgray;background-color:#ffffff;border-top:1px solid lightgray;margin-bottom:-2px;';
       ui.tabContainer.style.cssText =
         'position:absolute;left:0px;right:0px;bottom:0px;height:40px;white-space:nowrap;' +
-        'border-bottom:1px solid lightgray;background-color:#ffffff;border-top:1px solid lightgray;margin-bottom:-2px;';
+        'border-bottom:1px solid lightgray;background-color:#ffffff;border-top:1px solid lightgray;';
       // TEN9: remove hidden visibility to show tab container
       //'visibility:hidden;';
 

@@ -6707,31 +6707,32 @@ DiagramStylePanel.prototype.addView = function (div) {
   table.appendChild(tbody);
 
   // Sketch
-  left.appendChild(
-    this.createOption(
-      mxResources.get('sketch'),
-      function () {
-        return sketch;
-      },
-      function (checked) {
-        sketch = checked;
+  // TEN9: hide sketch option
+  // left.appendChild(
+  //   this.createOption(
+  //     mxResources.get('sketch'),
+  //     function () {
+  //       return sketch;
+  //     },
+  //     function (checked) {
+  //       sketch = checked;
 
-        if (checked) {
-          graph.currentEdgeStyle['sketch'] = '1';
-          graph.currentVertexStyle['sketch'] = '1';
-        } else {
-          delete graph.currentEdgeStyle['sketch'];
-          delete graph.currentVertexStyle['sketch'];
-        }
+  //       if (checked) {
+  //         graph.currentEdgeStyle['sketch'] = '1';
+  //         graph.currentVertexStyle['sketch'] = '1';
+  //       } else {
+  //         delete graph.currentEdgeStyle['sketch'];
+  //         delete graph.currentVertexStyle['sketch'];
+  //       }
 
-        graph.updateCellStyles('sketch', checked ? '1' : null, graph.getVerticesAndEdges());
-      },
-      null,
-      function (div) {
-        div.style.width = 'auto';
-      },
-    ),
-  );
+  //       graph.updateCellStyles('sketch', checked ? '1' : null, graph.getVerticesAndEdges());
+  //     },
+  //     null,
+  //     function (div) {
+  //       div.style.width = 'auto';
+  //     },
+  //   ),
+  // );
 
   // Rounded
   right.appendChild(

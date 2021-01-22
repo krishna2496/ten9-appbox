@@ -103,7 +103,8 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
         container.style.left = diagCont.offsetLeft + 'px';
       }
     } else {
-      container.style.top = diagCont.offsetTop - RULER_THICKNESS + 'px';
+      // TEN9: remove gap at the ruler top
+      container.style.top = diagCont.offsetTop - RULER_THICKNESS - 1 + 'px';
       container.style.left = diagCont.offsetLeft - RULER_THICKNESS + 'px';
       container.style.width = (isVertical ? 0 : diagCont.offsetWidth) + RULER_THICKNESS + 'px';
       container.style.height = (isVertical ? diagCont.offsetHeight : 0) + RULER_THICKNESS + 'px';
