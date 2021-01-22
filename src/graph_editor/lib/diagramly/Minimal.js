@@ -1457,7 +1457,7 @@ const IMAGE_PATH = '/images';
         elt.style.cursor = 'pointer';
         elt.style.borderTop = '1px solid lightgray';
         elt.style.borderLeft = '1px solid lightgray';
-        elt.style.height = parseInt(ui.tabContainerHeight) - 1 + 'px';
+        elt.style.height = parseInt(ui.tabContainerHeight) + 'px';
         elt.style.lineHeight = parseInt(ui.tabContainerHeight) + 1 + 'px';
         wrapper.appendChild(elt);
 

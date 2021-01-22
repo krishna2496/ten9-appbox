@@ -99,7 +99,7 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
         container.style.left = diagCont.offsetLeft + 'px';
       } else {
         container.style.width = (isVertical ? 0 : diagCont.offsetWidth) + 'px';
-        container.style.top = diagCont.offsetTop + 'px';
+        container.style.top = diagCont.offsetTop - 1 + 'px';
         container.style.left = diagCont.offsetLeft + 'px';
       }
     } else {
@@ -124,7 +124,7 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
   var canvas = document.createElement('canvas');
   //initial sizing which is corrected by the graph size event
   canvas.width = container.offsetWidth;
-  canvas.height = container.offsetHeight + 1;
+  canvas.height = container.offsetHeight + 3;
   container.style.overflow = 'hidden';
   canvas.style.position = 'relative';
   container.appendChild(canvas);
