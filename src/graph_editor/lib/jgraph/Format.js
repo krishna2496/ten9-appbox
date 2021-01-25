@@ -6735,7 +6735,8 @@ DiagramStylePanel.prototype.addView = function (div) {
   // );
 
   // Rounded
-  right.appendChild(
+  // TEN9: change rounded checkbox position
+  left.appendChild(
     this.createOption(
       mxResources.get('rounded'),
       function () {
@@ -6764,14 +6765,15 @@ DiagramStylePanel.prototype.addView = function (div) {
   );
 
   // Curved
-  left = left.cloneNode(false);
-  right = right.cloneNode(false);
-  row = row.cloneNode(false);
-  row.appendChild(left);
-  row.appendChild(right);
-  tbody.appendChild(row);
+  // TEN9: change curved checkbox position
+  //left = left.cloneNode(false);
+  // right = right.cloneNode(false);
+  // row = row.cloneNode(false);
+  // row.appendChild(left);
+  // row.appendChild(right);
+  // tbody.appendChild(row);
 
-  left.appendChild(
+  right.appendChild(
     this.createOption(
       mxResources.get('curved'),
       function () {
@@ -6911,7 +6913,14 @@ DiagramStylePanel.prototype.addView = function (div) {
   btn.setAttribute('title', mxResources.get('reset'));
   btn.style.textOverflow = 'ellipsis';
   btn.style.maxWidth = '90px';
-  right.appendChild(btn);
+  // TEN9: change in reset button position
+  left = left.cloneNode(false);
+  right = right.cloneNode(false);
+  row = row.cloneNode(false);
+  row.appendChild(left);
+  row.appendChild(right);
+  tbody.appendChild(row);
+  left.appendChild(btn);
 
   var createPreview = mxUtils.bind(
     this,

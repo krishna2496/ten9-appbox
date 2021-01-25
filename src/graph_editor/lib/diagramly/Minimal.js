@@ -199,7 +199,14 @@ const IMAGE_PATH = '/images';
         return;
       }
       var graph = ui.editor.graph;
+      var x;
       graph.popupMenuHandler.hideMenu();
+      // TEN9:fomrat panel position not get outside container
+      if (iw < 400) {
+        x = ui.diagramContainer.clientWidth - 260;
+      } else {
+        x = Math.max(20, ui.diagramContainer.clientWidth + 220 - 12);
+      }
 
       if (ui.formatWindow == null) {
         // TEN9: to calculate the container height
@@ -211,7 +218,7 @@ const IMAGE_PATH = '/images';
         ui.formatWindow = new WrapperWindow(
           ui,
           mxResources.get('format'),
-          Math.max(20, ui.diagramContainer.clientWidth + 220 - 12),
+          x,
           56,
           260,
           Math.min(566, newHeight),
@@ -696,7 +703,10 @@ const IMAGE_PATH = '/images';
           visible != null ? visible : !this.formatWindow.window.isVisible(),
         );
       } else {
-        toggleFormat(this);
+        // TEN9: check if deivce width is smaller then 400
+        if (iw > 400) {
+          toggleFormat(this);
+        }
       }
       // TEN9: Remove for format panel when theme is minimal
       this.formatWidth = 0;
@@ -1193,6 +1203,10 @@ const IMAGE_PATH = '/images';
       if (iw >= 1000) {
         toggleFormat(this, true);
       }
+      // TEN9: recalculate and repositioning for mobile view
+      if (iw < 400) {
+        window.dispatchEvent(new Event('resize'));
+      }
 
       // Needed for creating elements in Format panel
       var ui = this;
@@ -1459,6 +1473,8 @@ const IMAGE_PATH = '/images';
         elt.style.borderLeft = '1px solid lightgray';
         elt.style.height = parseInt(ui.tabContainerHeight) + 'px';
         elt.style.lineHeight = parseInt(ui.tabContainerHeight) + 1 + 'px';
+        // TEM9: add bottom border at zoom tab
+        elt.style.borderBottom = '1px solid lightgray';
         wrapper.appendChild(elt);
 
         // Updates the label if the scale changes
