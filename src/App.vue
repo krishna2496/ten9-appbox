@@ -116,6 +116,11 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
+    function insertDummyNonImage() {
+      const url = 'https://i.pinimg.com/originals/ca/76/0b/ca760b70976b52578da88e06973af542.jpg';
+      editor.value.insertImage(url);
+    }
+
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
     }
@@ -126,7 +131,12 @@ export default defineComponent({
         ...event,
       };
       addLog(fileLogEvent);
-      insertDummyImage();
+      const type = fileLogEvent.type.split('/');
+      if (type[0] == 'image') {
+        insertDummyImage();
+      } else {
+        insertDummyNonImage();
+      }
     }
 
     function onImagePasted(event: EventFileInfo) {
@@ -347,6 +357,7 @@ export default defineComponent({
       addLog,
       editor,
       insertDummyImage,
+      insertDummyNonImage,
       getDateString,
       loadFileData,
       logs,
