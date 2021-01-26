@@ -11734,18 +11734,21 @@ mxWindow.prototype.installMoveHandler = function () {
         var dy = mxEvent.getClientY(evt) - startY;
         this.setLocation(x + dx, y + dy);
         this.fireEvent(new mxEventObject(mxEvent.MOVE, 'event', evt));
-        mxEvent.consume(evt);
+        // TEN9: pass preventDefault false to remove console error
+        mxEvent.consume(evt, false);
       });
 
       var dropHandler = mxUtils.bind(this, function (evt) {
         mxEvent.removeGestureListeners(document, null, dragHandler, dropHandler);
         this.fireEvent(new mxEventObject(mxEvent.MOVE_END, 'event', evt));
-        mxEvent.consume(evt);
+        // TEN9: pass preventDefault false to remove console error
+        mxEvent.consume(evt, false);
       });
 
       mxEvent.addGestureListeners(document, null, dragHandler, dropHandler);
       this.fireEvent(new mxEventObject(mxEvent.MOVE_START, 'event', evt));
-      mxEvent.consume(evt);
+      // TEN9: pass preventDefault false to remove console error
+      mxEvent.consume(evt, false);
     }),
   );
 
