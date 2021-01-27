@@ -8948,7 +8948,8 @@ var mxEvent = {
 
     if (window.addEventListener) {
       return function (element, eventName, funct) {
-        element.addEventListener(eventName, funct, false);
+        // TEN9: make passive event false to resolve console error
+        element.addEventListener(eventName, funct, { passive: false });
         updateListenerList(element, eventName, funct);
       };
     } else {
@@ -11734,21 +11735,18 @@ mxWindow.prototype.installMoveHandler = function () {
         var dy = mxEvent.getClientY(evt) - startY;
         this.setLocation(x + dx, y + dy);
         this.fireEvent(new mxEventObject(mxEvent.MOVE, 'event', evt));
-        // TEN9: pass preventDefault false to remove console error
-        mxEvent.consume(evt, false);
+        mxEvent.consume(evt);
       });
 
       var dropHandler = mxUtils.bind(this, function (evt) {
         mxEvent.removeGestureListeners(document, null, dragHandler, dropHandler);
         this.fireEvent(new mxEventObject(mxEvent.MOVE_END, 'event', evt));
-        // TEN9: pass preventDefault false to remove console error
-        mxEvent.consume(evt, false);
+        mxEvent.consume(evt);
       });
 
       mxEvent.addGestureListeners(document, null, dragHandler, dropHandler);
       this.fireEvent(new mxEventObject(mxEvent.MOVE_START, 'event', evt));
-      // TEN9: pass preventDefault false to remove console error
-      mxEvent.consume(evt, false);
+      mxEvent.consume(evt);
     }),
   );
 
