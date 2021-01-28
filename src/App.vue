@@ -131,21 +131,23 @@ export default defineComponent({
         '<shape h="200" w="200" aspect="variable" strokewidth="inherit"><connections><constraint x="0" y="0" perimeter="1" /><constraint x="0.5" y="0" perimeter="1" /><constraint x="1" y="0" perimeter="1" /><constraint x="0" y="0.5" perimeter="1" /><constraint x="1" y="0.5" perimeter="1" /><constraint x="0" y="1" perimeter="1" /><constraint x="0.5" y="1" perimeter="1" /><constraint x="1" y="1" perimeter="1" /></connections><background><fillcolor color="#EBEBEB" /><strokecolor color="none" /><roundrect x="0" y="0" w="200" h="200" arcSize="5" /></background><foreground><fillstroke /><image src="https://cdn4.iconfinder.com/data/icons/documents-42/512/document_file_paper_page-17-128.png" x="50" y="50" w="100" h="100" /><fontstyle style="1" /><fontsize size="13" /><text str="' +
         fileName +
         '" align="center" x="100" y="170" /><stroke /></foreground></shape>';
-      let hide = false;
-      let targetGraph = editor.value.editorUi.editor.graph;
-      let targetCell = new mxCell(
+      const hide = false;
+      const targetGraph = editor.value.editorUi.editor.graph;
+      const shapeWidth = 120;
+      const shapeHeight = 120;
+      const targetCell = new mxCell(
         '',
-        new mxGeometry(0, 0, 120, 120),
+        new mxGeometry(0, 0, shapeWidth, shapeHeight),
         editor.value.editorUi.defaultCustomShapeStyle,
       );
       targetCell.vertex = true;
       // Checks if XML has changed (getPrettyXml "normalizes" DOM)
-      let doc = mxUtils.parseXml(newValue);
+      const doc = mxUtils.parseXml(newValue);
       newValue = mxUtils.getPrettyXml(doc.documentElement);
 
       // Checks for validation errors
       // LATER: Validate against XSD
-      let errors = doc.documentElement.getElementsByTagName('parsererror');
+      const errors = doc.documentElement.getElementsByTagName('parsererror');
 
       if (errors != null && errors.length > 0) {
         editor.value.editorUi.showError(
@@ -158,7 +160,7 @@ export default defineComponent({
           editor.value.editorUi.hideDialog();
         }
 
-        let isNew = !targetGraph.model.contains(targetCell);
+        const isNew = !targetGraph.model.contains(targetCell);
 
         if (!hide || isNew) {
           // Transform XML value to be used in cell style
@@ -168,7 +170,7 @@ export default defineComponent({
           try {
             // Inserts cell if required
             if (isNew) {
-              let pt = editor.value.editorUi.editor.graph.getFreeInsertPoint();
+              const pt = editor.value.editorUi.editor.graph.getFreeInsertPoint();
               targetCell.geometry.x = pt.x;
               targetCell.geometry.y = pt.y;
               targetGraph.addCell(targetCell);
@@ -177,8 +179,6 @@ export default defineComponent({
             targetGraph.setCellStyles(mxConstants.STYLE_SHAPE, 'stencil(' + newValue + ')', [
               targetCell,
             ]);
-          } catch (e) {
-            throw e;
           } finally {
             // Updates the display
             targetGraph.getModel().endUpdate();
