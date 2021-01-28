@@ -98,6 +98,7 @@ module.exports = {
         ignoreReadonlyClassProperties: true,
       },
     ],
+    'prefer-const': 'error',
     'prefer-destructuring': 'error',
     'no-multi-assign': 'error',
     'no-underscore-dangle': ['error'],
