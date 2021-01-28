@@ -26,6 +26,14 @@ import {
   ref,
   watch,
 } from '@vue/composition-api';
+import { Graph } from './graph_editor/lib/jgraph/Graph';
+const {
+  mxCell,
+  mxConstants,
+  mxGeometry,
+  mxResources,
+  mxUtils,
+} = require('./graph_editor/lib/jgraph/mxClient.js');
 import { debounce } from 'lodash';
 
 interface EventFileInfo {
@@ -116,9 +124,73 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
-    function insertDummyNonImage() {
-      const url = 'https://i.pinimg.com/originals/ca/76/0b/ca760b70976b52578da88e06973af542.jpg';
-      editor.value.insertImage(url);
+    function insertDummyNonImage(fileName: string) {
+      // const url = 'https://i.pinimg.com/originals/ca/76/0b/ca760b70976b52578da88e06973af542.jpg';
+      // editor.value.insertImage(url);
+      let newValue =
+        '<shape h="200" w="200" aspect="variable" strokewidth="inherit"><connections><constraint x="0" y="0" perimeter="1" /><constraint x="0.5" y="0" perimeter="1" /><constraint x="1" y="0" perimeter="1" /><constraint x="0" y="0.5" perimeter="1" /><constraint x="1" y="0.5" perimeter="1" /><constraint x="0" y="1" perimeter="1" /><constraint x="0.5" y="1" perimeter="1" /><constraint x="1" y="1" perimeter="1" /></connections><background><fillcolor color="#EBEBEB" /><strokecolor color="none" /><roundrect x="0" y="0" w="200" h="200" arcSize="5" /></background><foreground><fillstroke /><image src="https://cdn4.iconfinder.com/data/icons/documents-42/512/document_file_paper_page-17-128.png" x="50" y="50" w="100" h="100" /><fontstyle style="1" /><fontsize size="13" /><text str="' +
+        fileName +
+        '" align="center" x="100" y="170" /><stroke /></foreground></shape>';
+      let hide = false;
+      let targetGraph = editor.value.editorUi.editor.graph;
+      let targetCell = new mxCell(
+        '',
+        new mxGeometry(0, 0, 120, 120),
+        editor.value.editorUi.defaultCustomShapeStyle,
+      );
+      targetCell.vertex = true;
+      // Checks if XML has changed (getPrettyXml "normalizes" DOM)
+      let doc = mxUtils.parseXml(newValue);
+      newValue = mxUtils.getPrettyXml(doc.documentElement);
+
+      // Checks for validation errors
+      // LATER: Validate against XSD
+      let errors = doc.documentElement.getElementsByTagName('parsererror');
+
+      if (errors != null && errors.length > 0) {
+        editor.value.editorUi.showError(
+          mxResources.get('error'),
+          mxResources.get('containsValidationErrors'),
+          mxResources.get('ok'),
+        );
+      } else {
+        if (hide) {
+          editor.value.editorUi.hideDialog();
+        }
+
+        let isNew = !targetGraph.model.contains(targetCell);
+
+        if (!hide || isNew) {
+          // Transform XML value to be used in cell style
+          newValue = Graph.compress(newValue);
+
+          targetGraph.getModel().beginUpdate();
+          try {
+            // Inserts cell if required
+            if (isNew) {
+              let pt = editor.value.editorUi.editor.graph.getFreeInsertPoint();
+              targetCell.geometry.x = pt.x;
+              targetCell.geometry.y = pt.y;
+              targetGraph.addCell(targetCell);
+            }
+
+            targetGraph.setCellStyles(mxConstants.STYLE_SHAPE, 'stencil(' + newValue + ')', [
+              targetCell,
+            ]);
+          } catch (e) {
+            throw e;
+          } finally {
+            // Updates the display
+            targetGraph.getModel().endUpdate();
+          }
+
+          // Updates selection after stencil was created for rendering
+          if (isNew) {
+            targetGraph.setSelectionCell(targetCell);
+            targetGraph.scrollCellToVisible(targetCell);
+          }
+        }
+      }
     }
 
     function loadFileData(xmlData: string) {
@@ -135,7 +207,7 @@ export default defineComponent({
       if (type[0] == 'image') {
         insertDummyImage();
       } else {
-        insertDummyNonImage();
+        insertDummyNonImage(fileLogEvent.filename);
       }
     }
 

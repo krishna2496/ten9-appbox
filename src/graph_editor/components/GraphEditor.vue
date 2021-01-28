@@ -264,7 +264,6 @@ export default defineComponent({
 
     function loadXmlData(data: string) {
       editorUi.value.openLocalFile(data, null, null, null, null);
-
       // Reset the view after loading a file
       nextTick(() => {
         setGraphEnabled(props.enabled);
