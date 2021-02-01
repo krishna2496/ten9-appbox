@@ -8948,7 +8948,8 @@ var mxEvent = {
 
     if (window.addEventListener) {
       return function (element, eventName, funct) {
-        element.addEventListener(eventName, funct, false);
+        // TEN9: make passive event false to resolve console error
+        element.addEventListener(eventName, funct, { passive: false });
         updateListenerList(element, eventName, funct);
       };
     } else {
