@@ -4063,6 +4063,7 @@ var ImageDialog = function (editorUi, title, initialValue, fn, ignoreExisting, c
  * Overrides link dialog to add Google Picker.
  */
 var LinkDialog = function (editorUi, initialValue, btnLabel, fn, showPages) {
+  debugger;
   var div = document.createElement('div');
   mxUtils.write(div, mxResources.get('editLink') + ':');
 

@@ -26,7 +26,9 @@ import {
   ref,
   watch,
 } from '@vue/composition-api';
+import { mxUtils } from './graph_editor/lib/jgraph/mxClient.js';
 import { debounce } from 'lodash';
+//import { icons } from './graph_editor/lib/shapes/fa-fa-icons.js';
 
 interface EventFileInfo {
   filename?: string;
@@ -116,7 +118,7 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
-    function insertDummyNonImage(fileName: string) {
+    function insertDummyNonImage(fileName: string, icon: string) {
       // const url = 'https://i.pinimg.com/originals/ca/76/0b/ca760b70976b52578da88e06973af542.jpg';
       // editor.value.insertImage(url);
       // let newValue =
@@ -183,26 +185,52 @@ export default defineComponent({
       //     }
       //   }
       // }
-      console.log(fileName);
-      editor.value.editorUi.addCustomShape();
-      // const graph = editor.value.editorUi.editor.graph;
-      // var parent = graph.getDefaultParent();
-      // graph.getModel().beginUpdate();
-      // 	try
-      // 	{
-      //     const pt = graph.getFreeInsertPoint();
-      //     var v1 = graph.insertVertex(parent, null, 'Custom', pt.x, pt.y, 200, 200,'fillColor=#EBEBEB;strokeColor=none;arcSize=30;');
-      //     graph.insertVertex(parent, null, '', pt.x, pt.y, 100, 100,'shape=image;imageAspect=0;image=https://i.pinimg.com/originals/ca/76/0b/ca760b70976b52578da88e06973af542.jpg;');
-      // 	}
-      // 	finally
-      // 	{
-      // 		// Updates the display
-      // 		graph.getModel().endUpdate();
-      // 	}
+      //editor.value.editorUi.addCustomShape();
+      const graph = editor.value.editorUi.editor.graph;
+      const parent = graph.getDefaultParent();
+      graph.getModel().beginUpdate();
+      try {
+        const pt = graph.getFreeInsertPoint();
+        const height = 100;
+        const width = 100;
+        const padding = 10;
+        const image = graph.insertVertex(
+          parent,
+          null,
+          '',
+          pt.x,
+          pt.y,
+          height,
+          width,
+          'shape=image;imageAspect=0;image=' + icon,
+        );
+        const doc = mxUtils.createXmlDocument();
+        const node = doc.createElement('MyNode');
+        const labelX = pt.x + width / 2;
+        const labelY = pt.y + height + padding;
+        node.setAttribute('label', fileName);
+        graph.insertVertex(image.parent, null, node, labelX, labelY, '');
+        const link = editor.value.editorUi.actions.get('insertLinkNoDialog');
+        const cordinates = { x: pt.x, y: labelY + padding };
+        link.funct('https://www.google.com', null, cordinates);
+      } finally {
+        // Updates the display
+        graph.getModel().endUpdate();
+      }
     }
 
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
+    }
+
+    function fetchIConlink() {
+      // const icon = icons.filter((item:) => {
+      //  if( item.extensions.includes(type) ) {
+      //    return true;
+      //  }
+      // });
+      // return icon;
+      return 'https://cdn4.iconfinder.com/data/icons/documents-42/512/document_file_paper_page-17-128.png';
     }
 
     function onFileDropped(event: EventFileInfo) {
@@ -211,12 +239,14 @@ export default defineComponent({
         ...event,
       };
       addLog(fileLogEvent);
-      const type = fileLogEvent.type.split('/');
-      if (type[0] == 'image') {
-        insertDummyImage();
-      } else {
-        insertDummyNonImage(fileLogEvent.filename);
-      }
+      //const type = fileLogEvent.type.split('/');
+      const icon = fetchIConlink();
+      insertDummyNonImage(fileLogEvent.filename, icon);
+      // if (type[0] == 'image') {
+      //   insertDummyImage();
+      // } else {
+      //   insertDummyNonImage(fileLogEvent.filename);
+      // }
     }
 
     function onImagePasted(event: EventFileInfo) {
@@ -439,6 +469,7 @@ export default defineComponent({
       insertDummyImage,
       insertDummyNonImage,
       getDateString,
+      fetchIConlink,
       loadFileData,
       logs,
       onGraphChanged,
