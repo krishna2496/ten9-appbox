@@ -26,9 +26,8 @@ import {
   ref,
   watch,
 } from '@vue/composition-api';
-import { mxUtils } from './graph_editor/lib/jgraph/mxClient.js';
 import { debounce } from 'lodash';
-//import { icons } from './graph_editor/lib/shapes/fa-fa-icons.js';
+import { icons } from './graph_editor/lib/shapes/fa-fa-icons.js';
 
 interface EventFileInfo {
   filename?: string;
@@ -118,119 +117,21 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
-    function insertDummyNonImage(fileName: string, icon: string) {
-      // const url = 'https://i.pinimg.com/originals/ca/76/0b/ca760b70976b52578da88e06973af542.jpg';
-      // editor.value.insertImage(url);
-      // let newValue =
-      //   '<shape h="200" w="200" aspect="variable" strokewidth="inherit"><connections><constraint x="0" y="0" perimeter="1" /><constraint x="0.5" y="0" perimeter="1" /><constraint x="1" y="0" perimeter="1" /><constraint x="0" y="0.5" perimeter="1" /><constraint x="1" y="0.5" perimeter="1" /><constraint x="0" y="1" perimeter="1" /><constraint x="0.5" y="1" perimeter="1" /><constraint x="1" y="1" perimeter="1" /></connections><background><fillcolor color="#EBEBEB" /><strokecolor color="none" /><roundrect x="0" y="0" w="200" h="200" arcSize="5" /></background><foreground><fillstroke /><image src="https://cdn4.iconfinder.com/data/icons/documents-42/512/document_file_paper_page-17-128.png" x="50" y="50" w="100" h="100" /><fontstyle style="1" /><fontsize size="13" /><text str="' +
-      //   fileName +
-      //   '" align="center" x="100" y="170" /><stroke /></foreground></shape>';
-      // const hide = false;
-      // const targetGraph = editor.value.editorUi.editor.graph;
-      // const shapeWidth = 120;
-      // const shapeHeight = 120;
-      // const targetCell = new mxCell(
-      //   '',
-      //   new mxGeometry(0, 0, shapeWidth, shapeHeight),
-      //   editor.value.editorUi.defaultCustomShapeStyle,
-      // );
-      // targetCell.vertex = true;
-      // // Checks if XML has changed (getPrettyXml "normalizes" DOM)
-      // const doc = mxUtils.parseXml(newValue);
-      // newValue = mxUtils.getPrettyXml(doc.documentElement);
-
-      // // Checks for validation errors
-      // // LATER: Validate against XSD
-      // const errors = doc.documentElement.getElementsByTagName('parsererror');
-
-      // if (errors != null && errors.length > 0) {
-      //   editor.value.editorUi.showError(
-      //     mxResources.get('error'),
-      //     mxResources.get('containsValidationErrors'),
-      //     mxResources.get('ok'),
-      //   );
-      // } else {
-      //   if (hide) {
-      //     editor.value.editorUi.hideDialog();
-      //   }
-
-      //   const isNew = !targetGraph.model.contains(targetCell);
-
-      //   if (!hide || isNew) {
-      //     // Transform XML value to be used in cell style
-      //     newValue = Graph.compress(newValue);
-
-      //     targetGraph.getModel().beginUpdate();
-      //     try {
-      //       // Inserts cell if required
-      //       if (isNew) {
-      //         const pt = editor.value.editorUi.editor.graph.getFreeInsertPoint();
-      //         targetCell.geometry.x = pt.x;
-      //         targetCell.geometry.y = pt.y;
-      //         targetGraph.addCell(targetCell);
-      //       }
-
-      //       targetGraph.setCellStyles(mxConstants.STYLE_SHAPE, 'stencil(' + newValue + ')', [
-      //         targetCell,
-      //       ]);
-      //     } finally {
-      //       // Updates the display
-      //       targetGraph.getModel().endUpdate();
-      //     }
-
-      //     // Updates selection after stencil was created for rendering
-      //     if (isNew) {
-      //       targetGraph.setSelectionCell(targetCell);
-      //       targetGraph.scrollCellToVisible(targetCell);
-      //     }
-      //   }
-      // }
-      //editor.value.editorUi.addCustomShape();
-      const graph = editor.value.editorUi.editor.graph;
-      const parent = graph.getDefaultParent();
-      graph.getModel().beginUpdate();
-      try {
-        const pt = graph.getFreeInsertPoint();
-        const height = 100;
-        const width = 100;
-        const padding = 10;
-        const image = graph.insertVertex(
-          parent,
-          null,
-          '',
-          pt.x,
-          pt.y,
-          height,
-          width,
-          'shape=image;imageAspect=0;image=' + icon,
-        );
-        const doc = mxUtils.createXmlDocument();
-        const node = doc.createElement('MyNode');
-        const labelX = pt.x + width / 2;
-        const labelY = pt.y + height + padding;
-        node.setAttribute('label', fileName);
-        graph.insertVertex(image.parent, null, node, labelX, labelY, '');
-        const link = editor.value.editorUi.actions.get('insertLinkNoDialog');
-        const cordinates = { x: pt.x, y: labelY + padding };
-        link.funct('https://www.google.com', null, cordinates);
-      } finally {
-        // Updates the display
-        graph.getModel().endUpdate();
-      }
-    }
-
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
     }
 
-    function fetchIConlink() {
-      // const icon = icons.filter((item:) => {
-      //  if( item.extensions.includes(type) ) {
-      //    return true;
-      //  }
-      // });
-      // return icon;
-      return 'https://cdn4.iconfinder.com/data/icons/documents-42/512/document_file_paper_page-17-128.png';
+    function getImageData(ext: string) {
+      const icon = icons.filter((item) => {
+        return item.extensions.includes(ext);
+      });
+      return icon[0].link;
+    }
+
+    function getStyleForFile(file: FileLogEvent) {
+      const ext = file.filename.split('.').pop();
+      const imageData = getImageData(ext);
+      return `shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;aspect=fixed;image=data:image/svg+xml,${imageData}`;
     }
 
     function onFileDropped(event: EventFileInfo) {
@@ -238,15 +139,25 @@ export default defineComponent({
         title: 'File Dropped',
         ...event,
       };
+
       addLog(fileLogEvent);
-      //const type = fileLogEvent.type.split('/');
-      const icon = fetchIConlink();
-      insertDummyNonImage(fileLogEvent.filename, icon);
-      // if (type[0] == 'image') {
-      //   insertDummyImage();
-      // } else {
-      //   insertDummyNonImage(fileLogEvent.filename);
-      // }
+      // const graph = editor.value.editorUi.editor.graph;
+      const parent = editor.value.editorUi.editor.graph.getDefaultParent();
+      const url = 'https://www.google.com';
+      const style = getStyleForFile(fileLogEvent);
+      const pt = editor.value.editorUi.editor.graph.getFreeInsertPoint();
+      const shapeSize = 50;
+      const fileAttachmentCell = editor.value.editorUi.editor.graph.insertVertex(
+        parent,
+        null,
+        fileLogEvent.filename,
+        pt.x,
+        pt.y,
+        shapeSize,
+        shapeSize,
+        style,
+      );
+      editor.value.editorUi.editor.graph.setLinkForCell(fileAttachmentCell, url);
     }
 
     function onImagePasted(event: EventFileInfo) {
@@ -467,9 +378,9 @@ export default defineComponent({
       addLog,
       editor,
       insertDummyImage,
-      insertDummyNonImage,
       getDateString,
-      fetchIConlink,
+      getImageData,
+      getStyleForFile,
       loadFileData,
       logs,
       onGraphChanged,
