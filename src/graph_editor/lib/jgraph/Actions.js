@@ -702,7 +702,7 @@ Actions.prototype.init = function () {
   ).isEnabled = isGraphEnabled;
 
   // TEN9: Broke out insertLink function for reusability and add special attributes to control display
-  function insertLink(link, docs, cordinates) {
+  function insertLink(link, docs) {
     link = mxUtils.trim(link);
 
     if (link.length > 0) {
@@ -721,12 +721,7 @@ Actions.prototype.init = function () {
         }
       }
 
-      if (cordinates) {
-        var pt = cordinates;
-      } else {
-        var pt = graph.getFreeInsertPoint();
-      }
-
+      var pt = graph.getFreeInsertPoint();
       var linkCell = new mxCell(
         title,
         new mxGeometry(pt.x, pt.y, 100, 40),

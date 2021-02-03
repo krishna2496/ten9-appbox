@@ -328,49 +328,6 @@ const {
 
   mxCellRenderer.registerShape('cube', CubeShape);
 
-  // TEN9: add custom shape
-  function CustomShape() {
-    mxCylinder.call(this);
-  }
-
-  /*
-      The next lines use an mxCylinder instance to augment the
-      prototype of the shape ("inheritance") and reset the
-      constructor to the topmost function of the c'tor chain.
-  */
-  mxUtils.extend(CustomShape, mxCylinder);
-
-  // Defines the extrusion of the box as a "static class variable"
-  CustomShape.prototype.extrude = 10;
-  CustomShape.prototype.redrawPath = function (path, x, y, w, h, isForeground) {
-    var dy = this.extrude * this.scale;
-    var dx = this.extrude * this.scale;
-    let r = Math.min(
-      w / 2,
-      Math.min(
-        h / 2,
-        mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2,
-      ),
-    );
-
-    if (isForeground) {
-    } else {
-      path.moveTo(x + r, y);
-      path.lineTo(x + w - r, y);
-      path.quadTo(x + w, y, x + w, y + r);
-      path.lineTo(x + w, y + h - r);
-      path.quadTo(x + w, y + h, x + w - r, y + h);
-      path.lineTo(x + r, y + h);
-      path.quadTo(x, y + h, x, y + h - r);
-      path.lineTo(x, y + r);
-      path.quadTo(x, y, x + r, y);
-      path.setFillColor('#EBEBEB');
-      path.fillAndStroke();
-    }
-  };
-
-  mxCellRenderer.registerShape('custom', CustomShape);
-
   var tan30 = Math.tan(mxUtils.toRadians(30));
   var tan30Dx = (0.5 - tan30) / 2;
 

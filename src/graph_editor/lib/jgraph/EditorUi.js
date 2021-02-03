@@ -5240,47 +5240,6 @@ EditorUi.prototype.resetViewToShowFullGraph = function () {
   }
 };
 
-// TEN9:
-EditorUi.prototype.addCustomShape = function () {
-  var graph = this.editor.graph;
-  // //var style = graph.getStylesheet().getDefaultVertexStyle();
-  // const pt = graph.getFreeInsertPoint();
-  // let cells = [];
-  // cells = [
-  //   graph.insertVertex(
-  //     graph.getDefaultParent(),
-  //     null,
-  //     '',
-  //     pt.x,
-  //     pt.y,
-  //     100,
-  //     100,
-  //     'shape=box;fillColor=#868E96;strokeColor=none;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;',
-  //   ),
-  // ];
-  // var style = graph.getCurrentCellStyle(cells[0]);
-  // style[mxConstants.STYLE_SHAPE] = 'box';
-
-  // // Adds a spacing for the label that matches the
-  // // extrusion size
-  // style[mxConstants.STYLE_SPACING_TOP] = BoxShape.prototype.extrude;
-  // style[mxConstants.STYLE_SPACING_RIGHT] = BoxShape.prototype.extrude;
-  // style[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
-
-  // // Adds a gradient and shadow to improve the user experience
-  // //style[mxConstants.STYLE_GRADIENTCOLOR] = '#b0adb0';
-  // style[mxConstants.STYLE_SHADOW] = false;
-  // graph.setCellStyles('box', '', cells);
-  var parent = graph.getDefaultParent();
-  try {
-    var v1 = graph.insertVertex(parent, null, '', 20, 20, 200, 200, 'shape=custom;');
-    // var v2 = graph.insertVertex(parent, null, 'Shape', 200, 150, 80, 60);
-    // var e1 = graph.insertEdge(parent, null, '', v1, v2);
-  } finally {
-    graph.getModel().endUpdate();
-  }
-};
-
 // TEN9: Added exports
 module.exports = {
   createEditorUi,

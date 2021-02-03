@@ -27,7 +27,6 @@ import {
   watch,
 } from '@vue/composition-api';
 import { debounce } from 'lodash';
-import { icons } from './graph_editor/lib/shapes/fa-fa-icons.js';
 
 interface EventFileInfo {
   filename?: string;
@@ -121,19 +120,6 @@ export default defineComponent({
       editor.value.loadXmlData(xmlData);
     }
 
-    function getImageData(ext: string) {
-      const icon = icons.filter((item) => {
-        return item.extensions.includes(ext);
-      });
-      return icon[0].link;
-    }
-
-    function getStyleForFile(file: FileLogEvent) {
-      const ext = file.filename.split('.').pop();
-      const imageData = getImageData(ext);
-      return `shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;aspect=fixed;image=data:image/svg+xml,${imageData}`;
-    }
-
     function onFileDropped(event: EventFileInfo) {
       const fileLogEvent: FileLogEvent = {
         title: 'File Dropped',
@@ -141,23 +127,13 @@ export default defineComponent({
       };
 
       addLog(fileLogEvent);
-      // const graph = editor.value.editorUi.editor.graph;
-      const parent = editor.value.editorUi.editor.graph.getDefaultParent();
       const url = 'https://www.google.com';
-      const style = getStyleForFile(fileLogEvent);
-      const pt = editor.value.editorUi.editor.graph.getFreeInsertPoint();
-      const shapeSize = 50;
-      const fileAttachmentCell = editor.value.editorUi.editor.graph.insertVertex(
-        parent,
-        null,
-        fileLogEvent.filename,
-        pt.x,
-        pt.y,
-        shapeSize,
-        shapeSize,
-        style,
-      );
-      editor.value.editorUi.editor.graph.setLinkForCell(fileAttachmentCell, url);
+      const fileType = fileLogEvent.type.split('/');
+      if (fileType[0] === 'image') {
+        insertDummyImage();
+      } else {
+        editor.value.insertFile(fileLogEvent, url);
+      }
     }
 
     function onImagePasted(event: EventFileInfo) {
@@ -284,6 +260,7 @@ export default defineComponent({
 
         // If the dropped item was not an editor file, process as attachment
         if (!fileOpened) {
+          console.log('length ', e.dataTransfer.items.length);
           for (let i = 0; i < e.dataTransfer.items.length; i++) {
             const file = e.dataTransfer.items[i].getAsFile();
             const fileInfo: EventFileInfo = {
@@ -379,8 +356,6 @@ export default defineComponent({
       editor,
       insertDummyImage,
       getDateString,
-      getImageData,
-      getStyleForFile,
       loadFileData,
       logs,
       onGraphChanged,
