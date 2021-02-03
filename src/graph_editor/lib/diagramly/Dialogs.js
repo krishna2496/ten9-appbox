@@ -1407,6 +1407,7 @@ CreateGraphDialog.prototype.connectImage = new mxImage(
 var BackgroundImageDialog = function (editorUi, applyFn, img) {
   var div = document.createElement('div');
   div.style.whiteSpace = 'nowrap';
+  div.style.overflowY = 'hidden';
 
   var h3 = document.createElement('h2');
   mxUtils.write(h3, mxResources.get('backgroundImage'));
@@ -1612,11 +1613,15 @@ var BackgroundImageDialog = function (editorUi, applyFn, img) {
       }
     }
 
+    var btns = document.createElement('div');
+    btns.style.marginTop = '40px';
+    btns.style.textAlign = 'right';
     urlInput.focus();
   };
 
   var btns = document.createElement('div');
-  btns.style.marginTop = '40px';
+  // TEN9: remove scrollbar fr0m dialogbox
+  btns.style.marginTop = '39px';
   btns.style.textAlign = 'right';
 
   var cancelBtn = mxUtils.button(mxResources.get('cancel'), function () {

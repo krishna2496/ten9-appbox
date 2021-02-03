@@ -3715,7 +3715,9 @@ TextFormatPanel.prototype.addFont = function (container) {
         mxResources.get('table'),
         false,
         mxUtils.bind(this, function (menu) {
-          this.editorUi.menus.addInsertTableItem(menu);
+          // TEN9: make div visible when table open from format panel
+          //this.editorUi.menus.addInsertTableItem(menu)
+          this.editorUi.menus.addInsertTableItem(menu, null, null, true);
         }),
       ),
     ];
@@ -6595,8 +6597,8 @@ StyleFormatPanel.prototype.addEffects = function (div) {
     if (ss.glass) {
       addOption(mxResources.get('glass'), mxConstants.STYLE_GLASS, 0);
     }
-
-    addOption(mxResources.get('sketch'), 'sketch', 0);
+    // TEN9: hide sketch option
+    // addOption(mxResources.get('sketch'), 'sketch', 0);
   });
 
   graph.getModel().addListener(mxEvent.CHANGE, listener);
@@ -6705,34 +6707,36 @@ DiagramStylePanel.prototype.addView = function (div) {
   table.appendChild(tbody);
 
   // Sketch
-  left.appendChild(
-    this.createOption(
-      mxResources.get('sketch'),
-      function () {
-        return sketch;
-      },
-      function (checked) {
-        sketch = checked;
+  // TEN9: hide sketch option
+  // left.appendChild(
+  //   this.createOption(
+  //     mxResources.get('sketch'),
+  //     function () {
+  //       return sketch;
+  //     },
+  //     function (checked) {
+  //       sketch = checked;
 
-        if (checked) {
-          graph.currentEdgeStyle['sketch'] = '1';
-          graph.currentVertexStyle['sketch'] = '1';
-        } else {
-          delete graph.currentEdgeStyle['sketch'];
-          delete graph.currentVertexStyle['sketch'];
-        }
+  //       if (checked) {
+  //         graph.currentEdgeStyle['sketch'] = '1';
+  //         graph.currentVertexStyle['sketch'] = '1';
+  //       } else {
+  //         delete graph.currentEdgeStyle['sketch'];
+  //         delete graph.currentVertexStyle['sketch'];
+  //       }
 
-        graph.updateCellStyles('sketch', checked ? '1' : null, graph.getVerticesAndEdges());
-      },
-      null,
-      function (div) {
-        div.style.width = 'auto';
-      },
-    ),
-  );
+  //       graph.updateCellStyles('sketch', checked ? '1' : null, graph.getVerticesAndEdges());
+  //     },
+  //     null,
+  //     function (div) {
+  //       div.style.width = 'auto';
+  //     },
+  //   ),
+  // );
 
   // Rounded
-  right.appendChild(
+  // TEN9: change rounded checkbox position
+  left.appendChild(
     this.createOption(
       mxResources.get('rounded'),
       function () {
@@ -6761,14 +6765,15 @@ DiagramStylePanel.prototype.addView = function (div) {
   );
 
   // Curved
-  left = left.cloneNode(false);
-  right = right.cloneNode(false);
-  row = row.cloneNode(false);
-  row.appendChild(left);
-  row.appendChild(right);
-  tbody.appendChild(row);
+  // TEN9: change curved checkbox position
+  //left = left.cloneNode(false);
+  // right = right.cloneNode(false);
+  // row = row.cloneNode(false);
+  // row.appendChild(left);
+  // row.appendChild(right);
+  // tbody.appendChild(row);
 
-  left.appendChild(
+  right.appendChild(
     this.createOption(
       mxResources.get('curved'),
       function () {
@@ -6908,7 +6913,14 @@ DiagramStylePanel.prototype.addView = function (div) {
   btn.setAttribute('title', mxResources.get('reset'));
   btn.style.textOverflow = 'ellipsis';
   btn.style.maxWidth = '90px';
-  right.appendChild(btn);
+  // TEN9: change in reset button position
+  left = left.cloneNode(false);
+  right = right.cloneNode(false);
+  row = row.cloneNode(false);
+  row.appendChild(left);
+  row.appendChild(right);
+  tbody.appendChild(row);
+  left.appendChild(btn);
 
   var createPreview = mxUtils.bind(
     this,

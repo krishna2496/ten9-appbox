@@ -10,10 +10,12 @@ const {
   mxCodecRegistry,
   mxConnectionHandler,
   mxConstants,
+  mxConstraintHandler,
   mxDictionary,
   mxEvent,
   mxEventObject,
   mxEventSource,
+  mxGraphHandler,
   mxGraphModel,
   mxGraphView,
   mxImage,
@@ -26,17 +28,19 @@ const {
   mxPopupMenu,
   mxRectangle,
   mxResources,
+  mxRubberband,
   mxStackLayout,
   mxStencilRegistry,
   mxStylesheet,
   mxUtils,
+  mxWindow,
   mxXmlRequest,
 } = require('../jgraph/mxClient.js');
 const { LocalLibrary } = require('./LocalLibrary.js');
 const { StorageLibrary } = require('./StorageLibrary.js');
 const { mxSettings } = require('./Settings.js');
 const { DiagramPage } = require('./Pages.js');
-const { Dialog, PrintDialog } = require('../jgraph/Editor.js');
+const { Dialog, ErrorDialog, PrintDialog } = require('../jgraph/Editor.js');
 const { appPages, ChangePageSetup } = require('../jgraph/EditorUi.js');
 const {
   BackgroundImageDialog,
@@ -46,6 +50,7 @@ const {
   LinkDialog,
 } = require('./Dialogs.js');
 const { Spinner } = require('../spin/spin.js');
+const { Sidebar } = require('../jgraph/Sidebar.js');
 
 // TEN9: TODO: Consolidate all constants
 // const urlParams = {dev: '1', sync: 'manual'};

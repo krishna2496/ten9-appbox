@@ -137,10 +137,17 @@
     padding-left: 4px !important;
     margin-right: 5px;
     width: 58px;
+    min-height: 25px;
 
     &:last-child {
       margin-right: 0;
     }
+  }
+}
+
+.mxWindow {
+  .ge-dropdown-menu {
+    width: 35px !important;
   }
 }
 

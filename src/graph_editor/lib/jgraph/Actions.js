@@ -1289,7 +1289,6 @@ Actions.prototype.init = function () {
   });
   action.isEnabled = isGraphEnabled;
   action.visible = false;
-
   // TEN9: Disable Help and About
   // // Help actions
   // this.addAction('help', function()

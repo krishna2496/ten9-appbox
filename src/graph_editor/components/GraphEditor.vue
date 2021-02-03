@@ -28,6 +28,7 @@ require('../lib/diagramly/App.js');
 require('../lib/diagramly/Menus.js');
 require('../lib/diagramly/Pages.js');
 require('../lib/diagramly/DistanceGuides.js');
+require('../lib/diagramly/Minimal.js');
 
 import {
   defineComponent,
@@ -77,6 +78,10 @@ export default defineComponent({
       type: String,
     },
     enabled: Boolean,
+    theme: {
+      required: true,
+      type: String,
+    },
   },
 
   setup(props, ctx) {
@@ -108,7 +113,6 @@ export default defineComponent({
 
     function setGraphEnabled(enabled: boolean) {
       editorUi.value.setEnabled(enabled);
-
       /**
        * When scratchpad is enabled, open it when toggling from preview and
        * edit modes.
@@ -131,6 +135,10 @@ export default defineComponent({
       ctx.emit('scratchpad-data-changed', event.getProperty('detail'));
     }
 
+    function onThemeChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
+      ctx.emit('theme-changed', event.getProperty('detail'));
+    }
+
     function addListeners() {
       graph.value.model.addListener(mxEvent.CHANGE, onGraphChanged);
       graph.value.addListener('gridSizeChanged', onGraphChanged);
@@ -143,6 +151,7 @@ export default defineComponent({
       editorUi.value.addListener('connectionPointsChanged', onGraphChanged);
       editorUi.value.addListener('librariesChanged', onLibrariesChanged);
       editorUi.value.addListener('scratchpadDataChanged', onScratchpadDataChanged);
+      editorUi.value.addListener('themeChanged', onThemeChanged);
     }
 
     function removeListeners() {
@@ -151,6 +160,7 @@ export default defineComponent({
       editorUi.value.removeListener(onGraphChanged);
       editorUi.value.removeListener(onLibrariesChanged);
       editorUi.value.removeListener(onScratchpadDataChanged);
+      editorUi.value.removeListener(onThemeChanged);
     }
 
     function getXmlData(): string {
@@ -221,6 +231,22 @@ export default defineComponent({
       () => props.shapeLibraries,
       (val: string) => {
         sidebar.value.showEntries(val);
+      },
+    );
+
+    watch(
+      () => props.theme,
+      (val: string) => {
+        editorUi.value.theme = val;
+        if (val === 'min') {
+          editorUi.value.initTheme();
+          editorUi.value.setEnabled(true);
+          editorUi.value.menus.init();
+          editorUi.value.init();
+          editorUi.value.loadScratchpadData(props.scratchpadData);
+          editorUi.value.actions.get('fitWindow').funct();
+          editorUi.value.refresh();
+        }
       },
     );
 

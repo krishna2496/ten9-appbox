@@ -18,7 +18,14 @@
 import GraphEditor from './graph_editor/components/GraphEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
+import {
+  defineComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from '@vue/composition-api';
 import { debounce } from 'lodash';
 
 interface EventFileInfo {
@@ -35,6 +42,7 @@ interface FileLogEvent extends EventFileInfo {
 
 const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows;clipart;flowchart';
 const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
+const DEFAULT_THEME = 'kennedy';
 
 export default defineComponent({
   name: 'App',
@@ -54,12 +62,18 @@ export default defineComponent({
 
     const scratchpadData = ref('');
 
+    const theme = ref('');
+
     function getShapeLibrariesFromStorage() {
       return window.localStorage.getItem('shapeLibraries');
     }
 
     function getScratchpadData() {
       return window.localStorage.getItem('scratchpadData');
+    }
+
+    function getThemeData() {
+      return window.localStorage.getItem('theme');
     }
 
     function saveShapeLibrariesToStorage(libraries: string) {
@@ -169,6 +183,10 @@ export default defineComponent({
       addLog(fileLogEvent);
     }
 
+    function onThemeChanged(themeName: string) {
+      window.localStorage.setItem('theme', themeName);
+    }
+
     onMounted(() => {
       updateAppHeight();
       window.addEventListener('resize', onResize);
@@ -184,6 +202,12 @@ export default defineComponent({
       if (!scratchpadData.value) {
         scratchpadData.value = DEFAULT_SCRATCHPAD_DATA;
         saveScratchpadDataToStorage(scratchpadData.value);
+      }
+
+      theme.value = getThemeData();
+      if (!theme.value) {
+        theme.value = DEFAULT_THEME;
+        onThemeChanged(theme.value);
       }
 
       const drag: HTMLElement = document.querySelector('.geEditor');
@@ -309,6 +333,16 @@ export default defineComponent({
       addLog(fileLogEvent);
     }
 
+    watch(
+      () => theme.value,
+      (val: string) => {
+        if (val == 'min') {
+          document.getElementById('page').classList.remove('col-md-10');
+          document.getElementById('page').classList.add('col-md-12');
+        }
+      },
+    );
+
     return {
       addLog,
       editor,
@@ -320,10 +354,12 @@ export default defineComponent({
       onPreviewModeChanged,
       onScratchpadDataChanged,
       onShapeLibrariesChanged,
+      onThemeChanged,
       previewMode,
       saveFile,
       scratchpadData,
       shapeLibraries,
+      theme,
     };
   },
 });
@@ -332,7 +368,7 @@ export default defineComponent({
 <template lang="pug">
 #app
   .row
-    .col-md-2
+    .col-md-2(v-if='theme != "min"')
       b-list-group#logs-list.custom-list-group
         template(v-for='(log, index) in logs')
           table.custom-table(:key='index')
@@ -364,11 +400,19 @@ export default defineComponent({
                 b Modified
               td.table-details
                 | {{ getDateString(log.lastModified) }}
-    .col-md-10
-      .row-btn
+    #page.col-md-10
+      .row-btn(v-if='theme != "min"')
         button(@click='saveFile')
           | Save File
         open-file(@file-loaded='loadFileData')
+        input#preview.mt-1.ml-4(
+          type='checkbox',
+          name='preview',
+          value='preview',
+          @change='onPreviewModeChanged'
+        )
+        label.ml-1(for='preview') Preview Mode
+      .row-btn(v-else)
         input#preview.mt-1.ml-4(
           type='checkbox',
           name='preview',
@@ -382,9 +426,11 @@ export default defineComponent({
           :enabled='!previewMode',
           :shapeLibraries='shapeLibraries',
           :scratchpadData='scratchpadData',
+          :theme='theme',
           @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged',
-          @scratchpad-data-changed='onScratchpadDataChanged'
+          @scratchpad-data-changed='onScratchpadDataChanged',
+          @theme-changed='onThemeChanged'
         )
 </template>
 

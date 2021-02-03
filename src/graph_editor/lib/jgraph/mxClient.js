@@ -8948,7 +8948,8 @@ var mxEvent = {
 
     if (window.addEventListener) {
       return function (element, eventName, funct) {
-        element.addEventListener(eventName, funct, false);
+        // TEN9: make passive event false to resolve console error
+        element.addEventListener(eventName, funct, { passive: false });
         updateListenerList(element, eventName, funct);
       };
     } else {
@@ -11059,7 +11060,19 @@ var mxClipboard = {
  * style - Optional base classname for the window elements. Default is
  * mxWindow.
  */
-function mxWindow(title, content, x, y, width, height, minimizable, movable, replaceNode, style) {
+function mxWindow(
+  title,
+  content,
+  x,
+  y,
+  width,
+  height,
+  minimizable,
+  movable,
+  replaceNode,
+  style,
+  id,
+) {
   if (content != null) {
     minimizable = minimizable != null ? minimizable : true;
     this.content = content;
@@ -11078,7 +11091,14 @@ function mxWindow(title, content, x, y, width, height, minimizable, movable, rep
     if (replaceNode != null && replaceNode.parentNode != null) {
       replaceNode.parentNode.replaceChild(this.div, replaceNode);
     } else {
-      document.body.appendChild(this.div);
+      // TEN9: append submenu pop to container div rather then document.body
+      //document.body.appendChild(this.div);
+      mxClient.getDocumentContainer().appendChild(this.div);
+      this.div.style.zIndex = '2';
+    }
+    // TEN9: set id to sidebar window
+    if (id != undefined) {
+      this.div.setAttribute('id', 'sidebar');
     }
   }
 }
@@ -11185,7 +11205,8 @@ mxWindow.prototype.init = function (x, y, width, height, style) {
   this.div.style.top = y + 'px';
   this.table = document.createElement('table');
   this.table.className = style;
-
+  // TEN9: make min width of sidebar window for minmal theme
+  this.table.style.minWidth = width + 'px';
   // Disables built-in pan and zoom in IE10 and later
   if (mxClient.IS_POINTER) {
     this.div.style.touchAction = 'none';

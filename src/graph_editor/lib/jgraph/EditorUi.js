@@ -1081,6 +1081,9 @@ EditorUi.prototype.hsplitClickEnabled = false;
 // TEN9: Add Preview Mode to check the diagram position
 EditorUi.prototype.enabled = true;
 
+// TEN9: Add theme value
+EditorUi.prototype.theme = '';
+
 EditorUi.prototype.closeOpenWindows = function () {
   if (this.actions.layersWindow?.window.isVisible()) {
     this.actions.layersWindow.window.setVisible(false);
@@ -1100,9 +1103,14 @@ EditorUi.prototype.setEnabled = function (enabled) {
   this.enabled = enabled;
   // Set the graph enabled state before anything else
   this.editor.graph.setEnabled(enabled);
-  this.toggleSidebarPanel(enabled);
   this.toggleFormatPanel(enabled);
-  this.toogleSidebarFooterContainer(enabled);
+  this.toggleSidebarPanel(enabled);
+  // TEN9: disable all menu is in preview mode
+  if (this.theme === 'min') {
+    this.toogleSidebarFooterContainer(!enabled);
+  } else {
+    this.toogleSidebarFooterContainer(enabled);
+  }
 
   this.editor.graph.popupMenuHandler.hideMenu();
   this.editor.graph.tooltipHandler.hideTooltip();
@@ -1119,9 +1127,26 @@ EditorUi.prototype.setEnabled = function (enabled) {
   redo.setEnabled(enabled);
 
   // TEN9: Add class to denote preview or edit modes.
+  var tools = document.getElementsByClassName('geMenuItem');
   if (!enabled) {
     mxClient.getDocumentContainer().classList.add('preview-mode');
+    // TEN9: disable all menu is in preview mode
+    if (this.theme === 'min') {
+      for (var i = 0; i < tools.length; i++) {
+        tools[i].setAttribute('disabled', 'disabled');
+        tools[i].style.cursor = 'default';
+        tools[i].style.pointerEvents = 'none';
+      }
+    }
   } else {
+    // TEN9: activate all menu is in preview mode
+    if (this.theme === 'min') {
+      for (var i = 0; i < tools.length; i++) {
+        tools[i].removeAttribute('disabled');
+        tools[i].style.cursor = 'pointer';
+        tools[i].style.pointerEvents = 'all';
+      }
+    }
     mxClient.getDocumentContainer().classList.remove('preview-mode');
   }
 };
@@ -2913,6 +2938,14 @@ EditorUi.prototype.toggleSidebarPanel = function (visible) {
   }
 };
 
+EditorUi.prototype.toggleSidebarWindow = function (visible) {
+  if (!visible) {
+    document.getElementById('sidebar').style.display = 'none';
+  } else {
+    document.getElementById('sidebar').style.display = 'block';
+  }
+};
+
 // TEN9: add sidebarFooterContainer toggle function
 EditorUi.prototype.toogleSidebarFooterContainer = function (visible) {
   if (visible) {
@@ -3820,19 +3853,24 @@ EditorUi.prototype.refresh = function (sizeDidChange) {
   var diagContOffset = this.getDiagramContainerOffset();
   var contLeft = this.hsplit.parentNode != null ? effHsplitPosition + this.splitSize : 0;
 
-  // TEN9: check if preview mode is on then don't change the diagramContainer position
-  if (this.enabled) {
+  // TEN9: check if preview mode is on then don't change the diagramContainer position and same for minimal theme
+  if (this.enabled && this.theme != 'min') {
     this.diagramContainer.style.left = contLeft + diagContOffset.x + 'px';
   }
 
-  this.diagramContainer.style.top = tmp + diagContOffset.y + 'px';
+  // TEN9: check if preview mode is on then don't change diagramContainer position
+  if (this.theme !== 'min') {
+    this.diagramContainer.style.top = tmp + diagContOffset.y + 'px';
+  }
+
   this.footerContainer.style.height = this.footerHeight + 'px';
   this.hsplit.style.top = this.sidebarContainer.style.top;
   this.hsplit.style.bottom = this.footerHeight + off + 'px';
   this.hsplit.style.left = effHsplitPosition + 'px';
   this.footerContainer.style.display = this.footerHeight == 0 ? 'none' : '';
 
-  if (this.tabContainer != null) {
+  // TEN9: check if minimal theme is on then don't change the tabContainer position
+  if (this.tabContainer !== null && this.theme !== 'min') {
     this.tabContainer.style.left = contLeft + 'px';
   }
 
