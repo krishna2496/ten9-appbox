@@ -99,7 +99,12 @@ export default defineComponent({
     }, debounceTime);
 
     function addLog(fileLogEvent: FileLogEvent) {
-      logs.value.push(fileLogEvent);
+      if (fileLogEvent.file) {
+        logs.value.push(fileLogEvent.file);
+      } else {
+        logs.value.push(fileLogEvent);
+      }
+
       nextTick(() => {
         const logsList = document.getElementById('logs-list');
         if (logsList) {
@@ -245,30 +250,26 @@ export default defineComponent({
 
         let fileOpened = false;
 
-        if (e.dataTransfer.items.length === 1) {
-          const [item] = e.dataTransfer.items;
-          if (item.kind === 'file') {
-            const file = item.getAsFile();
-            if (await editor.value.canLoadFile(file)) {
-              const fileData = await file.text();
-              loadFileData(fileData);
-              fileOpened = true;
-            }
-          }
-        }
-
         // If the dropped item was not an editor file, process as attachment
         if (!fileOpened) {
           for (let i = 0; i < e.dataTransfer.items.length; i++) {
             const file = e.dataTransfer.items[i].getAsFile();
-            const fileInfo: EventFileInfo = {
-              file,
-              // filename: file.name,
-              size: file.size,
-              // type: file.type,
-              lastModified: file.lastModified,
-            };
-            onFileDropped(fileInfo);
+            if (e.dataTransfer.items[i].kind === 'file') {
+              if (await editor.value.canLoadFile(file)) {
+                const fileData = await file.text();
+                loadFileData(fileData);
+                fileOpened = true;
+              }
+            }
+            // If the dropped item was not an editor file, process as attachment
+            if (!fileOpened) {
+              const fileInfo: EventFileInfo = {
+                file,
+                size: file.size,
+                lastModified: file.lastModified,
+              };
+              onFileDropped(fileInfo);
+            }
           }
         }
       });
@@ -382,11 +383,11 @@ export default defineComponent({
             tr
               td.custom-header-background(colspan='2')
                 b.text-center.custom-header {{ log.title }}
-            tr(v-if='log.filename')
+            tr(v-if='log.name')
               td.table-details
                 b Filename
               td.table-details
-                | {{ log.filename }}
+                | {{ log.name }}
             tr(v-if='log.what')
               td.table-details
                 b What
