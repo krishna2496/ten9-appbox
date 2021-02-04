@@ -29,9 +29,8 @@ import {
 import { debounce } from 'lodash';
 
 interface EventFileInfo {
-  filename?: string;
+  file?: File;
   size?: number;
-  type?: string;
   lastModified?: number;
   what?: string;
 }
@@ -128,11 +127,11 @@ export default defineComponent({
 
       addLog(fileLogEvent);
       const url = 'https://www.google.com';
-      const fileType = fileLogEvent.type.split('/');
+      const fileType = fileLogEvent.file.type.split('/');
       if (fileType[0] === 'image') {
         insertDummyImage();
       } else {
-        editor.value.insertFile(fileLogEvent, url);
+        editor.value.insertFile(fileLogEvent.file, url);
       }
     }
 
@@ -260,13 +259,13 @@ export default defineComponent({
 
         // If the dropped item was not an editor file, process as attachment
         if (!fileOpened) {
-          console.log('length ', e.dataTransfer.items.length);
           for (let i = 0; i < e.dataTransfer.items.length; i++) {
             const file = e.dataTransfer.items[i].getAsFile();
             const fileInfo: EventFileInfo = {
-              filename: file.name,
+              file,
+              // filename: file.name,
               size: file.size,
-              type: file.type,
+              // type: file.type,
               lastModified: file.lastModified,
             };
             onFileDropped(fileInfo);

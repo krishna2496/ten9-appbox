@@ -39,7 +39,7 @@ import {
   watch,
 } from '@vue/composition-api';
 // TEN9: file drop shape image data
-import { icons } from '../lib/shapes/fileIcons.js';
+import { getImageData } from '../lib/shapes/fileIcons.js';
 
 const {
   mxClipboard,
@@ -63,18 +63,6 @@ interface InsertLinkInfo {
   iconUrl?: string;
   noTitleCase?: boolean;
   noTruncateTitle?: boolean;
-}
-
-interface EventFileInfo {
-  filename?: string;
-  size?: number;
-  type?: string;
-  lastModified?: number;
-  what?: string;
-}
-
-interface FileLogEvent extends EventFileInfo {
-  title: string;
 }
 
 import '../styles/main.scss';
@@ -442,29 +430,15 @@ export default defineComponent({
       action.funct(url, docs);
     }
 
-    function getDeafultImageData() {
-      return 'shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;aspect=fixed;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNzkyIiBoZWlnaHQ9IjE3OTIiIHZpZXdCb3g9IjAgMCAxNzkyIDE3OTIiPjxwYXRoIGQ9Ik0xNTk2IDM4MHEyOCAyOCA0OCA3NnQyMCA4OHYxMTUycTAgNDAtMjggNjh0LTY4IDI4aC0xMzQ0cS00MCAwLTY4LTI4dC0yOC02OHYtMTYwMHEwLTQwIDI4LTY4dDY4LTI4aDg5NnE0MCAwIDg4IDIwdDc2IDQ4em0tNDQ0LTI0NHYzNzZoMzc2cS0xMC0yOS0yMi00MWwtMzEzLTMxM3EtMTItMTItNDEtMjJ6bTM4NCAxNTI4di0xMDI0aC00MTZxLTQwIDAtNjgtMjh0LTI4LTY4di00MTZoLTc2OHYxNTM2aDEyODB6Ii8+PC9zdmc+';
+    function getStyleForFile(file: File) {
+      const imageData = getImageData(file);
+      return (
+        'shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;aspect=fixed;image=data:image/svg+xml,' +
+        imageData
+      );
     }
 
-    function getImageData(ext: string) {
-      const icon = icons.filter((item) => {
-        return item.extensions.includes(ext);
-      });
-      if (icon.length > 0) {
-        return icon[0].imageData;
-      } else {
-        return getDeafultImageData();
-      }
-    }
-
-    function getStyleForFile(file: FileLogEvent) {
-      const ext = file.filename.split('.').pop();
-      const imageData = getImageData(ext);
-      console.log('data ', imageData);
-      return imageData;
-    }
-
-    function insertFile(file: FileLogEvent, url: string) {
+    function insertFile(file: File, url: string) {
       const parent = graph.value.getDefaultParent();
       const style = getStyleForFile(file);
       const pt = graph.value.getFreeInsertPoint();
@@ -472,7 +446,7 @@ export default defineComponent({
       const fileAttachmentCell = graph.value.insertVertex(
         parent,
         null,
-        file.filename,
+        file.name,
         pt.x,
         pt.y,
         shapeSize,
