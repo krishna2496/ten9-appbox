@@ -124,9 +124,18 @@ export default defineComponent({
         graph.value.clearSelection();
       }
     }
+    function refreshLinks(event: typeof mxEventObject) {
+      const changes = event.getProperty('edit').changes;
+      const codec = new mxCodec();
+
+      for (let i = 0; i < changes.length; i++) {
+        console.log(codec.encode(changes[i]));
+      }
+    }
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
       ctx.emit('graph-changed', event.name);
+      refreshLinks(event);
     }
 
     function onLibrariesChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
