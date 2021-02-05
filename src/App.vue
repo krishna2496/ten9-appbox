@@ -239,7 +239,7 @@ export default defineComponent({
       });
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      drag.addEventListener('drop', async (e: DragEvent) => {
+      drag.addEventListener('drop', (e: DragEvent) => {
         e.stopPropagation();
         e.preventDefault();
 
@@ -249,27 +249,27 @@ export default defineComponent({
         }
 
         let fileOpened = false;
+        async function loadFile(file: File) {
+          if (await editor.value.canLoadFile(file)) {
+            const fileData = await file.text();
+            loadFileData(fileData);
+            fileOpened = true;
+          }
+        }
 
-        // If the dropped item was not an editor file, process as attachment
-        if (!fileOpened) {
-          for (let i = 0; i < e.dataTransfer.items.length; i++) {
-            const file = e.dataTransfer.items[i].getAsFile();
-            if (e.dataTransfer.items[i].kind === 'file') {
-              if (await editor.value.canLoadFile(file)) {
-                const fileData = await file.text();
-                loadFileData(fileData);
-                fileOpened = true;
-              }
-            }
-            // If the dropped item was not an editor file, process as attachment
-            if (!fileOpened) {
-              const fileInfo: EventFileInfo = {
-                file,
-                size: file.size,
-                lastModified: file.lastModified,
-              };
-              onFileDropped(fileInfo);
-            }
+        for (let i = 0; i < e.dataTransfer.items.length; i++) {
+          const file = e.dataTransfer.items[i].getAsFile();
+          // If the dropped item was not an editor file, process as attachment
+          if (e.dataTransfer.items[i].kind === 'file') {
+            loadFile(file);
+          }
+          if (!fileOpened) {
+            const fileInfo: EventFileInfo = {
+              file,
+              size: file.size,
+              lastModified: file.lastModified,
+            };
+            onFileDropped(fileInfo);
           }
         }
       });
