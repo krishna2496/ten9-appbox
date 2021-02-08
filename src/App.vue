@@ -122,6 +122,7 @@ export default defineComponent({
 
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
+      editor.value.refreshLinks();
     }
 
     function onFileDropped(event: EventFileInfo) {

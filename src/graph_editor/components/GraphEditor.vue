@@ -42,6 +42,7 @@ import {
 import { getImageData } from '../lib/shapes/fileIcons.js';
 
 const {
+  mxCell,
   mxClipboard,
   mxCodec,
   mxConstants,
@@ -124,19 +125,51 @@ export default defineComponent({
         graph.value.clearSelection();
       }
     }
-    // refresh the all the updated cell
-    function refreshLinks(event: typeof mxEventObject) {
-      const changes = event.getProperty('edit').changes;
-      const codec = new mxCodec();
 
-      for (let i = 0; i < changes.length; i++) {
-        console.log(codec.encode(changes[i]));
+    function isImage(cell: typeof mxCell) {
+      const style = cell.getStyle();
+      const arr = style.split(';');
+      if (arr[0] === 'shape=image' && cell.getStyle().includes('image=http')) {
+        return true;
+      } else {
+        return false;
       }
+    }
+
+    function isLink(cell: typeof mxCell) {
+      const cellValue = cell.getValue();
+      if (cellValue != '') {
+        if (cellValue.tagName === 'UserObject') {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      return false;
+    }
+    // refresh the all the updated cell
+    function refreshLinks() {
+      const root = graph.value.model.getRoot().children;
+      for (let i = 0; i < root[0].children.length; i++) {
+        const cell = root[0].children[i];
+        if (isImage(cell)) {
+          console.log('Image shape');
+          graph.value.setLinkForCell(cell, 'https://www.ten9.com');
+        } else if (isLink(cell)) {
+          console.log('link shape');
+          graph.value.setLinkForCell(cell, 'https://www.ten9.com');
+        }
+      }
+      // const changes = event.getProperty('edit').changes;
+      // const codec = new mxCodec();
+
+      // for (let i = 0; i < changes.length; i++) {
+      //   console.log(codec.encode(changes[i]));
+      // }
     }
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
       ctx.emit('graph-changed', event.name);
-      refreshLinks(event);
     }
 
     function onLibrariesChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
@@ -493,6 +526,7 @@ export default defineComponent({
       loadImage,
       paste,
       pasteShapes,
+      refreshLinks,
       setGraphEnabled,
     };
   },
