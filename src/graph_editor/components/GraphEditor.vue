@@ -124,6 +124,7 @@ export default defineComponent({
         graph.value.clearSelection();
       }
     }
+    // refresh the all the updated cell
     function refreshLinks(event: typeof mxEventObject) {
       const changes = event.getProperty('edit').changes;
       const codec = new mxCodec();
