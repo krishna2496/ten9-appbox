@@ -38,6 +38,8 @@ import {
   ref,
   watch,
 } from '@vue/composition-api';
+// TEN9: file drop shape image data
+import { getImageData } from '../lib/shapes/fileIcons.js';
 
 const {
   mxClipboard,
@@ -264,7 +266,6 @@ export default defineComponent({
 
     function loadXmlData(data: string) {
       editorUi.value.openLocalFile(data, null, null, null, null);
-
       // Reset the view after loading a file
       nextTick(() => {
         setGraphEnabled(props.enabled);
@@ -273,7 +274,7 @@ export default defineComponent({
     }
 
     function pasteShapes(doc: XMLDocument) {
-      let codec = new mxCodec(doc);
+      const codec = new mxCodec(doc);
       const model = new mxGraphModel();
       const rootElt = doc.documentElement.querySelector('root');
       // TODO: FIX!
@@ -297,23 +298,23 @@ export default defineComponent({
       result = result || graph.value.getSelectionCells();
       result = graph.value.getExportableCells(graph.value.model.getTopmostCells(result));
 
-      let cloneMap = new Object();
-      let lookup = graph.value.createCellLookup(result);
-      let clones = graph.value.cloneCells(result, null, cloneMap);
+      const cloneMap = new Object();
+      const lookup = graph.value.createCellLookup(result);
+      const clones = graph.value.cloneCells(result, null, cloneMap);
 
       // Uses temporary model to force new IDs to be assigned
       // to avoid having to carry over the mapping from object
       // ID to cell ID to the paste operation
-      let parent = model.getChildAt(model.getRoot(), 0);
+      const parent = model.getChildAt(model.getRoot(), 0);
 
       for (let i = 0; i < clones.length; i++) {
         model.add(parent, clones[i]);
 
         // Checks for orphaned relative children and makes absolute
-        let state = graph.value.view.getState(result[i]);
+        const state = graph.value.view.getState(result[i]);
 
         if (state != null) {
-          let geo = graph.value.getCellGeometry(clones[i]);
+          const geo = graph.value.getCellGeometry(clones[i]);
 
           if (
             geo != null &&
@@ -429,6 +430,32 @@ export default defineComponent({
       action.funct(url, docs);
     }
 
+    function getStyleForFile(file: File) {
+      const imageData = getImageData(file);
+      return (
+        'shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;aspect=fixed;image=data:image/svg+xml,' +
+        imageData
+      );
+    }
+
+    function insertFile(file: File, url: string) {
+      const parent = graph.value.getDefaultParent();
+      const style = getStyleForFile(file);
+      const pt = graph.value.getFreeInsertPoint();
+      const shapeSize = 50;
+      const fileAttachmentCell = graph.value.insertVertex(
+        parent,
+        null,
+        file.name,
+        pt.x,
+        pt.y,
+        shapeSize,
+        shapeSize,
+        style,
+      );
+      graph.value.setLinkForCell(fileAttachmentCell, url);
+    }
+
     watch(
       () => props.enabled,
       (val) => {
@@ -445,10 +472,13 @@ export default defineComponent({
       container,
       editor,
       editorUi,
+      getImageData,
+      getStyleForFile,
       getXmlData,
       graph,
       insertImage,
       insertLink,
+      insertFile,
       loadXmlData,
       loadImage,
       paste,

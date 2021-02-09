@@ -16,11 +16,13 @@
 
 // TEN9: Added imports
 const {
+  mxCellRenderer,
   mxClient,
   mxClipboard,
   mxCodecRegistry,
   mxConnectionHandler,
   mxConstants,
+  mxCylinder,
   mxDictionary,
   mxEvent,
   mxEventObject,

@@ -29,8 +29,8 @@ export default defineComponent({
 
     function loadFile() {
       if (file.value.files.length > 0) {
-        let [selectedFile] = file.value.files;
-        let reader = new FileReader();
+        const [selectedFile] = file.value.files;
+        const reader = new FileReader();
         reader.onload = (e) => {
           const fileData = e.target.result;
           ctx.emit('file-loaded', fileData);
