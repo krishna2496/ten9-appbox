@@ -129,8 +129,13 @@ export default defineComponent({
     function isImage(cell: typeof mxCell) {
       const style = cell.getStyle();
       const arr = style.split(';');
+      const index = 6;
       if (arr[0] === 'shape=image' && cell.getStyle().includes('image=http')) {
-        return true;
+        if (arr[arr.length - 1] != '') {
+          return arr[arr.length - 1].substring(index);
+        } else {
+          return arr[arr.length - 2].substring(index);
+        }
       } else {
         return false;
       }
@@ -140,32 +145,60 @@ export default defineComponent({
       const cellValue = cell.getValue();
       if (cellValue != '') {
         if (cellValue.tagName === 'UserObject') {
-          return true;
+          return cellValue.attributes[1].nodeValue;
         } else {
           return false;
         }
       }
       return false;
     }
+
+    function getStyle(cell: typeof mxCell) {
+      const style = cell.getStyle();
+      return style.substr(0, style.indexOf('image='));
+    }
+
+    function checkURL(url: string) {
+      const newUrl = new URL(url);
+      //debugger
+      if (newUrl.search === '' && newUrl.hash === '') {
+        return url + '?#a';
+      } else if (newUrl.hash === '') {
+        return url + '#a';
+      } else if (newUrl.hash !== '') {
+        return url + 'a';
+      } else {
+        return '';
+      }
+    }
+
     // refresh the all the updated cell
     function refreshLinks() {
       const root = graph.value.model.getRoot().children;
       for (let i = 0; i < root[0].children.length; i++) {
         const cell = root[0].children[i];
-        if (isImage(cell)) {
-          console.log('Image shape');
-          graph.value.setLinkForCell(cell, 'https://www.ten9.com');
-        } else if (isLink(cell)) {
-          console.log('link shape');
-          graph.value.setLinkForCell(cell, 'https://www.ten9.com');
+        const imageLink = isImage(cell);
+        if (imageLink) {
+          const newUrl = checkURL(imageLink);
+          if (newUrl) {
+            const style = getStyle(cell);
+            const newStyle = `${style}image=${newUrl}`;
+            cell.setStyle(newStyle);
+          }
+          //graph.value.setLinkForCell(cell, imageLink + '?#a');
+        }
+        const link = isLink(cell);
+        if (link) {
+          //debugger
+          const newUrl = checkURL(link);
+          if (newUrl) {
+            cell.getValue().attributes[1].nodeValue = newUrl;
+            cell.getValue().attributes[1].textContent = newUrl;
+            cell.getValue().attributes[1].value = newUrl;
+          }
+          //graph.value.setLinkForCell(cell, link + '?#a');
         }
       }
-      // const changes = event.getProperty('edit').changes;
-      // const codec = new mxCodec();
-
-      // for (let i = 0; i < changes.length; i++) {
-      //   console.log(codec.encode(changes[i]));
-      // }
     }
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
