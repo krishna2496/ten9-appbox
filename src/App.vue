@@ -249,28 +249,24 @@ export default defineComponent({
           return;
         }
 
-        let fileOpened = false;
-        async function loadFile(file: File) {
-          if (await editor.value.canLoadFile(file)) {
-            const fileData = await file.text();
-            loadFileData(fileData);
-            fileOpened = true;
-          }
-        }
-
         for (let i = 0; i < e.dataTransfer.items.length; i++) {
           const file = e.dataTransfer.items[i].getAsFile();
           // If the dropped item was not an editor file, process as attachment
           if (e.dataTransfer.items[i].kind === 'file') {
-            loadFile(file);
-          }
-          if (!fileOpened) {
-            const fileInfo: EventFileInfo = {
-              file,
-              size: file.size,
-              lastModified: file.lastModified,
-            };
-            onFileDropped(fileInfo);
+            editor.value.canLoadFile(file).then((canLoad: boolean) => {
+              if (canLoad) {
+                file.text().then((fileData) => {
+                  loadFileData(fileData);
+                });
+              } else {
+                const fileInfo: EventFileInfo = {
+                  file,
+                  size: file.size,
+                  lastModified: file.lastModified,
+                };
+                onFileDropped(fileInfo);
+              }
+            });
           }
         }
       });
