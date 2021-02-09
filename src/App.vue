@@ -239,7 +239,7 @@ export default defineComponent({
       });
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      drag.addEventListener('drop', (e: DragEvent) => {
+      drag.addEventListener('drop', async (e: DragEvent) => {
         e.stopPropagation();
         e.preventDefault();
 
@@ -248,30 +248,60 @@ export default defineComponent({
           return;
         }
 
-        let fileOpened = false;
-        async function loadFile(file: File) {
-          if (await editor.value.canLoadFile(file)) {
-            const fileData = await file.text();
-            loadFileData(fileData);
-            fileOpened = true;
-          }
-        }
+        // let fileOpened = false;
+        // async function loadFile(file: File) {
+        //   if (await editor.value.canLoadFile(file)) {
+        //     const fileData = await file.text();
+        //     loadFileData(fileData);
+        //     fileOpened = true;
+        //   }
+        // }
+
+        // const canLoadFileResults = [];
+        // const filesToLoad = [];
 
         for (let i = 0; i < e.dataTransfer.items.length; i++) {
           const file = e.dataTransfer.items[i].getAsFile();
           // If the dropped item was not an editor file, process as attachment
           if (e.dataTransfer.items[i].kind === 'file') {
-            loadFile(file);
-          }
-          if (!fileOpened) {
-            const fileInfo: EventFileInfo = {
-              file,
-              size: file.size,
-              lastModified: file.lastModified,
-            };
-            onFileDropped(fileInfo);
+            editor.value.canLoadFile(file).then((canLoad: boolean) => {
+              if (canLoad) {
+                file.text().then((fileData) => {
+                  loadFileData(fileData);
+                });
+              } else {
+                const fileInfo: EventFileInfo = {
+                  file,
+                  size: file.size,
+                  lastModified: file.lastModified,
+                };
+                onFileDropped(fileInfo);
+              }
+            });
+            // canLoadFileResults.push(editor.value.canLoadFile(file));
+            // filesToLoad.push(file);
           }
         }
+
+        // // Wait for all files to be loaded
+        // const canLoadFileValues = await Promise.all(canLoadFileResults);
+
+        // for (let i = 0; i < canLoadFileValues.length; i++) {
+        //   const file = filesToLoad[i];
+
+        //   if (canLoadFileValues[i]) {
+        //     const fileData = await file.text();
+        //     loadFileData(fileData);
+        //   }
+        //   else {
+        //     const fileInfo: EventFileInfo = {
+        //       file,
+        //       size: file.size,
+        //       lastModified: file.lastModified,
+        //     };
+        //     onFileDropped(fileInfo);
+        //   }
+        // }
       });
 
       // Add our own ctrl+v event listener
