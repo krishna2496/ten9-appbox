@@ -126,77 +126,56 @@ export default defineComponent({
       }
     }
 
-    function isImage(cell: typeof mxCell) {
+    function isImage(cell: typeof mxCell): string {
       const style = cell.getStyle();
       const arr = style.split(';');
       const index = 6;
       if (arr[0] === 'shape=image' && cell.getStyle().includes('image=http')) {
-        if (arr[arr.length - 1] != '') {
-          return arr[arr.length - 1].substring(index);
-        } else {
-          return arr[arr.length - 2].substring(index);
-        }
-      } else {
-        return false;
-      }
-    }
-
-    function isLink(cell: typeof mxCell) {
-      const cellValue = cell.getValue();
-      if (cellValue != '') {
-        if (cellValue.tagName === 'UserObject') {
-          return cellValue.attributes[1].nodeValue;
-        } else {
-          return false;
-        }
-      }
-      return false;
-    }
-
-    function getStyle(cell: typeof mxCell) {
-      const style = cell.getStyle();
-      return style.substr(0, style.indexOf('image='));
-    }
-
-    function checkURL(url: string) {
-      const newUrl = new URL(url);
-      //debugger
-      if (newUrl.search === '' && newUrl.hash === '') {
-        return url + '?#a';
-      } else if (newUrl.hash === '') {
-        return url + '#a';
-      } else if (newUrl.hash !== '') {
-        return url + 'a';
+        return arr[arr.length - 1].substring(index);
       } else {
         return '';
       }
     }
 
+    function isLink(cell: typeof mxCell): string {
+      const cellValue = cell.getValue();
+      return cellValue?.tagName === 'UserObject' && cellValue?.attributes[1].nodeValue;
+    }
+
+    function getStyle(cell: typeof mxCell): string {
+      const style = cell.getStyle();
+      return style.substr(0, style.indexOf('image='));
+    }
+
+    function updateCellImageUrl(cell: typeof mxCell, imageUrl: string) {
+      const style = getStyle(cell);
+      const newStyle = mxUtils.setStyle(style, 'image', imageUrl);
+      cell.setStyle(newStyle);
+    }
+
+    function updateCellLink(cell: typeof mxCell, newUrl: string) {
+      cell.getValue().attributes[1].nodeValue = newUrl;
+      cell.getValue().attributes[1].textContent = newUrl;
+      cell.getValue().attributes[1].value = newUrl;
+    }
+
     // refresh the all the updated cell
-    function refreshLinks() {
-      const root = graph.value.model.getRoot().children;
-      for (let i = 0; i < root[0].children.length; i++) {
-        const cell = root[0].children[i];
+    function refreshAllCellLinks(cells: typeof mxCell, checkURL: CallableFunction) {
+      for (let i = 0; i < cells[0].children.length; i++) {
+        const cell = cells[0].children[i];
         const imageLink = isImage(cell);
         if (imageLink) {
           const newUrl = checkURL(imageLink);
           if (newUrl) {
-            const style = getStyle(cell);
-            const newStyle = `${style}image=${newUrl}`;
-            cell.setStyle(newStyle);
+            updateCellImageUrl(cell, newUrl);
           }
-          //graph.value.setLinkForCell(cell, imageLink + '?#a');
         }
         const link = isLink(cell);
         if (link) {
-          //debugger
           const newUrl = checkURL(link);
           if (newUrl) {
-            cell.getValue().attributes[1].nodeValue = newUrl;
-            cell.getValue().attributes[1].textContent = newUrl;
-            cell.getValue().attributes[1].value = newUrl;
+            updateCellLink(cell, newUrl);
           }
-          //graph.value.setLinkForCell(cell, link + '?#a');
         }
       }
     }
@@ -559,7 +538,7 @@ export default defineComponent({
       loadImage,
       paste,
       pasteShapes,
-      refreshLinks,
+      refreshAllCellLinks,
       setGraphEnabled,
     };
   },

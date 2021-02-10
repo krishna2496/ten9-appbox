@@ -120,9 +120,26 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
+    function checkURL(url: string): string {
+      const newUrl = new URL(url);
+      if (newUrl.search === '' && newUrl.hash === '') {
+        newUrl.search = '?#a';
+      } else if (newUrl.hash === '') {
+        newUrl.hash = '#a';
+      } else if (newUrl.hash !== '') {
+        newUrl.hash = newUrl.hash + 'a';
+      }
+      return newUrl.toString();
+    }
+
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
-      editor.value.refreshLinks();
+      for (let i = 0; i < editor.value.editorUi.pages.length; i++) {
+        const cells = editor.value.editorUi.pages[i].root.children;
+        editor.value.refreshAllCellLinks(cells, checkURL);
+      }
+
+      //const cells = editor.value.editorUi.editor.graph.model.getRoot().children;
     }
 
     function onFileDropped(event: EventFileInfo) {
