@@ -1857,7 +1857,10 @@ Actions.prototype.init = function () {
     mxUtils.bind(this, function () {
       if (this.layersWindow == null) {
         // LATER: Check outline window for initial placement
-        this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 280, 120, 220, 196);
+        // TEN9: Layer window calculation according to
+        //this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 280, 120, 220, 196);
+        var container = document.getElementById('container');
+        this.layersWindow = new LayersWindow(ui, container.offsetWidth - 280, 120, 220, 196);
         this.layersWindow.window.addListener('show', function () {
           ui.fireEvent(new mxEventObject('layers'));
         });
