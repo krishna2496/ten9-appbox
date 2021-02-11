@@ -37,6 +37,7 @@ import {
   onMounted,
   ref,
   watch,
+  PropType,
 } from '@vue/composition-api';
 // TEN9: file drop shape image data
 import { getImageData } from '../lib/shapes/fileIcons.js';
@@ -68,6 +69,8 @@ interface InsertLinkInfo {
 
 import '../styles/main.scss';
 
+// const returnNull = (): string | null => null;
+
 export default defineComponent({
   name: 'GraphEditor',
 
@@ -85,6 +88,11 @@ export default defineComponent({
       required: true,
       type: String,
     },
+    refreshLinkHandler: {
+      type: Function as PropType<(url: string) => string | null> | null,
+      required: false,
+      default: null,
+    }
   },
 
   setup(props, ctx) {
@@ -126,72 +134,36 @@ export default defineComponent({
       }
     }
 
-    function isImage(cell: typeof mxCell): boolean {
-      const style = cell.getStyle();
-      const arr = style.split(';');
-      if (arr[0] === 'shape=image' && cell.getStyle().includes('image=http')) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+    function refreshCellLinks(cell: typeof mxCell) {
+      const style = graph.value.getCurrentCellStyle(cell);
 
-    function getImageLink(cell: typeof mxCell): string {
-      const style = cell.getStyle();
-      const arr = style.split(';');
-      const index = 6;
-      // check the array's last element is empty or not
-      if (arr[arr.length - 1] === '') {
-        return arr[arr.length - 2].substring(index);
-      } else {
-        return arr[arr.length - 1].substring(index);
-      }
-    }
-
-    function isLink(cell: typeof mxCell): string {
-      const cellValue = cell.getValue();
-      return cellValue?.tagName === 'UserObject' && cellValue?.attributes[1].nodeValue;
-    }
-
-    function getStyle(cell: typeof mxCell): string {
-      const style = cell.getStyle();
-      return style.substr(0, style.indexOf('image='));
-    }
-
-    function updateCellImageUrl(cell: typeof mxCell, imageUrl: string) {
-      const style = getStyle(cell);
-      const newStyle = mxUtils.setStyle(style, 'image', imageUrl);
-      cell.setStyle(newStyle);
-    }
-
-    function updateCellLink(cell: typeof mxCell, newUrl: string) {
-      cell.getValue().attributes[1].nodeValue = newUrl;
-      cell.getValue().attributes[1].textContent = newUrl;
-      cell.getValue().attributes[1].value = newUrl;
-    }
-
-    // refresh the all the updated cell
-    function refreshAllCellLinks(cells: typeof mxCell, checkURL: CallableFunction) {
-      const childCells = cells.children;
-      for (let j = 0; j < childCells.length; j++) {
-        for (let i = 0; i < childCells[j].children.length; i++) {
-          const cell = childCells[j].children[i];
-          if (isImage(cell)) {
-            const imageLink = getImageLink(cell);
-            const newUrl = checkURL(imageLink);
-            if (newUrl) {
-              updateCellImageUrl(cell, newUrl);
-            }
-          }
-          const link = isLink(cell);
-          if (link) {
-            const newUrl = checkURL(link);
-            if (newUrl) {
-              updateCellLink(cell, newUrl);
-            }
-          }
+      // Refresh the image links
+      if (style?.shape === 'image' && style?.image) {
+        const imageUrl = props.refreshLinkHandler(style.image);
+        if (imageUrl) {
+          const style = cell.getStyle();
+          cell.setStyle(mxUtils.setStyle(style, 'image', imageUrl));
         }
       }
+
+      // Refresh links for the objects
+      const linkUrl = graph.value.getLinkForCell(cell);
+      if (linkUrl) {
+        const newUrl = props.refreshLinkHandler(linkUrl);
+        if (newUrl) {
+          graph.value.setLinkForCell(cell, newUrl);
+        }
+      }
+
+      cell.children?.forEach((child: typeof mxCell) => { refreshCellLinks(child) });
+    }
+
+    function refreshGraphCellLinks() {
+      debugger;
+      if (!props.refreshLinkHandler) {
+        return;
+      }
+      refreshCellLinks(graph.value.model.getRoot());
     }
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
@@ -210,10 +182,15 @@ export default defineComponent({
       ctx.emit('theme-changed', event.getProperty('detail'));
     }
 
+    function onPageSelected(_sender: typeof mxEventSource) {
+      refreshGraphCellLinks();
+    }
+
     function addListeners() {
       graph.value.model.addListener(mxEvent.CHANGE, onGraphChanged);
       graph.value.addListener('gridSizeChanged', onGraphChanged);
       graph.value.addListener('graphChanged', onGraphChanged);
+      editor.value.addListener('pageSelected', onPageSelected);
       editorUi.value.addListener('shadowVisibleChanged', onGraphChanged);
       editorUi.value.addListener('gridEnabledChanged', onGraphChanged);
       editorUi.value.addListener('guidesEnabledChanged', onGraphChanged);
@@ -228,6 +205,7 @@ export default defineComponent({
     function removeListeners() {
       graph.value.model.removeListener(onGraphChanged);
       graph.value.removeListener(onGraphChanged);
+      editor.value.removeListener(onPageSelected);
       editorUi.value.removeListener(onGraphChanged);
       editorUi.value.removeListener(onLibrariesChanged);
       editorUi.value.removeListener(onScratchpadDataChanged);
@@ -339,6 +317,7 @@ export default defineComponent({
       nextTick(() => {
         setGraphEnabled(props.enabled);
         editorUi.value.resetViewToShowFullGraph();
+        refreshGraphCellLinks();
       });
     }
 
@@ -552,7 +531,7 @@ export default defineComponent({
       loadImage,
       paste,
       pasteShapes,
-      refreshAllCellLinks,
+      refreshGraphCellLinks,
       setGraphEnabled,
     };
   },

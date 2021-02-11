@@ -120,7 +120,7 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
-    function checkURL(url: string): string {
+    function refreshLink(url: string): string {
       const newUrl = new URL(url);
       newUrl.hash += 'a';
       return newUrl.toString();
@@ -128,12 +128,6 @@ export default defineComponent({
 
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
-      for (let i = 0; i < editor.value.editorUi.pages.length; i++) {
-        const cells = editor.value.editorUi.pages[i].root;
-        editor.value.refreshAllCellLinks(cells, checkURL);
-      }
-      // const cells = editor.value.editorUi.editor.graph.model.getRoot().children;
-      // editor.value.refreshAllCellLinks(cells, checkURL);
     }
 
     function onFileDropped(event: EventFileInfo) {
@@ -372,6 +366,7 @@ export default defineComponent({
       onShapeLibrariesChanged,
       onThemeChanged,
       previewMode,
+      refreshLink,
       saveFile,
       scratchpadData,
       shapeLibraries,
@@ -443,6 +438,7 @@ export default defineComponent({
           :shapeLibraries='shapeLibraries',
           :scratchpadData='scratchpadData',
           :theme='theme',
+          :refreshLinkHandler='refreshLink',
           @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged',
           @scratchpad-data-changed='onScratchpadDataChanged',
