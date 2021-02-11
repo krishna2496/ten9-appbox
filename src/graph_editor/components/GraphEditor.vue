@@ -126,14 +126,25 @@ export default defineComponent({
       }
     }
 
-    function isImage(cell: typeof mxCell): string {
+    function isImage(cell: typeof mxCell): boolean {
+      const style = cell.getStyle();
+      const arr = style.split(';');
+      if (arr[0] === 'shape=image' && cell.getStyle().includes('image=http')) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    function getImageLink(cell: typeof mxCell): string {
       const style = cell.getStyle();
       const arr = style.split(';');
       const index = 6;
-      if (arr[0] === 'shape=image' && cell.getStyle().includes('image=http')) {
-        return arr[arr.length - 1].substring(index);
+      // check the array's last element is empty or not
+      if (arr[arr.length - 1] === '') {
+        return arr[arr.length - 2].substring(index);
       } else {
-        return '';
+        return arr[arr.length - 1].substring(index);
       }
     }
 
@@ -161,20 +172,23 @@ export default defineComponent({
 
     // refresh the all the updated cell
     function refreshAllCellLinks(cells: typeof mxCell, checkURL: CallableFunction) {
-      for (let i = 0; i < cells[0].children.length; i++) {
-        const cell = cells[0].children[i];
-        const imageLink = isImage(cell);
-        if (imageLink) {
-          const newUrl = checkURL(imageLink);
-          if (newUrl) {
-            updateCellImageUrl(cell, newUrl);
+      const childCells = cells.children;
+      for (let j = 0; j < childCells.length; j++) {
+        for (let i = 0; i < childCells[j].children.length; i++) {
+          const cell = childCells[j].children[i];
+          if (isImage(cell)) {
+            const imageLink = getImageLink(cell);
+            const newUrl = checkURL(imageLink);
+            if (newUrl) {
+              updateCellImageUrl(cell, newUrl);
+            }
           }
-        }
-        const link = isLink(cell);
-        if (link) {
-          const newUrl = checkURL(link);
-          if (newUrl) {
-            updateCellLink(cell, newUrl);
+          const link = isLink(cell);
+          if (link) {
+            const newUrl = checkURL(link);
+            if (newUrl) {
+              updateCellLink(cell, newUrl);
+            }
           }
         }
       }

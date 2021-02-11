@@ -122,24 +122,18 @@ export default defineComponent({
 
     function checkURL(url: string): string {
       const newUrl = new URL(url);
-      if (newUrl.search === '' && newUrl.hash === '') {
-        newUrl.search = '?#a';
-      } else if (newUrl.hash === '') {
-        newUrl.hash = '#a';
-      } else if (newUrl.hash !== '') {
-        newUrl.hash = newUrl.hash + 'a';
-      }
+      newUrl.hash += 'a';
       return newUrl.toString();
     }
 
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
       for (let i = 0; i < editor.value.editorUi.pages.length; i++) {
-        const cells = editor.value.editorUi.pages[i].root.children;
+        const cells = editor.value.editorUi.pages[i].root;
         editor.value.refreshAllCellLinks(cells, checkURL);
       }
-
-      //const cells = editor.value.editorUi.editor.graph.model.getRoot().children;
+      // const cells = editor.value.editorUi.editor.graph.model.getRoot().children;
+      // editor.value.refreshAllCellLinks(cells, checkURL);
     }
 
     function onFileDropped(event: EventFileInfo) {
