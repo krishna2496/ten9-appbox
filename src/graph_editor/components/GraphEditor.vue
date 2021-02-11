@@ -69,8 +69,6 @@ interface InsertLinkInfo {
 
 import '../styles/main.scss';
 
-// const returnNull = (): string | null => null;
-
 export default defineComponent({
   name: 'GraphEditor',
 
@@ -91,8 +89,7 @@ export default defineComponent({
     refreshLinkHandler: {
       type: Function as PropType<(url: string) => string | null> | null,
       required: false,
-      default: null,
-    }
+    },
   },
 
   setup(props, ctx) {
@@ -138,11 +135,10 @@ export default defineComponent({
       const style = graph.value.getCurrentCellStyle(cell);
 
       // Refresh the image links
-      if (style?.shape === 'image' && style?.image) {
-        const imageUrl = props.refreshLinkHandler(style.image);
+      if (style[mxConstants.STYLE_SHAPE] === 'image') {
+        const imageUrl = props.refreshLinkHandler(style[mxConstants.STYLE_IMAGE]);
         if (imageUrl) {
-          const style = cell.getStyle();
-          cell.setStyle(mxUtils.setStyle(style, 'image', imageUrl));
+          graph.value.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
         }
       }
 
@@ -155,11 +151,12 @@ export default defineComponent({
         }
       }
 
-      cell.children?.forEach((child: typeof mxCell) => { refreshCellLinks(child) });
+      cell.children?.forEach((child: typeof mxCell) => {
+        refreshCellLinks(child);
+      });
     }
 
     function refreshGraphCellLinks() {
-      debugger;
       if (!props.refreshLinkHandler) {
         return;
       }
