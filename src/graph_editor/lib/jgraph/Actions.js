@@ -131,9 +131,10 @@ Actions.prototype.init = function () {
     ui.showDialog(new ExportDialog(ui).container, 300, 296, true, true);
   });
   this.addAction('editDiagram...', function () {
-    var dlg = new EditDiagramDialog(ui);
-    ui.showDialog(dlg.container, 620, 420, true, false);
-    dlg.init();
+    // var dlg = new EditDiagramDialog(ui);
+    // ui.showDialog(dlg.container, 620, 420, true, false);
+    // dlg.init();
+    ui.fireEvent(new mxEventObject('openEditDiagram'));
   }).isEnabled = isGraphEnabled; // TEN9: Enabled when graph is enabled
   this.addAction('pageSetup...', function () {
     ui.showDialog(new PageSetupDialog(ui, ChangePageSetup).container, 320, 220, true, true);

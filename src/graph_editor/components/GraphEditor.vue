@@ -40,6 +40,7 @@ import {
 } from '@vue/composition-api';
 // TEN9: file drop shape image data
 import { getImageData } from '../lib/shapes/fileIcons.js';
+import Model from '../../components/Model.vue';
 
 const {
   mxClipboard,
@@ -65,11 +66,17 @@ interface InsertLinkInfo {
   noTruncateTitle?: boolean;
 }
 
+interface CustomEvent {
+  value?: string;
+}
+
 import '../styles/main.scss';
 
 export default defineComponent({
   name: 'GraphEditor',
-
+  components: {
+    Model,
+  },
   props: {
     shapeLibraries: {
       required: true,
@@ -98,6 +105,10 @@ export default defineComponent({
     const graph = ref(null);
 
     const sidebar = ref(null);
+
+    const isShow = ref(false);
+
+    const xml = ref('');
 
     function loadImage(url: string): Promise<HTMLImageElement> {
       return new Promise((resolve) => {
@@ -141,6 +152,22 @@ export default defineComponent({
       ctx.emit('theme-changed', event.getProperty('detail'));
     }
 
+    function onOpenEditDiagram(_sender: typeof mxEventSource) {
+      isShow.value = true;
+      xml.value = mxUtils.getPrettyXml(editorUi.value.editor.getGraphXml());
+    }
+
+    function setGraphData(event: CustomEvent) {
+      isShow.value = false;
+      editorUi.value.editor.graph.model.beginUpdate();
+      editorUi.value.editor.setGraphXml(mxUtils.parseXml(event.value).documentElement);
+      editorUi.value.editor.graph.model.endUpdate();
+    }
+
+    function modelClose() {
+      isShow.value = false;
+    }
+
     function addListeners() {
       graph.value.model.addListener(mxEvent.CHANGE, onGraphChanged);
       graph.value.addListener('gridSizeChanged', onGraphChanged);
@@ -154,6 +181,7 @@ export default defineComponent({
       editorUi.value.addListener('librariesChanged', onLibrariesChanged);
       editorUi.value.addListener('scratchpadDataChanged', onScratchpadDataChanged);
       editorUi.value.addListener('themeChanged', onThemeChanged);
+      editorUi.value.addListener('openEditDiagram', onOpenEditDiagram);
     }
 
     function removeListeners() {
@@ -479,16 +507,22 @@ export default defineComponent({
       insertImage,
       insertLink,
       insertFile,
+      isShow,
       loadXmlData,
       loadImage,
+      modelClose,
       paste,
       pasteShapes,
+      setGraphData,
       setGraphEnabled,
+      xml,
     };
   },
 });
 </script>
 
 <template lang="pug">
-.geEditor(ref='container')
+div
+  model(:isShow='isShow', :xml='xml', @setGraphData='setGraphData', @modelClose='modelClose')
+  .geEditor(ref='container')
 </template>
