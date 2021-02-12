@@ -131,6 +131,7 @@ Actions.prototype.init = function () {
     ui.showDialog(new ExportDialog(ui).container, 300, 296, true, true);
   });
   this.addAction('editDiagram...', function () {
+    // TEN9: add custom dialog for edit diagram
     // var dlg = new EditDiagramDialog(ui);
     // ui.showDialog(dlg.container, 620, 420, true, false);
     // dlg.init();

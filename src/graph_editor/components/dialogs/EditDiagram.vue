@@ -5,7 +5,10 @@ export default defineComponent({
   name: 'Model',
   props: {
     isShow: Boolean,
-    xml: String,
+    xml: {
+      required: true,
+      type: String,
+    },
   },
   setup(props, ctx) {
     const xmlData = ref(null);

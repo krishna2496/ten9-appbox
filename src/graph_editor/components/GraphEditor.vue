@@ -40,7 +40,7 @@ import {
 } from '@vue/composition-api';
 // TEN9: file drop shape image data
 import { getImageData } from '../lib/shapes/fileIcons.js';
-import Model from '../../components/Model.vue';
+import EditDiagram from './dialogs/EditDiagram.vue';
 
 const {
   mxClipboard,
@@ -75,7 +75,7 @@ import '../styles/main.scss';
 export default defineComponent({
   name: 'GraphEditor',
   components: {
-    Model,
+    EditDiagram,
   },
   props: {
     shapeLibraries: {
@@ -523,6 +523,11 @@ export default defineComponent({
 
 <template lang="pug">
 div
-  model(:isShow='isShow', :xml='xml', @setGraphData='setGraphData', @modelClose='modelClose')
+  edit-diagram(
+    :isShow='isShow',
+    :xml='xml',
+    @setGraphData='setGraphData',
+    @modelClose='modelClose'
+  )
   .geEditor(ref='container')
 </template>
