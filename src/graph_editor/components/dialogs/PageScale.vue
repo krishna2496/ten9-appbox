@@ -17,8 +17,8 @@ export default defineComponent({
       (val) => {
         nextTick(() => {
           if (val) {
-            const btn: any = ctx.refs.myModal;
-            btn.show();
+            const modal: any = ctx.refs.pageScale;
+            modal.show();
           }
         });
       },
@@ -36,7 +36,7 @@ export default defineComponent({
     }
 
     function apply() {
-      ctx.emit('setGraphData', xmlData);
+      ctx.emit('setPageScale', xmlData);
     }
 
     return {
@@ -50,14 +50,14 @@ export default defineComponent({
 
 <template lang="pug">
 div
-  b-modal#modal(v-if='isShow', no-close-on-backdrop='' ref="myModal")
+  b-modal#modal(no-close-on-backdrop='' ref="pageScale")
     template(#modal-header='')
-      h4 Edit Diagram
     .mw-100
-      textarea(cols='50', rows='10', v-model='xmlData') {{ xmlData }}
+      label Page Scale (%):
+      input(type='text' value='100')
     template(#modal-footer='')
-      button.btn.btn-default(type='button', data-dismiss='modal', @click='closeModal')
+      button.btn.btn-default(type='button', @click='closeModal')
         | Close
-      button.btn.btn-primary(type='button', data-dismiss='modal', @click='apply')
+      button.btn.btn-primary(type='button', @click='apply')
         | Ok
 </template>

@@ -17,7 +17,7 @@
 import Vue from 'vue';
 import VueCompositionAPI from '@vue/composition-api';
 import App from './App.vue';
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+import { BootstrapVue, IconsPlugin, VBModal } from 'bootstrap-vue';
 
 Vue.use(VueCompositionAPI);
 
@@ -25,6 +25,8 @@ Vue.use(VueCompositionAPI);
 Vue.use(BootstrapVue);
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin);
+
+Vue.directive('b-modal', VBModal)
 
 Vue.config.productionTip = false;
 
