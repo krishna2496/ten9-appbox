@@ -26,7 +26,7 @@ Vue.use(BootstrapVue);
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin);
 
-Vue.directive('b-modal', VBModal)
+Vue.directive('b-modal', VBModal);
 
 Vue.config.productionTip = false;
 

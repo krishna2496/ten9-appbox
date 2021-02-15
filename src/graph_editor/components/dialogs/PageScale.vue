@@ -1,19 +1,20 @@
 <script lang="ts">
-import { defineComponent, nextTick ,ref, watch } from '@vue/composition-api';
+import { defineComponent, nextTick, ref, watch } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'Model',
   props: {
-    isShow: Boolean,
-    xml: {
+    pageScaleWindow: Boolean,
+    pageScaleValue: {
       required: true,
-      type: String,
+      type: Number,
     },
   },
   setup(props, ctx) {
-    const xmlData = ref(null);
+    const newPageScaleValue = ref(null);
+
     watch(
-      () => props.isShow,
+      () => props.pageScaleValue,
       (val) => {
         nextTick(() => {
           if (val) {
@@ -25,9 +26,11 @@ export default defineComponent({
     );
 
     watch(
-      () => props.xml,
-      (val: string) => {
-        xmlData.value = val;
+      () => props.pageScaleValue,
+      (val) => {
+        nextTick(() => {
+          newPageScaleValue.value = val;
+        });
       },
     );
 
@@ -36,13 +39,15 @@ export default defineComponent({
     }
 
     function apply() {
-      ctx.emit('setPageScale', xmlData);
+      const pageDivideBy = 100;
+      newPageScaleValue.value = newPageScaleValue.value / pageDivideBy;
+      ctx.emit('setPageScale', newPageScaleValue);
     }
 
     return {
       apply,
       closeModal,
-      xmlData,
+      newPageScaleValue,
     };
   },
 });
@@ -50,11 +55,11 @@ export default defineComponent({
 
 <template lang="pug">
 div
-  b-modal#modal(no-close-on-backdrop='' ref="pageScale")
+  b-modal#modal(v-if='pageScaleWindow', no-close-on-backdrop='', ref='pageScale')
     template(#modal-header='')
     .mw-100
       label Page Scale (%):
-      input(type='text' value='100')
+      input(type='text', v-model='newPageScaleValue')
     template(#modal-footer='')
       button.btn.btn-default(type='button', @click='closeModal')
         | Close

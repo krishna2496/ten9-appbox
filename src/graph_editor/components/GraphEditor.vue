@@ -41,6 +41,7 @@ import {
 // TEN9: file drop shape image data
 import { getImageData } from '../lib/shapes/fileIcons.js';
 import EditDiagram from './dialogs/EditDiagram.vue';
+import PageScale from './dialogs/PageScale.vue';
 
 const {
   mxClipboard,
@@ -76,6 +77,7 @@ export default defineComponent({
   name: 'GraphEditor',
   components: {
     EditDiagram,
+    PageScale,
   },
   props: {
     shapeLibraries: {
@@ -109,6 +111,10 @@ export default defineComponent({
     const isShow = ref(false);
 
     const xml = ref('');
+
+    const pageScaleWindow = ref(false);
+
+    const pageScaleValue = ref(0);
 
     function loadImage(url: string): Promise<HTMLImageElement> {
       return new Promise((resolve) => {
@@ -166,6 +172,18 @@ export default defineComponent({
 
     function modelClose() {
       isShow.value = false;
+      pageScaleWindow.value = false;
+    }
+
+    function openPageScale() {
+      pageScaleWindow.value = true;
+      const pageMultiplyBy = 100;
+      pageScaleValue.value = editorUi.value.editor.graph.pageScale * pageMultiplyBy;
+    }
+
+    function setPageScale(event: CustomEvent) {
+      editorUi.value.setPageScale(event.value);
+      pageScaleWindow.value = false;
     }
 
     function addListeners() {
@@ -182,6 +200,7 @@ export default defineComponent({
       editorUi.value.addListener('scratchpadDataChanged', onScratchpadDataChanged);
       editorUi.value.addListener('themeChanged', onThemeChanged);
       editorUi.value.addListener('openEditDiagram', onOpenEditDiagram);
+      editorUi.value.addListener('openPageScale', openPageScale);
     }
 
     function removeListeners() {
@@ -191,6 +210,8 @@ export default defineComponent({
       editorUi.value.removeListener(onLibrariesChanged);
       editorUi.value.removeListener(onScratchpadDataChanged);
       editorUi.value.removeListener(onThemeChanged);
+      editorUi.value.removeListener(onOpenEditDiagram);
+      editorUi.value.removeListener(openPageScale);
     }
 
     function getXmlData(): string {
@@ -511,10 +532,13 @@ export default defineComponent({
       loadXmlData,
       loadImage,
       modelClose,
+      pageScaleValue,
+      pageScaleWindow,
       paste,
       pasteShapes,
       setGraphData,
       setGraphEnabled,
+      setPageScale,
       xml,
     };
   },
@@ -528,6 +552,12 @@ div
     :xml='xml',
     @setGraphData='setGraphData',
     @modelClose='modelClose'
+  )
+  page-scale(
+    :pageScaleWindow='pageScaleWindow',
+    :pageScaleValue='pageScaleValue',
+    @modelClose='modelClose',
+    @setPageScale='setPageScale'
   )
   .geEditor(ref='container')
 </template>

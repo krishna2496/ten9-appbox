@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, nextTick ,ref, watch } from '@vue/composition-api';
+import { defineComponent, nextTick, ref, watch } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'Model',
@@ -50,7 +50,7 @@ export default defineComponent({
 
 <template lang="pug">
 div
-  b-modal#modal(v-if='isShow', no-close-on-backdrop='' ref="myModal")
+  b-modal#modal(v-if='isShow', no-close-on-backdrop='', ref='myModal')
     template(#modal-header='')
       h4 Edit Diagram
     .mw-100

@@ -1150,9 +1150,12 @@ Actions.prototype.init = function () {
         }),
         mxResources.get('pageScale') + ' (%)',
       );
-      this.editorUi.showDialog(dlg.container, 300, 80, true, true);
+      // TEN9: add custom dialog for page scale
+      //this.editorUi.showDialog(dlg.container, 300, 80, true, true);
+      ui.fireEvent(new mxEventObject('openPageScale'));
       dlg.init();
     }),
+    //ui.fireEvent(new mxEventObject('openPageScale'))
   );
   // TEN9: Add isEnabled to show/hide when graph is enabled/disabled
   action.isEnabled = isGraphEnabled;
