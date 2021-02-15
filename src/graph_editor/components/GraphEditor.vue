@@ -191,9 +191,7 @@ export default defineComponent({
       ctx.emit('theme-changed', event.getProperty('detail'));
     }
 
-    function onPageSelected(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      debugger;
-      console.log(event);
+    function onPageSelected(_sender: typeof mxEventSource) {
       refreshCurrentPageLinks();
     }
 
@@ -329,9 +327,8 @@ export default defineComponent({
         setGraphEnabled(props.enabled);
         editorUi.value.resetViewToShowFullGraph();
 
-        debugger;
-        for (let i = 0; i < editorUi.values.pages.length; i++) {
-          const page = editorUi.values.pages[i];
+        for (let i = 0; i < editorUi.value.pages.length; i++) {
+          const page = editorUi.value.pages[i];
           pagesToRefresh.add(page.getId());
         }
 
