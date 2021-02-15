@@ -89,6 +89,7 @@ export default defineComponent({
     refreshLinkHandler: {
       type: Function as PropType<(url: string) => string | null> | null,
       required: false,
+      default: null,
     },
   },
 
