@@ -105,6 +105,8 @@ export default defineComponent({
 
     const sidebar = ref(null);
 
+    const pagesToRefresh = new Set();
+
     function loadImage(url: string): Promise<HTMLImageElement> {
       return new Promise((resolve) => {
         const image = new Image();
@@ -156,11 +158,20 @@ export default defineComponent({
       });
     }
 
-    function refreshGraphCellLinks() {
+    function refreshCurrentPageLinks() {
       if (!props.refreshLinkHandler) {
         return;
       }
+
+      const pageId = editorUi.value.getCurrentPage().getId();
+
+      if (!pagesToRefresh.has(pageId)) {
+        return;
+      }
+
       refreshCellLinks(graph.value.model.getRoot());
+
+      pagesToRefresh.delete(pageId);
     }
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
@@ -179,8 +190,10 @@ export default defineComponent({
       ctx.emit('theme-changed', event.getProperty('detail'));
     }
 
-    function onPageSelected(_sender: typeof mxEventSource) {
-      refreshGraphCellLinks();
+    function onPageSelected(_sender: typeof mxEventSource, event: typeof mxEventObject) {
+      debugger;
+      console.log(event);
+      refreshCurrentPageLinks();
     }
 
     function addListeners() {
@@ -314,7 +327,14 @@ export default defineComponent({
       nextTick(() => {
         setGraphEnabled(props.enabled);
         editorUi.value.resetViewToShowFullGraph();
-        refreshGraphCellLinks();
+
+        debugger;
+        for (let i = 0; i < editorUi.values.pages.length; i++) {
+          const page = editorUi.values.pages[i];
+          pagesToRefresh.add(page.getId());
+        }
+
+        refreshCurrentPageLinks();
       });
     }
 
@@ -528,7 +548,7 @@ export default defineComponent({
       loadImage,
       paste,
       pasteShapes,
-      refreshGraphCellLinks,
+      refreshCurrentPageLinks,
       setGraphEnabled,
     };
   },
