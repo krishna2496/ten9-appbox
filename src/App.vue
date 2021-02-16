@@ -120,10 +120,12 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
-    async function refreshLink(url: string): Promise<string> {
-      const newUrl = new URL(url);
-      newUrl.hash += 'a';
-      return newUrl.toString();
+    function refreshLink(url: string): Promise<string> {
+      return new Promise((resolve) => {
+        const newUrl = new URL(url);
+        newUrl.hash += 'a';
+        resolve(newUrl.toString());
+      });
     }
 
     function loadFileData(xmlData: string) {
