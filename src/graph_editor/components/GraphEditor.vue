@@ -42,7 +42,6 @@ import {
 } from '@vue/composition-api';
 // TEN9: file drop shape image data
 import { getImageData } from '../lib/shapes/fileIcons.js';
-import PageScale from './dialogs/PageScale.vue';
 
 const {
   mxCell,
@@ -69,16 +68,11 @@ interface InsertLinkInfo {
   noTruncateTitle?: boolean;
 }
 
-interface CustomEvent {
-  value?: string;
-}
-
 import '../styles/main.scss';
 
 export default defineComponent({
   name: 'GraphEditor',
   components: {
-    PageScale,
     Modals,
   },
   props: {
@@ -116,10 +110,6 @@ export default defineComponent({
     const sidebar = ref(null);
 
     const pagesToRefresh = new Set();
-
-    const pageScaleWindow = ref(false);
-
-    const pageScaleValue = ref(0);
 
     function loadImage(url: string): Promise<HTMLImageElement> {
       return new Promise((resolve) => {
@@ -204,21 +194,6 @@ export default defineComponent({
       ctx.emit('theme-changed', event.getProperty('detail'));
     }
 
-    function onModalClose() {
-      pageScaleWindow.value = false;
-    }
-
-    function openPageScale() {
-      pageScaleWindow.value = true;
-      const pageMultiplyBy = 100;
-      pageScaleValue.value = editorUi.value.editor.graph.pageScale * pageMultiplyBy;
-    }
-
-    function setPageScale(event: CustomEvent) {
-      editorUi.value.setPageScale(event.value);
-      pageScaleWindow.value = false;
-    }
-
     function onPageSelected(_sender: typeof mxEventSource) {
       refreshCurrentPageLinks();
     }
@@ -237,7 +212,6 @@ export default defineComponent({
       editorUi.value.addListener('librariesChanged', onLibrariesChanged);
       editorUi.value.addListener('scratchpadDataChanged', onScratchpadDataChanged);
       editorUi.value.addListener('themeChanged', onThemeChanged);
-      editorUi.value.addListener('openPageScale', openPageScale);
     }
 
     function removeListeners() {
@@ -248,7 +222,6 @@ export default defineComponent({
       editorUi.value.removeListener(onLibrariesChanged);
       editorUi.value.removeListener(onScratchpadDataChanged);
       editorUi.value.removeListener(onThemeChanged);
-      editorUi.value.removeListener(openPageScale);
     }
 
     function getXmlData(): string {
@@ -574,14 +547,10 @@ export default defineComponent({
       insertFile,
       loadXmlData,
       loadImage,
-      onModalClose,
-      pageScaleValue,
-      pageScaleWindow,
       paste,
       pasteShapes,
       refreshCurrentPageLinks,
       setGraphEnabled,
-      setPageScale,
     };
   },
 });
@@ -589,12 +558,6 @@ export default defineComponent({
 
 <template lang="pug">
 div
-  page-scale(
-    :pageScaleWindow='pageScaleWindow',
-    :pageScaleValue='pageScaleValue',
-    @onModalClose='onModalClose',
-    @setPageScale='setPageScale'
-  )
   .geEditor(ref='container')
   modals(:editorUi='editorUi')
 </template>

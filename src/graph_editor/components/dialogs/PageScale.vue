@@ -15,70 +15,70 @@
 -->
 
 <script lang="ts">
-import { defineComponent, nextTick, ref, watch } from '@vue/composition-api';
+import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'Model',
+  name: 'PageScaleModel',
   props: {
-    pageScaleWindow: Boolean,
-    pageScaleValue: {
+    editorUi: {
+      type: Object,
       required: true,
-      type: Number,
     },
   },
-  setup(props, ctx) {
-    const newPageScaleValue = ref(null);
+  setup(props) {
+    const show = ref<boolean>(false);
 
-    watch(
-      () => props.pageScaleValue,
-      (val) => {
-        nextTick(() => {
-          if (val) {
-            const modal: any = ctx.refs.pageScale;
-            modal.show();
-          }
-        });
-      },
-    );
+    const pageScaleValue = ref(null);
 
-    watch(
-      () => props.pageScaleValue,
-      (val) => {
-        nextTick(() => {
-          newPageScaleValue.value = val;
-        });
-      },
-    );
+    const scaleValue = 100;
 
     function closeModal() {
-      ctx.emit('modelClose');
+      show.value = false;
     }
 
-    function apply() {
-      const pageDivideBy = 100;
-      newPageScaleValue.value = newPageScaleValue.value / pageDivideBy;
-      ctx.emit('setPageScale', newPageScaleValue);
+    function setPageScale() {
+      props.editorUi.setPageScale(pageScaleValue.value / scaleValue);
+      closeModal();
     }
+
+    function openPageScale() {
+      show.value = true;
+    }
+
+    onMounted(() => {
+      props.editorUi.addListener('openPageScale', openPageScale);
+      pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
+    });
+
+    onUnmounted(() => {
+      props.editorUi.removeListener(openPageScale);
+    });
 
     return {
-      apply,
       closeModal,
-      newPageScaleValue,
+      pageScaleValue,
+      setPageScale,
+      show,
     };
   },
 });
 </script>
 
 <template lang="pug">
-div
-  b-modal#modal(v-if='pageScaleWindow', no-close-on-backdrop='', ref='pageScale', no-fade)
-    template(#modal-header='')
-    .mw-100
-      label Page Scale (%):
-      input(type='text', v-model='newPageScaleValue')
-    template(#modal-footer='')
-      button.btn.btn-default(type='button', @click='closeModal')
-        | Close
-      button.btn.btn-primary(type='button', @click='apply')
-        | Ok
+b-modal#modal(
+  :visible='show',
+  no-close-on-backdrop='',
+  ref='pageScale',
+  no-fade,
+  @hide='closeModal'
+)
+  template(#modal-header='')
+  .mw-100
+    label Page Scale (%):
+    input(type='text', v-model='pageScaleValue')
+  template(#modal-footer='')
+    button.btn.btn-default(type='button', @click='closeModal')
+      | Close
+    button.btn.btn-primary(type='button', @click='setPageScale')
+      | Ok
 </template>

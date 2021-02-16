@@ -17,12 +17,15 @@
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
 import EditDiagramModal from './dialogs/EditDiagramModal.vue';
+import PageScaleModal from './dialogs/PageScale.vue';
+import BackgroundImageModal from './dialogs/BackgroundImageModal.vue';
 
 export default defineComponent({
   name: 'Modals',
   components: {
+    BackgroundImageModal,
     EditDiagramModal,
-    // PageScaleModal,
+    PageScaleModal,
   },
   props: {
     editorUi: {
@@ -36,5 +39,7 @@ export default defineComponent({
 
 <template lang="pug">
 .modals-container(v-if='editorUi')
+  background-image-modal(:editorUi='editorUi')
   edit-diagram-modal(:editorUi='editorUi')
+  page-scale-modal(:editorUi='editorUi')
 </template>
