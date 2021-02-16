@@ -37,11 +37,13 @@ import {
   onMounted,
   ref,
   watch,
+  PropType,
 } from '@vue/composition-api';
 // TEN9: file drop shape image data
 import { getImageData } from '../lib/shapes/fileIcons.js';
 
 const {
+  mxCell,
   mxClipboard,
   mxCodec,
   mxConstants,
@@ -84,6 +86,11 @@ export default defineComponent({
       required: true,
       type: String,
     },
+    refreshLinkHandler: {
+      type: Function as PropType<(url: string) => Promise<string | null>> | null,
+      required: false,
+      default: null,
+    },
   },
 
   setup(props, ctx) {
@@ -98,6 +105,8 @@ export default defineComponent({
     const graph = ref(null);
 
     const sidebar = ref(null);
+
+    const pagesToRefresh = new Set();
 
     function loadImage(url: string): Promise<HTMLImageElement> {
       return new Promise((resolve) => {
@@ -125,6 +134,47 @@ export default defineComponent({
       }
     }
 
+    async function refreshCellLinks(cell: typeof mxCell) {
+      const style = graph.value.getCurrentCellStyle(cell);
+
+      // Refresh the image links
+      if (style[mxConstants.STYLE_SHAPE] === 'image') {
+        const imageUrl = await props.refreshLinkHandler(style[mxConstants.STYLE_IMAGE]);
+        if (imageUrl) {
+          graph.value.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
+        }
+      }
+
+      // Refresh links for the objects
+      const linkUrl = graph.value.getLinkForCell(cell);
+      if (linkUrl) {
+        const newUrl = await props.refreshLinkHandler(linkUrl);
+        if (newUrl) {
+          graph.value.setLinkForCell(cell, newUrl);
+        }
+      }
+
+      cell.children?.forEach((child: typeof mxCell) => {
+        refreshCellLinks(child);
+      });
+    }
+
+    function refreshCurrentPageLinks() {
+      if (!props.refreshLinkHandler) {
+        return;
+      }
+
+      const pageId = editorUi.value.getCurrentPage().getId();
+
+      if (!pagesToRefresh.has(pageId)) {
+        return;
+      }
+
+      refreshCellLinks(graph.value.model.getRoot());
+
+      pagesToRefresh.delete(pageId);
+    }
+
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
       ctx.emit('graph-changed', event.name);
     }
@@ -141,10 +191,15 @@ export default defineComponent({
       ctx.emit('theme-changed', event.getProperty('detail'));
     }
 
+    function onPageSelected(_sender: typeof mxEventSource) {
+      refreshCurrentPageLinks();
+    }
+
     function addListeners() {
       graph.value.model.addListener(mxEvent.CHANGE, onGraphChanged);
       graph.value.addListener('gridSizeChanged', onGraphChanged);
       graph.value.addListener('graphChanged', onGraphChanged);
+      editor.value.addListener('pageSelected', onPageSelected);
       editorUi.value.addListener('shadowVisibleChanged', onGraphChanged);
       editorUi.value.addListener('gridEnabledChanged', onGraphChanged);
       editorUi.value.addListener('guidesEnabledChanged', onGraphChanged);
@@ -159,6 +214,7 @@ export default defineComponent({
     function removeListeners() {
       graph.value.model.removeListener(onGraphChanged);
       graph.value.removeListener(onGraphChanged);
+      editor.value.removeListener(onPageSelected);
       editorUi.value.removeListener(onGraphChanged);
       editorUi.value.removeListener(onLibrariesChanged);
       editorUi.value.removeListener(onScratchpadDataChanged);
@@ -270,6 +326,13 @@ export default defineComponent({
       nextTick(() => {
         setGraphEnabled(props.enabled);
         editorUi.value.resetViewToShowFullGraph();
+
+        for (let i = 0; i < editorUi.value.pages.length; i++) {
+          const page = editorUi.value.pages[i];
+          pagesToRefresh.add(page.getId());
+        }
+
+        refreshCurrentPageLinks();
       });
     }
 
@@ -483,6 +546,7 @@ export default defineComponent({
       loadImage,
       paste,
       pasteShapes,
+      refreshCurrentPageLinks,
       setGraphEnabled,
     };
   },
