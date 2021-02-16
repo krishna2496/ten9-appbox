@@ -29,6 +29,7 @@ require('../lib/diagramly/Menus.js');
 require('../lib/diagramly/Pages.js');
 require('../lib/diagramly/DistanceGuides.js');
 require('../lib/diagramly/Minimal.js');
+import Modals from './Modals.vue';
 
 import {
   defineComponent,
@@ -40,7 +41,6 @@ import {
 } from '@vue/composition-api';
 // TEN9: file drop shape image data
 import { getImageData } from '../lib/shapes/fileIcons.js';
-import EditDiagram from './dialogs/EditDiagram.vue';
 import PageScale from './dialogs/PageScale.vue';
 
 const {
@@ -76,8 +76,8 @@ import '../styles/main.scss';
 export default defineComponent({
   name: 'GraphEditor',
   components: {
-    EditDiagram,
     PageScale,
+    Modals,
   },
   props: {
     shapeLibraries: {
@@ -107,10 +107,6 @@ export default defineComponent({
     const graph = ref(null);
 
     const sidebar = ref(null);
-
-    const isShow = ref(false);
-
-    const xml = ref('');
 
     const pageScaleWindow = ref(false);
 
@@ -158,20 +154,7 @@ export default defineComponent({
       ctx.emit('theme-changed', event.getProperty('detail'));
     }
 
-    function onOpenEditDiagram(_sender: typeof mxEventSource) {
-      isShow.value = true;
-      xml.value = mxUtils.getPrettyXml(editorUi.value.editor.getGraphXml());
-    }
-
-    function setGraphData(event: CustomEvent) {
-      isShow.value = false;
-      editorUi.value.editor.graph.model.beginUpdate();
-      editorUi.value.editor.setGraphXml(mxUtils.parseXml(event.value).documentElement);
-      editorUi.value.editor.graph.model.endUpdate();
-    }
-
-    function modelClose() {
-      isShow.value = false;
+    function onModalClose() {
       pageScaleWindow.value = false;
     }
 
@@ -199,7 +182,6 @@ export default defineComponent({
       editorUi.value.addListener('librariesChanged', onLibrariesChanged);
       editorUi.value.addListener('scratchpadDataChanged', onScratchpadDataChanged);
       editorUi.value.addListener('themeChanged', onThemeChanged);
-      editorUi.value.addListener('openEditDiagram', onOpenEditDiagram);
       editorUi.value.addListener('openPageScale', openPageScale);
     }
 
@@ -210,7 +192,6 @@ export default defineComponent({
       editorUi.value.removeListener(onLibrariesChanged);
       editorUi.value.removeListener(onScratchpadDataChanged);
       editorUi.value.removeListener(onThemeChanged);
-      editorUi.value.removeListener(onOpenEditDiagram);
       editorUi.value.removeListener(openPageScale);
     }
 
@@ -528,18 +509,15 @@ export default defineComponent({
       insertImage,
       insertLink,
       insertFile,
-      isShow,
       loadXmlData,
       loadImage,
-      modelClose,
+      onModalClose,
       pageScaleValue,
       pageScaleWindow,
       paste,
       pasteShapes,
-      setGraphData,
       setGraphEnabled,
       setPageScale,
-      xml,
     };
   },
 });
@@ -547,17 +525,12 @@ export default defineComponent({
 
 <template lang="pug">
 div
-  edit-diagram(
-    :isShow='isShow',
-    :xml='xml',
-    @setGraphData='setGraphData',
-    @modelClose='modelClose'
-  )
   page-scale(
     :pageScaleWindow='pageScaleWindow',
     :pageScaleValue='pageScaleValue',
-    @modelClose='modelClose',
+    @onModalClose='onModalClose',
     @setPageScale='setPageScale'
   )
   .geEditor(ref='container')
+  modals(:editorUi='editorUi')
 </template>
