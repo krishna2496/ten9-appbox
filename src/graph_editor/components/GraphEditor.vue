@@ -87,7 +87,7 @@ export default defineComponent({
       type: String,
     },
     refreshLinkHandler: {
-      type: Function as PropType<(url: string) => string | null> | null,
+      type: Function as PropType<(url: string) => Promise<string | null>> | null,
       required: false,
       default: null,
     },
@@ -134,12 +134,12 @@ export default defineComponent({
       }
     }
 
-    function refreshCellLinks(cell: typeof mxCell) {
+    async function refreshCellLinks(cell: typeof mxCell) {
       const style = graph.value.getCurrentCellStyle(cell);
 
       // Refresh the image links
       if (style[mxConstants.STYLE_SHAPE] === 'image') {
-        const imageUrl = props.refreshLinkHandler(style[mxConstants.STYLE_IMAGE]);
+        const imageUrl = await props.refreshLinkHandler(style[mxConstants.STYLE_IMAGE]);
         if (imageUrl) {
           graph.value.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
         }
@@ -148,7 +148,7 @@ export default defineComponent({
       // Refresh links for the objects
       const linkUrl = graph.value.getLinkForCell(cell);
       if (linkUrl) {
-        const newUrl = props.refreshLinkHandler(linkUrl);
+        const newUrl = await props.refreshLinkHandler(linkUrl);
         if (newUrl) {
           graph.value.setLinkForCell(cell, newUrl);
         }

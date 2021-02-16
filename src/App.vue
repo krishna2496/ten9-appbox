@@ -120,7 +120,7 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
-    function refreshLink(url: string): string {
+    async function refreshLink(url: string): Promise<string> {
       const newUrl = new URL(url);
       newUrl.hash += 'a';
       return newUrl.toString();
