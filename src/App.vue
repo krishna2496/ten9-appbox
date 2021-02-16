@@ -120,6 +120,14 @@ export default defineComponent({
       editor.value.insertImage(url);
     }
 
+    function refreshLink(url: string): Promise<string> {
+      return new Promise((resolve) => {
+        const newUrl = new URL(url);
+        newUrl.hash += 'a';
+        resolve(newUrl.toString());
+      });
+    }
+
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
     }
@@ -360,6 +368,7 @@ export default defineComponent({
       onShapeLibrariesChanged,
       onThemeChanged,
       previewMode,
+      refreshLink,
       saveFile,
       scratchpadData,
       shapeLibraries,
@@ -431,6 +440,7 @@ export default defineComponent({
           :shapeLibraries='shapeLibraries',
           :scratchpadData='scratchpadData',
           :theme='theme',
+          :refreshLinkHandler='refreshLink',
           @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged',
           @scratchpad-data-changed='onScratchpadDataChanged',
