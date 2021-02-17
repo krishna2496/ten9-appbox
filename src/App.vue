@@ -113,11 +113,12 @@ export default defineComponent({
       });
     }
 
-    function insertDummyImage() {
+    function insertDummyImage(dataUri: string) {
       // add a dummy image to graph to emulate what will happen in production app
-      const url =
-        'https://static.scientificamerican.com/sciam/cache/file/4E0744CD-793A-4EF8-B550B54F7F2C4406_source.jpg';
-      editor.value.insertImage(url);
+      // const url =
+      //   'https://static.scientificamerican.com/sciam/cache/file/4E0744CD-793A-4EF8-B550B54F7F2C4406_source.jpg';
+      //dataUri = dataUri.replace(';base64','');
+      editor.value.insertImage(dataUri);
     }
 
     function refreshLink(url: string): Promise<string> {
@@ -132,7 +133,7 @@ export default defineComponent({
       editor.value.loadXmlData(xmlData);
     }
 
-    function onFileDropped(event: EventFileInfo) {
+    function onFileDropped(event: EventFileInfo, dataUri: string) {
       const fileLogEvent: FileLogEvent = {
         title: 'File Dropped',
         ...event,
@@ -142,19 +143,19 @@ export default defineComponent({
       const url = 'https://www.google.com';
       const fileType = fileLogEvent.file.type.split('/');
       if (fileType[0] === 'image') {
-        insertDummyImage();
+        insertDummyImage(dataUri);
       } else {
         editor.value.insertFile(fileLogEvent.file, url);
       }
     }
 
-    function onImagePasted(event: EventFileInfo) {
+    function onImagePasted(event: EventFileInfo, dataUri: string) {
       const fileLogEvent: FileLogEvent = {
         title: 'Image Pasted',
         ...event,
       };
       addLog(fileLogEvent);
-      insertDummyImage();
+      insertDummyImage(dataUri);
     }
 
     function saveXmlFile(xmlData: string) {
@@ -204,6 +205,17 @@ export default defineComponent({
 
     function onThemeChanged(themeName: string) {
       window.localStorage.setItem('theme', themeName);
+    }
+
+    function getImageData(file: Blob): Promise<string> {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+          const src = <string>reader.result;
+          resolve(src);
+        });
+        reader.readAsDataURL(file);
+      });
     }
 
     onMounted(() => {
@@ -271,7 +283,9 @@ export default defineComponent({
                   size: file.size,
                   lastModified: file.lastModified,
                 };
-                onFileDropped(fileInfo);
+                getImageData(file).then((imageData: string) => {
+                  onFileDropped(fileInfo, imageData);
+                });
               }
             });
           }
@@ -299,7 +313,9 @@ export default defineComponent({
               type: file.type,
               lastModified: file.lastModified,
             };
-            onImagePasted(fileInfo);
+            getImageData(file).then((imageData: string) => {
+              onImagePasted(fileInfo, imageData);
+            });
           }
         } else {
           // if default clipboard doesn't have file then if act as normal paste

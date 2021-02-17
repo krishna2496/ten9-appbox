@@ -435,6 +435,14 @@ export default defineComponent({
       return false;
     }
 
+    function updateCellStyle(cells: typeof mxCell) {
+      const waitingTime = 3000;
+      setTimeout(() => {
+        const newUrl = 'https://www.google.com';
+        graph.value.setLinkForCell(cells[0], newUrl);
+      }, waitingTime);
+    }
+
     function insertImage(url: string) {
       let cells = [];
 
@@ -462,7 +470,12 @@ export default defineComponent({
           select = cells;
           graph.value.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
 
-          graph.value.setCellStyles(mxConstants.STYLE_IMAGE, url.length > 0 ? url : null, cells);
+          const newUrl = url.replace(';base64', '');
+          graph.value.setCellStyles(
+            mxConstants.STYLE_IMAGE,
+            newUrl.length > 0 ? newUrl : null,
+            cells,
+          );
 
           // Sets shape only if not already shape with image (label or image)
           const style = graph.value.getCurrentCellStyle(cells[0]);
@@ -483,6 +496,8 @@ export default defineComponent({
           graph.value.setSelectionCells(select);
           graph.value.scrollCellToVisible(select[0]);
         }
+
+        updateCellStyle(cells);
       });
     }
 
