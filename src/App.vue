@@ -27,6 +27,7 @@ import {
   watch,
 } from '@vue/composition-api';
 import { debounce } from 'lodash';
+import { mxCell } from './graph_editor/lib/jgraph/mxClient';
 
 interface EventFileInfo {
   file?: File;
@@ -115,10 +116,13 @@ export default defineComponent({
 
     function insertDummyImage(dataUri: string) {
       // add a dummy image to graph to emulate what will happen in production app
-      // const url =
-      //   'https://static.scientificamerican.com/sciam/cache/file/4E0744CD-793A-4EF8-B550B54F7F2C4406_source.jpg';
-      //dataUri = dataUri.replace(';base64','');
-      editor.value.insertImage(dataUri);
+      editor.value.insertImage(dataUri).then((result: typeof mxCell) => {
+        const waitingTime = 3000;
+        setTimeout(() => {
+        const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
+        editor.value.updateCellImage(newUrl,result);
+      }, waitingTime);
+      });
     }
 
     function refreshLink(url: string): Promise<string> {

@@ -435,16 +435,10 @@ export default defineComponent({
       return false;
     }
 
-    function updateCellStyle(cells: typeof mxCell) {
-      const waitingTime = 3000;
-      setTimeout(() => {
-        const newUrl = 'https://www.google.com';
-        graph.value.setLinkForCell(cells[0], newUrl);
-      }, waitingTime);
-    }
-
-    function insertImage(url: string) {
-      let cells = [];
+  //Promise <typeof mxCell> 
+    function insertImage(url: string):Promise <typeof mxCell>{
+      return new Promise((resolve) => {
+        let cells = [];
 
       loadImage(url).then((result: HTMLImageElement) => {
         const { width, height } = result;
@@ -454,7 +448,7 @@ export default defineComponent({
 
         try {
           // Inserts new cell if no cell is selected
-          const pt = graph.value.getFreeInsertPoint();
+          const pt = graph.value.getInsertPoint();
           cells = [
             graph.value.insertVertex(
               graph.value.getDefaultParent(),
@@ -494,11 +488,13 @@ export default defineComponent({
 
         if (select != null) {
           graph.value.setSelectionCells(select);
-          graph.value.scrollCellToVisible(select[0]);
+          //graph.value.scrollCellToVisible(select[0]);
         }
 
-        updateCellStyle(cells);
+        resolve(cells[0]);
       });
+      });
+      
     }
 
     function insertLink(url: string) {
@@ -534,6 +530,10 @@ export default defineComponent({
       graph.value.setLinkForCell(fileAttachmentCell, url);
     }
 
+    function updateCellImage(imageUrl:string, cell: typeof mxCell) {
+      graph.value.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
+    }
+
     watch(
       () => props.enabled,
       (val) => {
@@ -563,6 +563,7 @@ export default defineComponent({
       pasteShapes,
       refreshCurrentPageLinks,
       setGraphEnabled,
+      updateCellImage,
     };
   },
 });
