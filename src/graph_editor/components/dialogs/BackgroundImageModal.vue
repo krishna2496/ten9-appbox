@@ -126,7 +126,7 @@ b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close',
       .col
         button.btn.btn-default(type='button', @click='reset') Reset
   template(v-slot:modal-footer)
-    button.btn.btn-default(@click='close') Cancel
+    button.btn.btn-secondary(@click='close') Cancel
     button.btn.btn-primary(@click='apply') Apply
 </template>
 

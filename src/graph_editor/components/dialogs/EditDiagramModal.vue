@@ -81,7 +81,7 @@ b-modal(
   .textarea-container
     textarea.xml(v-model='xml') {{ xml }}
   template(v-slot:modal-footer)
-    button.btn.btn-default(@click='close') Close
+    button.btn.btn-secondary(@click='close') Close
     button.btn.btn-primary(@click='setGraphData(xml)') OK
 </template>
 

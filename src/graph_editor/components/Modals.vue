@@ -19,12 +19,14 @@ import { defineComponent } from '@vue/composition-api';
 import EditDiagramModal from './dialogs/EditDiagramModal.vue';
 import PageScaleModal from './dialogs/PageScale.vue';
 import BackgroundImageModal from './dialogs/BackgroundImageModal.vue';
+import LayerRenameModal from './dialogs/RenameLayerModal.vue';
 
 export default defineComponent({
   name: 'Modals',
   components: {
     BackgroundImageModal,
     EditDiagramModal,
+    LayerRenameModal,
     PageScaleModal,
   },
   props: {
@@ -42,4 +44,5 @@ export default defineComponent({
   background-image-modal(:editorUi='editorUi')
   edit-diagram-modal(:editorUi='editorUi')
   page-scale-modal(:editorUi='editorUi')
+  layer-rename-modal(:editorUi='editorUi')
 </template>

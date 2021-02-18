@@ -16,9 +16,12 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-
+import { mxEventSource } from '../../lib/jgraph/mxClient';
+interface CustomEvent {
+  getProperty: FunctionStringCallback;
+}
 export default defineComponent({
-  name: 'PageScaleModel',
+  name: 'LayerRenameModal',
   props: {
     editorUi: {
       type: Object,
@@ -28,36 +31,40 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const pageScaleValue = ref(null);
+    const name = ref('');
 
-    const scaleValue = 100;
+    const layer = ref(null);
 
     function closeModal() {
       show.value = false;
     }
 
-    function setPageScale() {
-      props.editorUi.setPageScale(pageScaleValue.value / scaleValue);
+    function setLayerName() {
+      if (name.value != null && name.value.length > 0) {
+        props.editorUi.editor.graph.cellLabelChanged(layer.value, name);
+      }
       closeModal();
     }
 
-    function openPageScale() {
+    function onLayerRenameDialog(_sender: typeof mxEventSource, event: CustomEvent) {
       show.value = true;
+      layer.value = event.getProperty('layer');
+      name.value = props.editorUi.editor.graph.convertValueToString(layer.value) || 'Background';
     }
 
     onMounted(() => {
-      props.editorUi.addListener('openPageScale', openPageScale);
-      pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
+      props.editorUi.addListener('openLayerRenameDialog', onLayerRenameDialog);
     });
 
     onUnmounted(() => {
-      props.editorUi.removeListener(openPageScale);
+      props.editorUi.removeListener(onLayerRenameDialog);
     });
 
     return {
       closeModal,
-      pageScaleValue,
-      setPageScale,
+      layer,
+      name,
+      setLayerName,
       show,
     };
   },
@@ -74,11 +81,11 @@ b-modal#modal(
 )
   template(#modal-header='')
   .mw-100
-    label Page Scale (%):
-    input(type='number', v-model='pageScaleValue')
+    label Enter Name:
+    input(type='text', v-model='name')
   template(#modal-footer='')
     button.btn.btn-secondary(type='button', @click='closeModal')
       | Close
-    button.btn.btn-primary(type='button', @click='setPageScale')
+    button.btn.btn-primary(type='button', @click='setLayerName')
       | Ok
 </template>

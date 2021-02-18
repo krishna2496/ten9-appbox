@@ -2425,8 +2425,10 @@ var LayersWindow = function (editorUi, x, y, w, h) {
         var nodeName = mxEvent.getSource(evt).nodeName;
 
         if (nodeName != 'INPUT' && nodeName != 'IMG') {
-          renameLayer(child);
-          mxEvent.consume(evt);
+          // TEN9: add custom modal for layer rename dialog
+          //  renameLayer(child);
+          //  mxEvent.consume(evt);
+          editorUi.fireEvent(new mxEventObject('openLayerRenameDialog', 'layer', child));
         }
       });
 
