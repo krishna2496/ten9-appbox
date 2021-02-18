@@ -119,9 +119,9 @@ export default defineComponent({
       editor.value.insertImage(dataUri).then((result: typeof mxCell) => {
         const waitingTime = 3000;
         setTimeout(() => {
-        const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
-        editor.value.updateCellImage(newUrl,result);
-      }, waitingTime);
+          const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
+          editor.value.updateCellImage(newUrl, result);
+        }, waitingTime);
       });
     }
 
