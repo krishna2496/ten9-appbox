@@ -435,7 +435,6 @@ export default defineComponent({
       return false;
     }
 
-    //Promise <typeof mxCell>
     function insertImage(url: string): Promise<typeof mxCell> {
       return new Promise((resolve) => {
         let cells = [];
@@ -514,7 +513,7 @@ export default defineComponent({
     function insertFile(file: File, url: string) {
       const parent = graph.value.getDefaultParent();
       const style = getStyleForFile(file);
-      const pt = graph.value.getFreeInsertPoint();
+      const pt = graph.value.getInsertPoint();
       const shapeSize = 50;
       const fileAttachmentCell = graph.value.insertVertex(
         parent,
@@ -529,7 +528,7 @@ export default defineComponent({
       graph.value.setLinkForCell(fileAttachmentCell, url);
     }
 
-    function updateCellImage(imageUrl: string, cell: typeof mxCell) {
+    function updateCellImage(cell: typeof mxCell, imageUrl: string) {
       graph.value.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
     }
 
