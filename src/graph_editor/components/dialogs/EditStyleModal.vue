@@ -89,7 +89,7 @@ b-modal#modal(
     textarea.style(v-model='style') {{ style }}
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
-      | Close
+      | Cancel
     button.btn.btn-primary(type='button', @click='setStyle')
       | Ok
 </template>

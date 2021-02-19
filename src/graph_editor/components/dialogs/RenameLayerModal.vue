@@ -87,7 +87,7 @@ b-modal#modal(
     input.txt-input(type='text', v-model='name')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
-      | Close
+      | Cancel
     button.btn.btn-primary(type='button', @click='setLayerName')
       | Ok
 </template>

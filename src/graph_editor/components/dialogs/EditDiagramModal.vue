@@ -36,7 +36,7 @@ export default defineComponent({
       xml.value = mxUtils.getPrettyXml(props.editorUi.editor.getGraphXml());
     }
 
-    function close() {
+    function closeModal() {
       show.value = false;
     }
 
@@ -46,7 +46,7 @@ export default defineComponent({
         props.editorUi.editor.setGraphXml(mxUtils.parseXml(xmlData).documentElement);
         props.editorUi.editor.graph.model.endUpdate();
 
-        close();
+        closeModal();
       } else {
         alert('Not a diagram file');
       }
@@ -63,7 +63,7 @@ export default defineComponent({
     return {
       xml,
       show,
-      close,
+      closeModal,
       setGraphData,
     };
   },
@@ -76,8 +76,8 @@ b-modal(
   no-close-on-backdrop='',
   modal-class='edit-diagram-modal',
   size='lg',
-  @close='close',
-  @hide='close',
+  @close='closeModal',
+  @hide='closeModal',
   no-fade
 )
   template(v-slot:modal-header)
@@ -86,7 +86,7 @@ b-modal(
   .textarea-container
     textarea.xml(v-model='xml') {{ xml }}
   template(v-slot:modal-footer)
-    button.btn.btn-grey(@click='close') Close
+    button.btn.btn-grey(@click='closeModal') Cancel
     button.btn.btn-primary(@click='setGraphData(xml)') OK
 </template>
 

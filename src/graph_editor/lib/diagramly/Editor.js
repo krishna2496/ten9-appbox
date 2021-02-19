@@ -2239,12 +2239,14 @@ const uiTheme = null;
       // Calls updateGraphComponents
       editorSetGraphXml.apply(this, arguments);
     } else {
-      throw {
-        message: mxResources.get('notADiagramFile') || 'Invalid data',
-        toString: function () {
-          return this.message;
-        },
-      };
+      // TEN9: add alert for bad data in edit diagram
+      // throw {
+      //   message: mxResources.get('notADiagramFile') || 'Invalid data',
+      //   toString: function () {
+      //     return this.message;
+      //   },
+      // };
+      alert(mxResources.get('notADiagramFile'));
     }
   };
 

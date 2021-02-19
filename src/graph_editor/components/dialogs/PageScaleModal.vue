@@ -82,7 +82,7 @@ b-modal#modal(
     input.txt-input(type='number', v-model='pageScaleValue')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
-      | Close
+      | Cancel
     button.btn.btn-primary(type='button', @click='setPageScale')
       | Ok
 </template>
