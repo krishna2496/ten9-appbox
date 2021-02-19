@@ -120,7 +120,7 @@ export default defineComponent({
         const waitingTime = 3000;
         setTimeout(() => {
           const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
-          editor.value.updateCellImage(result,newUrl);
+          editor.value.updateCellImage(result, newUrl);
         }, waitingTime);
       });
     }
