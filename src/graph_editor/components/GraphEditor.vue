@@ -435,54 +435,63 @@ export default defineComponent({
       return false;
     }
 
-    function insertImage(url: string) {
-      let cells = [];
+    function insertImage(url: string): Promise<typeof mxCell> {
+      return new Promise((resolve) => {
+        let cells = [];
 
-      loadImage(url).then((result: HTMLImageElement) => {
-        const { width, height } = result;
-        let select = null;
+        loadImage(url).then((result: HTMLImageElement) => {
+          const { width, height } = result;
+          let select = null;
 
-        graph.value.getModel().beginUpdate();
+          graph.value.getModel().beginUpdate();
 
-        try {
-          // Inserts new cell if no cell is selected
-          const pt = graph.value.getFreeInsertPoint();
-          cells = [
-            graph.value.insertVertex(
-              graph.value.getDefaultParent(),
-              null,
-              '',
-              pt.x,
-              pt.y,
-              width,
-              height,
-              'shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;',
-            ),
-          ];
-          select = cells;
-          graph.value.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
+          try {
+            // Inserts new cell if no cell is selected
+            const pt = graph.value.getInsertPoint();
+            cells = [
+              graph.value.insertVertex(
+                graph.value.getDefaultParent(),
+                null,
+                '',
+                pt.x,
+                pt.y,
+                width,
+                height,
+                'shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;',
+              ),
+            ];
+            select = cells;
+            graph.value.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
 
-          graph.value.setCellStyles(mxConstants.STYLE_IMAGE, url.length > 0 ? url : null, cells);
+            const newUrl = url.replace(';base64', '');
+            graph.value.setCellStyles(
+              mxConstants.STYLE_IMAGE,
+              newUrl.length > 0 ? newUrl : null,
+              cells,
+            );
 
-          // Sets shape only if not already shape with image (label or image)
-          const style = graph.value.getCurrentCellStyle(cells[0]);
+            // Sets shape only if not already shape with image (label or image)
+            const style = graph.value.getCurrentCellStyle(cells[0]);
 
-          if (
-            style[mxConstants.STYLE_SHAPE] != 'image' &&
-            style[mxConstants.STYLE_SHAPE] != 'label'
-          ) {
-            graph.value.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
-          } else if (url.length === 0) {
-            graph.value.setCellStyles(mxConstants.STYLE_SHAPE, null, cells);
+            if (
+              style[mxConstants.STYLE_SHAPE] != 'image' &&
+              style[mxConstants.STYLE_SHAPE] != 'label'
+            ) {
+              graph.value.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
+            } else if (url.length === 0) {
+              graph.value.setCellStyles(mxConstants.STYLE_SHAPE, null, cells);
+            }
+          } finally {
+            graph.value.getModel().endUpdate();
           }
-        } finally {
-          graph.value.getModel().endUpdate();
-        }
 
-        if (select != null) {
-          graph.value.setSelectionCells(select);
-          graph.value.scrollCellToVisible(select[0]);
-        }
+          if (select != null) {
+            graph.value.setSelectionCells(select);
+            //graph.value.scrollCellToVisible(select[0]);
+          }
+
+          resolve(cells[0]);
+        });
       });
     }
 
@@ -504,7 +513,7 @@ export default defineComponent({
     function insertFile(file: File, url: string) {
       const parent = graph.value.getDefaultParent();
       const style = getStyleForFile(file);
-      const pt = graph.value.getFreeInsertPoint();
+      const pt = graph.value.getInsertPoint();
       const shapeSize = 50;
       const fileAttachmentCell = graph.value.insertVertex(
         parent,
@@ -517,6 +526,10 @@ export default defineComponent({
         style,
       );
       graph.value.setLinkForCell(fileAttachmentCell, url);
+    }
+
+    function updateCellImage(cell: typeof mxCell, imageUrl: string) {
+      graph.value.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
     }
 
     watch(
@@ -548,6 +561,7 @@ export default defineComponent({
       pasteShapes,
       refreshCurrentPageLinks,
       setGraphEnabled,
+      updateCellImage,
     };
   },
 });

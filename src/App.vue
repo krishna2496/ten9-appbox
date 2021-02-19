@@ -27,12 +27,14 @@ import {
   watch,
 } from '@vue/composition-api';
 import { debounce } from 'lodash';
+import { mxCell } from './graph_editor/lib/jgraph/mxClient';
 
 interface EventFileInfo {
   file?: File;
   size?: number;
   lastModified?: number;
   what?: string;
+  imageData?: string;
 }
 
 interface FileLogEvent extends EventFileInfo {
@@ -113,11 +115,15 @@ export default defineComponent({
       });
     }
 
-    function insertDummyImage() {
+    function insertDummyImage(dataUri: string) {
       // add a dummy image to graph to emulate what will happen in production app
-      const url =
-        'https://static.scientificamerican.com/sciam/cache/file/4E0744CD-793A-4EF8-B550B54F7F2C4406_source.jpg';
-      editor.value.insertImage(url);
+      editor.value.insertImage(dataUri).then((result: typeof mxCell) => {
+        const waitingTime = 3000;
+        setTimeout(() => {
+          const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
+          editor.value.updateCellImage(result, newUrl);
+        }, waitingTime);
+      });
     }
 
     function refreshLink(url: string): Promise<string> {
@@ -139,11 +145,11 @@ export default defineComponent({
       };
 
       addLog(fileLogEvent);
-      const url = 'https://www.google.com';
       const fileType = fileLogEvent.file.type.split('/');
       if (fileType[0] === 'image') {
-        insertDummyImage();
+        insertDummyImage(fileLogEvent.imageData);
       } else {
+        const url = 'https://www.google.com';
         editor.value.insertFile(fileLogEvent.file, url);
       }
     }
@@ -154,7 +160,7 @@ export default defineComponent({
         ...event,
       };
       addLog(fileLogEvent);
-      insertDummyImage();
+      insertDummyImage(fileLogEvent.imageData);
     }
 
     function saveXmlFile(xmlData: string) {
@@ -204,6 +210,17 @@ export default defineComponent({
 
     function onThemeChanged(themeName: string) {
       window.localStorage.setItem('theme', themeName);
+    }
+
+    function getImageData(file: Blob): Promise<string> {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+          const src = <string>reader.result;
+          resolve(src);
+        });
+        reader.readAsDataURL(file);
+      });
     }
 
     onMounted(() => {
@@ -271,7 +288,10 @@ export default defineComponent({
                   size: file.size,
                   lastModified: file.lastModified,
                 };
-                onFileDropped(fileInfo);
+                getImageData(file).then((imageData: string) => {
+                  fileInfo.imageData = imageData;
+                  onFileDropped(fileInfo);
+                });
               }
             });
           }
@@ -293,13 +313,15 @@ export default defineComponent({
         if (e.clipboardData.files.length > 0) {
           for (let i = 0; i < e.clipboardData.files.length; i++) {
             const file = e.clipboardData.files[i];
-            const fileInfo = {
-              filename: file.name,
+            const fileInfo: EventFileInfo = {
+              file,
               size: file.size,
-              type: file.type,
               lastModified: file.lastModified,
             };
-            onImagePasted(fileInfo);
+            getImageData(file).then((imageData: string) => {
+              fileInfo.imageData = imageData;
+              onImagePasted(fileInfo);
+            });
           }
         } else {
           // if default clipboard doesn't have file then if act as normal paste
