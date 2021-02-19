@@ -110,7 +110,8 @@ export default defineComponent({
 <template lang="pug">
 b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close', no-fade)
   template(v-slot:modal-header)
-  h4 Background Image
+    h4 Background Image
+    i.fa.fa-times(aria-hidden='true' @click='closeModal')
   .image-container
     .row
       .col-md-12.pl-5
@@ -126,7 +127,7 @@ b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close',
       .col
         button.btn.btn-default(type='button', @click='reset') Reset
   template(v-slot:modal-footer)
-    button.btn.btn-secondary(@click='close') Cancel
+    button.btn.btn-grey(@click='close') Cancel
     button.btn.btn-primary(@click='apply') Apply
 </template>
 

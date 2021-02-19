@@ -1622,8 +1622,10 @@ Actions.prototype.init = function () {
           400,
           220,
         );
-        this.editorUi.showDialog(dlg.container, 420, 300, true, true);
-        dlg.init();
+        // TEN9: add custom modal for edit styles
+        // this.editorUi.showDialog(dlg.container, 420, 300, true, true);
+        // dlg.init();
+        this.editorUi.fireEvent(new mxEventObject('openEditStyle', 'cell', cells));
       }
     }),
     null,

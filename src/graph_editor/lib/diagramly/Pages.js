@@ -1079,8 +1079,10 @@ EditorUi.prototype.renamePage = function (page) {
       }),
       mxResources.get('rename'),
     );
-    this.showDialog(dlg.container, 300, 80, true, true);
-    dlg.init();
+    // TEN9: add custom modal for rename page
+    // this.showDialog(dlg.container, 300, 80, true, true);
+    // dlg.init();
+    this.fireEvent(new mxEventObject('openPageRename','page',page));
   }
 
   return page;
@@ -1992,4 +1994,5 @@ EditorUi.prototype.createPageMenu = function (page, label) {
 
 module.exports = {
   DiagramPage,
+  RenamePage,
 };

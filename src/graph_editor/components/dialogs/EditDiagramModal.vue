@@ -41,11 +41,16 @@ export default defineComponent({
     }
 
     function setGraphData(xmlData: string) {
-      props.editorUi.editor.graph.model.beginUpdate();
-      props.editorUi.editor.setGraphXml(mxUtils.parseXml(xmlData).documentElement);
-      props.editorUi.editor.graph.model.endUpdate();
+      if(xmlData !== null && xmlData !== '') {
+        props.editorUi.editor.graph.model.beginUpdate();
+        props.editorUi.editor.setGraphXml(mxUtils.parseXml(xmlData).documentElement);
+        props.editorUi.editor.graph.model.endUpdate();
 
-      close();
+        close();
+      } else {
+        alert('Not a diagram file');
+      }
+      
     }
 
     onMounted(() => {
@@ -78,10 +83,11 @@ b-modal(
 )
   template(v-slot:modal-header)
     h4 Edit Diagram
+    i.fa.fa-times(aria-hidden='true' @click='closeModal')
   .textarea-container
     textarea.xml(v-model='xml') {{ xml }}
   template(v-slot:modal-footer)
-    button.btn.btn-secondary(@click='close') Close
+    button.btn.btn-grey(@click='close') Close
     button.btn.btn-primary(@click='setGraphData(xml)') OK
 </template>
 
