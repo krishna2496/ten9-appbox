@@ -34,6 +34,7 @@ interface EventFileInfo {
   size?: number;
   lastModified?: number;
   what?: string;
+  imageData?: string;
 }
 
 interface FileLogEvent extends EventFileInfo {
@@ -137,29 +138,29 @@ export default defineComponent({
       editor.value.loadXmlData(xmlData);
     }
 
-    function onFileDropped(event: EventFileInfo, dataUri: string) {
+    function onFileDropped(event: EventFileInfo) {
       const fileLogEvent: FileLogEvent = {
         title: 'File Dropped',
         ...event,
       };
 
       addLog(fileLogEvent);
-      const url = 'https://www.google.com';
       const fileType = fileLogEvent.file.type.split('/');
       if (fileType[0] === 'image') {
-        insertDummyImage(dataUri);
+        insertDummyImage(fileLogEvent.imageData);
       } else {
+        const url = 'https://www.google.com';
         editor.value.insertFile(fileLogEvent.file, url);
       }
     }
 
-    function onImagePasted(event: EventFileInfo, dataUri: string) {
+    function onImagePasted(event: EventFileInfo) {
       const fileLogEvent: FileLogEvent = {
         title: 'Image Pasted',
         ...event,
       };
       addLog(fileLogEvent);
-      insertDummyImage(dataUri);
+      insertDummyImage(fileLogEvent.imageData);
     }
 
     function saveXmlFile(xmlData: string) {
@@ -288,7 +289,8 @@ export default defineComponent({
                   lastModified: file.lastModified,
                 };
                 getImageData(file).then((imageData: string) => {
-                  onFileDropped(fileInfo, imageData);
+                  fileInfo.imageData = imageData;
+                  onFileDropped(fileInfo);
                 });
               }
             });
@@ -311,14 +313,14 @@ export default defineComponent({
         if (e.clipboardData.files.length > 0) {
           for (let i = 0; i < e.clipboardData.files.length; i++) {
             const file = e.clipboardData.files[i];
-            const fileInfo = {
-              filename: file.name,
+            const fileInfo: EventFileInfo = {
+              file,
               size: file.size,
-              type: file.type,
               lastModified: file.lastModified,
             };
             getImageData(file).then((imageData: string) => {
-              onImagePasted(fileInfo, imageData);
+              fileInfo.imageData = imageData;
+              onImagePasted(fileInfo);
             });
           }
         } else {
