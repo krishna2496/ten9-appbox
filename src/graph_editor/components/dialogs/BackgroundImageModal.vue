@@ -111,7 +111,7 @@ export default defineComponent({
 b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close', no-fade)
   template(v-slot:modal-header)
     h4 Background Image
-    i.fa.fa-times(aria-hidden='true' @click='closeModal')
+    i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .image-container
     .row
       .col-md-12.pl-5

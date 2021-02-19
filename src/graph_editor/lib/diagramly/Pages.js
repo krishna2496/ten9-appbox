@@ -1082,7 +1082,7 @@ EditorUi.prototype.renamePage = function (page) {
     // TEN9: add custom modal for rename page
     // this.showDialog(dlg.container, 300, 80, true, true);
     // dlg.init();
-    this.fireEvent(new mxEventObject('openPageRename','page',page));
+    this.fireEvent(new mxEventObject('openPageRename', 'page', page));
   }
 
   return page;

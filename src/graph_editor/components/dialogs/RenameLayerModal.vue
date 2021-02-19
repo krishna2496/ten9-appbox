@@ -81,7 +81,7 @@ b-modal#modal(
 )
   template(v-slot:modal-header)
     h4 Rename Layer
-    i.fa.fa-times(aria-hidden='true' @click='closeModal')
+    i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
     label Enter Name:
     input.txt-input(type='text', v-model='name')

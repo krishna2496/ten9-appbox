@@ -41,16 +41,16 @@ export default defineComponent({
 
     function setStyle() {
       if (style.value != null && style.value.length > 0) {
-          props.editorUi.editor.graph.setCellStyle(mxUtils.trim(style.value), cell.value);
+        props.editorUi.editor.graph.setCellStyle(mxUtils.trim(style.value), cell.value);
       }
       closeModal();
     }
 
     function onStyleChange(_sender: typeof mxEventSource, event: CustomEvent) {
-        show.value = true;
-        cell.value = event.getProperty('cell')
-        let modal = props.editorUi.editor.graph.model;
-        style.value = modal.getStyle(cell.value[0]);
+      show.value = true;
+      cell.value = event.getProperty('cell');
+      const modal = props.editorUi.editor.graph.model;
+      style.value = modal.getStyle(cell.value[0]);
     }
 
     onMounted(() => {
@@ -82,7 +82,7 @@ b-modal#modal(
 )
   template(v-slot:modal-header)
     h4 Edit Style
-    i.fa.fa-times(aria-hidden='true' @click='closeModal')
+    i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
     .textarea-container
     label Enter Style:

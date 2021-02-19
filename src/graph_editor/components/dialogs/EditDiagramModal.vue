@@ -41,7 +41,7 @@ export default defineComponent({
     }
 
     function setGraphData(xmlData: string) {
-      if(xmlData !== null && xmlData !== '') {
+      if (xmlData !== null && xmlData !== '') {
         props.editorUi.editor.graph.model.beginUpdate();
         props.editorUi.editor.setGraphXml(mxUtils.parseXml(xmlData).documentElement);
         props.editorUi.editor.graph.model.endUpdate();
@@ -50,7 +50,6 @@ export default defineComponent({
       } else {
         alert('Not a diagram file');
       }
-      
     }
 
     onMounted(() => {
@@ -83,7 +82,7 @@ b-modal(
 )
   template(v-slot:modal-header)
     h4 Edit Diagram
-    i.fa.fa-times(aria-hidden='true' @click='closeModal')
+    i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .textarea-container
     textarea.xml(v-model='xml') {{ xml }}
   template(v-slot:modal-footer)

@@ -74,7 +74,7 @@ b-modal#modal(
 )
   template(v-slot:modal-header)
     h4 Page Scale
-    i.fa.fa-times(aria-hidden='true' @click='closeModal')
+    i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-3
     label Page Scale (%):

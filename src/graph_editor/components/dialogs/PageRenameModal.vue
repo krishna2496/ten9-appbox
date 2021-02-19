@@ -42,14 +42,16 @@ export default defineComponent({
 
     function setPageName() {
       if (name.value != null && name.value.length > 0) {
-       props.editorUi.editor.graph.model.execute(new RenamePage(props.editorUi, page.value, name.value));
+        props.editorUi.editor.graph.model.execute(
+          new RenamePage(props.editorUi, page.value, name.value),
+        );
       }
       closeModal();
     }
 
     function onOpenPageRename(_sender: typeof mxEventSource, event: CustomEvent) {
       show.value = true;
-      page.value = event.getProperty('page')
+      page.value = event.getProperty('page');
       name.value = page.value.getName();
     }
 
@@ -82,7 +84,7 @@ b-modal#modal(
 )
   template(v-slot:modal-header)
     h4 Rename Page
-    i.fa.fa-times(aria-hidden='true' @click='closeModal')
+    i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
     label Enter Name:
     input.txt-input(type='text', v-model='name')
