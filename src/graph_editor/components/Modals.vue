@@ -16,12 +16,14 @@
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import EditDiagramModal from './dialogs/EditDiagramModal.vue';
-import PageScaleModal from './dialogs/PageScaleModal.vue';
 import BackgroundImageModal from './dialogs/BackgroundImageModal.vue';
+import EditDiagramModal from './dialogs/EditDiagramModal.vue';
+import EditStyleModal from './dialogs/EditStyleModal.vue';
+import InsertImageModal from './dialogs/InsertImageModal.vue';
+import InsertLinkModal from './dialogs/InserLinkModal.vue';
 import LayerRenameModal from './dialogs/RenameLayerModal.vue';
 import PageRenameModal from './dialogs/PageRenameModal.vue';
-import EditStyleModal from './dialogs/EditStyleModal.vue';
+import PageScaleModal from './dialogs/PageScaleModal.vue';
 
 import '../styles/modals.scss';
 
@@ -31,9 +33,11 @@ export default defineComponent({
     BackgroundImageModal,
     EditDiagramModal,
     EditStyleModal,
+    InsertImageModal,
+    InsertLinkModal,
     LayerRenameModal,
-    PageScaleModal,
     PageRenameModal,
+    PageScaleModal,
   },
   props: {
     editorUi: {
@@ -41,6 +45,15 @@ export default defineComponent({
       required: false,
       default: null,
     },
+  },
+  setup(_props, ctx) {
+    function insertImage(url: string) {
+      ctx.emit('insertImage', url);
+    }
+
+    return {
+      insertImage,
+    };
   },
 });
 </script>
@@ -50,7 +63,9 @@ export default defineComponent({
   background-image-modal(:editorUi='editorUi')
   edit-diagram-modal(:editorUi='editorUi')
   edit-style-modal(:editorUi='editorUi')
-  page-scale-modal(:editorUi='editorUi')
+  insert-image-modal(:editorUi='editorUi', @insertImage='insertImage')
+  insert-link-modal(:editorUi='editorUi')
   layer-rename-modal(:editorUi='editorUi')
   page-rename-modal(:editorUi='editorUi')
+  page-scale-modal(:editorUi='editorUi')
 </template>

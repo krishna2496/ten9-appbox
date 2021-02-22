@@ -1169,8 +1169,9 @@ DriveFile = function () {};
                           '#_CONFIG_' +
                           Graph.compress(JSON.stringify(obj));
                         var dlg = new EmbedDialog(editorUi, url);
-                        editorUi.showDialog(dlg.container, 440, 240, true);
-                        dlg.init();
+                        // editorUi.showDialog(dlg.container, 440, 240, true);
+                        // dlg.init();
+                        alert(123);
                       } catch (e) {
                         editorUi.handleError(e);
                       }

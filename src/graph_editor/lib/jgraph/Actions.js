@@ -683,10 +683,12 @@ Actions.prototype.init = function () {
         var cell = graph.getSelectionCell();
         var value = graph.getLinkForCell(cell) || '';
 
-        ui.showLinkDialog(value, mxResources.get('apply'), function (link) {
-          link = mxUtils.trim(link);
-          graph.setLinkForCell(cell, link.length > 0 ? link : null);
-        });
+        // TEN9: add custom modal for edit link
+        // ui.showLinkDialog(value, mxResources.get('apply'), function (link) {
+        //   link = mxUtils.trim(link);
+        //   graph.setLinkForCell(cell, link.length > 0 ? link : null);
+        // });
+        ui.fireEvent(new mxEventObject('openEditLink', 'cells', { cell, value }));
       }
     },
     null,
@@ -698,7 +700,9 @@ Actions.prototype.init = function () {
     new Action(mxResources.get('image') + '...', function () {
       if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())) {
         graph.clearSelection();
-        ui.actions.get('image').funct();
+        // TEN9: add custom modal for insert image
+        //ui.actions.get('image').funct();
+        ui.fireEvent(new mxEventObject('openInsertImage'));
       }
     }),
   ).isEnabled = isGraphEnabled;
@@ -758,7 +762,9 @@ Actions.prototype.init = function () {
     'insertLink',
     new Action(mxResources.get('link') + '...', function () {
       if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())) {
-        ui.showLinkDialog('', mxResources.get('insert'), insertLink);
+        // TEN9: add custom modal for insert link
+        //ui.showLinkDialog('', mxResources.get('insert'), insertLink);
+        ui.fireEvent(new mxEventObject('openInsertLink'));
       }
     }),
   ).isEnabled = isGraphEnabled;
@@ -1776,6 +1782,7 @@ Actions.prototype.init = function () {
         title,
         value,
         function (newValue, w, h) {
+          debugger;
           // Inserts image into HTML text
           if (graph.cellEditor.isContentEditing()) {
             graph.cellEditor.restoreSelection(selectionState);
