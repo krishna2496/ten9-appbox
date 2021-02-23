@@ -37,11 +37,13 @@ export default defineComponent({
 
     function closeModal() {
       show.value = false;
+      name.value = '';
+      layer.value = null;
     }
 
     function setLayerName() {
       if (name.value != null && name.value.length > 0) {
-        props.editorUi.editor.graph.cellLabelChanged(layer.value, name);
+        props.editorUi.editor.graph.cellLabelChanged(layer.value, name.value);
       }
       closeModal();
     }
@@ -72,13 +74,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-modal#modal(
-  :visible='show',
-  no-close-on-backdrop='',
-  ref='pageScale',
-  no-fade,
-  @hide='closeModal'
-)
+b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
   template(v-slot:modal-header)
     h4 Rename Layer
     i.fa.fa-times(aria-hidden='true', @click='closeModal')

@@ -559,5 +559,5 @@ export default defineComponent({
 <template lang="pug">
 div
   .geEditor(ref='container')
-  modals(:editorUi='editorUi', @insertImage='insertImage')
+  modals(:editorUi='editorUi')
 </template>

@@ -25,7 +25,9 @@ import {
 } from '../../lib/jgraph/mxClient.js';
 
 interface CustomEvent {
-  getProperty?: Function;
+  getProperty?: Function | FunctionStringCallback;
+}
+interface CustomObject {
   cell?: typeof mxCell;
   value?: string;
 }
@@ -53,39 +55,21 @@ export default defineComponent({
 
     const cell = ref(null);
 
-    function insertLink(url: string, docs: any) {
-      const graph = props.editorUi.editor.graph;
-      url = mxUtils.trim(url);
-
-      if (url.length > 0) {
-        let icon = null;
-        let title: string = graph.getLinkTitle(url);
-
-        if (docs != null && docs.length > 0) {
-          icon = docs[0].iconUrl;
-          title = docs[0].name || docs[0].type;
-          if (!docs[0].noTitleCase) {
-            title = title.charAt(0).toUpperCase() + title.substring(1);
-          }
-          const textLength = 30;
-          if (!docs[0].noTruncateTitle && title.length > textLength) {
-            title = title.substring(0, textLength) + '...';
-          }
-        }
+    function insertLink(url: string) {
+      const { editor } = props.editorUi;
+      const { graph } = editor;
+      const newUrl = mxUtils.trim(url);
+      if (newUrl.length > 0) {
+        const title: string = graph.getLinkTitle(newUrl);
 
         const pt = graph.getFreeInsertPoint();
-        let style = 'fontColor=#0000EE;fontStyle=4;rounded=1;overflow=hidden;';
-        if (icon != null) {
-          style = `${style}'shape=label;imageWidth=16;imageHeight=16;spacingLeft=26;align=left;image='${icon}`;
-        } else {
-          style = `${style}  spacing=10`;
-        }
+        const style = 'fontColor=#0000EE;fontStyle=4;rounded=1;overflow=hidden;spacing=10;';
         const height = 100;
         const width = 40;
         let linkCell = new mxCell(title, new mxGeometry(pt.x, pt.y, height, width), style);
         linkCell.vertex = true;
 
-        graph.setLinkForCell(linkCell, url);
+        graph.setLinkForCell(linkCell, newUrl);
         graph.cellSizeUpdated(linkCell, true);
 
         graph.getModel().beginUpdate();
@@ -115,11 +99,11 @@ export default defineComponent({
       if (type.value == 'insert') {
         if (option.value === 'customLink') {
           if (link.value !== '') {
-            insertLink(link.value, null);
+            insertLink(link.value);
           }
         } else {
           const docLink = 'data:page/id,' + pageId.value;
-          insertLink(docLink, null);
+          insertLink(docLink);
         }
       } else {
         if (option.value === 'customLink') {
@@ -145,11 +129,19 @@ export default defineComponent({
     function openEditLink(_sender: typeof mxEventSource, event: CustomEvent) {
       type.value = 'update';
       show.value = true;
-      const cells: CustomEvent = event.getProperty('cells');
+
+      const cells: CustomObject = event.getProperty('cells');
       link.value = cells.value;
       cell.value = cells.cell;
       pages.value = props.editorUi.pages;
       pageId.value = pages.value[0].getId();
+
+      if (link.value.startsWith('data:page')) {
+        option.value = 'pageLink';
+        link.value = '';
+      } else {
+        option.value = 'customLink';
+      }
     }
 
     onMounted(() => {
@@ -176,13 +168,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-modal#modal(
-  :visible='show',
-  no-close-on-backdrop='',
-  ref='pageScale',
-  no-fade,
-  @hide='closeModal'
-)
+b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
   template(v-slot:modal-header)
     h4 Edit Link
     i.fa.fa-times(aria-hidden='true', @click='closeModal')

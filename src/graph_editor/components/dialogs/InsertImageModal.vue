@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-
+import { mxConstants, mxEventObject } from '../../lib/jgraph/mxClient.js';
 export default defineComponent({
   name: 'InsertImageModal',
   props: {
@@ -25,19 +25,86 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, ctx) {
+  setup(props) {
     const show = ref<boolean>(false);
 
     const imageLink = ref('');
 
     function closeModal() {
       show.value = false;
+      imageLink.value = '';
+    }
+
+    function loadImage(url: string): Promise<HTMLImageElement> {
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.addEventListener('load', () => {
+          resolve(image);
+        });
+
+        image.onerror = () => {
+          alert('File not found');
+        };
+        image.src = url;
+      });
     }
 
     function insertImage() {
-      ctx.emit('insertImage', imageLink.value);
-      // props.editorUi.insertImage(imageLink.value / scaleValue);
-      closeModal();
+      let cells = [];
+
+      loadImage(imageLink.value).then((result: HTMLImageElement) => {
+        const { editor } = props.editorUi;
+        const { graph } = editor;
+        const { width, height } = result;
+        let select = null;
+
+        graph.getModel().beginUpdate();
+
+        try {
+          // Inserts new cell if no cell is selected
+          const pt = graph.getFreeInsertPoint();
+          cells = [
+            graph.insertVertex(
+              graph.getDefaultParent(),
+              null,
+              '',
+              pt.x,
+              pt.y,
+              width,
+              height,
+              'shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;',
+            ),
+          ];
+          select = cells;
+          graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
+
+          graph.setCellStyles(
+            mxConstants.STYLE_IMAGE,
+            imageLink.value.length > 0 ? imageLink.value : null,
+            cells,
+          );
+
+          // Sets shape only if not already shape with image (label or image)
+          const style = graph.getCurrentCellStyle(cells[0]);
+
+          if (
+            style[mxConstants.STYLE_SHAPE] != 'image' &&
+            style[mxConstants.STYLE_SHAPE] != 'label'
+          ) {
+            graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
+          } else if (imageLink.value.length === 0) {
+            graph.setCellStyles(mxConstants.STYLE_SHAPE, null, cells);
+          }
+        } finally {
+          graph.getModel().endUpdate();
+        }
+
+        if (select != null) {
+          graph.setSelectionCells(select);
+          graph.scrollCellToVisible(select[0]);
+        }
+        closeModal();
+      });
     }
 
     function openInsertImage() {
@@ -64,13 +131,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-modal#modal(
-  :visible='show',
-  no-close-on-backdrop='',
-  ref='pageScale',
-  no-fade,
-  @hide='closeModal'
-)
+b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
   template(v-slot:modal-header)
     h4 Insert Image
     i.fa.fa-times(aria-hidden='true', @click='closeModal')

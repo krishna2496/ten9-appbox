@@ -75,13 +75,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-modal#modal(
-  :visible='show',
-  no-close-on-backdrop='',
-  ref='pageScale',
-  no-fade,
-  @hide='closeModal'
-)
+b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
   template(v-slot:modal-header)
     h4 Rename Page
     i.fa.fa-times(aria-hidden='true', @click='closeModal')

@@ -16,9 +16,10 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import PageSize from '../../lib/PageSize.js';
 
 export default defineComponent({
-  name: 'PageScaleModel',
+  name: 'PrintModel',
   props: {
     editorUi: {
       type: Object,
@@ -30,7 +31,7 @@ export default defineComponent({
 
     const pageScaleValue = ref(null);
 
-    const scaleValue = 100;
+    const pageScaleInput = ref('');
 
     function closeModal() {
       show.value = false;
@@ -38,27 +39,27 @@ export default defineComponent({
 
     function setPageScale() {
       if (pageScaleValue.value != 0 && pageScaleValue.value != '') {
-        props.editorUi.setPageScale(pageScaleValue.value / scaleValue);
+        // props.editorUi.setPageScale(pageScaleValue.value / scaleValue);
       }
       closeModal();
     }
 
-    function openPageScale() {
+    function openPrintModal() {
       show.value = true;
-      pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
     }
 
     onMounted(() => {
-      props.editorUi.addListener('openPageScale', openPageScale);
+      props.editorUi.addListener('openPrintModal', openPrintModal);
     });
 
     onUnmounted(() => {
-      props.editorUi.removeListener(openPageScale);
+      props.editorUi.removeListener(openPrintModal);
     });
 
     return {
       closeModal,
-      pageScaleValue,
+      pageScaleInput,
+      PageSize,
       setPageScale,
       show,
     };
@@ -67,21 +68,39 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-modal#modal(
-  :visible='show',
-  no-close-on-backdrop='',
-  ref='pageScale',
-  no-fade,
-  @hide='closeModal'
-)
+b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
   template(v-slot:modal-header)
-    h4 Set Page Scale
+    h4 Print
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
-  .row.ml-3
-    label Percentage (%)
-  .row.ml-3
-    input.txt-input(type='number', v-model='pageScaleValue')
+  .row.ml-3.mb-3
+    input(type='radio', name='adjust')
+    label.ml-2 Adjust to
+    input.ml-2.txt-input(type='text')
+  .row.ml-3.mb-3
+    input(type='radio', name='adjust')
+    label.ml-2 Fit to
+    input.ml-2.txt-input(type='text')
+    label.ml-2 sheet(s) across
+  .row.ml-5.mb-3
+    label.ml-2 by
+    input.ml-4.txt-input(type='text')
+    label.ml-2 sheet(s) down
+  .row
+    hr
+  .row.ml-3.mb-3
+    h5 Paper Size
+  .row.ml-3.mb-3
+    select.form-control.w-90
+      option(v-for='(page, index) in PageSize', :key='index') {{ page.title }}
+  .row.ml-3.mb-3
+    input(type='radio', name='page_type')
+    label.ml-2 Portrait
+    input.ml-4(type='radio', name='page_type')
+    label.ml-2 Landscape
+  .row.ml-3.mb-3
+    label.ml-2 Page Scale
+    input.txt-input.ml-2(type='text', v-modal='pageScaleInput')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

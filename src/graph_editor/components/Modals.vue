@@ -24,6 +24,7 @@ import InsertLinkModal from './dialogs/InserLinkModal.vue';
 import LayerRenameModal from './dialogs/RenameLayerModal.vue';
 import PageRenameModal from './dialogs/PageRenameModal.vue';
 import PageScaleModal from './dialogs/PageScaleModal.vue';
+import PrintModal from './dialogs/PrintModal.vue';
 
 import '../styles/modals.scss';
 
@@ -38,6 +39,7 @@ export default defineComponent({
     LayerRenameModal,
     PageRenameModal,
     PageScaleModal,
+    PrintModal,
   },
   props: {
     editorUi: {
@@ -45,15 +47,6 @@ export default defineComponent({
       required: false,
       default: null,
     },
-  },
-  setup(_props, ctx) {
-    function insertImage(url: string) {
-      ctx.emit('insertImage', url);
-    }
-
-    return {
-      insertImage,
-    };
   },
 });
 </script>
@@ -63,9 +56,10 @@ export default defineComponent({
   background-image-modal(:editorUi='editorUi')
   edit-diagram-modal(:editorUi='editorUi')
   edit-style-modal(:editorUi='editorUi')
-  insert-image-modal(:editorUi='editorUi', @insertImage='insertImage')
+  insert-image-modal(:editorUi='editorUi')
   insert-link-modal(:editorUi='editorUi')
   layer-rename-modal(:editorUi='editorUi')
   page-rename-modal(:editorUi='editorUi')
   page-scale-modal(:editorUi='editorUi')
+  print-modal(:editorUi='editorUi')
 </template>
