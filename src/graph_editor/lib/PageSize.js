@@ -14,6 +14,9 @@
  * -----
  */
 
+// This is valid use of magic numbers
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+
 // We use Font Awesome icons for file attachment icons.
 // These shapes are SVGs that are from the stencil used in
 // this link: https://app.diagrams.net/?splash=0&clibs=Uhttps%3A%2F%2Fjgraph.github.io%2Fdrawio-libs%2Flibs%2Ffont-awesome.xml

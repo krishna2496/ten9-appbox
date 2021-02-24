@@ -35,3 +35,13 @@
 .w-90 {
   width: 90% !important;
 }
+
+.w-70 {
+  width: 70% !important;
+}
+
+.disable {
+  pointer-events: none;
+  cursor: not-allowed;
+  background-color: rgb(229, 229, 229) !important;
+}

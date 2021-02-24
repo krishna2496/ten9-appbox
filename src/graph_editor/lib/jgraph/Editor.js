@@ -1269,8 +1269,8 @@ var ErrorDialog = function (
  */
 var PrintDialog = function (editorUi, title) {
   // TEN9: add custom modal for print
-  editorUi.fireEvent(new mxEventObject('openPrintModal'));
-  //this.create(editorUi, title);
+  //editorUi.fireEvent(new mxEventObject('openPrintModal'));
+  this.create(editorUi, title);
 };
 
 /**

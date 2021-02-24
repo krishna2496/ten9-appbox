@@ -24,12 +24,13 @@ import {
   mxUtils,
 } from '../../lib/jgraph/mxClient.js';
 
-interface CustomEvent {
-  getProperty?: Function | FunctionStringCallback;
-}
-interface CustomObject {
+interface InsertLinkObject {
   cell?: typeof mxCell;
   value?: string;
+}
+
+interface InsertLinkEvent {
+  getProperty?(propName: string): InsertLinkObject;
 }
 
 export default defineComponent({
@@ -126,11 +127,11 @@ export default defineComponent({
       pageId.value = pages.value[0].getId();
     }
 
-    function openEditLink(_sender: typeof mxEventSource, event: CustomEvent) {
+    function openEditLink(_sender: typeof mxEventSource, event: InsertLinkEvent) {
       type.value = 'update';
       show.value = true;
 
-      const cells: CustomObject = event.getProperty('cells');
+      const cells: InsertLinkObject = event.getProperty('cells');
       link.value = cells.value;
       cell.value = cells.cell;
       pages.value = props.editorUi.pages;

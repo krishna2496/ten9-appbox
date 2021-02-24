@@ -620,7 +620,9 @@ Actions.prototype.init = function () {
     'editData...',
     function () {
       var cell = graph.getSelectionCell() || graph.getModel().getRoot();
-      ui.showDataDialog(cell);
+      // TEN9: add custom modal for edit data
+      //ui.showDataDialog(cell);
+      ui.fireEvent(new mxEventObject('editData', 'cell', cell));
     },
     null,
     null,
@@ -1128,8 +1130,10 @@ Actions.prototype.init = function () {
           }),
           mxResources.get('zoom') + ' (%)',
         );
-        this.editorUi.showDialog(dlg.container, 300, 80, true, true);
-        dlg.init();
+        // TEN9: add custom modal for custom zoom
+        // this.editorUi.showDialog(dlg.container, 300, 80, true, true);
+        // dlg.init();
+        this.editorUi.fireEvent(new mxEventObject('customZoom'));
       }),
       null,
       null,
