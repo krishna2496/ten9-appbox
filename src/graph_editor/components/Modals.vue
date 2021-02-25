@@ -27,6 +27,7 @@ import LayerRenameModal from './dialogs/RenameLayerModal.vue';
 import PageRenameModal from './dialogs/PageRenameModal.vue';
 import PageScaleModal from './dialogs/PageScaleModal.vue';
 import PrintModal from './dialogs/PrintModal.vue';
+import ScratchpadModal from './dialogs/ScratchpadModal.vue';
 
 import '../styles/modals.scss';
 
@@ -44,6 +45,7 @@ export default defineComponent({
     PageRenameModal,
     PageScaleModal,
     PrintModal,
+    ScratchpadModal,
   },
   props: {
     editorUi: {
@@ -68,4 +70,5 @@ export default defineComponent({
   page-rename-modal(:editorUi='editorUi')
   page-scale-modal(:editorUi='editorUi')
   print-modal(:editorUi='editorUi')
+  scratchpad-modal(:editorUi='editorUi')
 </template>

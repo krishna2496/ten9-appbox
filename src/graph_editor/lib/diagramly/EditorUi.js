@@ -3139,8 +3139,10 @@ var SelectedFile;
         var spinBtn = null;
 
         var editLibrary = mxUtils.bind(this, function (evt) {
-          this.showLibraryDialog(file.getTitle(), contentDiv, images, file, file.getMode());
-          mxEvent.consume(evt);
+          // TEN9: add custom modal for scratchpad
+          // this.showLibraryDialog(file.getTitle(), contentDiv, images, file, file.getMode());
+          // mxEvent.consume(evt);
+          this.fireEvent(new mxEventObject('scratchpadModal', 'scratchpad', images));
         });
 
         var saveLibrary = mxUtils.bind(this, function (evt) {

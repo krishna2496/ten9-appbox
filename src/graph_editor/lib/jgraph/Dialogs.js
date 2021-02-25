@@ -1588,7 +1588,6 @@ var EditDataDialog = function (ui, cell) {
   var applyBtn = mxUtils.button(mxResources.get('apply'), function () {
     try {
       ui.hideDialog.apply(ui, arguments);
-
       // Clones and updates the value
       value = value.cloneNode(true);
       var removeLabel = false;

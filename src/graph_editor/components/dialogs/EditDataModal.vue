@@ -16,13 +16,21 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
-import { mxEventSource } from '../../lib/jgraph/mxClient';
+import { mxEventSource, mxUtils } from '../../lib/jgraph/mxClient';
 interface CustomEvent {
   getProperty: FunctionStringCallback;
 }
 
+interface node {
+  nodeName: string;
+  nodeValue: string;
+}
+interface Tag {
+  attributes: Array<node>;
+}
+
 export default defineComponent({
-  name: 'PageScaleModel',
+  name: 'EditDataModal',
   props: {
     editorUi: {
       type: Object,
@@ -40,35 +48,99 @@ export default defineComponent({
 
     const cell = ref(null);
 
-    const innerHtml = ref<Array>([]);
+    const innerHtml = ref([]);
+
+    const names = ref([]);
+
+    const count = ref(0);
+
+    const idTrack = ref([]);
 
     function closeModal() {
       show.value = false;
+      properyName.value = '';
+      cell.value = null;
+      innerHtml.value = [];
+      names.value = [];
+      count.value = 0;
     }
 
-    function setPageScale() {
-      //   if (properyName.value != 0 && properyName.value != '') {
-      //     props.editorUi.setPageScale(properyName.value / scaleValue);
-      //   }
-      //   closeModal();
+    function setProperty() {
+      const doc = mxUtils.createXmlDocument();
+      let obj = doc.createElement('object');
+
+      // Clones and updates the value
+      obj = obj.cloneNode(true);
+      let removeLabel = false;
+
+      for (let i = 0; i < names.value.length; i++) {
+        const data: any = document.getElementById(`val${idTrack.value[i]}`);
+        if (data.value == null) {
+          obj.removeAttribute(names.value[i]);
+        } else {
+          obj.setAttribute(names.value[i], data.value);
+          removeLabel =
+            removeLabel ||
+            (names.value[i] == 'placeholder' && obj.getAttribute('placeholders') == '1');
+        }
+      }
+
+      // Removes label if placeholder is assigned
+      if (removeLabel) {
+        obj.removeAttribute('label');
+      }
+
+      // Updates the value of the cell (undoable)
+      props.editorUi.editor.graph.getModel().setValue(cell.value, obj);
+      closeModal();
     }
 
     function editData(_sender: typeof mxEventSource, event: CustomEvent) {
       show.value = true;
       cell.value = event.getProperty('cell');
       pageId.value = cell.value.getId();
-      //   properyName.value = props.editorUi.editor.graph.pageScale * scaleValue;
+      const value: Tag = props.editorUi.editor.graph.getModel().getValue(cell.value);
+      const attrs = value.attributes;
+      //let temp = [];
+      const isLayer =
+        props.editorUi.editor.graph.getModel().getParent(cell.value) ==
+        props.editorUi.editor.graph.getModel().getRoot();
+
+      if (attrs != undefined) {
+        for (let i = 0; i < attrs.length; i++) {
+          if ((isLayer || attrs[i].nodeName != 'label') && attrs[i].nodeName != 'placeholders') {
+            //temp.push({ name: attrs[i].nodeName, value: attrs[i].nodeValue });
+            names.value.push(attrs[i].nodeName);
+            const temp = `<div class="row ml-2 mb-3"><label class="col-sm-2">${attrs[i].nodeName}</label><input type="text" id="val${count.value}"  class="txt-input col-sm-8"value="${attrs[i].nodeValue}" ></div>`;
+            innerHtml.value.push(temp);
+            count.value += 1;
+          }
+        }
+      }
     }
 
     function addProperty() {
-      const temp = `<div class="row ml-2 mb-3"><label class="col-sm-2">${properyName.value}</label><input type="text" class="txt-input col-sm-8" ></div>`;
+      if (properyName.value.indexOf(' ') >= 0) {
+        alert('InvalidCharacterError: Failed to execute setAttribute');
+        return;
+      }
+      const temp = `<div class="row ml-2 mb-3"><label class="col-sm-2">${properyName.value}</label><input type="text" id="val${count.value}" r class="txt-input col-sm-8" ></div>`;
       innerHtml.value.push(temp);
+      names.value.push(properyName.value);
       properyName.value = '';
       disable.value = true;
+      idTrack.value.push(count.value);
+      count.value += 1;
     }
 
-    function removeProperty(index) {
+    function removeProperty(index: number) {
       innerHtml.value.splice(index, 1);
+      names.value.splice(index, 1);
+      const value = idTrack.value.indexOf(index);
+      const indexValue = -1;
+      if (value > indexValue) {
+        idTrack.value.splice(value, 1);
+      }
     }
 
     onMounted(() => {
@@ -93,11 +165,13 @@ export default defineComponent({
       cell,
       closeModal,
       disable,
+      idTrack,
       innerHtml,
+      names,
       pageId,
       properyName,
       removeProperty,
-      setPageScale,
+      setProperty,
       show,
     };
   },
@@ -128,8 +202,10 @@ b-modal#modal(
     input.txt-input.w-70(type='text', v-model='properyName')
     button.btn.ml-3(type='button', :class='{ disable: disable }', @click='addProperty') Add Property
   template(#modal-footer='')
+    input(type='checkbox')
+    label Placeholders
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setPageScale')
+    button.btn.btn-primary(type='button', @click='setProperty')
       | Apply
 </template>
