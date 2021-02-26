@@ -74,7 +74,9 @@ export default defineComponent({
       let removeLabel = false;
 
       for (let i = 0; i < names.value.length; i++) {
-        const data: any = document.getElementById(`val${idTrack.value[i]}`);
+        const data: HTMLInputElement = document.getElementById(
+          `val${idTrack.value[i]}`,
+        ) as HTMLInputElement;
         if (data.value == null) {
           obj.removeAttribute(names.value[i]);
         } else {
@@ -111,7 +113,7 @@ export default defineComponent({
           if ((isLayer || attrs[i].nodeName != 'label') && attrs[i].nodeName != 'placeholders') {
             //temp.push({ name: attrs[i].nodeName, value: attrs[i].nodeValue });
             names.value.push(attrs[i].nodeName);
-            const temp = `<div class="row ml-2 mb-3"><label class="col-sm-2">${attrs[i].nodeName}</label><input type="text" id="val${count.value}"  class="txt-input col-sm-8"value="${attrs[i].nodeValue}" ></div>`;
+            const temp = `<div class="row ml-2 mb-3"><label class="col-sm-3">${attrs[i].nodeName}:</label><input type="text" id="val${count.value}"  class="txt-input col-sm-9"value="${attrs[i].nodeValue}" ></div>`;
             innerHtml.value.push(temp);
             count.value += 1;
           }
@@ -124,7 +126,7 @@ export default defineComponent({
         alert('InvalidCharacterError: Failed to execute setAttribute');
         return;
       }
-      const temp = `<div class="row ml-2 mb-3"><label class="col-sm-2">${properyName.value}</label><input type="text" id="val${count.value}" r class="txt-input col-sm-8" ></div>`;
+      const temp = `<div class="row ml-2 mb-3"><label class="col-sm-3">${properyName.value}:</label><input type="text" id="val${count.value}" r class="txt-input col-sm-9" ></div>`;
       innerHtml.value.push(temp);
       names.value.push(properyName.value);
       properyName.value = '';
@@ -184,6 +186,7 @@ b-modal#modal(
   no-close-on-backdrop='',
   ref='pageScale',
   no-fade,
+  size='lg',
   @hide='closeModal'
 )
   template(v-slot:modal-header)
@@ -195,9 +198,9 @@ b-modal#modal(
     label.ml-5 {{ pageId }}
   .row
     template(v-for='(div, index) in innerHtml')
-      .col-sm-10(v-html='div')
-      .col-sm-2
-        label(@click='removeProperty(index)') X
+      .col-sm-11(v-html='div')
+      .col-sm-1
+        label.pointer(@click='removeProperty(index)') X
   .row.ml-3
     input.txt-input.w-70(type='text', v-model='properyName')
     button.btn.ml-3(type='button', :class='{ disable: disable }', @click='addProperty') Add Property

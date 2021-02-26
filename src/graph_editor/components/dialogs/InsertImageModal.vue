@@ -16,7 +16,12 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import { mxConstants, mxEventObject } from '../../lib/jgraph/mxClient.js';
+import { mxConstants, mxEventObject, mxEventSource } from '../../lib/jgraph/mxClient.js';
+
+interface ImageData {
+  getProperty: FunctionStringCallback;
+}
+
 export default defineComponent({
   name: 'InsertImageModal',
   props: {
@@ -28,7 +33,9 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const imageLink = ref('');
+    const imageLink = ref(null);
+
+    const cell = ref(null);
 
     function closeModal() {
       show.value = false;
@@ -62,22 +69,25 @@ export default defineComponent({
 
         try {
           // Inserts new cell if no cell is selected
-          const pt = graph.getFreeInsertPoint();
-          cells = [
-            graph.insertVertex(
-              graph.getDefaultParent(),
-              null,
-              '',
-              pt.x,
-              pt.y,
-              width,
-              height,
-              'shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;',
-            ),
-          ];
-          select = cells;
-          graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
-
+          if (cell.value == null) {
+            const pt = graph.getFreeInsertPoint();
+            cells = [
+              graph.insertVertex(
+                graph.getDefaultParent(),
+                null,
+                '',
+                pt.x,
+                pt.y,
+                width,
+                height,
+                'shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;',
+              ),
+            ];
+            select = cells;
+            graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
+          } else {
+            cells = cell.value;
+          }
           graph.setCellStyles(
             mxConstants.STYLE_IMAGE,
             imageLink.value.length > 0 ? imageLink.value : null,
@@ -111,9 +121,15 @@ export default defineComponent({
       show.value = true;
     }
 
+    function editImage(_sender: typeof mxEventSource, event: ImageData) {
+      show.value = true;
+      imageLink.value = event.getProperty('image');
+      cell.value = props.editorUi.editor.graph.getSelectionCells();
+    }
+
     onMounted(() => {
       props.editorUi.addListener('openInsertImage', openInsertImage);
-      //imageLink.value = props.editorUi.editor.graph.pageScale * scaleValue;
+      props.editorUi.addListener('editImage', editImage);
     });
 
     onUnmounted(() => {
@@ -122,6 +138,7 @@ export default defineComponent({
 
     return {
       closeModal,
+      editImage,
       imageLink,
       insertImage,
       show,

@@ -1131,8 +1131,8 @@ Actions.prototype.init = function () {
           mxResources.get('zoom') + ' (%)',
         );
         // TEN9: add custom modal for custom zoom
-        // this.editorUi.showDialog(dlg.container, 300, 80, true, true);
-        // dlg.init();
+        //  this.editorUi.showDialog(dlg.container, 300, 80, true, true);
+        //  dlg.init();
         this.editorUi.fireEvent(new mxEventObject('customZoom'));
       }),
       null,
@@ -1786,14 +1786,13 @@ Actions.prototype.init = function () {
         title,
         value,
         function (newValue, w, h) {
-          debugger;
           // Inserts image into HTML text
           if (graph.cellEditor.isContentEditing()) {
             graph.cellEditor.restoreSelection(selectionState);
             graph.insertImage(newValue, w, h);
           } else {
             var cells = graph.getSelectionCells();
-
+            debugger;
             if (newValue != null && (newValue.length > 0 || cells.length > 0)) {
               var select = null;
 

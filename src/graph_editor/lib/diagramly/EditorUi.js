@@ -3140,8 +3140,8 @@ var SelectedFile;
 
         var editLibrary = mxUtils.bind(this, function (evt) {
           // TEN9: add custom modal for scratchpad
-          // this.showLibraryDialog(file.getTitle(), contentDiv, images, file, file.getMode());
-          // mxEvent.consume(evt);
+          //this.showLibraryDialog(file.getTitle(), contentDiv, images, file, file.getMode());
+          //mxEvent.consume(evt);
           this.fireEvent(new mxEventObject('scratchpadModal', 'scratchpad', images));
         });
 
@@ -4188,15 +4188,17 @@ var SelectedFile;
    */
   EditorUi.prototype.showImageDialog = function (title, value, fn, ignoreExisting, convertDataUri) {
     // KNOWN: IE+FF don't return keyboard focus after image dialog (calling focus doesn't help)
-    var dlg = new ImageDialog(this, title, value, fn, ignoreExisting, convertDataUri);
-    this.showDialog(
-      dlg.container,
-      Graph.fileSupport ? 480 : 360,
-      Graph.fileSupport ? 200 : 90,
-      true,
-      true,
-    );
-    dlg.init();
+    // TEN9: add custom modal for edit image
+    // var dlg = new ImageDialog(this, title, value, fn, ignoreExisting, convertDataUri);
+    // this.showDialog(
+    //   dlg.container,
+    //   Graph.fileSupport ? 480 : 360,
+    //   Graph.fileSupport ? 200 : 90,
+    //   true,
+    //   true,
+    // );
+    // dlg.init();
+    this.fireEvent(new mxEventObject('editImage', 'image', value));
   };
 
   /**

@@ -16,7 +16,17 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import { mxCell, mxEventSource } from '../../lib/jgraph/mxClient.js';
+import {
+  mxCell,
+  mxClient,
+  mxEvent,
+  mxEventSource,
+  mxResources,
+  mxUtils,
+  mxUrlConverter,
+} from '../../lib/jgraph/mxClient.js';
+import { Editor } from '../../lib/jgraph/Editor.js';
+import { Graph } from '../../lib/jgraph/Graph.js';
 interface InsertLinkObject {
   length: number;
   cell?: typeof mxCell;
@@ -50,6 +60,12 @@ export default defineComponent({
 
     const scaleValue = 100;
 
+    const shapes = ref([]);
+
+    const shapesHtml = ref([]);
+
+    const IMAGE_PATH = '../../../../public/images';
+
     function closeModal() {
       show.value = false;
     }
@@ -61,233 +77,194 @@ export default defineComponent({
       closeModal();
     }
 
-    function addButton(
-      data: string,
-      mimeType: string,
-      x: number,
-      y: number,
-      w: number,
-      h: number,
-      img: any,
-      aspect: any,
-      title: string,
-    ) {
-      console.log(data);
-      console.log(mimeType);
-      console.log(x);
-      console.log(y);
-      console.log(w);
-      console.log(h);
-      console.log(img);
-      console.log(aspect);
-      console.log(title);
+    function enableText(index: number) {
+      alert(index);
+    }
 
+    function addButton(data: string, mimeType: string, w: any, h: any, img: any) {
       // // Ignores duplicates
-      //     try {
-      //     props.editorUi.spinner.stop();
-      //         let entries = {};
-      //     if (mimeType == null || mimeType.substring(0, 6) == 'image/') {
-      //         if ((data == null && img != null) || entries[data] == null) {
-      //         div.style.backgroundImage = '';
-      //         bg.style.display = 'none';
+      try {
+        props.editorUi.spinner.stop();
+        const converter = new mxUrlConverter();
+        const entries = {};
+        const ew = 100;
+        const eh = 100;
+        const images: any[] = [];
+        const div: HTMLDivElement = document.createElement('div');
+        // TEN9: remove the top border of the box
+        // div.style.borderWidth = '1px 0px 1px 0px';
+        div.style.borderWidth = '0px 0px 1px 0px';
+        div.style.borderColor = '#d3d3d3';
+        div.style.borderStyle = 'solid';
+        div.style.marginTop = '6px';
+        div.style.overflow = 'auto';
+        div.style.height = '340px';
+        div.style.backgroundPosition = 'center center';
+        div.style.backgroundRepeat = 'no-repeat';
 
-      //         var iw = w;
-      //         var ih = h;
+        const bg: HTMLDivElement = document.createElement('div');
+        bg.style.position = 'absolute';
+        bg.style.width = '640px';
+        bg.style.top = '260px';
+        bg.style.textAlign = 'center';
+        bg.style.fontSize = '22px';
+        bg.style.color = '#a0c3ff';
 
-      //         if (w > editorUi.maxImageSize || h > editorUi.maxImageSize) {
-      //             var s = Math.min(
-      //             1,
-      //             Math.min(editorUi.maxImageSize / Math.max(1, w)),
-      //             editorUi.maxImageSize / Math.max(1, h),
-      //             );
-      //             w *= s;
-      //             h *= s;
-      //         }
+        var wrapper: any = document.createElement('div');
+        if (mimeType == null || mimeType.startsWith('image/')) {
+          if ((data == null && img != null) || entries[data] == null) {
+            div.style.backgroundImage = '';
+            bg.style.display = 'none';
 
-      //         if (iw > ih) {
-      //             ih = Math.round((ih * ew) / iw);
-      //             iw = ew;
-      //         } else {
-      //             iw = Math.round((iw * eh) / ih);
-      //             ih = eh;
-      //         }
+            let iw = w;
+            let ih = h;
 
-      //         var wrapper = document.createElement('div');
-      //         // TEN9: remove drag
-      //         //wrapper.setAttribute('draggable', 'true');
-      //         wrapper.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
-      //         wrapper.style.position = 'relative';
-      //         // TEN9: remove drag
-      //         //wrapper.style.cursor = 'move';
-      //         mxUtils.setPrefixedStyle(wrapper.style, 'transition', 'transform .1s ease-in-out');
+            if (w > props.editorUi.maxImageSize || h > props.editorUi.maxImageSize) {
+              const s = Math.min(
+                1,
+                Math.min(props.editorUi.maxImageSize / Math.max(1, w)),
+                props.editorUi.maxImageSize / Math.max(1, h),
+              );
+              w *= s;
+              h *= s;
+            }
 
-      //         if (data != null) {
-      //             var elt = document.createElement('img');
-      //             elt.setAttribute('src', converter.convert(data));
-      //             elt.style.width = iw + 'px';
-      //             elt.style.height = ih + 'px';
-      //             elt.style.margin = '10px';
+            if (iw > ih) {
+              ih = Math.round((ih * ew) / iw);
+              iw = ew;
+            } else {
+              iw = Math.round((iw * eh) / ih);
+              ih = eh;
+            }
+            const outer: HTMLDivElement = document.createElement('div');
+            outer.style.height = '100%';
 
-      //             elt.style.paddingBottom = Math.floor((eh - ih) / 2) + 'px';
-      //             elt.style.paddingLeft = Math.floor((ew - iw) / 2) + 'px';
+            // TEN9: change placeholder text for the scratchpad save dailog
+            //mxUtils.write(bg, mxResources.get('dragImagesHere'));
+            mxUtils.write(bg, 'Scratchpad is empty');
+            outer.appendChild(bg);
 
-      //             wrapper.appendChild(elt);
-      //         } else if (img != null) {
-      //             var cells = editorUi.stringToCells(Graph.decompress(img.xml));
+            wrapper.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
+            wrapper.style.position = 'relative';
 
-      //             if (cells.length > 0) {
-      //             editorUi.sidebar.createThumb(cells, ew, eh, wrapper, null, true, false);
+            mxUtils.setPrefixedStyle(wrapper.style, 'transition', 'transform .1s ease-in-out');
 
-      //             // Needs inline block on SVG for delete icon to appear on same line
-      //             wrapper.firstChild.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
-      //             wrapper.firstChild.style.cursor = '';
-      //             }
-      //         }
+            if (data != null) {
+              const elt: HTMLDivElement = document.createElement('img');
+              elt.setAttribute('src', converter.convert(data));
+              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+              elt.style.width = iw + 'px';
+              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+              elt.style.height = ih + 'px';
+              elt.style.margin = '10px';
 
-      //         var rem = document.createElement('img');
-      //         rem.setAttribute('src', Editor.closeImage);
-      //         rem.setAttribute('border', '0');
-      //         rem.setAttribute('title', mxResources.get('delete'));
-      //         rem.setAttribute('align', 'top');
-      //         rem.style.paddingTop = '4px';
-      //         rem.style.position = 'absolute';
-      //         rem.style.marginLeft = '-12px';
-      //         rem.style.zIndex = '1';
-      //         rem.style.cursor = 'pointer';
+              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+              elt.style.paddingBottom = Math.floor((eh - ih) / 2) + 'px';
+              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+              elt.style.paddingLeft = Math.floor((ew - iw) / 2) + 'px';
 
-      //         // Blocks dragging of remove icon
-      //         mxEvent.addListener(rem, 'dragstart', function (evt) {
-      //             mxEvent.consume(evt);
-      //         });
+              wrapper.appendChild(elt);
+            } else if (img != null) {
+              // eslint-disable-next-line no-undef
+              const cells: typeof mxCell = props.editorUi.stringToCells(Graph.decompress(img.xml));
 
-      //         (function (wrapperDiv, dataParam, imgParam) {
-      //             mxEvent.addListener(rem, 'click', function (evt) {
-      //             entries[dataParam] = null;
+              if (cells.length > 0) {
+                props.editorUi.sidebar.createThumb(cells, ew, eh, wrapper, null, true, false);
 
-      //             for (var i = 0; i < images.length; i++) {
-      //                 if (
-      //                 (images[i].data != null && images[i].data == dataParam) ||
-      //                 (images[i].xml != null && imgParam != null && images[i].xml == imgParam.xml)
-      //                 ) {
-      //                 images.splice(i, 1);
-      //                 break;
-      //                 }
-      //             }
+                // Needs inline block on SVG for delete icon to appear on same line
+                wrapper.firstChild.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
+                wrapper.firstChild.style.cursor = '';
+              }
+            }
 
-      //             wrapper.parentNode.removeChild(wrapperDiv);
+            const rem: HTMLImageElement = document.createElement('img');
+            rem.setAttribute('src', Editor.closeImage);
+            rem.setAttribute('border', '0');
+            rem.setAttribute('title', mxResources.get('delete'));
+            rem.setAttribute('align', 'top');
+            rem.style.paddingTop = '4px';
+            rem.style.position = 'absolute';
+            rem.style.marginLeft = '-12px';
+            rem.style.zIndex = '1';
+            rem.style.cursor = 'pointer';
 
-      //             if (images.length == 0) {
-      //                 div.style.backgroundImage = "url('" + IMAGE_PATH + "/droptarget.png')";
-      //                 bg.style.display = '';
-      //             }
+            wrapper.appendChild(rem);
+            wrapper.style.marginBottom = '30px';
 
-      //             mxEvent.consume(evt);
-      //             });
-      //             // Workaround for accidental select all
-      //             mxEvent.addListener(rem, 'dblclick', function (evt) {
-      //             mxEvent.consume(evt);
-      //             });
-      //         })(wrapper, data, img);
+            ((wrapperDiv, dataParam, imgParam) => {
+              mxEvent.addListener(rem, 'click', () => {
+                entries[dataParam] = null;
 
-      //         wrapper.appendChild(rem);
-      //         wrapper.style.marginBottom = '30px';
+                for (let i = 0; i < images.length; i++) {
+                  if (
+                    (images[i].data != null && images[i].data == dataParam) ||
+                    (images[i].xml != null && imgParam != null && images[i].xml == imgParam.xml)
+                  ) {
+                    images.splice(i, 1);
+                    break;
+                  }
+                }
 
-      //         var label = document.createElement('div');
-      //         label.style.position = 'absolute';
-      //         label.style.boxSizing = 'border-box';
-      //         label.style.bottom = '-18px';
-      //         label.style.left = '10px';
-      //         label.style.right = '10px';
-      //         label.style.backgroundColor = uiTheme == 'dark' ? '#2a2a2a' : '#ffffff';
-      //         label.style.overflow = 'hidden';
-      //         label.style.textAlign = 'center';
+                wrapper.parentNode.removeChild(wrapperDiv);
 
-      //         var entry = null;
+                if (images.length == 0) {
+                  div.style.backgroundImage = "url('" + IMAGE_PATH + "/droptarget.png')";
+                  bg.style.display = '';
+                }
+              });
+            })(wrapper, data, img);
+          }
+          //else if (!errorShowed) {
+          // //errorShowed = true;
+          // props.editorUi.handleError({ message: mxResources.get('fileExists') });
+          // }
+        } else {
+          let done = false;
 
-      //         if (data != null) {
-      //             entry = { data: data, w: w, h: h, title: title };
+          try {
+            const doc: HTMLDocument = mxUtils.parseXml(data);
 
-      //             if (aspect != null) {
-      //             entry.aspect = aspect;
-      //             }
+            if (doc.documentElement.nodeName == 'mxlibrary') {
+              const temp = JSON.parse(mxUtils.getTextContent(doc.documentElement));
 
-      //             entries[data] = elt;
-      //             images.push(entry);
-      //         } else if (img != null) {
-      //             img.aspect = 'fixed';
-      //             images.push(img);
-      //             entry = img;
-      //         }
+              if (temp != null && temp.length > 0) {
+                for (let i = 0; i < temp.length; i++) {
+                  if (temp[i].xml != null) {
+                    addButton(null, null, 0, 0, temp[i]);
+                  } else {
+                    addButton(temp[i].data, null, temp[i].w, temp[i].h, null);
+                  }
+                }
+              }
 
-      //         wrapper.appendChild(label);
+              done = true;
+            } else if (doc.documentElement.nodeName == 'mxfile') {
+              const pages = doc.documentElement.getElementsByTagName('diagram');
 
-      //         // Blocks dragging of label
+              for (let i = 0; i < pages.length; i++) {
+                const temp = mxUtils.getTextContent(pages[i]);
+                const cells = props.editorUi.stringToCells(Graph.decompress(temp));
+                props.editorUi.editor.graph.getBoundingBoxFromGeometry(cells);
+                // let size = props.editorUi.editor.graph.getBoundingBoxFromGeometry(cells);
+                //addButton(null, null, 0, 0, 0, 0, { xml: temp, w: size.width, h: size.height });
+              }
 
-      //         mxEvent.addListener(label, 'click', startEditing);
-      //         mxEvent.addListener(wrapper, 'dblclick', startEditing);
+              done = true;
+            }
+          } catch (e) {
+            // ignore
+          }
 
-      //         div.appendChild(wrapper);
+          if (!done) {
+            props.editorUi.spinner.stop();
+            props.editorUi.handleError({ message: mxResources.get('errorLoadingFile') });
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
 
-      //         } else if (!errorShowed) {
-      //         errorShowed = true;
-      //         editorUi.handleError({ message: mxResources.get('fileExists') });
-      //         }
-      //     } else {
-      //         var done = false;
-
-      //         try {
-      //         var doc = mxUtils.parseXml(data);
-
-      //         if (doc.documentElement.nodeName == 'mxlibrary') {
-      //             var temp = JSON.parse(mxUtils.getTextContent(doc.documentElement));
-
-      //             if (temp != null && temp.length > 0) {
-      //             for (var i = 0; i < temp.length; i++) {
-      //                 if (temp[i].xml != null) {
-      //                 addButton(null, null, 0, 0, 0, 0, temp[i]);
-      //                 } else {
-      //                 addButton(
-      //                     temp[i].data,
-      //                     null,
-      //                     0,
-      //                     0,
-      //                     temp[i].w,
-      //                     temp[i].h,
-      //                     null,
-      //                     'fixed',
-      //                     temp[i].title,
-      //                 );
-      //                 }
-      //             }
-      //             }
-
-      //             done = true;
-      //         } else if (doc.documentElement.nodeName == 'mxfile') {
-      //             var pages = doc.documentElement.getElementsByTagName('diagram');
-
-      //             for (var i = 0; i < pages.length; i++) {
-      //             var temp = mxUtils.getTextContent(pages[i]);
-      //             var cells = editorUi.stringToCells(Graph.decompress(temp));
-      //             var size = editorUi.editor.graph.getBoundingBoxFromGeometry(cells);
-      //             addButton(null, null, 0, 0, 0, 0, { xml: temp, w: size.width, h: size.height });
-      //             }
-
-      //             done = true;
-      //         }
-      //         } catch (e) {
-      //         // ignore
-      //         }
-
-      //         if (!done) {
-      //         editorUi.spinner.stop();
-      //         editorUi.handleError({ message: mxResources.get('errorLoadingFile') });
-      //         }
-      //     }
-      //     } catch (e) {
-      //     // ignore
-      //     }
-
-      //     return null;
+      return wrapper;
     }
 
     function scratchpadModal(_sender: typeof mxEventSource, event: ScratchpadData) {
@@ -297,7 +274,19 @@ export default defineComponent({
       if (images != null) {
         for (let i = 0; i < images.length; i++) {
           const img: imageData = images[i];
-          addButton(img.data, null, 0, 0, img.w, img.h, img, img.aspect, img.title);
+          shapes.value.push(img);
+          const temp: HTMLDivElement = addButton(img.data, null, img.w, img.h, img);
+          const tmpNode = document.createElement('div');
+          tmpNode.appendChild(temp.cloneNode(true));
+          let str = tmpNode.innerHTML;
+          let label;
+          if (img.title) {
+            label = `<div><input type="text" value="${img.title}" class="w-90" disabled id="txt${i}"></div>`;
+          } else {
+            label = `<div><input type="text" placeholder="Untitled" class="w-90" disabled id="txt${i}"></div>`;
+          }
+          str = str + label;
+          shapesHtml.value.push(str);
         }
       }
     }
@@ -313,8 +302,10 @@ export default defineComponent({
     return {
       addButton,
       closeModal,
+      enableText,
       pageScaleValue,
       setPageScale,
+      shapesHtml,
       show,
     };
   },
@@ -327,12 +318,16 @@ b-modal#modal(
   no-close-on-backdrop='',
   ref='scratchpad',
   no-fade,
+  size='lg',
   @hide='closeModal'
 )
   template(v-slot:modal-header)
     h4 Scratchpad Data
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
+  .row
+    .col-sm-2(v-for='(div, index) in shapesHtml', v-html='div')
+    br
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel
