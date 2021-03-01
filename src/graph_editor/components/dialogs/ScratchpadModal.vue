@@ -19,7 +19,7 @@ import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-a
 import {
   mxCell,
   mxClient,
-  mxEvent,
+  mxEventObject,
   mxEventSource,
   mxResources,
   mxUtils,
@@ -58,22 +58,30 @@ export default defineComponent({
 
     const pageScaleValue = ref(null);
 
-    const scaleValue = 100;
-
     const shapes = ref([]);
 
     const shapesHtml = ref([]);
 
-    const IMAGE_PATH = '../../../../public/images';
+    const textBoxIndex = ref([]);
 
     function closeModal() {
       show.value = false;
+      shapes.value = [];
+      shapesHtml.value = [];
+      textBoxIndex.value = [];
     }
 
-    function setPageScale() {
-      if (pageScaleValue.value != 0 && pageScaleValue.value != '') {
-        props.editorUi.setPageScale(pageScaleValue.value / scaleValue);
+    function saveScratchpad() {
+      for (let i = 0; i < textBoxIndex.value.length; i++) {
+        const textBox: HTMLInputElement = document.getElementById(`txt${i}`) as HTMLInputElement;
+        if (shapes.value[i].title != undefined) {
+          shapes.value[i].title = textBox.value;
+        } else {
+          shapes.value[i].title = textBox.value;
+        }
       }
+      const xml = props.editorUi.createLibraryDataFromImages(shapes.value);
+      props.editorUi.fireEvent(new mxEventObject('scratchpadDataChanged', 'detail', xml));
       closeModal();
     }
 
@@ -81,7 +89,7 @@ export default defineComponent({
       alert(index);
     }
 
-    function addButton(data: string, mimeType: string, w: any, h: any, img: any) {
+    function addButton(data: string, mimeType: string, w: any, h: any, img: any, index: number) {
       // // Ignores duplicates
       try {
         props.editorUi.spinner.stop();
@@ -89,7 +97,6 @@ export default defineComponent({
         const entries = {};
         const ew = 100;
         const eh = 100;
-        const images: any[] = [];
         const div: HTMLDivElement = document.createElement('div');
         // TEN9: remove the top border of the box
         // div.style.borderWidth = '1px 0px 1px 0px';
@@ -125,7 +132,9 @@ export default defineComponent({
                 Math.min(props.editorUi.maxImageSize / Math.max(1, w)),
                 props.editorUi.maxImageSize / Math.max(1, h),
               );
+              // eslint-disable-next-line no-param-reassign
               w *= s;
+              // eslint-disable-next-line no-param-reassign
               h *= s;
             }
 
@@ -187,32 +196,19 @@ export default defineComponent({
             rem.style.marginLeft = '-12px';
             rem.style.zIndex = '1';
             rem.style.cursor = 'pointer';
+            rem.className = 'remove';
+            rem.setAttribute('data-index', index.toString());
+            // eslint-disable-next-line no-use-before-define
+            rem.addEventListener(
+              'click',
+              (evt: MouseEvent) => {
+                console.log(evt);
+              },
+              true,
+            );
 
             wrapper.appendChild(rem);
             wrapper.style.marginBottom = '30px';
-
-            ((wrapperDiv, dataParam, imgParam) => {
-              mxEvent.addListener(rem, 'click', () => {
-                entries[dataParam] = null;
-
-                for (let i = 0; i < images.length; i++) {
-                  if (
-                    (images[i].data != null && images[i].data == dataParam) ||
-                    (images[i].xml != null && imgParam != null && images[i].xml == imgParam.xml)
-                  ) {
-                    images.splice(i, 1);
-                    break;
-                  }
-                }
-
-                wrapper.parentNode.removeChild(wrapperDiv);
-
-                if (images.length == 0) {
-                  div.style.backgroundImage = "url('" + IMAGE_PATH + "/droptarget.png')";
-                  bg.style.display = '';
-                }
-              });
-            })(wrapper, data, img);
           }
           //else if (!errorShowed) {
           // //errorShowed = true;
@@ -230,9 +226,9 @@ export default defineComponent({
               if (temp != null && temp.length > 0) {
                 for (let i = 0; i < temp.length; i++) {
                   if (temp[i].xml != null) {
-                    addButton(null, null, 0, 0, temp[i]);
+                    addButton(null, null, 0, 0, temp[i], i);
                   } else {
-                    addButton(temp[i].data, null, temp[i].w, temp[i].h, null);
+                    addButton(temp[i].data, null, temp[i].w, temp[i].h, null, i);
                   }
                 }
               }
@@ -275,20 +271,26 @@ export default defineComponent({
         for (let i = 0; i < images.length; i++) {
           const img: imageData = images[i];
           shapes.value.push(img);
-          const temp: HTMLDivElement = addButton(img.data, null, img.w, img.h, img);
+          const index = i;
+          const temp: HTMLDivElement = addButton(img.data, null, img.w, img.h, img, index);
           const tmpNode = document.createElement('div');
           tmpNode.appendChild(temp.cloneNode(true));
           let str = tmpNode.innerHTML;
           let label;
           if (img.title) {
-            label = `<div><input type="text" value="${img.title}" class="w-90" disabled id="txt${i}"></div>`;
+            label = `<div><input type="text" value="${img.title}" class="w-90" id="txt${i}"></div>`;
           } else {
-            label = `<div><input type="text" placeholder="Untitled" class="w-90" disabled id="txt${i}"></div>`;
+            label = `<div><input type="text" placeholder="Untitled" class="w-90" id="txt${i}"></div>`;
           }
           str = str + label;
           shapesHtml.value.push(str);
+          textBoxIndex.value.push(i);
         }
       }
+    }
+
+    function myFunction(element: number) {
+      console.log(element);
     }
 
     onMounted(() => {
@@ -303,10 +305,12 @@ export default defineComponent({
       addButton,
       closeModal,
       enableText,
+      myFunction,
       pageScaleValue,
-      setPageScale,
+      saveScratchpad,
       shapesHtml,
       show,
+      textBoxIndex,
     };
   },
 });
@@ -331,6 +335,6 @@ b-modal#modal(
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setPageScale')
+    button.btn.btn-primary(type='button', @click='saveScratchpad')
       | Apply
 </template>

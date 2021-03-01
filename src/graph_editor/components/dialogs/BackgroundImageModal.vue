@@ -16,7 +16,14 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-const { mxImage } = require('../../lib/jgraph/mxClient');
+const { mxImage, mxResources, mxUtils } = require('../../lib/jgraph/mxClient');
+const { ChangePageSetup } = require('../../lib/jgraph/EditorUi');
+
+interface ImageData {
+  height: number;
+  width: number;
+}
+
 export default defineComponent({
   name: 'BackgroundImageModal',
   props: {
@@ -31,9 +38,9 @@ export default defineComponent({
 
     const imageUrl = ref('');
 
-    const imageHeight = ref<number>(0);
+    const imageHeight = ref(null);
 
-    const imageWidth = ref<number>(0);
+    const imageWidth = ref(null);
 
     function close() {
       show.value = false;
@@ -49,14 +56,78 @@ export default defineComponent({
       imageWidth.value = 0;
     }
 
-    function done(url: string) {
-      const applyFn = props.editorUi.editor.graph.backgroundImage;
-      applyFn(
-        url != '' && url != null
-          ? new mxImage(imageUrl.value, imageWidth.value, imageHeight.value)
-          : null,
-        url == null,
+    function loadUrl() {
+      props.editorUi.loadImage(
+        imageUrl.value,
+        (img: ImageData) => {
+          imageWidth.value = img.width;
+          imageHeight.value = img.height;
+        },
+        () => {
+          alert('File not found');
+        },
       );
+    }
+
+    function urlChanged(evt: EventHandlerNonNull, execute: FunctionStringCallback) {
+      // Skips blur event if called from apply button
+      if (evt == null) {
+        imageUrl.value = mxUtils.trim(imageUrl.value);
+
+        if (imageUrl.value != '' && !props.editorUi.isOffline()) {
+          props.editorUi.loadImage(
+            imageUrl.value,
+            (img: ImageData) => {
+              imageWidth.value = img.width;
+              imageHeight.value = img.height;
+
+              if (execute != null) {
+                execute(imageUrl.value);
+              }
+            },
+            () => {
+              props.editorUi.showError(
+                mxResources.get('error'),
+                mxResources.get('fileNotFound'),
+                mxResources.get('ok'),
+              );
+              imageWidth.value = '';
+              imageHeight.value = '';
+
+              if (execute != null) {
+                execute(null);
+              }
+            },
+          );
+        } else {
+          imageWidth.value = '';
+          imageHeight.value = '';
+
+          if (execute != null) {
+            execute('');
+          }
+        }
+      }
+    }
+
+    function done() {
+      const applyFn = mxUtils.bind(props.editorUi, (image: ImageData, failed: string) => {
+        if (!failed) {
+          const change = new ChangePageSetup(props.editorUi, null, image);
+          change.ignoreColor = true;
+
+          props.editorUi.editor.graph.model.execute(change);
+        }
+      });
+
+      urlChanged(null, (newurl: string) => {
+        applyFn(
+          newurl != '' && newurl != null
+            ? new mxImage(imageUrl.value, imageWidth.value, imageHeight.value)
+            : null,
+          newurl == null,
+        );
+      });
     }
     function apply() {
       props.editorUi.loadImage(
@@ -65,7 +136,7 @@ export default defineComponent({
           imageWidth.value = img.width;
           imageHeight.value = img.height;
           if (done != null) {
-            done(imageUrl.value);
+            done();
           }
         },
         () => {
@@ -79,7 +150,7 @@ export default defineComponent({
           imageHeight.value = 0;
 
           if (done != null) {
-            done(null);
+            done();
           }
         },
       );
@@ -99,6 +170,7 @@ export default defineComponent({
       imageHeight,
       imageUrl,
       imageWidth,
+      loadUrl,
       openBackgroundImage,
       reset,
       show,
@@ -111,12 +183,12 @@ export default defineComponent({
 b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close', no-fade)
   template(v-slot:modal-header)
     h4 Background Image
-    i.fa.fa-times(aria-hidden='true', @click='closeModal')
+    i.fa.fa-times(aria-hidden='true', @click='close')
   .image-container
     .row
       .col-md-12.pl-5
         label Image URL:
-        input.image-url(type='text', v-model='imageUrl')
+        input.image-url(type='text', v-model='imageUrl', @change='loadUrl')
     .row.image-cordinate
       .col
         label.text-box-label Width:

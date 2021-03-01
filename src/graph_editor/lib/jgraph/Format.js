@@ -7364,10 +7364,10 @@ DiagramFormatPanel.prototype.addView = function (div) {
 
     if (this.showBackgroundImageOption) {
       var btn = mxUtils.button(mxResources.get('image'), function (evt) {
-        // TEN9: add custom dialog for background image
-        ui.showBackgroundImageDialog(null, ui.editor.graph.backgroundImage);
-        mxEvent.consume(evt);
-        //ui.fireEvent(new mxEventObject('openBackgroundImage'));
+        // TEN9: add custom modal for background image
+        // ui.showBackgroundImageDialog(null, ui.editor.graph.backgroundImage);
+        // mxEvent.consume(evt);
+        ui.fireEvent(new mxEventObject('openBackgroundImage'));
       });
 
       btn.classList.add('background-panel__button', 'geColorBtn');
