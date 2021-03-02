@@ -23,6 +23,7 @@ import EditDiagramModal from './dialogs/EditDiagramModal.vue';
 import EditStyleModal from './dialogs/EditStyleModal.vue';
 import InsertImageModal from './dialogs/InsertImageModal.vue';
 import InsertLinkModal from './dialogs/InserLinkModal.vue';
+import MoreShapesModal from './dialogs/MoreShapesModal.vue';
 import LayerRenameModal from './dialogs/RenameLayerModal.vue';
 import PageRenameModal from './dialogs/PageRenameModal.vue';
 import PageScaleModal from './dialogs/PageScaleModal.vue';
@@ -42,6 +43,7 @@ export default defineComponent({
     InsertImageModal,
     InsertLinkModal,
     LayerRenameModal,
+    MoreShapesModal,
     PageRenameModal,
     PageScaleModal,
     PrintModal,
@@ -66,6 +68,7 @@ export default defineComponent({
   edit-style-modal(:editorUi='editorUi')
   insert-image-modal(:editorUi='editorUi')
   insert-link-modal(:editorUi='editorUi')
+  more-shapes-modal(:editorUi='editorUi')
   layer-rename-modal(:editorUi='editorUi')
   page-rename-modal(:editorUi='editorUi')
   page-scale-modal(:editorUi='editorUi')

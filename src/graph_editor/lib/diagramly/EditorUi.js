@@ -4296,8 +4296,10 @@ var SelectedFile;
       elt2,
       'click',
       mxUtils.bind(this, function (evt) {
-        this.actions.get('shapes').funct();
-        mxEvent.consume(evt);
+        // TEN9: add custom modal for add shapes
+        // this.actions.get('shapes').funct();
+        // mxEvent.consume(evt);
+        this.fireEvent(new mxEventObject('moreShapes'));
       }),
     );
 

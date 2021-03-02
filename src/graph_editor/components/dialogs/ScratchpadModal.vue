@@ -43,6 +43,7 @@ interface imageData {
   h: number;
   aspect: string;
   title: string;
+  xml?: string;
 }
 
 export default defineComponent({
@@ -89,7 +90,15 @@ export default defineComponent({
       alert(index);
     }
 
-    function addButton(data: string, mimeType: string, w: any, h: any, img: any, index: number) {
+    // eslint-disable-next-line consistent-return
+    function addButton(
+      data: string,
+      mimeType: string,
+      w: any,
+      h: any,
+      img: imageData,
+      index: number,
+    ) {
       // // Ignores duplicates
       try {
         props.editorUi.spinner.stop();
@@ -117,7 +126,7 @@ export default defineComponent({
         bg.style.fontSize = '22px';
         bg.style.color = '#a0c3ff';
 
-        var wrapper: any = document.createElement('div');
+        const wrapper: any = document.createElement('div');
         if (mimeType == null || mimeType.startsWith('image/')) {
           if ((data == null && img != null) || entries[data] == null) {
             div.style.backgroundImage = '';
@@ -198,7 +207,7 @@ export default defineComponent({
             rem.style.cursor = 'pointer';
             rem.className = 'remove';
             rem.setAttribute('data-index', index.toString());
-            // eslint-disable-next-line no-use-before-define
+            // rem.onclick = removeShape(index);
             rem.addEventListener(
               'click',
               (evt: MouseEvent) => {
@@ -256,11 +265,10 @@ export default defineComponent({
             props.editorUi.handleError({ message: mxResources.get('errorLoadingFile') });
           }
         }
+        return wrapper;
       } catch (e) {
         // ignore
       }
-
-      return wrapper;
     }
 
     function scratchpadModal(_sender: typeof mxEventSource, event: ScratchpadData) {
@@ -289,8 +297,8 @@ export default defineComponent({
       }
     }
 
-    function myFunction(element: number) {
-      console.log(element);
+    function removeShape(index: number) {
+      console.log(index);
     }
 
     onMounted(() => {
@@ -305,8 +313,8 @@ export default defineComponent({
       addButton,
       closeModal,
       enableText,
-      myFunction,
       pageScaleValue,
+      removeShape,
       saveScratchpad,
       shapesHtml,
       show,
@@ -329,8 +337,8 @@ b-modal#modal(
     h4 Scratchpad Data
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
-  .row
-    .col-sm-2(v-for='(div, index) in shapesHtml', v-html='div')
+  .row.shape-modal-content
+    .col-sm-4.col-md-2.mt-4(v-for='(div, index) in shapesHtml', v-html='div')
     br
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')

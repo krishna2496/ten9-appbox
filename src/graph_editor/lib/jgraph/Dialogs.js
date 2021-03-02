@@ -2788,7 +2788,6 @@ var MoreShapesDialog = function (editorUi, expanded, entries) {
           libs.push(lib);
         }
       }
-
       editorUi.sidebar.showEntries(libs.join(';'), cb.checked, true);
       // TEN9: fire shape-libraries-changed event
       editorUi.fireEvent(new mxEventObject('shape-libraries-changed'));
