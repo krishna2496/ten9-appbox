@@ -1269,8 +1269,8 @@ var ErrorDialog = function (
  */
 var PrintDialog = function (editorUi, title) {
   // TEN9: add custom modal for print
-  //editorUi.fireEvent(new mxEventObject('openPrintModal'));
-  this.create(editorUi, title);
+  //this.create(editorUi, title);
+  editorUi.fireEvent(new mxEventObject('openPrintModal'));
 };
 
 /**
@@ -1380,6 +1380,7 @@ PrintDialog.prototype.create = function (editorUi) {
 
   // Overall scale for print-out to account for print borders in dialogs etc
   function preview(print) {
+    debugger;
     var autoOrigin = onePageCheckBox.checked || pageCountCheckBox.checked;
     var printScale = parseInt(pageScaleInput.value) / 100;
 

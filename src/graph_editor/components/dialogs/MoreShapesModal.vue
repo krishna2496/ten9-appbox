@@ -36,6 +36,8 @@ export default defineComponent({
 
     const libs = ref([]);
 
+    const defaultSelected = ref('');
+
     function closeModal() {
       show.value = false;
     }
@@ -74,8 +76,26 @@ export default defineComponent({
       libs.value = shapes.split(';');
     }
 
-    function showImage(url: string) {
+    function selectShape(ind: number, index: number) {
+      if (defaultSelected.value !== '') {
+        const previousSelected: HTMLLabelElement = document.getElementById(
+          `title${defaultSelected.value}`,
+        ) as HTMLLabelElement;
+        previousSelected.className = 'heading';
+      }
+
+      const label: HTMLLabelElement = document.getElementById(
+        `title${ind}${index}`,
+      ) as HTMLLabelElement;
+
+      label.className = 'heading bg-light-blue';
+
+      defaultSelected.value = ind.toString() + '' + index.toString();
+    }
+
+    function showImage(url: string, ind: number, index: number) {
       imageUrl.value = url;
+      selectShape(ind, index);
     }
 
     onMounted(() => {
@@ -89,12 +109,14 @@ export default defineComponent({
     return {
       addRemoveShape,
       closeModal,
+      defaultSelected,
       entries,
       imageUrl,
       isShapeExists,
       libs,
       loadShapes,
       pageScaleValue,
+      selectShape,
       showImage,
       show,
     };
@@ -117,18 +139,19 @@ b-modal#modal(
   .mw-100
   .row.ml-2.shapes
     .col-md-4.shape-modal-content.right-border
-      template(v-for='(entry, index) in entries')
+      template(v-for='(entry, ind) in entries')
         label.row.bg-lightgray {{ entry.title }}
-        template(v-for='shape in entry.entries')
+        template(v-for='(shape, index) in entry.entries')
           .row
-            input(
-              type='checkbox',
-              @change='addRemoveShape(shape.id)',
-              :checked='isShapeExists(shape.id)'
-            )
-            label.ml-2(@click='showImage(shape.image)') {{ shape.title }}
+            .heading(@click='showImage(shape.image, ind, index)', :id='`title${ind}${index}`')
+              input(
+                type='checkbox',
+                @change='addRemoveShape(shape.id)',
+                :checked='isShapeExists(shape.id)'
+              )
+              label.ml-2.mb-0 {{ shape.title }}
     .col-md-8.shape-modal-content
-      img(:src='imageUrl')
+      img.full-width(:src='imageUrl')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

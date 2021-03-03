@@ -4286,20 +4286,20 @@ EditorUi.prototype.showDialog = function (
   }
 
   // TEN9: hide dialog for custom print modal
-  this.dialog = new Dialog(
-    this,
-    elt,
-    w,
-    h,
-    modal,
-    closable,
-    onClose,
-    noScroll,
-    transparent,
-    onResize,
-    ignoreBgClick,
-  );
-  this.dialogs.push(this.dialog);
+  // this.dialog = new Dialog(
+  //   this,
+  //   elt,
+  //   w,
+  //   h,
+  //   modal,
+  //   closable,
+  //   onClose,
+  //   noScroll,
+  //   transparent,
+  //   onResize,
+  //   ignoreBgClick,
+  // );
+  // this.dialogs.push(this.dialog);
 };
 
 /**
