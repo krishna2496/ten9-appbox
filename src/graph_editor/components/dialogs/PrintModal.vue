@@ -16,7 +16,16 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-const { mxConstants, mxRectangle, mxUtils } = require('../../lib/jgraph/mxClient.js');
+const {
+  mxConstants,
+  mxClient,
+  mxPoint,
+  mxImage,
+  mxRectangle,
+  mxResources,
+  mxUtils,
+} = require('../../lib/jgraph/mxClient.js');
+const { Graph } = require('../../lib/jgraph/Graph.js');
 const { PrintDialog } = require('../../lib/jgraph/Editor.js');
 import PageSize from '../../lib/PageSize.js';
 
@@ -47,61 +56,62 @@ export default defineComponent({
 
     const pageScaleInput = ref('100 %');
 
+    const isMultiplePages = ref(false);
+
+    const pagesFromInput = ref(1);
+
+    const pagesToInput = ref(1);
+
+    const pageType = ref('page');
+
     function closeModal() {
       show.value = false;
       pageFormat.value = null;
     }
 
-    // Overall scale for print-out to account for print borders in dialogs etc
-    function preview(print: boolean) {
-      let autoOrigin = false;
-      // if (printZoom.value == 'fit') {
-      //   autoOrigin = true;
-      // }
+    function printGraph(thisGraph: any, pv: any, forcePageBreaks: any) {
+      // Workaround for CSS transforms affecting the print output
+      // is to disable during print output and restore after
+      const prev = thisGraph.useCssTransforms;
+      const prevTranslate = thisGraph.currentTranslate;
+      const prevScale = thisGraph.currentScale;
+      const prevViewTranslate = thisGraph.view.translate;
+      const prevViewScale = thisGraph.view.scale;
 
-      let printScale = parseInt(pageScaleInput.value) / scaleValue;
-
-      if (isNaN(printScale)) {
-        printScale = 1;
-        pageScaleValue.value = '100%';
+      if (thisGraph.useCssTransforms) {
+        thisGraph.useCssTransforms = false;
+        thisGraph.currentTranslate = new mxPoint(0, 0);
+        thisGraph.currentScale = 1;
+        thisGraph.view.translate = new mxPoint(0, 0);
+        thisGraph.view.scale = 1;
       }
 
-      // Workaround to match available paper size in actual print output
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      printScale *= 0.75;
-      const gb = props.editorUi.editor.graph.getGraphBounds();
-      let scale = 1 / props.editorUi.editor.graph.pageScale;
-      let pf = pageFormat.value || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
+      // Negative coordinates are cropped or shifted if page visible
+      const gb = thisGraph.getGraphBounds();
+      const border = 0;
+      let x0 = 0;
+      let y0 = 0;
 
+      let pf = pageFormat.value || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
+      let scale = 1 / thisGraph.pageScale;
+      let autoOrigin = false;
+      let printScale = parseInt(pageScaleInput.value) / scaleValue;
       if (autoOrigin) {
         const h = parseInt(sheetsAcrossInput.value);
         const v = parseInt(sheetsDownInput.value);
 
         scale = Math.min(
-          (pf.height * v) / (gb.height / props.editorUi.editor.graph.view.scale),
-          (pf.width * h) / (gb.width / props.editorUi.editor.graph.view.scale),
+          (pf.height * v) / (gb.height / thisGraph.view.scale),
+          (pf.width * h) / (gb.width / thisGraph.view.scale),
         );
       } else {
-        scale = parseInt(zoomInput.value) / (scaleValue * props.editorUi.editor.graph.pageScale);
+        scale = parseInt(zoomInput.value) / (100 * thisGraph.pageScale);
 
         if (isNaN(scale)) {
-          printScale = 1 / props.editorUi.editor.graph.pageScale;
+          printScale = 1 / thisGraph.pageScale;
           zoomInput.value = '100 %';
         }
       }
-
-      if (autoOrigin) {
-        const pageCount = parseInt(pageScaleValue.value);
-
-        if (!isNaN(pageCount)) {
-          scale = mxUtils.getScaleForPageCount(pageCount, props.editorUi.editor.graph, pf);
-        }
-      }
-
-      // Negative coordinates are cropped or shifted if page visible
-      const border = 0;
-      let x0 = 0;
-      let y0 = 0;
 
       // Applies print scale
       pf = mxRectangle.fromRectangle(pf);
@@ -110,28 +120,380 @@ export default defineComponent({
       scale *= printScale;
 
       // Starts at first visible page
-      if (!autoOrigin && props.editorUi.editor.graph.pageVisible) {
-        const layout = props.editorUi.editor.graph.getPageLayout();
+      if (!autoOrigin && thisGraph.pageVisible) {
+        const layout = thisGraph.getPageLayout();
         x0 -= layout.x * pf.width;
         y0 -= layout.y * pf.height;
       } else {
         autoOrigin = true;
       }
 
-      const printPreview = PrintDialog.createPrintPreview(
-        props.editorUi.editor.graph,
-        scale,
-        pf,
-        border,
-        x0,
-        y0,
-        autoOrigin,
-      );
-      printPreview.open();
+      if (pv == null) {
+        //debugger
+        pv = PrintDialog.createPrintPreview(thisGraph, scale, pf, border, x0, y0, autoOrigin);
+        pv.pageSelector = false;
+        pv.mathEnabled = false;
 
-      if (print) {
-        PrintDialog.printPreview(printPreview);
+        const file = props.editorUi.getCurrentFile();
+
+        if (file != null) {
+          pv.title = file.getTitle();
+        }
+
+        const { writeHead } = pv;
+
+        // Overridden to add custom fonts
+        pv.writeHead = function (doc: any) {
+          writeHead.apply(this, arguments);
+
+          // Fixes clipping for transformed math
+          if (mxClient.IS_GC || mxClient.IS_SF) {
+            doc.writeln('<style type="text/css">');
+            doc.writeln('div.MathJax_SVG_Display { position: static; }');
+            doc.writeln('</style>');
+          }
+
+          // Fixes font weight for PDF export in Chrome
+          if (mxClient.IS_GC) {
+            doc.writeln('<style type="text/css">');
+            doc.writeln('@media print {');
+            doc.writeln('span.MathJax_SVG svg { shape-rendering: crispEdges; }');
+            doc.writeln('}');
+            doc.writeln('</style>');
+          }
+
+          if (props.editorUi.editor.fontCss != null) {
+            doc.writeln('<style type="text/css">');
+            doc.writeln(props.editorUi.editor.fontCss);
+            doc.writeln('</style>');
+          }
+
+          const extFonts = thisGraph.getCustomFonts();
+
+          for (let i = 0; i < extFonts.length; i++) {
+            const fontName = extFonts[i].name;
+            const fontUrl = extFonts[i].url;
+
+            if (Graph.isCssFontUrl(fontUrl)) {
+              doc.writeln(
+                '<link rel="stylesheet" href="' +
+                  mxUtils.htmlEntities(fontUrl) +
+                  '" charset="UTF-8" type="text/css">',
+              );
+            } else {
+              doc.writeln('<style type="text/css">');
+              doc.writeln(
+                '@font-face {\n' +
+                  'font-family: "' +
+                  mxUtils.htmlEntities(fontName) +
+                  '";\n' +
+                  'src: url("' +
+                  mxUtils.htmlEntities(fontUrl) +
+                  '");\n}',
+              );
+              doc.writeln('</style>');
+            }
+          }
+        };
+
+        // if (typeof(MathJax) !== 'undefined')
+        // 	{
+        // Adds class to ignore if math is disabled
+        let printPreviewRenderPage = pv.renderPage;
+
+        pv.renderPage = function () {
+          const prev = mxClient.NO_FO;
+          mxClient.NO_FO =
+            props.editorUi.editor.graph.mathEnabled &&
+            !props.editorUi.editor.useForeignObjectForMath
+              ? true
+              : props.editorUi.editor.originalNoForeignObject;
+          const result = printPreviewRenderPage.apply(this, arguments);
+          mxClient.NO_FO = prev;
+
+          if (this.graph.mathEnabled) {
+            this.mathEnabled = this.mathEnabled || true;
+          } else {
+            result.className = 'geDisableMathJax';
+          }
+
+          return result;
+        };
+        //	}
+
+        // Switches stylesheet for print output in dark mode
+        let temp = null;
+
+        if (
+          props.editorUi.editor.graph.themes != null &&
+          props.editorUi.editor.graph.defaultThemeName == 'darkTheme'
+        ) {
+          temp = props.editorUi.editor.graph.stylesheet;
+          // eslint-disable-next-line vue/no-mutating-props
+          props.editorUi.editor.graph.stylesheet = props.editorUi.editor.graph.getDefaultStylesheet();
+          props.editorUi.editor.graph.refresh();
+        }
+
+        // Generates the print output
+        pv.open(null, null, forcePageBreaks, true);
+
+        // Restores the stylesheet
+        if (temp != null) {
+          // eslint-disable-next-line vue/no-mutating-props
+          props.editorUi.editor.graph.stylesheet = temp;
+          props.editorUi.editor.graph.refresh();
+        }
+      } else {
+        let bg = thisGraph.background;
+
+        if (bg == null || bg == '' || bg == mxConstants.NONE) {
+          bg = '#ffffff';
+        }
+
+        pv.backgroundColor = bg;
+        pv.autoOrigin = autoOrigin;
+        pv.appendGraph(thisGraph, scale, x0, y0, forcePageBreaks, true);
+
+        const extFonts = thisGraph.getCustomFonts();
+
+        if (pv.wnd != null) {
+          for (let i = 0; i < extFonts.length; i++) {
+            const fontName = extFonts[i].name;
+            const fontUrl = extFonts[i].url;
+
+            if (Graph.isCssFontUrl(fontUrl)) {
+              pv.wnd.document.writeln(
+                '<link rel="stylesheet" href="' +
+                  mxUtils.htmlEntities(fontUrl) +
+                  '" charset="UTF-8" type="text/css">',
+              );
+            } else {
+              pv.wnd.document.writeln('<style type="text/css">');
+              pv.wnd.document.writeln(
+                '@font-face {\n' +
+                  'font-family: "' +
+                  mxUtils.htmlEntities(fontName) +
+                  '";\n' +
+                  'src: url("' +
+                  mxUtils.htmlEntities(fontUrl) +
+                  '");\n}',
+              );
+              pv.wnd.document.writeln('</style>');
+            }
+          }
+        }
       }
+
+      // Restores state if css transforms are used
+      if (prev) {
+        thisGraph.useCssTransforms = prev;
+        thisGraph.currentTranslate = prevTranslate;
+        thisGraph.currentScale = prevScale;
+        thisGraph.view.translate = prevViewTranslate;
+        thisGraph.view.scale = prevViewScale;
+      }
+
+      return pv;
+    }
+
+    // Overall scale for print-out to account for print borders in dialogs etc
+    function preview(print: boolean) {
+      //debugger
+      let autoOrigin = false;
+      let ignorePages = false;
+      let currentPage = 1;
+      if (props.editorUi.pages.length > 1) {
+        if (props.editorUi.getCurrentPage() != null) {
+          for (let i = 0; i < props.editorUi.pages.length; i++) {
+            if (props.editorUi.getCurrentPage() == props.editorUi.pages[i]) {
+              currentPage = i + 1;
+              break;
+            }
+          }
+        }
+      }
+
+      let pv;
+      // if (printZoom.value == 'fit') {
+      //   autoOrigin = true;
+      // }
+
+      if (isMultiplePages.value) {
+        // pagesFromInput.value = currentPage;
+        // pagesToInput.value = currentPage;
+
+        if (pageType.value == 'page') {
+          ignorePages = true;
+        }
+
+        if (ignorePages) {
+          ignorePages = pagesFromInput.value == currentPage && pagesToInput.value == currentPage;
+        }
+
+        if (!ignorePages && props.editorUi.pages != null && props.editorUi.pages.length) {
+          let i0 = 0;
+          let imax = props.editorUi.pages.length - 1;
+
+          if (pageType.value == 'page') {
+            i0 = pagesFromInput.value - 1;
+            imax = pagesToInput.value - 1;
+          }
+          console.log('i0=', i0);
+          console.log('imax=', imax);
+          for (let i = i0; i <= imax; i++) {
+            const page = props.editorUi.pages[i];
+            let tempGraph = page == props.editorUi.currentPage ? props.editorUi.editor.graph : null;
+
+            if (tempGraph == null) {
+              tempGraph = props.editorUi.createTemporaryGraph(
+                props.editorUi.editor.graph.stylesheet,
+              ); //getStylesheet());
+
+              // Restores graph settings that are relevant for printing
+              let pageVisible = true;
+              let mathEnabled = false;
+              let bg = null;
+              let bgImage = null;
+
+              if (page.viewState == null) {
+                // Workaround to extract view state from XML node
+                // This changes the state of the page and parses
+                // the XML for the graph model even if not needed.
+                if (page.root == null) {
+                  props.editorUi.updatePageRoot(page);
+                }
+              }
+
+              if (page.viewState != null) {
+                // eslint-disable-next-line prefer-destructuring
+                pageVisible = page.viewState.pageVisible;
+                // eslint-disable-next-line prefer-destructuring
+                mathEnabled = page.viewState.mathEnabled;
+                bg = page.viewState.background;
+                bgImage = page.viewState.backgroundImage;
+                tempGraph.extFonts = page.viewState.extFonts;
+              }
+
+              tempGraph.background = bg;
+              tempGraph.backgroundImage =
+                bgImage != null ? new mxImage(bgImage.src, bgImage.width, bgImage.height) : null;
+              tempGraph.pageVisible = pageVisible;
+              tempGraph.mathEnabled = mathEnabled;
+
+              // Redirects placeholders to current page
+              const graphGetGlobalVariable = tempGraph.getGlobalVariable;
+
+              tempGraph.getGlobalVariable = function (name: string) {
+                if (name == 'page') {
+                  return page.getName();
+                } else if (name == 'pagenumber') {
+                  return i + 1;
+                } else if (name == 'pagecount') {
+                  return props.editorUi.pages != null ? props.editorUi.pages.length : 1;
+                }
+
+                return graphGetGlobalVariable.apply(this, arguments);
+              };
+
+              document.body.appendChild(tempGraph.container);
+              props.editorUi.updatePageRoot(page);
+              tempGraph.model.setRoot(page.root);
+            }
+
+            pv = printGraph(tempGraph, pv, i != imax);
+
+            if (tempGraph != props.editorUi.editor.graph) {
+              tempGraph.container.parentNode.removeChild(tempGraph.container);
+            }
+          }
+        } else {
+          pv = printGraph(props.editorUi.editor.graph, null, false);
+        }
+
+        if (pv == null) {
+          props.editorUi.handleError({ message: mxResources.get('errorUpdatingPreview') });
+        } else {
+          pv.open();
+          if (print) {
+            PrintDialog.printPreview(pv);
+          }
+        }
+      } else {
+        let printScale = parseInt(pageScaleInput.value) / scaleValue;
+
+        if (isNaN(printScale)) {
+          printScale = 1;
+          pageScaleValue.value = '100%';
+        }
+
+        // Workaround to match available paper size in actual print output
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        printScale *= 0.75;
+        const gb = props.editorUi.editor.graph.getGraphBounds();
+        let scale = 1 / props.editorUi.editor.graph.pageScale;
+        let pf = pageFormat.value || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
+
+        if (autoOrigin) {
+          const h = parseInt(sheetsAcrossInput.value);
+          const v = parseInt(sheetsDownInput.value);
+
+          scale = Math.min(
+            (pf.height * v) / (gb.height / props.editorUi.editor.graph.view.scale),
+            (pf.width * h) / (gb.width / props.editorUi.editor.graph.view.scale),
+          );
+        } else {
+          scale = parseInt(zoomInput.value) / (scaleValue * props.editorUi.editor.graph.pageScale);
+
+          if (isNaN(scale)) {
+            printScale = 1 / props.editorUi.editor.graph.pageScale;
+            zoomInput.value = '100 %';
+          }
+        }
+
+        if (autoOrigin) {
+          const pageCount = parseInt(pageScaleValue.value);
+
+          if (!isNaN(pageCount)) {
+            scale = mxUtils.getScaleForPageCount(pageCount, props.editorUi.editor.graph, pf);
+          }
+        }
+
+        // Negative coordinates are cropped or shifted if page visible
+        const border = 0;
+        let x0 = 0;
+        let y0 = 0;
+
+        // Applies print scale
+        pf = mxRectangle.fromRectangle(pf);
+        pf.width = Math.ceil(pf.width * printScale);
+        pf.height = Math.ceil(pf.height * printScale);
+        scale *= printScale;
+
+        // Starts at first visible page
+        if (!autoOrigin && props.editorUi.editor.graph.pageVisible) {
+          const layout = props.editorUi.editor.graph.getPageLayout();
+          x0 -= layout.x * pf.width;
+          y0 -= layout.y * pf.height;
+        } else {
+          autoOrigin = true;
+        }
+
+        const printPreview = PrintDialog.createPrintPreview(
+          props.editorUi.editor.graph,
+          scale,
+          pf,
+          border,
+          x0,
+          y0,
+          autoOrigin,
+        );
+        printPreview.open();
+
+        if (print) {
+          PrintDialog.printPreview(printPreview);
+        }
+      }
+
       closeModal();
     }
 
@@ -142,6 +504,7 @@ export default defineComponent({
     function openPrintModal() {
       show.value = true;
       pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
+      isMultiplePages.value = props.editorUi.pages.length > 1 ? true : false;
     }
 
     onMounted(() => {
@@ -154,10 +517,14 @@ export default defineComponent({
 
     return {
       closeModal,
+      isMultiplePages,
       pageFormat,
+      pagesFromInput,
       pageScaleInput,
       pageScaleValue,
       PageSize,
+      pageType,
+      pagesToInput,
       preview,
       printZoom,
       setPageFormat,
@@ -176,7 +543,18 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     h4 Print
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
-  .row.ml-3.mb-3
+    .pages(v-show='isMultiplePages')
+      .row.ml-3.mb-3
+        input(type='radio', name='page', value='all_page', v-model='pageType')
+        label.ml-2 Print All Pages
+      .row.ml-3.mb-3
+        input(type='radio', name='page', value='page', v-model='pageType')
+        label.ml-2 Pages:
+        input.ml-2.w-25(type='text', v-model='pagesFromInput')
+        label.ml-2 to
+        input.ml-2.w-25(type='text', v-model='pagesToInput')
+      .row.bottom-border
+  .row.ml-3.mb-3.mt-4
     input(type='radio', name='printZoom', value='adjust', v-model='printZoom')
     label.ml-2 Adjust to
     input.ml-2.txt-input(type='text', v-model='zoomInput')
@@ -190,8 +568,7 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     input.ml-4.txt-input(type='text', v-model='sheetsDownInput')
     label.ml-2 sheet(s) down
   .row.bottom-border
-    hr
-  .row.ml-3.mb-3
+  .row.ml-3.mb-3.mt-3
     h5 Paper Size
   .row.ml-3.mb-3
     select.form-control.w-90(v-model='pageFormat')
