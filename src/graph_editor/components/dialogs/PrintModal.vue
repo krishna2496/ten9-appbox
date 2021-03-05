@@ -19,8 +19,10 @@ import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-a
 const {
   mxConstants,
   mxClient,
-  mxPoint,
+  mxGraph,
   mxImage,
+  mxPoint,
+  mxPrintPreview,
   mxRectangle,
   mxResources,
   mxUtils,
@@ -73,7 +75,29 @@ export default defineComponent({
       pageFormat.value = mxConstants.PAGE_FORMAT_A4_PORTRAIT;
     }
 
-    function printGraph(thisGraph: any, pv: any, forcePageBreaks: any) {
+    function addFontToDoc(doc: HTMLDocument, fontName: string, fontUrl: string) {
+      if (Graph.isCssFontUrl(fontUrl)) {
+        doc.writeln(
+          `<link rel="stylesheet" href="${mxUtils.htmlEntities(
+            fontUrl,
+          )}" charset="UTF-8" type="text/css">'`,
+        );
+      } else {
+        doc.writeln('<style type="text/css">');
+        doc.writeln(
+          `@font-face {\nfont-family: "${mxUtils.htmlEntities(
+            fontName,
+          )}";\nsrc: url("${mxUtils.htmlEntities(fontUrl)}");\n}`,
+        );
+        doc.writeln('</style>');
+      }
+    }
+
+    function printGraph(
+      thisGraph: typeof mxGraph,
+      pv: typeof mxPrintPreview,
+      forcePageBreaks: boolean,
+    ): typeof mxGraph {
       // Workaround for CSS transforms affecting the print output
       // is to disable during print output and restore after
       const prev = thisGraph.useCssTransforms;
@@ -81,6 +105,8 @@ export default defineComponent({
       const prevScale = thisGraph.currentScale;
       const prevViewTranslate = thisGraph.view.translate;
       const prevViewScale = thisGraph.view.scale;
+
+      let printPreview: typeof mxPrintPreview = pv;
 
       if (thisGraph.useCssTransforms) {
         thisGraph.useCssTransforms = false;
@@ -112,7 +138,8 @@ export default defineComponent({
           (pf.width * h) / (gb.width / thisGraph.view.scale),
         );
       } else {
-        scale = parseInt(zoomInput.value) / (100 * thisGraph.pageScale);
+        const oneHundred = 100;
+        scale = parseInt(zoomInput.value) / (oneHundred * thisGraph.pageScale);
 
         if (isNaN(scale)) {
           printScale = 1 / thisGraph.pageScale;
@@ -135,21 +162,29 @@ export default defineComponent({
         autoOrigin = true;
       }
 
-      if (pv == null) {
-        pv = PrintDialog.createPrintPreview(thisGraph, scale, pf, border, x0, y0, autoOrigin);
-        pv.pageSelector = false;
-        pv.mathEnabled = false;
+      if (printPreview == null) {
+        printPreview = PrintDialog.createPrintPreview(
+          thisGraph,
+          scale,
+          pf,
+          border,
+          x0,
+          y0,
+          autoOrigin,
+        );
+        printPreview.pageSelector = false;
+        printPreview.mathEnabled = false;
 
         const file = props.editorUi.getCurrentFile();
 
         if (file != null) {
-          pv.title = file.getTitle();
+          printPreview.title = file.getTitle();
         }
 
-        const { writeHead } = pv;
+        const { writeHead } = printPreview;
 
         // Overridden to add custom fonts
-        pv.writeHead = function (doc: any) {
+        printPreview.writeHead = function writeHeader(doc: HTMLDocument) {
           writeHead.apply(this, arguments);
 
           // Fixes clipping for transformed math
@@ -179,43 +214,24 @@ export default defineComponent({
           for (let i = 0; i < extFonts.length; i++) {
             const fontName = extFonts[i].name;
             const fontUrl = extFonts[i].url;
-
-            if (Graph.isCssFontUrl(fontUrl)) {
-              doc.writeln(
-                '<link rel="stylesheet" href="' +
-                  mxUtils.htmlEntities(fontUrl) +
-                  '" charset="UTF-8" type="text/css">',
-              );
-            } else {
-              doc.writeln('<style type="text/css">');
-              doc.writeln(
-                '@font-face {\n' +
-                  'font-family: "' +
-                  mxUtils.htmlEntities(fontName) +
-                  '";\n' +
-                  'src: url("' +
-                  mxUtils.htmlEntities(fontUrl) +
-                  '");\n}',
-              );
-              doc.writeln('</style>');
-            }
+            addFontToDoc(doc, fontName, fontUrl);
           }
         };
 
         // if (typeof(MathJax) !== 'undefined')
         // 	{
         // Adds class to ignore if math is disabled
-        let printPreviewRenderPage = pv.renderPage;
+        const printPreviewRenderPage = printPreview.renderPage;
 
-        pv.renderPage = function () {
-          const prev = mxClient.NO_FO;
+        printPreview.renderPage = function renderPage() {
+          const renderPagePrev = mxClient.NO_FO;
           mxClient.NO_FO =
             props.editorUi.editor.graph.mathEnabled &&
             !props.editorUi.editor.useForeignObjectForMath
               ? true
               : props.editorUi.editor.originalNoForeignObject;
           const result = printPreviewRenderPage.apply(this, arguments);
-          mxClient.NO_FO = prev;
+          mxClient.NO_FO = renderPagePrev;
 
           if (this.graph.mathEnabled) {
             this.mathEnabled = this.mathEnabled || true;
@@ -241,7 +257,7 @@ export default defineComponent({
         }
 
         // Generates the print output
-        pv.open(null, null, forcePageBreaks, true);
+        printPreview.open(null, null, forcePageBreaks, true);
 
         // Restores the stylesheet
         if (temp != null) {
@@ -256,36 +272,17 @@ export default defineComponent({
           bg = '#ffffff';
         }
 
-        pv.backgroundColor = bg;
-        pv.autoOrigin = autoOrigin;
-        pv.appendGraph(thisGraph, scale, x0, y0, forcePageBreaks, true);
+        printPreview.backgroundColor = bg;
+        printPreview.autoOrigin = autoOrigin;
+        printPreview.appendGraph(thisGraph, scale, x0, y0, forcePageBreaks, true);
 
         const extFonts = thisGraph.getCustomFonts();
 
-        if (pv.wnd != null) {
+        if (printPreview.wnd != null) {
           for (let i = 0; i < extFonts.length; i++) {
             const fontName = extFonts[i].name;
             const fontUrl = extFonts[i].url;
-
-            if (Graph.isCssFontUrl(fontUrl)) {
-              pv.wnd.document.writeln(
-                '<link rel="stylesheet" href="' +
-                  mxUtils.htmlEntities(fontUrl) +
-                  '" charset="UTF-8" type="text/css">',
-              );
-            } else {
-              pv.wnd.document.writeln('<style type="text/css">');
-              pv.wnd.document.writeln(
-                '@font-face {\n' +
-                  'font-family: "' +
-                  mxUtils.htmlEntities(fontName) +
-                  '";\n' +
-                  'src: url("' +
-                  mxUtils.htmlEntities(fontUrl) +
-                  '");\n}',
-              );
-              pv.wnd.document.writeln('</style>');
-            }
+            addFontToDoc(printPreview.wnd.document, fontName, fontUrl);
           }
         }
       }
@@ -299,7 +296,7 @@ export default defineComponent({
         thisGraph.view.scale = prevViewScale;
       }
 
-      return pv;
+      return printPreview;
     }
 
     // Overall scale for print-out to account for print borders in dialogs etc

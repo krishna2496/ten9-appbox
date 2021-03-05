@@ -94,8 +94,8 @@ export default defineComponent({
     function addButton(
       data: string,
       mimeType: string,
-      w: any,
-      h: any,
+      w: number,
+      h: number,
       img: imageData,
       index: number,
     ) {
@@ -126,7 +126,7 @@ export default defineComponent({
         bg.style.fontSize = '22px';
         bg.style.color = '#a0c3ff';
 
-        const wrapper: any = document.createElement('div');
+        const wrapper: HTMLDivElement = document.createElement('div');
         if (mimeType == null || mimeType.startsWith('image/')) {
           if ((data == null && img != null) || entries[data] == null) {
             div.style.backgroundImage = '';
@@ -189,9 +189,11 @@ export default defineComponent({
               if (cells.length > 0) {
                 props.editorUi.sidebar.createThumb(cells, ew, eh, wrapper, null, true, false);
 
+                const firstChild = wrapper.firstChild as HTMLElement;
+
                 // Needs inline block on SVG for delete icon to appear on same line
-                wrapper.firstChild.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
-                wrapper.firstChild.style.cursor = '';
+                firstChild.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
+                firstChild.style.cursor = '';
               }
             }
 
@@ -268,6 +270,7 @@ export default defineComponent({
         return wrapper;
       } catch (e) {
         // ignore
+        return null;
       }
     }
 
