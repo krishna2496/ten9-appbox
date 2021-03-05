@@ -52,7 +52,7 @@ export default defineComponent({
 
     const zoomInput = ref('100 %');
 
-    const pageFormat = ref(null);
+    const pageFormat = ref(mxConstants.PAGE_FORMAT_A4_PORTRAIT);
 
     const pageScaleInput = ref('100 %');
 
@@ -64,9 +64,13 @@ export default defineComponent({
 
     const pageType = ref('page');
 
+    const maxPage = ref(1);
+
+    const currentPage = ref(1);
+
     function closeModal() {
       show.value = false;
-      pageFormat.value = null;
+      pageFormat.value = mxConstants.PAGE_FORMAT_A4_PORTRAIT;
     }
 
     function printGraph(thisGraph: any, pv: any, forcePageBreaks: any) {
@@ -95,6 +99,9 @@ export default defineComponent({
       let pf = pageFormat.value || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
       let scale = 1 / thisGraph.pageScale;
       let autoOrigin = false;
+      if (printZoom.value == 'fit') {
+        autoOrigin = true;
+      }
       let printScale = parseInt(pageScaleInput.value) / scaleValue;
       if (autoOrigin) {
         const h = parseInt(sheetsAcrossInput.value);
@@ -129,7 +136,6 @@ export default defineComponent({
       }
 
       if (pv == null) {
-        //debugger
         pv = PrintDialog.createPrintPreview(thisGraph, scale, pf, border, x0, y0, autoOrigin);
         pv.pageSelector = false;
         pv.mathEnabled = false;
@@ -301,33 +307,17 @@ export default defineComponent({
       //debugger
       let autoOrigin = false;
       let ignorePages = false;
-      let currentPage = 1;
-      if (props.editorUi.pages.length > 1) {
-        if (props.editorUi.getCurrentPage() != null) {
-          for (let i = 0; i < props.editorUi.pages.length; i++) {
-            if (props.editorUi.getCurrentPage() == props.editorUi.pages[i]) {
-              currentPage = i + 1;
-              break;
-            }
-          }
-        }
-      }
 
-      let pv;
-      // if (printZoom.value == 'fit') {
-      //   autoOrigin = true;
-      // }
+      let pv = null;
 
       if (isMultiplePages.value) {
-        // pagesFromInput.value = currentPage;
-        // pagesToInput.value = currentPage;
-
         if (pageType.value == 'page') {
           ignorePages = true;
         }
 
         if (ignorePages) {
-          ignorePages = pagesFromInput.value == currentPage && pagesToInput.value == currentPage;
+          ignorePages =
+            pagesFromInput.value == currentPage.value && pagesToInput.value == currentPage.value;
         }
 
         if (!ignorePages && props.editorUi.pages != null && props.editorUi.pages.length) {
@@ -342,7 +332,8 @@ export default defineComponent({
           console.log('imax=', imax);
           for (let i = i0; i <= imax; i++) {
             const page = props.editorUi.pages[i];
-            let tempGraph = page == props.editorUi.currentPage ? props.editorUi.editor.graph : null;
+            let tempGraph =
+              page == props.editorUi.getCurrentPage() ? props.editorUi.editor.graph : null;
 
             if (tempGraph == null) {
               tempGraph = props.editorUi.createTemporaryGraph(
@@ -383,7 +374,7 @@ export default defineComponent({
               // Redirects placeholders to current page
               const graphGetGlobalVariable = tempGraph.getGlobalVariable;
 
-              tempGraph.getGlobalVariable = function (name: string) {
+              tempGraph.getGlobalVariable = (name: string) => {
                 if (name == 'page') {
                   return page.getName();
                 } else if (name == 'pagenumber') {
@@ -392,7 +383,7 @@ export default defineComponent({
                   return props.editorUi.pages != null ? props.editorUi.pages.length : 1;
                 }
 
-                return graphGetGlobalVariable.apply(this, arguments);
+                return graphGetGlobalVariable.apply(tempGraph, arguments);
               };
 
               document.body.appendChild(tempGraph.container);
@@ -413,13 +404,16 @@ export default defineComponent({
         if (pv == null) {
           props.editorUi.handleError({ message: mxResources.get('errorUpdatingPreview') });
         } else {
-          pv.open();
+          pv.open(null, null, false, true);
           if (print) {
             PrintDialog.printPreview(pv);
           }
         }
       } else {
         let printScale = parseInt(pageScaleInput.value) / scaleValue;
+        if (printZoom.value == 'fit') {
+          autoOrigin = true;
+        }
 
         if (isNaN(printScale)) {
           printScale = 1;
@@ -451,11 +445,13 @@ export default defineComponent({
         }
 
         if (autoOrigin) {
-          const pageCount = parseInt(pageScaleValue.value);
+          const h = parseInt(sheetsAcrossInput.value);
+          const v = parseInt(sheetsDownInput.value);
 
-          if (!isNaN(pageCount)) {
-            scale = mxUtils.getScaleForPageCount(pageCount, props.editorUi.editor.graph, pf);
-          }
+          scale = Math.min(
+            (pf.height * v) / (gb.height / props.editorUi.editor.graph.view.scale),
+            (pf.width * h) / (gb.width / props.editorUi.editor.graph.view.scale),
+          );
         }
 
         // Negative coordinates are cropped or shifted if page visible
@@ -505,6 +501,19 @@ export default defineComponent({
       show.value = true;
       pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
       isMultiplePages.value = props.editorUi.pages.length > 1 ? true : false;
+      maxPage.value = props.editorUi.pages.length;
+      if (props.editorUi.pages.length > 1) {
+        if (props.editorUi.getCurrentPage() != null) {
+          for (let i = 0; i < props.editorUi.pages.length; i++) {
+            if (props.editorUi.getCurrentPage() == props.editorUi.pages[i]) {
+              currentPage.value = i + 1;
+              pagesFromInput.value = i + 1;
+              pagesToInput.value = i + 1;
+              break;
+            }
+          }
+        }
+      }
     }
 
     onMounted(() => {
@@ -518,6 +527,7 @@ export default defineComponent({
     return {
       closeModal,
       isMultiplePages,
+      maxPage,
       pageFormat,
       pagesFromInput,
       pageScaleInput,
@@ -550,9 +560,9 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
       .row.ml-3.mb-3
         input(type='radio', name='page', value='page', v-model='pageType')
         label.ml-2 Pages:
-        input.ml-2.w-25(type='text', v-model='pagesFromInput')
+        input.ml-2.w-25(type='number', v-model='pagesFromInput', :max='maxPage', min='1')
         label.ml-2 to
-        input.ml-2.w-25(type='text', v-model='pagesToInput')
+        input.ml-2.w-25(type='number', v-model='pagesToInput', :max='maxPage', min='1')
       .row.bottom-border
   .row.ml-3.mb-3.mt-4
     input(type='radio', name='printZoom', value='adjust', v-model='printZoom')
