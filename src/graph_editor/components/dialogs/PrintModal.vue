@@ -70,9 +70,12 @@ export default defineComponent({
 
     const currentPage = ref(1);
 
+    const pageStyle = ref('portrait');
+
     function closeModal() {
       show.value = false;
       pageFormat.value = mxConstants.PAGE_FORMAT_A4_PORTRAIT;
+      pageStyle.value = 'portrait';
     }
 
     function addFontToDoc(doc: HTMLDocument, fontName: string, fontUrl: string) {
@@ -123,6 +126,12 @@ export default defineComponent({
       let y0 = 0;
 
       let pf = pageFormat.value || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
+      if (pageStyle.value == 'landscape') {
+        const h = pf.height;
+        const w = pf.width;
+        pf.height = w;
+        pf.width = h;
+      }
       let scale = 1 / thisGraph.pageScale;
       let autoOrigin = false;
       if (printZoom.value == 'fit') {
@@ -423,7 +432,12 @@ export default defineComponent({
         const gb = props.editorUi.editor.graph.getGraphBounds();
         let scale = 1 / props.editorUi.editor.graph.pageScale;
         let pf = pageFormat.value || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
-
+        if (pageStyle.value == 'landscape') {
+          const h = pf.height;
+          const w = pf.width;
+          pf.height = w;
+          pf.width = h;
+        }
         if (autoOrigin) {
           const h = parseInt(sheetsAcrossInput.value);
           const v = parseInt(sheetsDownInput.value);
@@ -532,6 +546,7 @@ export default defineComponent({
       PageSize,
       pageType,
       pagesToInput,
+      pageStyle,
       preview,
       printZoom,
       setPageFormat,
@@ -552,24 +567,24 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
   .mw-100
     .pages(v-show='isMultiplePages')
       .row.ml-3.mb-3
-        input(type='radio', name='page', value='all_page', v-model='pageType')
+        input.mt-1(type='radio', name='page', value='all_page', v-model='pageType')
         label.ml-2 Print All Pages
       .row.ml-3.mb-3
-        input(type='radio', name='page', value='page', v-model='pageType')
-        label.ml-2 Pages:
+        input.mt-2(type='radio', name='page', value='page', v-model='pageType')
+        label.ml-2.mt-1 Pages:
         input.ml-2.w-25(type='number', v-model='pagesFromInput', :max='maxPage', min='1')
-        label.ml-2 to
+        label.ml-2.mt-1 to
         input.ml-2.w-25(type='number', v-model='pagesToInput', :max='maxPage', min='1')
       .row.bottom-border
   .row.ml-3.mb-3.mt-4
-    input(type='radio', name='printZoom', value='adjust', v-model='printZoom')
-    label.ml-2 Adjust to
+    input.mt-2(type='radio', name='printZoom', value='adjust', v-model='printZoom')
+    label.ml-2.mt-1 Adjust to
     input.ml-2.txt-input(type='text', v-model='zoomInput')
   .row.ml-3.mb-3
-    input(type='radio', name='printZoom', value='fit', v-model='printZoom')
-    label.ml-2 Fit to
+    input.mt-2(type='radio', name='printZoom', value='fit', v-model='printZoom')
+    label.ml-2.mt-1 Fit to
     input.ml-2.txt-input(type='text', v-model='sheetsAcrossInput')
-    label.ml-2 sheet(s) across
+    label.ml-2.mt-1 sheet(s) across
   .row.ml-5.mb-3
     label.ml-2 by
     input.ml-4.txt-input(type='text', v-model='sheetsDownInput')
@@ -581,12 +596,12 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     select.form-control.w-90(v-model='pageFormat')
       option(v-for='(page, index) in PageSize', :key='index', :value='page.format') {{ page.title }}
   .row.ml-3.mb-3
-    input(type='radio', name='page_type')
+    input.mt-1(type='radio', name='page_type', value='portrait', v-model='pageStyle')
     label.ml-2 Portrait
-    input.ml-4(type='radio', name='page_type')
+    input.ml-4.mt-1(type='radio', name='page_type', value='landscape', v-model='pageStyle')
     label.ml-2 Landscape
   .row.ml-3.mb-3
-    label.ml-2 Page Scale
+    label.ml-2.mt-2 Page Scale
     input.txt-input.ml-2(type='text', v-model='pageScaleInput')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
