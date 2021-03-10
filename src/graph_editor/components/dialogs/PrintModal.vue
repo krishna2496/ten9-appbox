@@ -148,10 +148,21 @@ export default defineComponent({
       }
       let scale = 1 / thisGraph.pageScale;
       let autoOrigin = false;
+
+      let printScale = parseInt(pageScaleInput.value) / scaleValue;
       if (printZoom.value == 'fit') {
         autoOrigin = true;
       }
-      let printScale = parseInt(pageScaleInput.value) / scaleValue;
+
+      if (isNaN(printScale)) {
+        printScale = 1;
+        pageScaleValue.value = '100%';
+      }
+
+      // Workaround to match available paper size in actual print output
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      printScale *= 0.75;
+
       if (autoOrigin) {
         const h = parseInt(sheetsAcrossInput.value);
         const v = parseInt(sheetsDownInput.value);
@@ -497,7 +508,6 @@ export default defineComponent({
         pf.width = Math.ceil(pf.width * printScale);
         pf.height = Math.ceil(pf.height * printScale);
         scale *= printScale;
-
         // Starts at first visible page
         if (!autoOrigin && props.editorUi.editor.graph.pageVisible) {
           const layout = props.editorUi.editor.graph.getPageLayout();
@@ -506,7 +516,6 @@ export default defineComponent({
         } else {
           autoOrigin = true;
         }
-
         const printPreview = PrintDialog.createPrintPreview(
           props.editorUi.editor.graph,
           scale,
