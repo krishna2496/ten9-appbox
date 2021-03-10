@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 const {
   mxConstants,
   mxClient,
@@ -71,6 +71,12 @@ export default defineComponent({
     const currentPage = ref(1);
 
     const pageStyle = ref('portrait');
+
+    const showCustomPaperSize = ref(false);
+
+    const customHeight = ref('8.27');
+
+    const customWidth = ref('11.69');
 
     function closeModal() {
       show.value = false;
@@ -131,6 +137,14 @@ export default defineComponent({
         const w = pf.width;
         pf.height = w;
         pf.width = h;
+      } else if (pageStyle.value == 'custom') {
+        const newPageFormat: typeof mxRectangle = new mxRectangle(
+          0,
+          0,
+          Math.floor(parseFloat(customWidth.value) * scaleValue),
+          Math.floor(parseFloat(customHeight.value) * scaleValue),
+        );
+        pf = new mxRectangle(0, 0, newPageFormat.height, newPageFormat.width);
       }
       let scale = 1 / thisGraph.pageScale;
       let autoOrigin = false;
@@ -437,6 +451,14 @@ export default defineComponent({
           const w = pf.width;
           pf.height = w;
           pf.width = h;
+        } else if (pageStyle.value == 'custom') {
+          const newPageFormat: typeof mxRectangle = new mxRectangle(
+            0,
+            0,
+            Math.floor(parseFloat(customWidth.value) * scaleValue),
+            Math.floor(parseFloat(customHeight.value) * scaleValue),
+          );
+          pf = new mxRectangle(0, 0, newPageFormat.height, newPageFormat.width);
         }
         if (autoOrigin) {
           const h = parseInt(sheetsAcrossInput.value);
@@ -535,8 +557,23 @@ export default defineComponent({
       props.editorUi.removeListener(openPrintModal);
     });
 
+    watch(
+      () => pageFormat.value,
+      (val) => {
+        if (val.x == 'custom') {
+          showCustomPaperSize.value = true;
+          pageStyle.value = 'custom';
+        } else {
+          showCustomPaperSize.value = false;
+          pageStyle.value = 'portrait';
+        }
+      },
+    );
+
     return {
       closeModal,
+      customHeight,
+      customWidth,
       isMultiplePages,
       maxPage,
       pageFormat,
@@ -553,6 +590,7 @@ export default defineComponent({
       sheetsAcrossInput,
       sheetsDownInput,
       show,
+      showCustomPaperSize,
       zoomInput,
     };
   },
@@ -595,7 +633,12 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
   .row.ml-3.mb-3
     select.form-control.w-90(v-model='pageFormat')
       option(v-for='(page, index) in PageSize', :key='index', :value='page.format') {{ page.title }}
-  .row.ml-3.mb-3
+  .row.ml-3.mb-3(v-show='showCustomPaperSize')
+    input.mt-1.txt-input(type='text', v-model='customHeight')
+    label.ml-2.mt-2 in x
+    input.mt-1.txt-input(type='text', v-model='customWidth')
+    label.ml-2.mt-2 in
+  .row.ml-3.mb-3(v-show='!showCustomPaperSize')
     input.mt-1(type='radio', name='page_type', value='portrait', v-model='pageStyle')
     label.ml-2 Portrait
     input.ml-4.mt-1(type='radio', name='page_type', value='landscape', v-model='pageStyle')
