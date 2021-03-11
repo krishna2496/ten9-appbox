@@ -17,6 +17,7 @@
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
 import BackgroundImageModal from './dialogs/BackgroundImageModal.vue';
+import ColorPickerModal from './dialogs/ColorPickerModal.vue';
 import CustomZoomModal from './dialogs/CustomZoomModal.vue';
 import EditDataModal from './dialogs/EditDataModal.vue';
 import EditDiagramModal from './dialogs/EditDiagramModal.vue';
@@ -36,6 +37,7 @@ export default defineComponent({
   name: 'Modals',
   components: {
     BackgroundImageModal,
+    ColorPickerModal,
     CustomZoomModal,
     EditDataModal,
     EditDiagramModal,
@@ -62,6 +64,7 @@ export default defineComponent({
 <template lang="pug">
 .modals-container(v-if='editorUi')
   background-image-modal(:editorUi='editorUi')
+  color-picker-modal(:editorUi='editorUi')
   custom-zoom-modal(:editorUi='editorUi')
   edit-data-modal(:editorUi='editorUi')
   edit-diagram-modal(:editorUi='editorUi')

@@ -1158,10 +1158,12 @@ BaseFormatPanel.prototype.createColorOption = function (
   btn = mxUtils.button(
     '',
     mxUtils.bind(this, function (evt) {
-      this.editorUi.pickColor(value, function (color) {
-        apply(color, null, true);
-      });
-      mxEvent.consume(evt);
+      // TEN9: add custom modal for color picker
+      // this.editorUi.pickColor(value, function (color) {
+      //   apply(color, null, true);
+      // });
+      // mxEvent.consume(evt);
+      this.editorUi.fireEvent(new mxEventObject('openColorPicker'));
     }),
   );
 
