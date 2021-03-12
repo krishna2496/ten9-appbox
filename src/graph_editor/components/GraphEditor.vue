@@ -51,6 +51,7 @@ const {
   mxEventObject,
   mxGraphModel,
   mxObjectIdentity,
+  mxPoint,
   mxResources,
   mxUtils,
 } = require('../lib/jgraph/mxClient');
@@ -73,6 +74,13 @@ export interface RefreshedLinkInfo {
   url?: string;
   width?: number;
   height?: number;
+}
+
+interface GraphBounds {
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
 }
 
 import '../styles/main.scss';
@@ -116,6 +124,8 @@ export default defineComponent({
     const sidebarRef = ref(null);
 
     const pagesToRefresh = new Set();
+
+    const pagesToFit = new Set();
 
     function loadImage(url: string): Promise<HTMLImageElement> {
       return new Promise((resolve) => {
@@ -218,6 +228,54 @@ export default defineComponent({
       refreshCellLinks(graph.model.getRoot());
     }
 
+    function removePageFromCurrentPageWindow(
+      _sender: typeof mxEventSource,
+      pageId: typeof mxEventObject,
+    ) {
+      pagesToFit.delete(pageId.getProperty('pageId'));
+    }
+
+    function fitCurrentPageWindow() {
+      const editorUi = editorUiRef.value;
+      const graph = graphRef.value;
+
+      const pageId: string = editorUi.getCurrentPage().getId();
+      const bounds: GraphBounds = graph.isSelectionEmpty()
+        ? graph.getGraphBounds()
+        : graph.getBoundingBox(graph.getSelectionCells());
+      const t: typeof mxPoint = graph.view.translate;
+      const s: number = graph.view.scale;
+
+      bounds.x = bounds.x / s - t.x;
+      bounds.y = bounds.y / s - t.y;
+      bounds.width /= s;
+      bounds.height /= s;
+      const border = 10;
+      const padding = 20;
+
+      const cw: number = graph.container.clientWidth - border;
+      const ch: number = graph.container.clientHeight - border;
+      const scale: number =
+        Math.floor(padding * Math.min(cw / bounds.width, ch / bounds.height)) / padding;
+
+      if (scale < 1 && !pagesToFit.has(pageId)) {
+        graph.zoomTo(scale);
+
+        if (mxUtils.hasScrollbars(graph.container)) {
+          const p: typeof mxPoint = graph.view.translate;
+          graph.container.scrollTop =
+            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+            (bounds.y + p.y) * scale - Math.max((ch - bounds.height * scale) / 2 + border / 2, 0);
+          graph.container.scrollLeft =
+            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+            (bounds.x + p.x) * scale - Math.max((cw - bounds.width * scale) / 2 + border / 2, 0);
+        }
+        pagesToFit.add(pageId);
+      } else if (!pagesToFit.has(pageId)) {
+        pagesToFit.add(pageId);
+      }
+    }
+
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
       ctx.emit('graph-changed', event.name);
     }
@@ -247,6 +305,7 @@ export default defineComponent({
       graph.addListener('gridSizeChanged', onGraphChanged);
       graph.addListener('graphChanged', onGraphChanged);
       editor.addListener('pageSelected', onPageSelected);
+      editorUi.addListener('fitCurrentPageWindow', fitCurrentPageWindow);
       editorUi.addListener('shadowVisibleChanged', onGraphChanged);
       editorUi.addListener('gridEnabledChanged', onGraphChanged);
       editorUi.addListener('guidesEnabledChanged', onGraphChanged);
@@ -254,6 +313,7 @@ export default defineComponent({
       editorUi.addListener('connectionArrowsChanged', onGraphChanged);
       editorUi.addListener('connectionPointsChanged', onGraphChanged);
       editorUi.addListener('librariesChanged', onLibrariesChanged);
+      editorUi.addListener('removePageFromCurrentPageWindow', removePageFromCurrentPageWindow);
       editorUi.addListener('scratchpadDataChanged', onScratchpadDataChanged);
       editorUi.addListener('themeChanged', onThemeChanged);
     }
@@ -266,8 +326,10 @@ export default defineComponent({
       graph.model.removeListener(onGraphChanged);
       graph.removeListener(onGraphChanged);
       editor.removeListener(onPageSelected);
+      editorUi.removeListener(fitCurrentPageWindow);
       editorUi.removeListener(onGraphChanged);
       editorUi.removeListener(onLibrariesChanged);
+      editorUi.removeListener(removePageFromCurrentPageWindow);
       editorUi.removeListener(onScratchpadDataChanged);
       editorUi.removeListener(onThemeChanged);
     }
@@ -614,6 +676,7 @@ export default defineComponent({
       containerRef,
       editorRef,
       editorUiRef,
+      fitCurrentPageWindow,
       getImageData,
       getStyleForFile,
       getXmlData,
@@ -623,10 +686,12 @@ export default defineComponent({
       insertFile,
       loadXmlData,
       loadImage,
+      pagesToFit,
       paste,
       pasteShapes,
       refreshCurrentPageLinks,
       refreshUi,
+      removePageFromCurrentPageWindow,
       setGraphEnabled,
       showingDialog,
       updateCellImage,

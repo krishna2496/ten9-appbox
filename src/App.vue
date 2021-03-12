@@ -136,6 +136,7 @@ export default defineComponent({
 
     function loadFileData(xmlData: string) {
       editor.value.loadXmlData(xmlData);
+      editor.value.fitCurrentPageWindow();
     }
 
     function onFileDropped(event: EventFileInfo) {
@@ -329,6 +330,8 @@ export default defineComponent({
           action.funct();
         }
       };
+
+      editor.value.pagesToFit.add(editor.value.editorUiRef.getCurrentPage().getId());
     });
 
     onBeforeUnmount(() => {
