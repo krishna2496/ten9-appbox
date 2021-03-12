@@ -82,8 +82,9 @@ function mxRuler(editorUi, unit, isVertical, isSecondery) {
   container.style[isVertical ? 'borderRight' : 'borderBottom'] = '0.5px solid ' + style.strokeClr;
   container.style.borderLeft = '0.5px solid ' + style.strokeClr;
 
-  //document.body.appendChild(container);
-  document.getElementById('container').appendChild(container);
+  // TEN9: Replace body with container
+  // document.body.appendChild(container);
+  mxClient.getDocumentContainer().appendChild(container);
   mxEvent.disableContextMenu(container);
 
   function resizeRulerContainer() {
