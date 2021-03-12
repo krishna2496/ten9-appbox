@@ -92,7 +92,7 @@ export default defineComponent({
       const bottomMargin = 5;
       const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
       container.style.height = `${newHeight}px`;
-      editor.value.editorUi.refresh();
+      editor.value.editorUiRef.refresh();
     }
 
     const debounceTime = 100;
@@ -325,7 +325,7 @@ export default defineComponent({
           }
         } else {
           // if default clipboard doesn't have file then if act as normal paste
-          const action = editor.value.editorUi.actions.get('paste');
+          const action = editor.value.editorUiRef.actions.get('paste');
           action.funct();
         }
       };

@@ -19,6 +19,7 @@ import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
+import { getImageData } from '../lib/shapes/fileIcons.js';
 import { debounce } from 'lodash';
 require('../lib/diagramly/DrawioFile.js');
 require('../lib/diagramly/LocalFile.js');
@@ -39,8 +40,6 @@ import {
   watch,
   PropType,
 } from '@vue/composition-api';
-// TEN9: file drop shape image data
-import { getImageData } from '../lib/shapes/fileIcons.js';
 
 const {
   mxCell,
@@ -58,6 +57,9 @@ const {
 
 const defaultStyleXml = require('../styles/default.xml');
 const resourcesFile = require('../locale/en.txt');
+const DEFAULT_THEME = 'kennedy';
+
+export type GraphEditorCell = typeof mxCell;
 
 interface InsertLinkInfo {
   name?: string;
@@ -65,6 +67,12 @@ interface InsertLinkInfo {
   iconUrl?: string;
   noTitleCase?: boolean;
   noTruncateTitle?: boolean;
+}
+
+export interface RefreshedLinkInfo {
+  url?: string;
+  width?: number;
+  height?: number;
 }
 
 import '../styles/main.scss';
@@ -83,28 +91,29 @@ export default defineComponent({
     },
     enabled: Boolean,
     theme: {
-      required: true,
+      required: false,
       type: String,
+      default: DEFAULT_THEME,
     },
     refreshLinkHandler: {
-      type: Function as PropType<(url: string) => Promise<string | null>> | null,
+      type: Function as PropType<(url: string) => Promise<RefreshedLinkInfo>> | null,
       required: false,
       default: null,
     },
   },
 
   setup(props, ctx) {
-    const app = ref(null);
+    const appRef = ref(null);
 
-    const container = ref(null);
+    const containerRef = ref(null);
 
-    const editorUi = ref(null);
+    const editorUiRef = ref(null);
 
-    const editor = ref(null);
+    const editorRef = ref(null);
 
-    const graph = ref(null);
+    const graphRef = ref(null);
 
-    const sidebar = ref(null);
+    const sidebarRef = ref(null);
 
     const pagesToRefresh = new Set();
 
@@ -116,41 +125,72 @@ export default defineComponent({
         });
 
         image.onerror = () => {
-          ctx.emit('paste-text', url);
+          if (!url.startsWith('data:')) {
+            ctx.emit('paste-text', url);
+          }
         };
         image.src = url;
       });
     }
 
     function setGraphEnabled(enabled: boolean) {
-      editorUi.value.setEnabled(enabled);
+      const editorUi = editorUiRef.value;
+      const graph = graphRef.value;
+
+      editorUi.setEnabled(enabled);
       /**
        * When scratchpad is enabled, open it when toggling from preview and
        * edit modes.
        */
-      editorUi.value.openScratchpad();
+      editorUi.openScratchpad();
       if (!enabled) {
-        graph.value.clearSelection();
+        graph.clearSelection();
+      }
+    }
+
+    function updateCellImage(
+      cell: GraphEditorCell,
+      imageUrl: string,
+      width?: number,
+      height?: number,
+    ) {
+      const graph = graphRef.value;
+
+      graph.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
+
+      if (width && height) {
+        let geo = graph.getModel().getGeometry(cell);
+
+        if (geo !== null) {
+          geo = geo.clone();
+          geo.width = width;
+          geo.height = height;
+          graph.getModel().setGeometry(cell, geo);
+        }
       }
     }
 
     async function refreshCellLinks(cell: typeof mxCell) {
-      const style = graph.value.getCurrentCellStyle(cell);
+      const graph = graphRef.value;
+      const style = graph.getCurrentCellStyle(cell);
 
       // Refresh the image links
       if (style[mxConstants.STYLE_SHAPE] === 'image') {
-        const imageUrl = await props.refreshLinkHandler(style[mxConstants.STYLE_IMAGE]);
-        if (imageUrl) {
-          graph.value.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
+        const currentUrl = style[mxConstants.STYLE_IMAGE];
+        const { url: imageUrl, width, height } = await props.refreshLinkHandler(
+          style[mxConstants.STYLE_IMAGE],
+        );
+        if (imageUrl && currentUrl !== imageUrl) {
+          updateCellImage(cell, imageUrl, width, height);
         }
       }
 
       // Refresh links for the objects
-      const linkUrl = graph.value.getLinkForCell(cell);
+      const linkUrl = graph.getLinkForCell(cell);
       if (linkUrl) {
-        const newUrl = await props.refreshLinkHandler(linkUrl);
-        if (newUrl) {
-          graph.value.setLinkForCell(cell, newUrl);
+        const { url: newUrl } = await props.refreshLinkHandler(linkUrl);
+        if (newUrl && linkUrl !== newUrl) {
+          graph.setLinkForCell(cell, newUrl);
         }
       }
 
@@ -160,19 +200,22 @@ export default defineComponent({
     }
 
     function refreshCurrentPageLinks() {
-      if (!props.refreshLinkHandler) {
+      const graph = graphRef.value;
+      const editorUi = editorUiRef.value;
+
+      if (!props.refreshLinkHandler || !props.enabled) {
         return;
       }
 
-      const pageId = editorUi.value.getCurrentPage().getId();
+      const pageId = editorUi.getCurrentPage().getId();
 
       if (!pagesToRefresh.has(pageId)) {
         return;
       }
 
-      refreshCellLinks(graph.value.model.getRoot());
-
       pagesToRefresh.delete(pageId);
+
+      refreshCellLinks(graph.model.getRoot());
     }
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
@@ -196,34 +239,44 @@ export default defineComponent({
     }
 
     function addListeners() {
-      graph.value.model.addListener(mxEvent.CHANGE, onGraphChanged);
-      graph.value.addListener('gridSizeChanged', onGraphChanged);
-      graph.value.addListener('graphChanged', onGraphChanged);
-      editor.value.addListener('pageSelected', onPageSelected);
-      editorUi.value.addListener('shadowVisibleChanged', onGraphChanged);
-      editorUi.value.addListener('gridEnabledChanged', onGraphChanged);
-      editorUi.value.addListener('guidesEnabledChanged', onGraphChanged);
-      editorUi.value.addListener('pageViewChanged', onGraphChanged);
-      editorUi.value.addListener('connectionArrowsChanged', onGraphChanged);
-      editorUi.value.addListener('connectionPointsChanged', onGraphChanged);
-      editorUi.value.addListener('librariesChanged', onLibrariesChanged);
-      editorUi.value.addListener('scratchpadDataChanged', onScratchpadDataChanged);
-      editorUi.value.addListener('themeChanged', onThemeChanged);
+      const editorUi = editorUiRef.value;
+      const editor = editorRef.value;
+      const graph = graphRef.value;
+
+      graph.model.addListener(mxEvent.CHANGE, onGraphChanged);
+      graph.addListener('gridSizeChanged', onGraphChanged);
+      graph.addListener('graphChanged', onGraphChanged);
+      editor.addListener('pageSelected', onPageSelected);
+      editorUi.addListener('shadowVisibleChanged', onGraphChanged);
+      editorUi.addListener('gridEnabledChanged', onGraphChanged);
+      editorUi.addListener('guidesEnabledChanged', onGraphChanged);
+      editorUi.addListener('pageViewChanged', onGraphChanged);
+      editorUi.addListener('connectionArrowsChanged', onGraphChanged);
+      editorUi.addListener('connectionPointsChanged', onGraphChanged);
+      editorUi.addListener('librariesChanged', onLibrariesChanged);
+      editorUi.addListener('scratchpadDataChanged', onScratchpadDataChanged);
+      editorUi.addListener('themeChanged', onThemeChanged);
     }
 
     function removeListeners() {
-      graph.value.model.removeListener(onGraphChanged);
-      graph.value.removeListener(onGraphChanged);
-      editor.value.removeListener(onPageSelected);
-      editorUi.value.removeListener(onGraphChanged);
-      editorUi.value.removeListener(onLibrariesChanged);
-      editorUi.value.removeListener(onScratchpadDataChanged);
-      editorUi.value.removeListener(onThemeChanged);
+      const editorUi = editorUiRef.value;
+      const editor = editorRef.value;
+      const graph = graphRef.value;
+
+      graph.model.removeListener(onGraphChanged);
+      graph.removeListener(onGraphChanged);
+      editor.removeListener(onPageSelected);
+      editorUi.removeListener(onGraphChanged);
+      editorUi.removeListener(onLibrariesChanged);
+      editorUi.removeListener(onScratchpadDataChanged);
+      editorUi.removeListener(onThemeChanged);
     }
 
     function getXmlData(): string {
-      app.value.currentFile.updateFileData();
-      const xmlData = app.value.currentFile.getData();
+      const app = appRef.value;
+
+      app.currentFile.updateFileData();
+      const xmlData = app.currentFile.getData();
       return xmlData;
     }
 
@@ -237,8 +290,9 @@ export default defineComponent({
         ctx.emit('on-redo', getXmlData());
       }, debounceDelay);
 
-      editor.value.undoManager.addListener(mxEvent.UNDO, undoListener);
-      editor.value.undoManager.addListener(mxEvent.REDO, redoListener);
+      const editor = editorRef.value;
+      editor.undoManager.addListener(mxEvent.UNDO, undoListener);
+      editor.undoManager.addListener(mxEvent.REDO, redoListener);
     }
 
     onMounted(() => {
@@ -250,63 +304,70 @@ export default defineComponent({
 
       const themes = {};
       themes[Graph.prototype.defaultThemeName] = defaultStyleDoc.documentElement;
-      editorUi.value = createEditorUi(createEditor(themes), container.value);
-      editor.value = editorUi.value.editor;
-      graph.value = editor.value.graph;
-      sidebar.value = editorUi.value.sidebar;
-      app.value = createApp(editorUi.value, editor.value, container.value);
+      editorUiRef.value = createEditorUi(createEditor(themes), containerRef.value);
+      editorRef.value = editorUiRef.value.editor;
+      graphRef.value = editorRef.value.graph;
+      sidebarRef.value = editorUiRef.value.sidebar;
+      appRef.value = createApp(editorUiRef.value, editorRef.value, containerRef.value);
 
       // Add scratchpad to the sidebar
-      editorUi.value.loadScratchpadData(props.scratchpadData);
+      editorUiRef.value.loadScratchpadData(props.scratchpadData);
 
       // Add stencils to the sidebar
-      sidebar.value.showEntries(props.shapeLibraries);
+      sidebarRef.value.showEntries(props.shapeLibraries);
 
       addListeners();
 
       nextTick(() => {
         setGraphEnabled(props.enabled);
-        editorUi.value.resetViewToShowFullGraph();
+        editorUiRef.value.resetViewToShowFullGraph();
+        // TODO: Re-enable this when theme switching is all worked out
+        // editorUiRef.value.theme = props.theme;
       });
 
       registerUndoListeners();
     });
 
     onBeforeUnmount(() => {
-      editorUi.value.resetPages();
-      editorUi.value.closeOpenWindows();
+      const editorUi = editorUiRef.value;
+      editorUi.resetPages();
+      editorUi.closeOpenWindows();
+      editorUi.destroy();
       removeListeners();
     });
 
     watch(
       () => props.scratchpadData,
       (val: string) => {
-        editorUi.value.loadScratchpadData(val);
+        editorUiRef.value.loadScratchpadData(val);
       },
     );
 
     watch(
       () => props.shapeLibraries,
       (val: string) => {
-        sidebar.value.showEntries(val);
+        sidebarRef.value.showEntries(val);
       },
     );
 
-    watch(
-      () => props.theme,
-      (val: string) => {
-        editorUi.value.theme = val;
-        if (val === 'min') {
-          editorUi.value.initTheme();
-          editorUi.value.setEnabled(true);
-          editorUi.value.menus.init();
-          editorUi.value.init();
-          editorUi.value.loadScratchpadData(props.scratchpadData);
-          editorUi.value.actions.get('fitWindow').funct();
-          editorUi.value.refresh();
-        }
-      },
-    );
+    // TODO: Re-enable this watch when theme switching is all worked out
+    // watch(
+    //   () => props.theme,
+    //   (val: string) => {
+    //     if (val !== editorUiRef.value.theme) {
+    //       editorUiRef.value.theme = val;
+    //       if (val === 'min') {
+    //         editorUiRef.value.initTheme();
+    //         editorUiRef.value.setEnabled(true);
+    //         editorUiRef.value.menus.init();
+    //         editorUiRef.value.init();
+    //         editorUiRef.value.loadScratchpadData(props.scratchpadData);
+    //         editorUiRef.value.actions.get('fitWindow').funct();
+    //         editorUiRef.value.refresh();
+    //       }
+    //     }
+    //   },
+    // );
 
     async function canLoadFile(file: File): Promise<boolean> {
       const ext = file.name.split('.').pop();
@@ -321,14 +382,16 @@ export default defineComponent({
     }
 
     function loadXmlData(data: string) {
-      editorUi.value.openLocalFile(data, null, null, null, null);
+      const editorUi = editorUiRef.value;
+
+      editorUi.openLocalFile(data, null, null, null, null);
       // Reset the view after loading a file
       nextTick(() => {
         setGraphEnabled(props.enabled);
-        editorUi.value.resetViewToShowFullGraph();
+        editorUi.resetViewToShowFullGraph();
 
-        for (let i = 0; i < editorUi.value.pages.length; i++) {
-          const page = editorUi.value.pages[i];
+        for (let i = 0; i < editorUi.pages.length; i++) {
+          const page = editorUi.pages[i];
           pagesToRefresh.add(page.getId());
         }
 
@@ -339,6 +402,9 @@ export default defineComponent({
     function pasteShapes(doc: XMLDocument) {
       const codec = new mxCodec(doc);
       const model = new mxGraphModel();
+      const graph = graphRef.value;
+      const editorUi = editorUiRef.value;
+
       const rootElt = doc.documentElement.querySelector('root');
       // TODO: FIX!
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -349,7 +415,7 @@ export default defineComponent({
         if (node.id != '0' && node.id != '1') {
           cells.push(codec.decodeCell(node));
           // TODO: do we need this?
-          // graph.value.refresh();
+          // graph.refresh();
         }
       });
 
@@ -358,12 +424,12 @@ export default defineComponent({
       // @ts-ignore
       let result = cells;
 
-      result = result || graph.value.getSelectionCells();
-      result = graph.value.getExportableCells(graph.value.model.getTopmostCells(result));
+      result = result || graph.getSelectionCells();
+      result = graph.getExportableCells(graph.model.getTopmostCells(result));
 
       const cloneMap = new Object();
-      const lookup = graph.value.createCellLookup(result);
-      const clones = graph.value.cloneCells(result, null, cloneMap);
+      const lookup = graph.createCellLookup(result);
+      const clones = graph.cloneCells(result, null, cloneMap);
 
       // Uses temporary model to force new IDs to be assigned
       // to avoid having to carry over the mapping from object
@@ -374,10 +440,10 @@ export default defineComponent({
         model.add(parent, clones[i]);
 
         // Checks for orphaned relative children and makes absolute
-        const state = graph.value.view.getState(result[i]);
+        const state = graph.view.getState(result[i]);
 
         if (state != null) {
-          const geo = graph.value.getCellGeometry(clones[i]);
+          const geo = graph.getCellGeometry(clones[i]);
 
           if (
             geo != null &&
@@ -393,21 +459,23 @@ export default defineComponent({
         }
       }
 
-      graph.value.updateCustomLinks(graph.value.createCellMapping(cloneMap, lookup), clones);
+      graph.updateCustomLinks(graph.createCellMapping(cloneMap, lookup), clones);
 
       // TODO: Is this the best way to insert a group of cells into the graph?
       mxClipboard.insertCount = 1;
       mxClipboard.setCells(clones);
 
-      const pasteAction = editorUi.value.actions.get('paste');
+      const pasteAction = editorUi.actions.get('paste');
       pasteAction.funct();
 
       // TODO: Is this needed?
-      const copy = editorUi.value.actions.get('copy');
+      const copy = editorUi.actions.get('copy');
       copy.funct();
     }
 
     function paste(event: ClipboardEvent): boolean {
+      const editorUi = editorUiRef.value;
+
       if (event) {
         // TODO: We should be able to call pasteCells from here and keep this simple. Check on that.
         const textData = event.clipboardData.getData('text');
@@ -422,12 +490,7 @@ export default defineComponent({
               // do nothing
             }
           } else {
-            editorUi.value.pasteCells(
-              event,
-              editorUi.value.textInputForNativeClipboard,
-              true,
-              true,
-            );
+            editorUi.pasteCells(event, editorUi.textInputForNativeClipboard, true, true);
             return mxEvent.isConsumed(event);
           }
         }
@@ -435,68 +498,63 @@ export default defineComponent({
       return false;
     }
 
-    function insertImage(url: string): Promise<typeof mxCell> {
-      return new Promise((resolve) => {
-        let cells = [];
+    async function insertImage(url: string, event?: MouseEvent): Promise<typeof mxCell> {
+      const graph = graphRef.value;
+      let cells = [];
 
-        loadImage(url).then((result: HTMLImageElement) => {
-          const { width, height } = result;
-          let select = null;
+      const image: HTMLImageElement = await loadImage(url);
+      const { width, height } = image;
+      let select = null;
 
-          graph.value.getModel().beginUpdate();
+      graphRef.value.getModel().beginUpdate();
 
-          try {
-            // Inserts new cell if no cell is selected
-            const pt = graph.value.getInsertPoint();
-            cells = [
-              graph.value.insertVertex(
-                graph.value.getDefaultParent(),
-                null,
-                '',
-                pt.x,
-                pt.y,
-                width,
-                height,
-                'shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;',
-              ),
-            ];
-            select = cells;
-            graph.value.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
+      try {
+        const insertPoint = event ? graph.getPointForEvent(event) : graph.getInsertPoint();
 
-            const newUrl = url.replace(';base64', '');
-            graph.value.setCellStyles(
-              mxConstants.STYLE_IMAGE,
-              newUrl.length > 0 ? newUrl : null,
-              cells,
-            );
+        cells = [
+          graph.insertVertex(
+            graph.getDefaultParent(),
+            null,
+            '',
+            insertPoint.x,
+            insertPoint.y,
+            width,
+            height,
+            'shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;',
+          ),
+        ];
+        select = cells;
+        graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
 
-            // Sets shape only if not already shape with image (label or image)
-            const style = graph.value.getCurrentCellStyle(cells[0]);
+        const newUrl = url.replace(';base64', '');
+        graph.setCellStyles(mxConstants.STYLE_IMAGE, newUrl.length > 0 ? newUrl : null, cells);
 
-            if (
-              style[mxConstants.STYLE_SHAPE] != 'image' &&
-              style[mxConstants.STYLE_SHAPE] != 'label'
-            ) {
-              graph.value.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
-            } else if (url.length === 0) {
-              graph.value.setCellStyles(mxConstants.STYLE_SHAPE, null, cells);
-            }
-          } finally {
-            graph.value.getModel().endUpdate();
-          }
+        // Sets shape only if not already shape with image (label or image)
+        const style = graph.getCurrentCellStyle(cells[0]);
 
-          if (select != null) {
-            graph.value.setSelectionCells(select);
-            //graph.value.scrollCellToVisible(select[0]);
-          }
+        if (
+          style[mxConstants.STYLE_SHAPE] != 'image' &&
+          style[mxConstants.STYLE_SHAPE] != 'label'
+        ) {
+          graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
+        } else if (url.length === 0) {
+          graph.setCellStyles(mxConstants.STYLE_SHAPE, null, cells);
+        }
+      } finally {
+        graph.getModel().endUpdate();
+      }
 
-          resolve(cells[0]);
-        });
-      });
+      if (select != null) {
+        graph.setSelectionCells(select);
+        // graph.scrollCellToVisible(select[0]);
+      }
+
+      return cells[0];
     }
 
     function insertLink(url: string) {
-      const action = editorUi.value.actions.get('insertLinkNoDialog');
+      const editorUi = editorUiRef.value;
+      const action = editorUi.actions.get('insertLinkNoDialog');
       const docs: Array<InsertLinkInfo> = [];
       docs.push({ name: url, noTitleCase: true, noTruncateTitle: true });
       action.funct(url, docs);
@@ -510,26 +568,33 @@ export default defineComponent({
       );
     }
 
-    function insertFile(file: File, url: string) {
-      const parent = graph.value.getDefaultParent();
+    function insertFile(file: File, url: string, event?: MouseEvent) {
+      const graph = graphRef.value;
+      const parent = graph.getDefaultParent();
       const style = getStyleForFile(file);
-      const pt = graph.value.getInsertPoint();
       const shapeSize = 50;
-      const fileAttachmentCell = graph.value.insertVertex(
+
+      const insertPoint = event ? graph.getPointForEvent(event) : graph.getInsertPoint();
+
+      const fileAttachmentCell = graph.insertVertex(
         parent,
         null,
         file.name,
-        pt.x,
-        pt.y,
+        insertPoint.x,
+        insertPoint.y,
         shapeSize,
         shapeSize,
         style,
       );
-      graph.value.setLinkForCell(fileAttachmentCell, url);
+      graph.setLinkForCell(fileAttachmentCell, url);
     }
 
-    function updateCellImage(cell: typeof mxCell, imageUrl: string) {
-      graph.value.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
+    function refreshUi() {
+      editorUiRef.value?.refresh();
+    }
+
+    function showingDialog(): boolean {
+      return !!editorUiRef.value?.dialog;
     }
 
     watch(
@@ -537,21 +602,22 @@ export default defineComponent({
       (val) => {
         nextTick(() => {
           setGraphEnabled(val);
-          editorUi.value.resetViewToShowFullGraph();
+          editorUiRef.value.resetViewToShowFullGraph();
+          refreshCurrentPageLinks();
         });
       },
     );
 
     return {
-      app,
+      appRef,
       canLoadFile,
-      container,
-      editor,
-      editorUi,
+      containerRef,
+      editorRef,
+      editorUiRef,
       getImageData,
       getStyleForFile,
       getXmlData,
-      graph,
+      graphRef,
       insertImage,
       insertLink,
       insertFile,
@@ -560,7 +626,9 @@ export default defineComponent({
       paste,
       pasteShapes,
       refreshCurrentPageLinks,
+      refreshUi,
       setGraphEnabled,
+      showingDialog,
       updateCellImage,
     };
   },
@@ -568,5 +636,5 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.geEditor(ref='container')
+.geEditor(ref='containerRef')
 </template>
