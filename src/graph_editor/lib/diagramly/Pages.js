@@ -987,7 +987,7 @@ EditorUi.prototype.createPageName = function () {
  */
 EditorUi.prototype.removePage = function (page) {
   try {
-    this.fireEvent(new mxEventObject('remvePageFromCurrentPageWindow', 'pageId', page.getId()));
+    this.fireEvent(new mxEventObject('removePageFromCurrentPageWindow', 'pageId', page.getId()));
     var graph = this.editor.graph;
     var tmp = mxUtils.indexOf(this.pages, page);
 
