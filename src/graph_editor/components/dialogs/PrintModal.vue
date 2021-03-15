@@ -342,6 +342,7 @@ export default defineComponent({
       let pv = null;
 
       if (isMultiplePages.value) {
+        //debugger
         if (pageType.value == 'page') {
           ignorePages = true;
         }
@@ -429,7 +430,54 @@ export default defineComponent({
             }
           }
         } else {
-          pv = printGraph(props.editorUi.editor.graph, null, false);
+          let scale = 1;
+          let printScale = parseInt(pageScaleInput.value) / scaleValue;
+          scale = parseInt(zoomInput.value) / (scaleValue * props.editorUi.editor.graph.pageScale);
+
+          if (isNaN(scale)) {
+            printScale = 1 / props.editorUi.editor.graph.pageScale;
+            zoomInput.value = '100 %';
+          }
+          if (printZoom.value == 'fit') {
+            autoOrigin = true;
+          }
+
+          if (isNaN(printScale)) {
+            printScale = 1;
+            pageScaleValue.value = '100%';
+          }
+
+          // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+          printScale *= 0.75;
+          let pf = pageFormat.value || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
+          if (pageStyle.value == 'landscape') {
+            const h = pf.height;
+            const w = pf.width;
+            pf.height = w;
+            pf.width = h;
+          } else if (pageStyle.value == 'custom') {
+            const newPageFormat: typeof mxRectangle = new mxRectangle(
+              0,
+              0,
+              Math.floor(parseFloat(customWidth.value) * scaleValue),
+              Math.floor(parseFloat(customHeight.value) * scaleValue),
+            );
+            pf = new mxRectangle(0, 0, newPageFormat.height, newPageFormat.width);
+          }
+          pf = mxRectangle.fromRectangle(pf);
+          pf.width = Math.ceil(pf.width * printScale);
+          pf.height = Math.ceil(pf.height * printScale);
+          scale *= printScale;
+          pv = PrintDialog.createPrintPreview(
+            props.editorUi.editor.graph,
+            scale,
+            pf,
+            0,
+            0,
+            0,
+            autoOrigin,
+          );
+          //pv = printGraph(props.editorUi.editor.graph, null, false);
         }
 
         if (pv == null) {

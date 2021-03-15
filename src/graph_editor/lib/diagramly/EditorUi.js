@@ -13401,7 +13401,7 @@ var SelectedFile;
   /**
    * Overridden to remove export dialog in chromeless lightbox.
    */
-  var editoUiDestroy = EditorUi.prototype.destroy;
+  var editorUiDestroy = EditorUi.prototype.destroy;
 
   EditorUi.prototype.destroy = function () {
     if (this.exportDialog != null) {
@@ -13409,7 +13409,7 @@ var SelectedFile;
       this.exportDialog = null;
     }
 
-    editoUiDestroy.apply(this, arguments);
+    editorUiDestroy.apply(this, arguments);
   };
 
   /**

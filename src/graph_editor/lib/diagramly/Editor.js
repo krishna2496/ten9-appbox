@@ -5548,9 +5548,18 @@ const uiTheme = null;
 
     mxEvent.addListener(this.container, 'mouseenter', setMouseEvent);
     mxEvent.addListener(this.container, 'mousemove', setMouseEvent);
-    mxEvent.addListener(this.container, 'mouseleave', function (evt) {
+
+    // TEN9: Add support for drag events to update the mousepoint too
+    mxEvent.addListener(this.container, 'dragenter', setMouseEvent);
+    mxEvent.addListener(this.container, 'dragover', setMouseEvent);
+    mxEvent.addListener(this.container, 'drag', setMouseEvent);
+
+    function clearMouseEvent(evt) {
       mouseEvent = null;
-    });
+    }
+    mxEvent.addListener(this.container, 'mouseleave', clearMouseEvent);
+    mxEvent.addListener(this.container, 'dragleave', clearMouseEvent);
+    mxEvent.addListener(this.container, 'dragend', clearMouseEvent);
 
     // Extends getInsertPoint to use the current mouse location
     this.isMouseInsertPoint = function () {

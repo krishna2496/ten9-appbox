@@ -886,6 +886,8 @@ EditorUi.prototype.selectPage = function (page, quiet, viewState) {
         this.editor.graph.model.fireEvent(new mxEventObject(mxEvent.UNDO, 'edit', edit));
       }
     }
+    // TEN9: check fit window is done on this page or not
+    this.fireEvent(new mxEventObject('fitCurrentPageWindow'));
   } catch (e) {
     this.handleError(e);
   }
@@ -923,6 +925,9 @@ EditorUi.prototype.insertPage = function (page, index) {
     // Uses model to fire event and trigger autosave
     var change = new ChangePage(this, page, page, index);
     this.editor.graph.model.execute(change);
+
+    // TEN9: add fit window calculations
+    this.fireEvent(new mxEventObject('fitCurrentPageWindow'));
   }
 
   return page;
@@ -982,6 +987,7 @@ EditorUi.prototype.createPageName = function () {
  */
 EditorUi.prototype.removePage = function (page) {
   try {
+    this.fireEvent(new mxEventObject('removePageFromCurrentPageWindow', 'pageId', page.getId()));
     var graph = this.editor.graph;
     var tmp = mxUtils.indexOf(this.pages, page);
 
@@ -1053,6 +1059,9 @@ EditorUi.prototype.duplicatePage = function (page, name) {
       newPage.setName(name);
 
       newPage = this.insertPage(newPage, mxUtils.indexOf(this.pages, page) + 1);
+
+      // TEN9: add fit window calculations
+      this.fireEvent(new mxEventObject('fitCurrentPageWindow'));
     }
   } catch (e) {
     this.handleError(e);

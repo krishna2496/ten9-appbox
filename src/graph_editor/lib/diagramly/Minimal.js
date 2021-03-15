@@ -163,8 +163,11 @@ const IMAGE_PATH = '/images';
         x = Math.max(0, Math.min(x, iiw - this.table.clientWidth));
         y = Math.max(0, Math.min(y, ih - this.table.clientHeight - 48));
 
-        let containerHeight = document.getElementById('container').style.height;
-        let containerWidth = document.getElementById('container').clientWidth;
+        // TEN9: Replace document container lookup
+        let containerHeight = mxClient.getDocumentContainer().style.height;
+        let containerWidth = mxClient.getDocumentContainer().clientWidth;
+        // let containerHeight = document.getElementById('container').style.height;
+        // let containerWidth = document.getElementById('container').clientWidth;
         containerHeight = containerHeight.substring(0, containerHeight.length - 2);
 
         // TEN9: check the window is not going outside container
@@ -198,6 +201,14 @@ const IMAGE_PATH = '/images';
       if (!ui.editor.graph.isEnabled()) {
         return;
       }
+
+      // TEN9: Replace ID lookup with mxClient API
+      const container = mxClient.getDocumentContainer();
+      // const container = document.getElementById('container');
+      if (!container) {
+        return;
+      }
+
       var graph = ui.editor.graph;
       var x;
       graph.popupMenuHandler.hideMenu();
@@ -210,7 +221,6 @@ const IMAGE_PATH = '/images';
 
       if (ui.formatWindow == null) {
         // TEN9: to calculate the container height
-        const container = document.getElementById('container');
         const rect = container.getBoundingClientRect();
         const contentPadding = 20;
         const bottomMargin = 5;
@@ -249,7 +259,12 @@ const IMAGE_PATH = '/images';
         return;
       }
       // TEN9: to calculate the container height
-      const container = document.getElementById('container');
+      const container = mxClient.getDocumentContainer();
+      // const container = document.getElementById('container');
+      if (!container) {
+        return;
+      }
+
       const recta = container.getBoundingClientRect();
       const contentPadding = 20;
       const bottomMargin = 5;

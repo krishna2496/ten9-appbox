@@ -3594,6 +3594,7 @@ EditorUi.prototype.setPageScale = function (value) {
  * Loads the stylesheet for this graph.
  */
 EditorUi.prototype.setGridColor = function (value) {
+  debugger;
   this.editor.graph.view.gridColor = value;
   this.editor.graph.view.validateBackground();
   this.fireEvent(new mxEventObject('gridColorChanged'));
@@ -4285,7 +4286,7 @@ EditorUi.prototype.showDialog = function (
     this.dialogs = [];
   }
 
-  // TEN9: hide dialog for custom print modal
+  // TEN9: hide dialog for custom print modal and color modal
   // this.dialog = new Dialog(
   //   this,
   //   elt,
