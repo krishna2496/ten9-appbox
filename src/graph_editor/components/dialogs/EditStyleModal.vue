@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import { mxEventSource, mxUtils } from '../../lib/jgraph/mxClient';
+import { mxEventSource } from '../../lib/jgraph/mxClient';
 interface CustomEvent {
   getProperty: FunctionStringCallback;
 }
@@ -41,7 +41,8 @@ export default defineComponent({
 
     function setStyle() {
       if (style.value != null && style.value.length > 0) {
-        props.editorUi.editor.graph.setCellStyle(mxUtils.trim(style.value), cell.value);
+        props.editorUi.setCellStyle(style.value, cell.value);
+        //props.editorUi.editor.graph.setCellStyle(mxUtils.trim(style.value), cell.value);
       }
       closeModal();
     }
@@ -49,8 +50,8 @@ export default defineComponent({
     function onStyleChange(_sender: typeof mxEventSource, event: CustomEvent) {
       show.value = true;
       cell.value = event.getProperty('cell');
-      const modal = props.editorUi.editor.graph.model;
-      style.value = modal.getStyle(cell.value[0]);
+      //const modal = props.editorUi.editor.graph.model;
+      style.value = props.editorUi.getCellStyle(cell.value[0]);
     }
 
     onMounted(() => {

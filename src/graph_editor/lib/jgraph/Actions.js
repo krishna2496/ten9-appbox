@@ -1792,7 +1792,6 @@ Actions.prototype.init = function () {
             graph.insertImage(newValue, w, h);
           } else {
             var cells = graph.getSelectionCells();
-            debugger;
             if (newValue != null && (newValue.length > 0 || cells.length > 0)) {
               var select = null;
 

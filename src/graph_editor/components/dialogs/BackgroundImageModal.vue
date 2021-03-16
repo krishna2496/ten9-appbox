@@ -17,7 +17,6 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 const { mxImage, mxResources, mxUtils } = require('../../lib/jgraph/mxClient');
-const { ChangePageSetup } = require('../../lib/jgraph/EditorUi');
 
 interface ImageData {
   height: number;
@@ -38,9 +37,9 @@ export default defineComponent({
 
     const imageUrl = ref('');
 
-    const imageHeight = ref(null);
+    const imageHeight = ref<number>(null);
 
-    const imageWidth = ref(null);
+    const imageWidth = ref<number>(null);
 
     function close() {
       show.value = false;
@@ -52,8 +51,8 @@ export default defineComponent({
 
     function reset() {
       imageUrl.value = '';
-      imageHeight.value = 0;
-      imageWidth.value = 0;
+      imageHeight.value = null;
+      imageWidth.value = null;
     }
 
     function loadUrl() {
@@ -91,8 +90,8 @@ export default defineComponent({
                 mxResources.get('fileNotFound'),
                 mxResources.get('ok'),
               );
-              imageWidth.value = '';
-              imageHeight.value = '';
+              imageWidth.value = null;
+              imageHeight.value = null;
 
               if (execute != null) {
                 execute(null);
@@ -100,8 +99,8 @@ export default defineComponent({
             },
           );
         } else {
-          imageWidth.value = '';
-          imageHeight.value = '';
+          imageWidth.value = null;
+          imageHeight.value = null;
 
           if (execute != null) {
             execute('');
@@ -113,10 +112,7 @@ export default defineComponent({
     function done() {
       const applyFn = mxUtils.bind(props.editorUi, (image: ImageData, failed: string) => {
         if (!failed) {
-          const change = new ChangePageSetup(props.editorUi, null, image);
-          change.ignoreColor = true;
-
-          props.editorUi.editor.graph.model.execute(change);
+          props.editorUi.setBackgroundImage(image);
         }
       });
 
@@ -188,16 +184,14 @@ b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close',
     .row
       .col-md-12.pl-5
         label Image URL:
-        input.image-url(type='text', v-model='imageUrl', @change='loadUrl')
-    .row.image-cordinate
-      .col
-        label.text-box-label Width:
-        input.text-box(type='text', v-model='imageWidth')
-      .col
-        label.text-box-label Height:
-        input.text-box(type='text', v-model='imageHeight')
-      .col
-        button.btn.btn-default(type='button', @click='reset') Reset
+      .col-md-12.pl-5
+        input.txt-input.w-90(type='text', v-model='imageUrl', @change='loadUrl')
+    .row.background-image-cordinate.mt-3.pl-5
+      label.mt-1.text-box-label Width:
+      input.ml-2.txt-input.w-20(type='text', v-model='imageWidth')
+      label.ml-2.mt-1.text-box-label Height:
+      input.ml-2.txt-input.w-20(type='text', v-model='imageHeight')
+      button.ml-4.btn.btn-default(type='button', @click='reset') Reset
   template(v-slot:modal-footer)
     button.btn.btn-grey(@click='close') Cancel
     button.btn.btn-primary(@click='apply') Apply

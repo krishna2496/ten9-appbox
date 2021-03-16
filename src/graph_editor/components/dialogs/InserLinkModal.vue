@@ -93,7 +93,7 @@ export default defineComponent({
     }
 
     function updateCell(url: string) {
-      props.editorUi.editor.graph.setLinkForCell(cell.value, url.length > 0 ? url : null);
+      props.editorUi.setCellLink(cell.value, url.length > 0 ? url : null);
     }
 
     function setLink() {

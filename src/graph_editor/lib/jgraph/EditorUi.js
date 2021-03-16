@@ -3594,7 +3594,6 @@ EditorUi.prototype.setPageScale = function (value) {
  * Loads the stylesheet for this graph.
  */
 EditorUi.prototype.setGridColor = function (value) {
-  debugger;
   this.editor.graph.view.gridColor = value;
   this.editor.graph.view.validateBackground();
   this.fireEvent(new mxEventObject('gridColorChanged'));

@@ -46,8 +46,7 @@ export default defineComponent({
 
     function customZoom() {
       show.value = true;
-      pageScaleValue.value = props.editorUi.editor.graph.getView().getScale() * scaleValue;
-      // pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
+      pageScaleValue.value = props.editorUi.getPageScale() * scaleValue;
     }
 
     onMounted(() => {

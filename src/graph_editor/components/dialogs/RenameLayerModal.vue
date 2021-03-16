@@ -43,7 +43,7 @@ export default defineComponent({
 
     function setLayerName() {
       if (name.value != null && name.value.length > 0) {
-        props.editorUi.editor.graph.cellLabelChanged(layer.value, name.value);
+        props.editorUi.setLayerName(layer.value, name.value);
       }
       closeModal();
     }
@@ -51,7 +51,7 @@ export default defineComponent({
     function onLayerRenameDialog(_sender: typeof mxEventSource, event: CustomEvent) {
       show.value = true;
       layer.value = event.getProperty('layer');
-      name.value = props.editorUi.editor.graph.convertValueToString(layer.value) || 'Background';
+      name.value = props.editorUi.convertValueToString(layer.value);
     }
 
     onMounted(() => {

@@ -93,7 +93,7 @@ export default defineComponent({
       }
 
       // Updates the value of the cell (undoable)
-      props.editorUi.editor.graph.getModel().setValue(cell.value, obj);
+      props.editorUi.setCellValue(cell.value, obj);
       closeModal();
     }
 
@@ -101,12 +101,10 @@ export default defineComponent({
       show.value = true;
       cell.value = event.getProperty('cell');
       pageId.value = cell.value.getId();
-      const value: Tag = props.editorUi.editor.graph.getModel().getValue(cell.value);
+      const value: Tag = props.editorUi.getCellValue(cell.value);
       const attrs = value.attributes;
       //let temp = [];
-      const isLayer =
-        props.editorUi.editor.graph.getModel().getParent(cell.value) ==
-        props.editorUi.editor.graph.getModel().getRoot();
+      const isLayer = props.editorUi.getCellParent(cell.value) == props.editorUi.getPageRoot();
 
       if (attrs != undefined) {
         for (let i = 0; i < attrs.length; i++) {

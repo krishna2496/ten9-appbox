@@ -33,7 +33,7 @@ export default defineComponent({
 
     function openEditDiagram() {
       show.value = true;
-      xml.value = mxUtils.getPrettyXml(props.editorUi.editor.getGraphXml());
+      xml.value = mxUtils.getPrettyXml(props.editorUi.getGraphXml());
     }
 
     function closeModal() {
@@ -42,9 +42,7 @@ export default defineComponent({
 
     function setGraphData(xmlData: string) {
       if (xmlData !== null && xmlData !== '') {
-        props.editorUi.editor.graph.model.beginUpdate();
-        props.editorUi.editor.setGraphXml(mxUtils.parseXml(xmlData).documentElement);
-        props.editorUi.editor.graph.model.endUpdate();
+        props.editorUi.setGraphXml(xmlData);
 
         closeModal();
       } else {

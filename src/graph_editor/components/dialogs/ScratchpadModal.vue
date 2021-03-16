@@ -251,9 +251,7 @@ export default defineComponent({
               for (let i = 0; i < pages.length; i++) {
                 const temp = mxUtils.getTextContent(pages[i]);
                 const cells = props.editorUi.stringToCells(Graph.decompress(temp));
-                props.editorUi.editor.graph.getBoundingBoxFromGeometry(cells);
-                // let size = props.editorUi.editor.graph.getBoundingBoxFromGeometry(cells);
-                //addButton(null, null, 0, 0, 0, 0, { xml: temp, w: size.width, h: size.height });
+                props.editorUi.getBoundingBoxFromGeometry(cells);
               }
 
               done = true;

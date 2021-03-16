@@ -1147,7 +1147,8 @@ BaseFormatPanel.prototype.createColorOption = function (
 
         // Checks if the color value needs to be updated in the model
         if (forceUpdate || hideCheckbox || getColorFn() != value) {
-          setColorFn(value);
+          // TEN9: add cutom modal for changing the color picker value
+          // setColorFn(value);
         }
       }
 
@@ -1163,7 +1164,9 @@ BaseFormatPanel.prototype.createColorOption = function (
       //   apply(color, null, true);
       // });
       // mxEvent.consume(evt);
-      this.editorUi.fireEvent(new mxEventObject('openColorPicker'));
+      var color = getColorFn();
+      var type = label;
+      this.editorUi.fireEvent(new mxEventObject('openColorPicker', 'options', { type, color }));
     }),
   );
 

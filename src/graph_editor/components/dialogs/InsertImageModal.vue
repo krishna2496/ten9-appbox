@@ -124,7 +124,7 @@ export default defineComponent({
     function editImage(_sender: typeof mxEventSource, event: ImageData) {
       show.value = true;
       imageLink.value = event.getProperty('image');
-      cell.value = props.editorUi.editor.graph.getSelectionCells();
+      cell.value = props.editorUi.getSelectedCell();
     }
 
     onMounted(() => {

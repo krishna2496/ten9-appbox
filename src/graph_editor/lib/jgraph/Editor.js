@@ -1380,7 +1380,6 @@ PrintDialog.prototype.create = function (editorUi) {
 
   // Overall scale for print-out to account for print borders in dialogs etc
   function preview(print) {
-    debugger;
     var autoOrigin = onePageCheckBox.checked || pageCountCheckBox.checked;
     var printScale = parseInt(pageScaleInput.value) / 100;
 

@@ -16,13 +16,22 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import { Chrome } from 'vue-color';
-const { ChangePageSetup } = require('../../lib/jgraph/EditorUi');
+import { Sketch } from 'vue-color';
+const { mxEventSource } = require('../../lib/jgraph/mxClient.js');
+
+interface ColorPickerObject {
+  type?: string;
+  color?: string;
+}
+
+interface ColorPickerEvent {
+  getProperty?(propName: string): ColorPickerObject;
+}
 
 export default defineComponent({
-  name: 'BackgroundImageModal',
+  name: 'ColorPickerModal',
   components: {
-    'chrome-picker': Chrome,
+    'sketch-picker': Sketch,
   },
   props: {
     editorUi: {
@@ -34,37 +43,38 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const imageUrl = ref('');
-
-    const imageHeight = ref(null);
-
-    const imageWidth = ref(null);
+    const colorPickerType = ref('');
 
     const colors = ref({
       hex: '#FFFFF',
-      hex8: 'd0d0d0',
     });
 
     function close() {
       show.value = false;
     }
 
-    function openColorPicker() {
+    function openColorPicker(_sender: typeof mxEventSource, event: ColorPickerEvent) {
       show.value = true;
-    }
-
-    function reset() {
-      imageUrl.value = '';
-      imageHeight.value = 0;
-      imageWidth.value = 0;
+      const options = event.getProperty('options');
+      colorPickerType.value = options.type;
+      console.log(options.color);
+      colors.value.hex = options.color;
     }
 
     function apply() {
-      props.editorUi.editor.graph.setGridEnabled(true);
-      const change = new ChangePageSetup(props.editorUi, colors.value.hex8);
-      change.ignoreImage = true;
-      props.editorUi.editor.graph.model.execute(change);
-      //props.editorUi.setGridColor(colors.value.hex8);
+      if (colorPickerType.value === 'Background') {
+        props.editorUi.setGraphBackgroundColor(colors.value.hex);
+      } else if (colorPickerType.value === 'Grid') {
+        props.editorUi.setGridColor(colors.value.hex);
+      } else if (colorPickerType.value === 'Fill') {
+        props.editorUi.setShapeColor('fillColor', colors.value.hex);
+      } else if (colorPickerType.value === 'Line') {
+        props.editorUi.setShapeColor('strokeColor', colors.value.hex);
+      } else if (colorPickerType.value === 'Font Color') {
+        props.editorUi.setShapeColor('fontColor', colors.value.hex);
+      } else if (colorPickerType.value === 'Background Color') {
+        props.editorUi.setShapeColor('labelBackgroundColor', colors.value.hex);
+      }
       close();
     }
     onMounted(() => {
@@ -79,10 +89,7 @@ export default defineComponent({
       apply,
       close,
       colors,
-      imageHeight,
-      imageUrl,
-      imageWidth,
-      reset,
+      colorPickerType,
       show,
     };
   },
@@ -95,7 +102,7 @@ b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close',
     h4 Select Color
     i.fa.fa-times(aria-hidden='true', @click='close')
   .row.justify-content-center
-    chrome-picker(v-model='colors')
+    sketch-picker(v-model='colors')
   template(v-slot:modal-footer)
     button.btn.btn-grey(@click='close') Cancel
     button.btn.btn-primary(@click='apply') Apply

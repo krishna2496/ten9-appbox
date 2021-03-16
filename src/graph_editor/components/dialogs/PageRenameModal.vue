@@ -17,7 +17,6 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import { mxEventSource } from '../../lib/jgraph/mxClient';
-import { RenamePage } from '../../lib/diagramly/Pages';
 interface CustomEvent {
   getProperty: FunctionStringCallback;
 }
@@ -42,9 +41,7 @@ export default defineComponent({
 
     function setPageName() {
       if (name.value != null && name.value.length > 0) {
-        props.editorUi.editor.graph.model.execute(
-          new RenamePage(props.editorUi, page.value, name.value),
-        );
+        props.editorUi.pageRename(page.value, name.value);
       }
       closeModal();
     }

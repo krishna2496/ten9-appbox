@@ -39,7 +39,7 @@ const {
 const { LocalLibrary } = require('./LocalLibrary.js');
 const { StorageLibrary } = require('./StorageLibrary.js');
 const { mxSettings } = require('./Settings.js');
-const { DiagramPage } = require('./Pages.js');
+const { DiagramPage, RenamePage } = require('./Pages.js');
 const { Dialog, ErrorDialog, PrintDialog } = require('../jgraph/Editor.js');
 const { appPages, ChangePageSetup } = require('../jgraph/EditorUi.js');
 const {
@@ -14501,6 +14501,95 @@ var SelectedFile;
 
   EditorUi.prototype.setMigratedFlag = function () {
     localStorage.setItem('.localStorageMigrated', '1');
+  };
+
+  // TEN9: set graph background color
+  EditorUi.prototype.setGraphBackgroundColor = function (color) {
+    this.editor.graph.setGridEnabled(true);
+    const change = new ChangePageSetup(this, color);
+    change.ignoreImage = true;
+    this.editor.graph.model.execute(change);
+  };
+
+  // TEN9: set shape color
+  EditorUi.prototype.setShapeColor = function (colorKey, color) {
+    this.editor.graph.setCellStyles(colorKey, color, this.editor.graph.getSelectionCells());
+  };
+
+  // TEN9: get page scale
+  EditorUi.prototype.getPageScale = function () {
+    return this.editor.graph.getView().getScale();
+  };
+
+  // TEN9: get cell value
+  EditorUi.prototype.getCellValue = function (cell) {
+    return this.editor.graph.getModel().getValue(cell);
+  };
+
+  // TEN9: set cell value
+  EditorUi.prototype.setCellValue = function (cell, obj) {
+    return this.editor.graph.getModel().setValue(cell, obj);
+  };
+
+  // TEN9: get cell parent
+  EditorUi.prototype.getCellParent = function (cell) {
+    return this.editor.graph.getModel().getParent(cell);
+  };
+
+  // TEN9: get page root
+  EditorUi.prototype.getPageRoot = function () {
+    return this.editor.graph.getModel().getRoot();
+  };
+
+  // TEN9: get graph xml data
+  EditorUi.prototype.getGraphXml = function () {
+    return this.editor.getGraphXml();
+  };
+
+  // TEN9: set graph xml data
+  EditorUi.prototype.setGraphXml = function (xml) {
+    this.editor.graph.model.beginUpdate();
+    this.editor.setGraphXml(mxUtils.parseXml(xml).documentElement);
+    this.editor.graph.model.endUpdate();
+  };
+
+  // TEN9: set cell style
+  EditorUi.prototype.setCellStyle = function (style, cell) {
+    this.editor.graph.setCellStyle(mxUtils.trim(style), cell);
+  };
+
+  // TEN9: get cell style
+  EditorUi.prototype.getCellStyle = function (cell) {
+    return this.editor.graph.model.getStyle(cell);
+  };
+
+  // TEN9: set link for cell
+  EditorUi.prototype.setCellLink = function (cell, url) {
+    return this.editor.graph.setLinkForCell(cell, url.length > 0 ? url : null);
+  };
+
+  // TEN9: get selected cell
+  EditorUi.prototype.getSelectedCell = function () {
+    return this.editor.graph.getSelectionCells();
+  };
+
+  // TEN9: Rename page
+  EditorUi.prototype.pageRename = function (page, name) {
+    this.editor.graph.model.execute(new RenamePage(this, page, name));
+  };
+
+  // TEN9: set layer name
+  EditorUi.prototype.setLayerName = function (layer, name) {
+    this.editor.graph.cellLabelChanged(layer, name);
+  };
+
+  // TEN9: conver layer value to string
+  EditorUi.prototype.convertValueToString = function (layer) {
+    return this.editor.graph.convertValueToString(layer) || 'Background';
+  };
+
+  EditorUi.prototype.getBoundingBoxFromGeometry = function (cells) {
+    this.editor.graph.getBoundingBoxFromGeometry(cells);
   };
 })();
 
