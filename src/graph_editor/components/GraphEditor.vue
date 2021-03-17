@@ -59,6 +59,7 @@ const {
 const defaultStyleXml = require('../styles/default.xml');
 const resourcesFile = require('../locale/en.txt');
 const DEFAULT_THEME = 'kennedy';
+const MAX_IMAGE_SIZE = 520;
 
 export type GraphEditorCell = typeof mxCell;
 
@@ -169,12 +170,23 @@ export default defineComponent({
       graph.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
 
       if (width && height) {
+        let newWidth;
+        let newHeight;
         let geo = graph.getModel().getGeometry(cell);
 
         if (geo !== null) {
+          // Constrain new width and height within old values
+          if (width > height) {
+            newWidth = geo.width;
+            newHeight = newWidth * (height / width);
+          } else {
+            newHeight = geo.height;
+            newWidth = newHeight / (height / width);
+          }
+
           geo = geo.clone();
-          geo.width = width;
-          geo.height = height;
+          geo.width = newWidth;
+          geo.height = newHeight;
           graph.getModel().setGeometry(cell, geo);
         }
       }
@@ -264,11 +276,11 @@ export default defineComponent({
         if (mxUtils.hasScrollbars(graph.container)) {
           const p: typeof mxPoint = graph.view.translate;
           graph.container.scrollTop =
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            (bounds.y + p.y) * scale - Math.max((ch - bounds.height * scale) / 2 + border / 2, 0);
+            (bounds.y + (p.y as number)) * scale -
+            Math.max((ch - bounds.height * scale) / 2 + border / 2, 0);
           graph.container.scrollLeft =
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            (bounds.x + p.x) * scale - Math.max((cw - bounds.width * scale) / 2 + border / 2, 0);
+            (bounds.x + (p.x as number)) * scale -
+            Math.max((cw - bounds.width * scale) / 2 + border / 2, 0);
         }
         pagesToFit.add(pageId);
       } else if (!pagesToFit.has(pageId)) {
@@ -565,7 +577,19 @@ export default defineComponent({
       let cells = [];
 
       const image: HTMLImageElement = await loadImage(url);
-      const { width, height } = image;
+      const { width: originalWidth, height: originalHeight } = image;
+      let width = originalWidth;
+      let height = originalHeight;
+
+      if (originalWidth > MAX_IMAGE_SIZE || originalHeight > MAX_IMAGE_SIZE) {
+        if (originalWidth > originalHeight) {
+          width = MAX_IMAGE_SIZE;
+          height = width * (originalHeight / originalWidth);
+        } else {
+          height = MAX_IMAGE_SIZE;
+          width = height / (originalHeight / originalWidth);
+        }
+      }
       let select = null;
 
       graphRef.value.getModel().beginUpdate();
@@ -630,7 +654,12 @@ export default defineComponent({
       );
     }
 
-    function insertFile(file: File, url: string, event?: MouseEvent) {
+    function updateCellLink(cell: GraphEditorCell, url: string) {
+      const graph = graphRef.value;
+      graph.setLinkForCell(cell, url);
+    }
+
+    function insertFile(file: File, url: string, event?: MouseEvent): GraphEditorCell {
       const graph = graphRef.value;
       const parent = graph.getDefaultParent();
       const style = getStyleForFile(file);
@@ -648,7 +677,12 @@ export default defineComponent({
         shapeSize,
         style,
       );
-      graph.setLinkForCell(fileAttachmentCell, url);
+
+      if (url) {
+        graph.setLinkForCell(fileAttachmentCell, url);
+      }
+
+      return fileAttachmentCell;
     }
 
     function refreshUi() {
@@ -695,6 +729,7 @@ export default defineComponent({
       setGraphEnabled,
       showingDialog,
       updateCellImage,
+      updateCellLink,
     };
   },
 });
