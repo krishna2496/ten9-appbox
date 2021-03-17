@@ -42,7 +42,7 @@ export default defineComponent({
 
     const disable = ref<boolean>(true);
 
-    const properyName = ref(null);
+    const propertyName = ref(null);
 
     const pageId = ref('');
 
@@ -58,7 +58,7 @@ export default defineComponent({
 
     function closeModal() {
       show.value = false;
-      properyName.value = '';
+      propertyName.value = '';
       cell.value = null;
       innerHtml.value = [];
       names.value = [];
@@ -126,14 +126,14 @@ export default defineComponent({
     }
 
     function addProperty() {
-      if (properyName.value.indexOf(' ') >= 0) {
+      if (propertyName.value.indexOf(' ') >= 0) {
         alert('InvalidCharacterError: Failed to execute setAttribute');
         return;
       }
-      const temp = `<div class="row ml-2 mb-3"><label class="col-sm-3">${properyName.value}:</label><input type="text" id="val${count.value}" r class="txt-input col-sm-9" ></div>`;
+      const temp = `<div class="row ml-2 mb-3"><label class="col-sm-3">${propertyName.value}:</label><input type="text" id="val${count.value}" r class="txt-input col-sm-9" ></div>`;
       innerHtml.value.push(temp);
-      names.value.push(properyName.value);
-      properyName.value = '';
+      names.value.push(propertyName.value);
+      propertyName.value = '';
       disable.value = true;
       idTrack.value.push(count.value);
       count.value += 1;
@@ -158,7 +158,7 @@ export default defineComponent({
     });
 
     watch(
-      () => properyName.value,
+      () => propertyName.value,
       (val) => {
         if (val.length > 0) {
           disable.value = false;
@@ -175,7 +175,7 @@ export default defineComponent({
       innerHtml,
       names,
       pageId,
-      properyName,
+      propertyName,
       removeProperty,
       setProperty,
       show,
@@ -206,7 +206,7 @@ b-modal#modal(
       .col-sm-1
         label.pointer(@click='removeProperty(index)') X
   .row.ml-3
-    input.txt-input.w-70(type='text', v-model='properyName')
+    input.txt-input.w-70(type='text', v-model='propertyName')
     button.btn.ml-3(type='button', :class='{ disable: disable }', @click='addProperty') Add Property
   template(#modal-footer='')
     input(type='checkbox')
