@@ -42,9 +42,12 @@ export default defineComponent({
 
     function setGraphData(xmlData: string) {
       if (xmlData !== null && xmlData !== '') {
-        props.editorUi.setGraphXml(xmlData);
-
-        closeModal();
+        try {
+          props.editorUi.setGraphData(xmlData);
+          closeModal();
+        } catch {
+          alert('Not a diagram file');
+        }
       } else {
         alert('Not a diagram file');
       }
@@ -59,10 +62,10 @@ export default defineComponent({
     });
 
     return {
-      xml,
-      show,
       closeModal,
       setGraphData,
+      show,
+      xml,
     };
   },
 });

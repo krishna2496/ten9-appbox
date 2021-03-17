@@ -662,6 +662,11 @@ export default defineComponent({
       return !!editorUiRef.value?.dialog;
     }
 
+    function imageInsert(url: string) {
+      console.log('2 ', url);
+      insertImage(url);
+    }
+
     watch(
       () => props.enabled,
       (val) => {
@@ -687,6 +692,7 @@ export default defineComponent({
       insertImage,
       insertLink,
       insertFile,
+      imageInsert,
       loadXmlData,
       loadImage,
       pagesToFit,
@@ -706,5 +712,5 @@ export default defineComponent({
 <template lang="pug">
 .div
   .geEditor(ref='containerRef')
-  modals(:editorUi='editorUiRef')
+  modals(:editorUi='editorUiRef', @insertImage='imageInsert')
 </template>

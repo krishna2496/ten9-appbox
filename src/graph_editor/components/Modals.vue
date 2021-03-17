@@ -58,6 +58,15 @@ export default defineComponent({
       default: null,
     },
   },
+  setup(_props, ctx) {
+    function insertImage(url: string) {
+      ctx.emit('insertImage', url);
+      console.log('image ', url);
+    }
+    return {
+      insertImage,
+    };
+  },
 });
 </script>
 
@@ -69,7 +78,7 @@ export default defineComponent({
   edit-data-modal(:editorUi='editorUi')
   edit-diagram-modal(:editorUi='editorUi')
   edit-style-modal(:editorUi='editorUi')
-  insert-image-modal(:editorUi='editorUi')
+  insert-image-modal(:editorUi='editorUi', @insertImage='insertImage')
   insert-link-modal(:editorUi='editorUi')
   more-shapes-modal(:editorUi='editorUi')
   layer-rename-modal(:editorUi='editorUi')

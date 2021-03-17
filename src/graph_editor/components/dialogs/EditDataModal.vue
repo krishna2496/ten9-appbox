@@ -101,19 +101,25 @@ export default defineComponent({
       show.value = true;
       cell.value = event.getProperty('cell');
       pageId.value = cell.value.getId();
+      if (pageId.value == '0') {
+        pageId.value = props.editorUi.pages[0].node.id;
+      }
       const value: Tag = props.editorUi.getCellValue(cell.value);
-      const attrs = value.attributes;
-      //let temp = [];
-      const isLayer = props.editorUi.getCellParent(cell.value) == props.editorUi.getPageRoot();
 
-      if (attrs != undefined) {
-        for (let i = 0; i < attrs.length; i++) {
-          if ((isLayer || attrs[i].nodeName != 'label') && attrs[i].nodeName != 'placeholders') {
-            //temp.push({ name: attrs[i].nodeName, value: attrs[i].nodeValue });
-            names.value.push(attrs[i].nodeName);
-            const temp = `<div class="row ml-2 mb-3"><label class="col-sm-3">${attrs[i].nodeName}:</label><input type="text" id="val${count.value}"  class="txt-input col-sm-9"value="${attrs[i].nodeValue}" ></div>`;
-            innerHtml.value.push(temp);
-            count.value += 1;
+      if (value != undefined) {
+        const attrs = value.attributes;
+        //let temp = [];
+        const isLayer = props.editorUi.getCellParent(cell.value) == props.editorUi.getPageRoot();
+
+        if (attrs != undefined) {
+          for (let i = 0; i < attrs.length; i++) {
+            if ((isLayer || attrs[i].nodeName != 'label') && attrs[i].nodeName != 'placeholders') {
+              //temp.push({ name: attrs[i].nodeName, value: attrs[i].nodeValue });
+              names.value.push(attrs[i].nodeName);
+              const temp = `<div class="row ml-2 mb-3"><label class="col-sm-3">${attrs[i].nodeName}:</label><input type="text" id="val${count.value}"  class="txt-input col-sm-9"value="${attrs[i].nodeValue}" ></div>`;
+              innerHtml.value.push(temp);
+              count.value += 1;
+            }
           }
         }
       }

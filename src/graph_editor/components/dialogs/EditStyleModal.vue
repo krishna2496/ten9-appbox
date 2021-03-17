@@ -63,11 +63,11 @@ export default defineComponent({
     });
 
     return {
-      closeModal,
       cell,
-      style,
+      closeModal,
       setStyle,
       show,
+      style,
     };
   },
 });

@@ -14547,10 +14547,14 @@ var SelectedFile;
   };
 
   // TEN9: set graph xml data
-  EditorUi.prototype.setGraphXml = function (xml) {
-    this.editor.graph.model.beginUpdate();
-    this.editor.setGraphXml(mxUtils.parseXml(xml).documentElement);
-    this.editor.graph.model.endUpdate();
+  EditorUi.prototype.setGraphData = function (xml) {
+    try {
+      this.editor.graph.model.beginUpdate();
+      this.editor.setGraphXml(mxUtils.parseXml(xml).documentElement);
+      this.editor.graph.model.endUpdate();
+    } catch {
+      throw { message: mxResources.get('notADiagramFile') };
+    }
   };
 
   // TEN9: set cell style

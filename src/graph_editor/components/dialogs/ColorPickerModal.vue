@@ -51,6 +51,9 @@ export default defineComponent({
 
     function close() {
       show.value = false;
+      colors.value = {
+        hex: '#FFFFF',
+      };
     }
 
     function openColorPicker(_sender: typeof mxEventSource, event: ColorPickerEvent) {
@@ -68,6 +71,8 @@ export default defineComponent({
         props.editorUi.setGridColor(colors.value.hex);
       } else if (colorPickerType.value === 'Fill') {
         props.editorUi.setShapeColor('fillColor', colors.value.hex);
+      } else if (colorPickerType.value === 'Gradient') {
+        props.editorUi.setShapeColor('gradientColor', colors.value.hex);
       } else if (colorPickerType.value === 'Line') {
         props.editorUi.setShapeColor('strokeColor', colors.value.hex);
       } else if (colorPickerType.value === 'Font Color') {
