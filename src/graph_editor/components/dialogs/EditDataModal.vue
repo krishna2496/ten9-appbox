@@ -42,9 +42,9 @@ export default defineComponent({
 
     const disable = ref<boolean>(true);
 
-    const propertyName = ref(null);
+    const propertyName = ref<string>(null);
 
-    const pageId = ref('');
+    const pageId = ref<string>('');
 
     const cell = ref(null);
 

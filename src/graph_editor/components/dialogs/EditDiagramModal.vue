@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-const { mxUtils } = require('../../lib/jgraph/mxClient');
+const { mxResources, mxUtils } = require('../../lib/jgraph/mxClient');
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
@@ -29,7 +29,7 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const xml = ref('');
+    const xml = ref<string>('');
 
     function openEditDiagram() {
       show.value = true;
@@ -46,10 +46,10 @@ export default defineComponent({
           props.editorUi.setGraphData(xmlData);
           closeModal();
         } catch {
-          alert('Not a diagram file');
+          throw new Error(mxResources.get('notADiagramFile'));
         }
       } else {
-        alert('Not a diagram file');
+        throw new Error(mxResources.get('notADiagramFile'));
       }
     }
 

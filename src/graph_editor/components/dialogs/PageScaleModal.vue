@@ -28,7 +28,7 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const pageScaleValue = ref(null);
+    const pageScaleValue = ref<number>(null);
 
     const scaleValue = 100;
 
@@ -37,7 +37,7 @@ export default defineComponent({
     }
 
     function setPageScale() {
-      if (pageScaleValue.value != 0 && pageScaleValue.value != '') {
+      if (pageScaleValue.value != 0) {
         props.editorUi.setPageScale(pageScaleValue.value / scaleValue);
       }
       closeModal();

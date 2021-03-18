@@ -1956,23 +1956,25 @@ DriveFile = function () {};
 
     editorUi.actions.addAction('shapes...', function () {
       if (graph.isEnabled()) {
-        if (mxClient.IS_CHROMEAPP || !editorUi.isOffline()) {
-          editorUi.showDialog(
-            new MoreShapesDialog(editorUi, true).container,
-            640,
-            isLocalStorage ? (mxClient.IS_IOS ? 480 : 460) : 440,
-            true,
-            true,
-          );
-        } else {
-          editorUi.showDialog(
-            new MoreShapesDialog(editorUi, false).container,
-            360,
-            isLocalStorage ? (mxClient.IS_IOS ? 300 : 280) : 260,
-            true,
-            true,
-          );
-        }
+        // TEN9: add custom modal for more shape
+        // if (mxClient.IS_CHROMEAPP || !editorUi.isOffline()) {
+        //   editorUi.showDialog(
+        //     new MoreShapesDialog(editorUi, true).container,
+        //     640,
+        //     isLocalStorage ? (mxClient.IS_IOS ? 480 : 460) : 440,
+        //     true,
+        //     true,
+        //   );
+        // } else {
+        //   editorUi.showDialog(
+        //     new MoreShapesDialog(editorUi, false).container,
+        //     360,
+        //     isLocalStorage ? (mxClient.IS_IOS ? 300 : 280) : 260,
+        //     true,
+        //     true,
+        //   );
+        // }
+        editorUi.fireEvent(new mxEventObject('moreShapes'));
       }
     }).isEnabled = isGraphEnabled;
 

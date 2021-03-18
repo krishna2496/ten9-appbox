@@ -31,7 +31,7 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const name = ref('');
+    const name = ref<string>('');
 
     const page = ref(null);
 

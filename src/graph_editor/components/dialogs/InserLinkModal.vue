@@ -42,17 +42,17 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const type = ref('');
+    const type = ref<string>('');
 
     const show = ref<boolean>(false);
 
-    const link = ref('');
+    const link = ref<string>('');
 
     const pages = ref(null);
 
-    const pageId = ref('');
+    const pageId = ref<string>('');
 
-    const option = ref('customLink');
+    const option = ref<string>('customLink');
 
     const cell = ref(null);
 

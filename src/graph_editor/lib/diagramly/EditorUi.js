@@ -4296,7 +4296,7 @@ var SelectedFile;
       elt2,
       'click',
       mxUtils.bind(this, function (evt) {
-        // TEN9: add custom modal for add shapes
+        // TEN9: add custom modal for more shapes
         // this.actions.get('shapes').funct();
         // mxEvent.consume(evt);
         this.fireEvent(new mxEventObject('moreShapes'));
@@ -9266,7 +9266,9 @@ var SelectedFile;
       };
 
       if (onerror != null) {
-        img.onerror = onerror;
+        // TEN9: throw error so at app level we can show the alert
+        throw new Error(mxResources.get('fileNotFound'));
+        //img.onerror = onerror;
       }
 
       img.src = uri;
@@ -14553,7 +14555,7 @@ var SelectedFile;
       this.editor.setGraphXml(mxUtils.parseXml(xml).documentElement);
       this.editor.graph.model.endUpdate();
     } catch {
-      throw { message: mxResources.get('notADiagramFile') };
+      throw new Error(mxResources.get('notADiagramFile'));
     }
   };
 

@@ -28,7 +28,7 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const pageScaleValue = ref(null);
+    const pageScaleValue = ref<number>(null);
 
     const scaleValue = 100;
 

@@ -28,15 +28,13 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const pageScaleValue = ref(null);
+    const entries = ref<string>(null);
 
-    const entries = ref(null);
-
-    const imageUrl = ref('images/sidebar-general.png');
+    const imageUrl = ref<string>('images/sidebar-general.png');
 
     const libs = ref([]);
 
-    const defaultSelected = ref('');
+    const defaultSelected = ref<string>('');
 
     function closeModal() {
       show.value = false;
@@ -115,7 +113,6 @@ export default defineComponent({
       isShapeExists,
       libs,
       loadShapes,
-      pageScaleValue,
       selectShape,
       showImage,
       show,

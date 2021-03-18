@@ -2246,7 +2246,7 @@ const uiTheme = null;
       //     return this.message;
       //   },
       // };
-      throw { message: mxResources.get('notADiagramFile') };
+      throw new Error(mxResources.get('notADiagramFile'));
       //alert(mxResources.get('notADiagramFile'));
     }
   };

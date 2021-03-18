@@ -31,7 +31,7 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const style = ref('');
+    const style = ref<string>('');
 
     const cell = ref(null);
 

@@ -15,6 +15,7 @@
 -->
 
 <script lang="ts">
+import Vue from 'vue';
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
@@ -32,6 +33,9 @@ require('../lib/diagramly/DistanceGuides.js');
 require('../lib/diagramly/Minimal.js');
 import Modals from './Modals.vue';
 
+Vue.config.errorHandler = (err) => {
+  alert(err.message);
+};
 import {
   defineComponent,
   nextTick,

@@ -57,8 +57,6 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const pageScaleValue = ref(null);
-
     const shapes = ref([]);
 
     const shapesHtml = ref([]);
@@ -314,7 +312,6 @@ export default defineComponent({
       addButton,
       closeModal,
       enableText,
-      pageScaleValue,
       removeShape,
       saveScratchpad,
       shapesHtml,

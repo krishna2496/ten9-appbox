@@ -28,6 +28,10 @@ interface ColorPickerEvent {
   getProperty?(propName: string): ColorPickerObject;
 }
 
+interface ColorObject {
+  hex?: string;
+}
+
 export default defineComponent({
   name: 'ColorPickerModal',
   components: {
@@ -43,9 +47,9 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const colorPickerType = ref('');
+    const colorPickerType = ref<string>('');
 
-    const colors = ref({
+    const colors = ref<ColorObject>({
       hex: '#FFFFF',
     });
 

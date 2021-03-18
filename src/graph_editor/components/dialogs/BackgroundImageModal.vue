@@ -35,7 +35,7 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const imageUrl = ref('');
+    const imageUrl = ref<string>('');
 
     const imageHeight = ref<number>(null);
 
@@ -63,7 +63,7 @@ export default defineComponent({
           imageHeight.value = img.height;
         },
         () => {
-          alert('File not found');
+          throw new Error(mxResources.get('fileNotFound'));
         },
       );
     }
@@ -85,11 +85,6 @@ export default defineComponent({
               }
             },
             () => {
-              props.editorUi.showError(
-                mxResources.get('error'),
-                mxResources.get('fileNotFound'),
-                mxResources.get('ok'),
-              );
               imageWidth.value = null;
               imageHeight.value = null;
 
@@ -136,12 +131,6 @@ export default defineComponent({
           }
         },
         () => {
-          props.editorUi.showError(
-            //   mxResources.get('error'),
-            //   mxResources.get('fileNotFound'),
-            //   mxResources.get('ok'),
-            alert('error'),
-          );
           imageWidth.value = 0;
           imageHeight.value = 0;
 
