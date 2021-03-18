@@ -10571,6 +10571,10 @@ var SelectedFile;
       var asHtml = false;
 
       if (useEvent && evt.clipboardData != null && evt.clipboardData.getData) {
+        if (evt.clipboardData.files.length) {
+          return;
+        }
+
         var data = evt.clipboardData.getData('text/html');
 
         if (data != null && data.length > 0) {
