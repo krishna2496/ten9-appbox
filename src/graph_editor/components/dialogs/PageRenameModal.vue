@@ -32,7 +32,7 @@ export default defineComponent({
     const show = ref<boolean>(false);
 
     const name = ref<string>('');
-
+    // TODO: Use type here
     const page = ref(null);
 
     function closeModal() {

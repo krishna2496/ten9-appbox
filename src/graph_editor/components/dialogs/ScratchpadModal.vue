@@ -56,12 +56,12 @@ export default defineComponent({
   },
   setup(props) {
     const show = ref<boolean>(false);
-
+    // TODO: Use type here
     const shapes = ref([]);
 
-    const shapesHtml = ref<Array<string>>([]);
+    const shapesHtml = ref<string[]>([]);
 
-    const textBoxIndex = ref<Array<number>>([]);
+    const textBoxIndex = ref<number[]>([]);
 
     function closeModal() {
       show.value = false;

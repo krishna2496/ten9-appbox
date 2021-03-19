@@ -32,7 +32,7 @@ export default defineComponent({
     const show = ref<boolean>(false);
 
     const style = ref<string>('');
-
+    // TODO: Use type here
     const cell = ref(null);
 
     function closeModal() {

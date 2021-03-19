@@ -41,42 +41,42 @@ export default defineComponent({
   },
   setup(props) {
     const show = ref<boolean>(false);
-
+    // TODO: Use type here
     const pageScaleValue = ref(null);
 
     const scaleValue = 100;
 
-    const printZoom = ref('adjust');
+    const printZoom = ref<string>('adjust');
 
-    const sheetsAcrossInput = ref('1');
+    const sheetsAcrossInput = ref<string>('1');
 
-    const sheetsDownInput = ref('1');
+    const sheetsDownInput = ref<string>('1');
 
-    const zoomInput = ref('100 %');
-
+    const zoomInput = ref<string>('100 %');
+    // TODO: Use type here
     const pageFormat = ref(mxConstants.PAGE_FORMAT_A4_PORTRAIT);
 
-    const pageScaleInput = ref('100 %');
+    const pageScaleInput = ref<string>('100 %');
 
-    const isMultiplePages = ref(false);
+    const isMultiplePages = ref<boolean>(false);
 
-    const pagesFromInput = ref(1);
+    const pagesFromInput = ref<number>(1);
 
-    const pagesToInput = ref(1);
+    const pagesToInput = ref<number>(1);
 
-    const pageType = ref('page');
+    const pageType = ref<string>('page');
 
-    const maxPage = ref(1);
+    const maxPage = ref<number>(1);
 
-    const currentPage = ref(1);
+    const currentPage = ref<number>(1);
 
-    const pageStyle = ref('portrait');
+    const pageStyle = ref<string>('portrait');
 
-    const showCustomPaperSize = ref(false);
+    const showCustomPaperSize = ref<boolean>(false);
 
-    const customHeight = ref('8.27');
+    const customHeight = ref<string>('8.27');
 
-    const customWidth = ref('11.69');
+    const customWidth = ref<string>('11.69');
 
     function closeModal() {
       show.value = false;

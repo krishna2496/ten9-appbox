@@ -45,14 +45,14 @@ export default defineComponent({
     const propertyName = ref<string>(null);
 
     const pageId = ref<string>('');
-
+    // TODO: Use type here
     const cell = ref(null);
 
-    const innerHtml = ref<Array<string>>([]);
+    const innerHtml = ref<string[]>([]);
 
-    const names = ref<Array<string>>([]);
+    const names = ref<string[]>([]);
 
-    const count = ref(0);
+    const count = ref<number>(0);
 
     const idTrack = ref<Array<number>>([]);
 

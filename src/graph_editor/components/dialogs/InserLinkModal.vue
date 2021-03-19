@@ -47,13 +47,13 @@ export default defineComponent({
     const show = ref<boolean>(false);
 
     const link = ref<string>('');
-
+    // TODO: Use type here
     const pages = ref(null);
 
     const pageId = ref<string>('');
 
     const option = ref<string>('customLink');
-
+    // TODO: Use type here
     const cell = ref(null);
 
     function insertLink(url: string) {

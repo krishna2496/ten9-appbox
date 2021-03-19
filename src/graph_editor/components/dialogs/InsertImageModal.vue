@@ -34,7 +34,7 @@ export default defineComponent({
     const show = ref<boolean>(false);
 
     const imageLink = ref(null);
-
+    // TODO: Use type here
     const cell = ref(null);
 
     function closeModal() {
