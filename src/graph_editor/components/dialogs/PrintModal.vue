@@ -80,8 +80,10 @@ export default defineComponent({
 
     function closeModal() {
       show.value = false;
-      pageFormat.value = mxConstants.PAGE_FORMAT_A4_PORTRAIT;
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      pageFormat.value = new mxRectangle(0, 0, 827, 1169);
       pageStyle.value = 'portrait';
+      pageScaleInput.value = '100 %';
     }
 
     function addFontToDoc(doc: HTMLDocument, fontName: string, fontUrl: string) {
@@ -364,64 +366,60 @@ export default defineComponent({
           console.log('imax=', imax);
           for (let i = i0; i <= imax; i++) {
             const page = props.editorUi.pages[i];
-            let tempGraph =
-              page == props.editorUi.getCurrentPage() ? props.editorUi.editor.graph : null;
 
-            if (tempGraph == null) {
-              tempGraph = props.editorUi.createTemporaryGraph(
-                props.editorUi.editor.graph.stylesheet,
-              ); //getStylesheet());
+            const tempGraph = props.editorUi.createTemporaryGraph(
+              props.editorUi.editor.graph.stylesheet,
+            ); //getStylesheet());
 
-              // Restores graph settings that are relevant for printing
-              let pageVisible = true;
-              let mathEnabled = false;
-              let bg = null;
-              let bgImage = null;
+            // Restores graph settings that are relevant for printing
+            let pageVisible = true;
+            let mathEnabled = false;
+            let bg = null;
+            let bgImage = null;
 
-              if (page.viewState == null) {
-                // Workaround to extract view state from XML node
-                // This changes the state of the page and parses
-                // the XML for the graph model even if not needed.
-                if (page.root == null) {
-                  props.editorUi.updatePageRoot(page);
-                }
+            if (page.viewState == null) {
+              // Workaround to extract view state from XML node
+              // This changes the state of the page and parses
+              // the XML for the graph model even if not needed.
+              if (page.root == null) {
+                props.editorUi.updatePageRoot(page);
               }
-
-              if (page.viewState != null) {
-                // eslint-disable-next-line prefer-destructuring
-                pageVisible = page.viewState.pageVisible;
-                // eslint-disable-next-line prefer-destructuring
-                mathEnabled = page.viewState.mathEnabled;
-                bg = page.viewState.background;
-                bgImage = page.viewState.backgroundImage;
-                tempGraph.extFonts = page.viewState.extFonts;
-              }
-
-              tempGraph.background = bg;
-              tempGraph.backgroundImage =
-                bgImage != null ? new mxImage(bgImage.src, bgImage.width, bgImage.height) : null;
-              tempGraph.pageVisible = pageVisible;
-              tempGraph.mathEnabled = mathEnabled;
-
-              // Redirects placeholders to current page
-              const graphGetGlobalVariable = tempGraph.getGlobalVariable;
-
-              tempGraph.getGlobalVariable = (name: string) => {
-                if (name == 'page') {
-                  return page.getName();
-                } else if (name == 'pagenumber') {
-                  return i + 1;
-                } else if (name == 'pagecount') {
-                  return props.editorUi.pages != null ? props.editorUi.pages.length : 1;
-                }
-
-                return graphGetGlobalVariable.apply(tempGraph, arguments);
-              };
-
-              document.body.appendChild(tempGraph.container);
-              props.editorUi.updatePageRoot(page);
-              tempGraph.model.setRoot(page.root);
             }
+
+            if (page.viewState != null) {
+              // eslint-disable-next-line prefer-destructuring
+              pageVisible = page.viewState.pageVisible;
+              // eslint-disable-next-line prefer-destructuring
+              mathEnabled = page.viewState.mathEnabled;
+              bg = page.viewState.background;
+              bgImage = page.viewState.backgroundImage;
+              tempGraph.extFonts = page.viewState.extFonts;
+            }
+
+            tempGraph.background = bg;
+            tempGraph.backgroundImage =
+              bgImage != null ? new mxImage(bgImage.src, bgImage.width, bgImage.height) : null;
+            tempGraph.pageVisible = pageVisible;
+            tempGraph.mathEnabled = mathEnabled;
+
+            // Redirects placeholders to current page
+            const graphGetGlobalVariable = tempGraph.getGlobalVariable;
+
+            tempGraph.getGlobalVariable = (name: string) => {
+              if (name == 'page') {
+                return page.getName();
+              } else if (name == 'pagenumber') {
+                return i + 1;
+              } else if (name == 'pagecount') {
+                return props.editorUi.pages != null ? props.editorUi.pages.length : 1;
+              }
+
+              return graphGetGlobalVariable.apply(tempGraph, arguments);
+            };
+
+            document.body.appendChild(tempGraph.container);
+            props.editorUi.updatePageRoot(page);
+            tempGraph.model.setRoot(page.root);
 
             pv = printGraph(tempGraph, pv, i != imax);
 

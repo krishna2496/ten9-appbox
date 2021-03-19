@@ -59,9 +59,9 @@ export default defineComponent({
 
     const shapes = ref([]);
 
-    const shapesHtml = ref([]);
+    const shapesHtml = ref<Array<string>>([]);
 
-    const textBoxIndex = ref([]);
+    const textBoxIndex = ref<Array<number>>([]);
 
     function closeModal() {
       show.value = false;

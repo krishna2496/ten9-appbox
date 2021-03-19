@@ -32,7 +32,7 @@ export default defineComponent({
 
     const imageUrl = ref<string>('images/sidebar-general.png');
 
-    const libs = ref([]);
+    const libs = ref<Array<string>>([]);
 
     const defaultSelected = ref<string>('');
 

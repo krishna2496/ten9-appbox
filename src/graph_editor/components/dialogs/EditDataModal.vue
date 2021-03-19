@@ -48,13 +48,13 @@ export default defineComponent({
 
     const cell = ref(null);
 
-    const innerHtml = ref([]);
+    const innerHtml = ref<Array<string>>([]);
 
-    const names = ref([]);
+    const names = ref<Array<string>>([]);
 
     const count = ref(0);
 
-    const idTrack = ref([]);
+    const idTrack = ref<Array<number>>([]);
 
     function closeModal() {
       show.value = false;
