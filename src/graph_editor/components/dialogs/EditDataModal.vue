@@ -127,8 +127,7 @@ export default defineComponent({
 
     function addProperty() {
       if (propertyName.value.indexOf(' ') >= 0) {
-        alert('InvalidCharacterError: Failed to execute setAttribute');
-        return;
+        throw new Error('InvalidCharacterError: Failed to execute setAttribute');
       }
       const temp = `<div class="row ml-2 mb-3"><label class="col-sm-3">${propertyName.value}:</label><input type="text" id="val${count.value}" r class="txt-input col-sm-9" ></div>`;
       innerHtml.value.push(temp);

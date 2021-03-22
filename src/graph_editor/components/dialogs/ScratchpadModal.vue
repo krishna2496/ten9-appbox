@@ -84,10 +84,6 @@ export default defineComponent({
       closeModal();
     }
 
-    function enableText(index: number) {
-      alert(index);
-    }
-
     // eslint-disable-next-line consistent-return
     function addButton(
       data: string,
@@ -311,7 +307,6 @@ export default defineComponent({
     return {
       addButton,
       closeModal,
-      enableText,
       removeShape,
       saveScratchpad,
       shapesHtml,
