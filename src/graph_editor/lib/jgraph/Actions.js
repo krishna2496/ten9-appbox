@@ -1911,7 +1911,9 @@ Actions.prototype.init = function () {
     mxUtils.bind(this, function () {
       if (this.outlineWindow == null) {
         // LATER: Check layers window for initial placement
-        this.outlineWindow = new OutlineWindow(ui, document.body.offsetWidth - 260, 100, 180, 180);
+        // TEN9: add mxWindow to editor container instead of document body
+        // this.outlineWindow = new OutlineWindow(ui, document.body.offsetWidth - 260, 100, 180, 180);
+        this.outlineWindow = new OutlineWindow(ui, ui.container.offsetWidth - 260, 100, 180, 180);
         this.outlineWindow.window.addListener('show', function () {
           ui.fireEvent(new mxEventObject('outline'));
         });

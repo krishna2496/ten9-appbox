@@ -1062,11 +1062,11 @@ DriveFile = function () {};
       'find...',
       mxUtils.bind(this, function () {
         if (this.findWindow == null) {
-          // TEN9: adjust findWindow height
+          // TEN9: adjust findWindow height and dd fit window in to container instead of document body
           // this.findWindow = new FindWindow(editorUi, document.body.offsetWidth - 300, 110, 240, 155);
           this.findWindow = new FindWindow(
             editorUi,
-            document.body.offsetWidth - 300,
+            editorUi.container.offsetWidth - 300,
             110,
             240,
             175,
