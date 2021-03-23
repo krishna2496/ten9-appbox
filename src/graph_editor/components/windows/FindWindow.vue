@@ -188,7 +188,7 @@ export default defineComponent({
       props.editorUi.addListener('openFindWindow', openFindWindow);
 
       setTimeout(() => {
-        function dragElement(elmnt: HTMLElementTagNameMap) {
+        function dragElement(elmnt: any) {
           let pos1 = 0,
             pos2 = 0,
             pos3 = 0,
@@ -210,8 +210,10 @@ export default defineComponent({
             document.onmousemove = null;
           }
 
+          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
           if (document.getElementById(elmnt.id + 'header')) {
             // if present, the header is where you move the DIV from:
+            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
             document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
           } else {
             // otherwise, move the DIV from anywhere inside the DIV:
@@ -236,6 +238,7 @@ export default defineComponent({
         // eslint-disable-next-line prefer-destructuring
         const ele = document.getElementsByClassName('card')[0];
         dragElement(ele);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 500);
     });
 
