@@ -1,6 +1,6 @@
-<script>
-//import { computed, defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-//const { mxEventSource } = require('../../../lib/jgraph/mxClient.js');
+<script lang="ts">
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
+const { mxEventSource } = require('../../../lib/jgraph/mxClient.js');
 import mixin from './mixin';
 import Saturation from './Saturation.vue';
 import Hue from './Hue.vue';
@@ -10,14 +10,14 @@ import Sucker from './Sucker.vue';
 import Box from './Box.vue';
 import Colors from './Colors.vue';
 
-// interface ColorPickerObject {
-//   type?: string;
-//   color?: string;
-// }
+interface ColorPickerObject {
+  type?: string;
+  color?: string;
+}
 
-// interface ColorPickerEvent {
-//   getProperty?(propName: string): ColorPickerObject;
-// }
+interface ColorPickerEvent {
+  getProperty?(propName: string): ColorPickerObject;
+}
 
 // export default defineComponent({
 //   name: 'ColorPickerModal',
@@ -43,13 +43,9 @@ import Colors from './Colors.vue';
 //       type: null, // HTMLCanvasElement
 //       default: null,
 //     },
-//     suckerArea: {
-//       type: Array,
-//       default: () => [],
-//     },
 //     colorsDefault: {
 //       type: Array,
-//       default: () => [
+//       default: [
 //         '#000000',
 //         '#FFFFFF',
 //         '#FF1900',
@@ -78,7 +74,8 @@ import Colors from './Colors.vue';
 //       default: {},
 //     },
 //   },
-//   setup(props) {
+  
+//   setup(props, ctx, computed ) {
 //     const color = ref<string>('#000000');
 //     const show = ref<boolean>(false);
 //     const hueWidth = ref(15);
@@ -94,6 +91,7 @@ import Colors from './Colors.vue';
 //     const s = ref(0);
 //     const v = ref(0);
 //     const colorPickerType = ref('');
+//     const suckerArea = ref([]);
 
 //     function openColorPicker(_sender: typeof mxEventSource, event: ColorPickerEvent) {
 //       show.value = true;
@@ -101,6 +99,38 @@ import Colors from './Colors.vue';
 //       colorPickerType.value = options.type;
 //       console.log(options.color);
 //       color.value = options.color;
+//     }
+
+//     const isLightTheme = computed(() =>  props.theme === 'light');
+
+//     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+//     const totalWidth = computed(() => hueHeight.value + (hueWidth.value + 8) * 2);
+
+//     const previewWidth = computed(() => totalWidth - (props.suckerHide ? 0 : previewHeight.value));
+
+//     const rgba = computed({ 
+//       get(){
+//         return  {r: r.value, g: g.value, b: b.value,  a: a.value}
+//       },
+//       });
+
+//     const hsv = computed({
+//       get(){
+//         return  {h: h.value, s: s.value, v: v.value}
+//       },
+//       });
+
+
+//     const rgbString = computed(() => `rgb(${r.value}, ${g.value}, ${b.value})`);
+
+//     const rgbaStringShort = computed(() => `${r.value}, ${g.value}, ${b.value}, ${a.value}`);
+
+//     const rgbaString = computed(() => `rgba(${rgbaStringShort})`);
+
+//     const hexString = computed(() => rgb2hex(rgba, true));
+
+//     function close() {
+//       show.value = false;
 //     }
 
 //     onMounted(() => {
@@ -111,22 +141,157 @@ import Colors from './Colors.vue';
 //       props.editorUi.removeListener(openColorPicker);
 //     });
 
+//     Object.assign(ctx, setColorValue(color.value));
+//     setText();
+
+//     watch(
+//       () => rgba,
+//       () => {
+//         ctx.emit('changeColor', {
+//         rgba: rgba,
+//         hsv: hsv,
+//         hex: modelHex,
+//       });
+//       },
+//     );
+     
+
+
+//     function apply() {
+//       if (colorPickerType.value === 'Background') {
+//         props.editorUi.setGraphBackgroundColor(hexString.value);
+//       } else if (colorPickerType.value === 'Grid') {
+//         props.editorUi.setGridColor(hexString.value);
+//       } else if (colorPickerType.value === 'Fill') {
+//         props.editorUi.setShapeColor('fillColor', hexString.value);
+//       } else if (colorPickerType.value === 'Gradient') {
+//         props.editorUi.setShapeColor('gradientColor', hexString.value);
+//       } else if (colorPickerType.value === 'Line') {
+//         props.editorUi.setShapeColor('strokeColor', hexString.value);
+//       } else if (colorPickerType.value === 'Font Color') {
+//         props.editorUi.setShapeColor('fontColor', hexString.value);
+//       } else if (colorPickerType.value === 'Background Color') {
+//         props.editorUi.setShapeColor('labelBackgroundColor', hexString.value);
+//       }
+//       close();
+//     }
+
+//     function selectSaturation(color: string) {
+//       const { r, g, b, h, s, v } = setColorValue(color);
+//       Object.assign(ctx, { r, g, b, h, s, v });
+//       setText();
+//     }
+
+//     function selectHue(color: string) {
+//       const { r, g, b, h, s, v } = setColorValue(color);
+//       Object.assign(ctx, { r, g, b, h, s, v });
+//       setText();
+//       nextTick(() => {
+//         ctx.refs.saturation.renderColor();
+//         ctx.refs.saturation.renderSlide();
+//       });
+//     }
+
+//     function selectAlpha(b: number) {
+//       a.value = b;
+//       setText();
+//     }
+
+//     function inputHex(color: string) {
+//       const { r, g, b, a, h, s, v } =setColorValue(color);
+//       Object.assign(ctx, { r, g, b, a, h, s, v });
+//       modelHex.value = color;
+//       modelRgba.value = rgbaStringShort.value;
+//       nextTick(() => {
+//         ctx.refs.saturation.renderColor();
+//         ctx.refs.saturation.renderSlide();
+//         ctx.refs.hue.renderSlide();
+//       });
+//     }
+
+//     function inputRgba(color: string) {
+//       const { r, g, b, a, h, s, v } = setColorValue(color);
+//       Object.assign(ctx, { r, g, b, a, h, s, v });
+//       modelHex.value = hexString.value;
+//       modelRgba.value = color;
+//       nextTick(() => {
+//         ctx.refs.saturation.renderColor();
+//         ctx.refs.saturation.renderSlide();
+//         ctx.refs.hue.renderSlide();
+//       });
+//     }
+
+//     function setText() {
+//       modelHex.value = hexString.value;
+//       modelRgba.value = rgbaStringShort.value;
+//     }
+
+//     function openSucker(isOpen: any) {
+//       ctx.emit('openSucker', isOpen);
+//     }
+
+//     function selectSucker(color: string) {
+//       const { r, g, b, a, h, s, v } = setColorValue(color);
+//       Object.assign(ctx, { r, g, b, a, h, s, v });
+//       setText();
+//       nextTick(() => {
+//         ctx.refs.saturation.renderColor();
+//         ctx.refs.saturation.renderSlide();
+//         ctx.refs.hue.renderSlide();
+//       });
+//     }
+
+//     function selectColor(colors: string, isNextTick = true) {
+//       // eslint-disable-next-line vue/no-mutating-props
+//       color.value = colors;
+//       const { r, g, b, a, h, s, v } = setColorValue(color);
+//       Object.assign(ctx, { r, g, b, a, h, s, v });
+//      setText();
+//       if (isNextTick) {
+//        ctx.selectAlphanextTick(() => {
+//          ctx.refs.saturation.renderColor();
+//          ctx.refs.saturation.renderSlide();
+//          ctx.refs.hue.renderSlide();
+//         });
+//       }
+//     }
+
 //     return {
+//       apply,
 //       color,
 //       colorPickerType,
 //       show,
+//       hexString,
 //       hueWidth,
 //       hueHeight,
+//       hsv,
+//       inputHex,
+//       inputRgba,
 //       isLightTheme,
+//       openColorPicker,
+//       openSucker,
 //       previewHeight,
+//       previewWidth,
 //       modelRgba,
 //       modelHex,
 //       r,
+//       rgba,
+//       rgbString,
+//       rgbaString,
+//       rgbaStringShort,
 //       g,
 //       b,
 //       a,
 //       h,
 //       s,
+//       selectAlpha,
+//       selectColor,
+//       selectHue,
+//       selectSaturation,
+//       selectSucker,
+//       setText,
+//       suckerArea,
+//       totalWidth,
 //       v,
 //     };
 //   },
@@ -297,16 +462,20 @@ export default {
           }
 
           function elementDrag(e) {
-            e = e || window.event;
-            e.preventDefault();
-            // calculate the new cursor position:
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            // set the element's new position:
-            elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-            elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+            const handle = document.getElementById('handle');
+            //if (handle.contains(e.target)) {
+              e = e || window.event;
+              e.preventDefault();
+              // calculate the new cursor position:
+              pos1 = pos3 - e.clientX;
+              pos2 = pos4 - e.clientY;
+              pos3 = e.clientX;
+              pos4 = e.clientY;
+              // set the element's new position:
+              elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
+              elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+            //}
+           
           }
 
           function closeDragElement() {
@@ -315,8 +484,8 @@ export default {
             document.onmousemove = null;
           }
         }
-        dragElement(document.getElementById('color_picker'));
-      }, 2000);
+        dragElement(document.getElementsByClassName('modal-content')[0]);
+      }, 500);
     });
   },
   methods: {
@@ -420,12 +589,12 @@ export default {
 </script>
 
 <template lang="pug">
-b-modal#color_picker(
+b-modal(
   :visible='show',
   no-close-on-backdrop='',
   @close='close',
   @hide='close',
-  no-fade=''
+  no-fade='',
 )
   .hu-color-picker(:class='{ light: isLightTheme }', :style='{ width: totalWidth + "px" }')
     .color-set
