@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 const { mxEventSource } = require('../../../lib/jgraph/mxClient.js');
 import mixin from './mixin';
@@ -10,14 +10,14 @@ import Sucker from './Sucker.vue';
 import Box from './Box.vue';
 import Colors from './Colors.vue';
 
-interface ColorPickerObject {
-  type?: string;
-  color?: string;
-}
+// interface ColorPickerObject {
+//   type?: string;
+//   color?: string;
+// }
 
-interface ColorPickerEvent {
-  getProperty?(propName: string): ColorPickerObject;
-}
+// interface ColorPickerEvent {
+//   getProperty?(propName: string): ColorPickerObject;
+// }
 
 // export default defineComponent({
 //   name: 'ColorPickerModal',
