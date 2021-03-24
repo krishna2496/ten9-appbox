@@ -331,7 +331,6 @@ export default defineComponent({
         thisGraph.view.translate = prevViewTranslate;
         thisGraph.view.scale = prevViewScale;
       }
-
       return printPreview;
     }
 
@@ -344,7 +343,6 @@ export default defineComponent({
       let pv = null;
 
       if (isMultiplePages.value) {
-        //debugger
         if (pageType.value == 'page') {
           ignorePages = true;
         }
@@ -481,7 +479,6 @@ export default defineComponent({
         if (pv == null) {
           props.editorUi.handleError({ message: mxResources.get('errorUpdatingPreview') });
         } else {
-          pv.open(null, null, false, true);
           if (print) {
             PrintDialog.printPreview(pv);
           }
@@ -621,6 +618,15 @@ export default defineComponent({
         } else {
           showCustomPaperSize.value = false;
           pageStyle.value = 'portrait';
+        }
+      },
+    );
+
+    watch(
+      () => pagesToInput.value,
+      (val: number) => {
+        if (val < pagesFromInput.value) {
+          pagesToInput.value = Number(val) + 1;
         }
       },
     );

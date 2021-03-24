@@ -17,7 +17,8 @@
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
 import BackgroundImageModal from './dialogs/BackgroundImageModal.vue';
-import ColorPickerModal from './vue-colorpicker/color/Index.vue';
+import ColorPickerModal from '../components/vue-colorpicker/color/Index.vue';
+//import ColorPickerModal from './dialogs/ColorPickerModal.vue';
 import CustomZoomModal from './dialogs/CustomZoomModal.vue';
 import EditDataModal from './dialogs/EditDataModal.vue';
 import EditDiagramModal from './dialogs/EditDiagramModal.vue';

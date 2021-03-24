@@ -1062,6 +1062,11 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@caohenghu/vue-colorpicker@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@caohenghu/vue-colorpicker/-/vue-colorpicker-1.2.4.tgz#1595f47b9e25b278c73318a812c0df9e989a90c0"
+  integrity sha512-2YvCiBOnA9IANRJtw9rqIhVeJZPRPgO9gmFi3qfNgs1IEl7PFlcRx17VD1UF2L97PEk5GaxmrfCdCY15L09UQg==
+
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.2.tgz#8f03a22a04de437254e8ce8cc84ba39689288752"

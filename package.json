@@ -16,6 +16,7 @@
     "update-package:all": "./node_modules/.bin/ncu -u"
   },
   "dependencies": {
+    "@caohenghu/vue-colorpicker": "^1.2.4",
     "@vue/composition-api": "^1.0.0-beta.24",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",

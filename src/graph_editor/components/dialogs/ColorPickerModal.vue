@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import { Sketch } from 'vue-color';
+import colorPicker from '@caohenghu/vue-colorpicker';
 const { mxEventSource } = require('../../lib/jgraph/mxClient.js');
 
 interface ColorPickerObject {
@@ -35,7 +35,7 @@ interface ColorObject {
 export default defineComponent({
   name: 'ColorPickerModal',
   components: {
-    'sketch-picker': Sketch,
+    'color-picker': colorPicker,
   },
   props: {
     editorUi: {
@@ -47,17 +47,19 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
+    const suckerCanvas = ref(null);
+
+    const suckerArea = ref([]);
+
+    const isSucking = ref<boolean>(false);
+
     const colorPickerType = ref<string>('');
 
-    const colors = ref<ColorObject>({
-      hex: '#FFFFF',
-    });
+    const color = ref<string>('#FFFFF');
 
     function close() {
       show.value = false;
-      colors.value = {
-        hex: '#FFFFF',
-      };
+      color.value = '#FFFFF';
     }
 
     function openColorPicker(_sender: typeof mxEventSource, event: ColorPickerEvent) {
@@ -65,24 +67,24 @@ export default defineComponent({
       const options = event.getProperty('options');
       colorPickerType.value = options.type;
       console.log(options.color);
-      colors.value.hex = options.color;
+      color.value = options.color;
     }
 
     function apply() {
       if (colorPickerType.value === 'Background') {
-        props.editorUi.setGraphBackgroundColor(colors.value.hex);
+        props.editorUi.setGraphBackgroundColor(color.value);
       } else if (colorPickerType.value === 'Grid') {
-        props.editorUi.setGridColor(colors.value.hex);
+        props.editorUi.setGridColor(color.value);
       } else if (colorPickerType.value === 'Fill') {
-        props.editorUi.setShapeColor('fillColor', colors.value.hex);
+        props.editorUi.setShapeColor('fillColor', color.value);
       } else if (colorPickerType.value === 'Gradient') {
-        props.editorUi.setShapeColor('gradientColor', colors.value.hex);
+        props.editorUi.setShapeColor('gradientColor', color.value);
       } else if (colorPickerType.value === 'Line') {
-        props.editorUi.setShapeColor('strokeColor', colors.value.hex);
+        props.editorUi.setShapeColor('strokeColor', color.value);
       } else if (colorPickerType.value === 'Font Color') {
-        props.editorUi.setShapeColor('fontColor', colors.value.hex);
+        props.editorUi.setShapeColor('fontColor', color.value);
       } else if (colorPickerType.value === 'Background Color') {
-        props.editorUi.setShapeColor('labelBackgroundColor', colors.value.hex);
+        props.editorUi.setShapeColor('labelBackgroundColor', color.value);
       }
       close();
     }
@@ -94,12 +96,32 @@ export default defineComponent({
       props.editorUi.removeListener(openColorPicker);
     });
 
+    function changeColor(colors: any) {
+      const { r, g, b, a } = colors.rgba;
+      color.value = `rgba(${r}, ${g}, ${b}, ${a})`;
+    }
+
+    function openSucker(isOpen: boolean) {
+      if (isOpen) {
+        // ... canvas be created
+        // this.suckerCanvas = canvas
+        // this.suckerArea = [x1, y1, x2, y2]
+      } else {
+        // this.suckerCanvas && this.suckerCanvas.remove
+      }
+    }
+
     return {
       apply,
       close,
-      colors,
+      color,
       colorPickerType,
+      changeColor,
+      isSucking,
+      openSucker,
       show,
+      suckerArea,
+      suckerCanvas,
     };
   },
 });
@@ -110,8 +132,15 @@ b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close',
   template(v-slot:modal-header)
     h4 Select Color
     i.fa.fa-times(aria-hidden='true', @click='close')
-  .row.justify-content-center
-    sketch-picker(v-model='colors')
+    color-picker(
+      theme='light',
+      :color='color',
+      :sucker-hide='false',
+      :sucker-canvas='suckerCanvas',
+      :sucker-area='suckerArea',
+      @changecolor='changeColor',
+      @opensucker='openSucker'
+    )
   template(v-slot:modal-footer)
     button.btn.btn-grey(@click='close') Cancel
     button.btn.btn-primary(@click='apply') Apply
