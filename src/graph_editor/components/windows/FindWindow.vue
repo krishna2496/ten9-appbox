@@ -40,7 +40,7 @@ export default defineComponent({
       show.value = true;
     }
 
-    function testMeta(re: any, cell: typeof mxCell, search: string) {
+    function testMeta(re: any, cell: any, search: string) {
       if (typeof cell.value === 'object' && cell.value.attributes != null) {
         const attrs = cell.value.attributes;
 
@@ -64,7 +64,7 @@ export default defineComponent({
       return false;
     }
 
-    function searchText(internalCall = true) {
+    function searchText(): any {
       let { graph } = props.editorUi.editor;
       let lastFound = null;
       let allChecked = false;
@@ -101,7 +101,7 @@ export default defineComponent({
             props.editorUi.updatePageRoot(nextPage);
             graph.model.setRoot(nextPage.root);
             nextPageIndex = (nextPageIndex + 1) % props.editorUi.pages.length;
-          } while (!searchText(true) && nextPageIndex != currentPageIndex);
+          } while (!searchText() && nextPageIndex != currentPageIndex);
 
           if (lastFound) {
             lastFound = null;
@@ -112,7 +112,7 @@ export default defineComponent({
           // eslint-disable-next-line prefer-destructuring
           graph = props.editorUi.editor.graph;
 
-          return searchText(true);
+          return searchText();
         }
 
         let i;
@@ -161,7 +161,7 @@ export default defineComponent({
         if (i == cells.length && allPagesInput.value) {
           lastFound = null;
           allChecked = true;
-          return searchText(true);
+          return searchText();
         }
 
         lastFound = firstMatch;
@@ -174,9 +174,10 @@ export default defineComponent({
         }
       }
       //Check other pages
-      else if (!internalCall && allPagesInput.value) {
+      // else if (!internalCall && allPagesInput.value) {
+        else if (allPagesInput.value) {
         allChecked = true;
-        return searchText(true);
+        return searchText();
       } else if (graph.isEnabled()) {
         graph.clearSelection();
       }
@@ -187,59 +188,59 @@ export default defineComponent({
     onMounted(() => {
       props.editorUi.addListener('openFindWindow', openFindWindow);
 
-      setTimeout(() => {
-        function dragElement(elmnt: any) {
-          let pos1 = 0,
-            pos2 = 0,
-            pos3 = 0,
-            pos4 = 0;
-          function dragMouseDown(e: any) {
-            e = e || window.event;
-            e.preventDefault();
-            // get the mouse cursor position at startup:
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            document.onmouseup = closeDragElement;
-            // call a function whenever the cursor moves:
-            document.onmousemove = elementDrag;
-          }
+      // setTimeout(() => {
+      //   function dragElement(elmnt: any) {
+      //     let pos1 = 0,
+      //       pos2 = 0,
+      //       pos3 = 0,
+      //       pos4 = 0;
+      //     function dragMouseDown(e: any) {
+      //       e = e || window.event;
+      //       e.preventDefault();
+      //       // get the mouse cursor position at startup:
+      //       pos3 = e.clientX;
+      //       pos4 = e.clientY;
+      //       document.onmouseup = closeDragElement;
+      //       // call a function whenever the cursor moves:
+      //       document.onmousemove = elementDrag;
+      //     }
 
-          function closeDragElement() {
-            // stop moving when mouse button is released:
-            document.onmouseup = null;
-            document.onmousemove = null;
-          }
+      //     function closeDragElement() {
+      //       // stop moving when mouse button is released:
+      //       document.onmouseup = null;
+      //       document.onmousemove = null;
+      //     }
 
-          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-          if (document.getElementById(elmnt.id + 'header')) {
-            // if present, the header is where you move the DIV from:
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
-          } else {
-            // otherwise, move the DIV from anywhere inside the DIV:
-            elmnt.onmousedown = dragMouseDown;
-          }
+      //     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+      //     if (document.getElementById(elmnt.id + 'header')) {
+      //       // if present, the header is where you move the DIV from:
+      //       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+      //       document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
+      //     } else {
+      //       // otherwise, move the DIV from anywhere inside the DIV:
+      //       elmnt.onmousedown = dragMouseDown;
+      //     }
 
-          function elementDrag(e) {
-            e = e || window.event;
-            e.preventDefault();
-            // calculate the new cursor position:
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            // set the element's new position:
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-          }
-        }
-        // eslint-disable-next-line prefer-destructuring
-        const ele = document.getElementsByClassName('card')[0];
-        dragElement(ele);
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 500);
+      //     function elementDrag(e:any) {
+      //       e = e || window.event;
+      //       e.preventDefault();
+      //       // calculate the new cursor position:
+      //       pos1 = pos3 - e.clientX;
+      //       pos2 = pos4 - e.clientY;
+      //       pos3 = e.clientX;
+      //       pos4 = e.clientY;
+      //       // set the element's new position:
+      //       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+      //       elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
+      //       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+      //       elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+      //     }
+      //   }
+      //   // eslint-disable-next-line prefer-destructuring
+      //   const ele = document.getElementsByClassName('card')[0];
+      //   dragElement(ele);
+      // // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      // }, 500);
     });
 
     onUnmounted(() => {
