@@ -26,6 +26,10 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const allChecked = ref<boolean>(false);
+
+    const lastFound = ref(null);
+
     const show = ref<boolean>(false);
 
     const searchInput = ref<string>('');
@@ -67,57 +71,57 @@ export default defineComponent({
     function searchText(): any {
       //try {
       let { graph } = props.editorUi.editor;
-      let lastFound = null;
-      let allChecked = false;
+
       const tmp = document.createElement('div');
       const cells = graph.model.getDescendants(graph.model.getRoot());
       const searchStr = searchInput.value.toLowerCase();
       //const re = regexInput.checked ? new RegExp(searchStr) : null;
-      const re = new RegExp(searchStr);
+      let re: any = null;
       let firstMatch = null;
 
-      let active = lastFound == null;
+      let active = lastFound.value == null;
+      let i;
+      debugger;
       if (searchStr.length > 0) {
-        if (allChecked) {
-          allChecked = false;
+        if (allChecked.value) {
+          allChecked.value = false;
 
           //Find current page index
           let currentPageIndex;
 
-          for (let i = 0; i < props.editorUi.pages.length; i++) {
-            if (props.editorUi.getCurrentPage() == props.editorUi.pages[i]) {
-              currentPageIndex = i;
+          for (let j = 0; j < props.editorUi.pages.length; j++) {
+            if (props.editorUi.getCurrentPage() == props.editorUi.pages[j]) {
+              currentPageIndex = j;
               break;
             }
           }
 
           let nextPageIndex = (currentPageIndex + 1) % props.editorUi.pages.length,
             nextPage;
-          lastFound = null;
+          lastFound.value = null;
 
           do {
-            allChecked = false;
+            console.log(props.editorUi.getCurrentPage());
+            console.log('root updated');
+            allChecked.value = false;
             nextPage = props.editorUi.pages[nextPageIndex];
             graph = props.editorUi.createTemporaryGraph(graph.getStylesheet());
             props.editorUi.updatePageRoot(nextPage);
             graph.model.setRoot(nextPage.root);
             nextPageIndex = (nextPageIndex + 1) % props.editorUi.pages.length;
+            console.log(props.editorUi.getCurrentPage());
           } while (!searchText() && nextPageIndex != currentPageIndex);
-
-          if (lastFound) {
-            lastFound = null;
+          if (lastFound.value) {
+            lastFound.value = null;
             props.editorUi.selectPage(nextPage);
           }
 
-          allChecked = false;
+          allChecked.value = false;
           // eslint-disable-next-line prefer-destructuring
           graph = props.editorUi.editor.graph;
-
           return searchText();
         }
 
-        let i;
-        //console.log('len ', cells.length);
         for (i = 0; i < cells.length; i++) {
           const state = graph.view.getState(cells[i]);
           let label;
@@ -136,13 +140,14 @@ export default defineComponent({
 
             // eslint-disable-next-line no-control-regex
             label = mxUtils.trim(label.replace(/[\x00-\x1F\x7F-\x9F]|\s+/g, ' ')).toLowerCase();
-
             if (
               (re == null &&
                 (label.substring(0, searchStr.length) === searchStr ||
                   testMeta(re, state.cell, searchStr))) ||
               (re != null && (re.test(label) || testMeta(re, state.cell, searchStr)))
             ) {
+              console.log(11);
+              console.log('active', active);
               if (active) {
                 firstMatch = state;
 
@@ -153,31 +158,30 @@ export default defineComponent({
             }
           }
 
-          active = active || state == lastFound;
+          active = active || state == lastFound.value;
         }
       }
 
       if (firstMatch != null) {
-        let i;
         if (i == cells.length && allPagesInput.value) {
-          lastFound = null;
-          allChecked = true;
+          lastFound.value = null;
+          allChecked.value = true;
           return searchText();
         }
-
-        lastFound = firstMatch;
-        graph.scrollCellToVisible(lastFound.cell);
+        console.log(2);
+        lastFound.value = firstMatch;
+        graph.scrollCellToVisible(lastFound.value.cell);
 
         if (graph.isEnabled()) {
-          graph.setSelectionCell(lastFound.cell);
+          graph.setSelectionCell(lastFound.value.cell);
         } else {
-          graph.highlightCell(lastFound.cell);
+          graph.highlightCell(lastFound.value.cell);
         }
       }
       //Check other pages
-      // else if (!internalCall && allPagesInput.value) {
+      //else if (!internalCall && allPagesInput.value) {
       else if (allPagesInput.value) {
-        allChecked = true;
+        allChecked.value = true;
         return searchText();
       } else if (graph.isEnabled()) {
         graph.clearSelection();
@@ -229,7 +233,7 @@ export default defineComponent({
             elmnt.onmousedown = dragMouseDown;
           }
 
-          function elementDrag(e:any) {
+          function elementDrag(e: any) {
             e = e || window.event;
             e.preventDefault();
             // calculate the new cursor position:
@@ -247,7 +251,7 @@ export default defineComponent({
         // eslint-disable-next-line prefer-destructuring
         const ele = document.getElementsByClassName('card')[0];
         dragElement(ele);
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 500);
     });
 
@@ -265,7 +269,9 @@ export default defineComponent({
     );
 
     return {
+      allChecked,
       close,
+      lastFound,
       searchText,
       show,
       searchInput,
