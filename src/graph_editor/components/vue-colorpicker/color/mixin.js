@@ -92,6 +92,46 @@ export default {
       let v = parseFloat(max.toFixed(2));
       return { h, s, v };
     },
+    rgba2hex(orig, alpha) {
+      var a, isPercent,
+        rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
+        //alpha = (rgb && rgb[4] || "").trim(),
+        hex = rgb ? 
+        (rgb[1] | 1 << 8).toString(16).slice(1) +
+        (rgb[2] | 1 << 8).toString(16).slice(1) +
+        (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
+          //if (alpha !== "") {
+            a = alpha;
+          // } else {
+          //   a = 1;
+          // }
+
+          a = Math.round(a * 100) / 100;
+            var alpha = Math.round(a * 255);
+            var hexAlpha = (alpha + 0x10000).toString(16).substr(-2).toUpperCase();
+            hex = hex + hexAlpha;
+
+      return hex;
+    },
+    hexToRGBA(hex) {
+      // remove invalid characters
+      if(hex != null) {
+        hex = hex.replace(/[^0-9a-fA-F]/g, '');
+  
+        if (hex.length < 5) { 
+            // 3, 4 characters double-up
+            hex = hex.split('').map(s => s + s).join('');
+        }
+    
+        // parse pairs of two
+        let rgba = hex.match(/.{1,2}/g).map(s => parseInt(s, 16));
+    
+        // alpha code between 0 & 1 / default 1
+        rgba[3] = rgba.length > 3 ? parseFloat(rgba[3] / 255).toFixed(2): 1;
+        return rgba[3];
+        //return 'rgba(' + rgba.join(', ') + ')';
+      }
+  }
   },
 };
 

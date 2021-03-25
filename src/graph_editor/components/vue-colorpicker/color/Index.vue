@@ -358,6 +358,7 @@ export default {
   },
   data() {
     return {
+      alphaHexString: '',
       color: '#000000',
       colorPickerType: '',
       show: false,
@@ -420,6 +421,7 @@ export default {
 
     // 避免初始化时，也会触发changeColor事件
     this.$watch('rgba', () => {
+      this.alphaHexString = this.rgba2hex(`rgb(${this.r}, ${this.g}, ${this.b}), ${this.a}`, this.a);
       this.$emit('changeColor', {
         rgba: this.rgba,
         hsv: this.hsv,
@@ -431,11 +433,14 @@ export default {
     // eslint-disable-next-line no-undef
     this.editorUi.addListener('openColorPicker', (ui, event) => {
       const optios = event.getProperty('options');
-      this.color = optios.color;
+      this.alphaHexString = optios.color;
       this.selectColor(optios.color, false);
       this.colorPickerType = optios.type;
       this.show = true;
-
+      const alpha = this.hexToRGBA(this.alphaHexString);
+      if(alpha != undefined) {
+        this.a = alpha
+      }
       setTimeout(() => {
         function dragElement(elmnt) {
           let pos1 = 0,
@@ -462,8 +467,8 @@ export default {
           }
 
           function elementDrag(e) {
-            const handle = document.getElementById('handle');
-            //if (handle.contains(e.target)) {
+            const handle = document.getElementsByClassName('modal-header')[0];
+            if (handle.contains(e.target)) {
               e = e || window.event;
               e.preventDefault();
               // calculate the new cursor position:
@@ -474,7 +479,7 @@ export default {
               // set the element's new position:
               elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
               elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-            //}
+            }
            
           }
 
@@ -497,19 +502,19 @@ export default {
     },
     apply() {
       if (this.colorPickerType === 'Background') {
-        this.editorUi.setGraphBackgroundColor(this.hexString);
+        this.editorUi.setGraphBackgroundColor( '#'+this.alphaHexString);
       } else if (this.colorPickerType === 'Grid') {
-        this.editorUi.setGridColor(this.hexString);
+        this.editorUi.setGridColor( '#'+this.alphaHexString);
       } else if (this.colorPickerType === 'Fill') {
-        this.editorUi.setShapeColor('fillColor', this.hexString);
+        this.editorUi.setShapeColor('fillColor',  '#'+this.alphaHexString);
       } else if (this.colorPickerType === 'Gradient') {
-        this.editorUi.setShapeColor('gradientColor', this.hexString);
+        this.editorUi.setShapeColor('gradientColor',  '#'+this.alphaHexString);
       } else if (this.colorPickerType === 'Line') {
-        this.editorUi.setShapeColor('strokeColor', this.hexString);
+        this.editorUi.setShapeColor('strokeColor',  '#'+this.alphaHexString);
       } else if (this.colorPickerType === 'Font Color') {
-        this.editorUi.setShapeColor('fontColor', this.hexString);
+        this.editorUi.setShapeColor('fontColor',  '#'+this.alphaHexString);
       } else if (this.colorPickerType === 'Background Color') {
-        this.editorUi.setShapeColor('labelBackgroundColor', this.hexString);
+        this.editorUi.setShapeColor('labelBackgroundColor',  '#'+this.alphaHexString);
       }
       this.close();
     },

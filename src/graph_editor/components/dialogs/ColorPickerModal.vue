@@ -28,9 +28,9 @@ interface ColorPickerEvent {
   getProperty?(propName: string): ColorPickerObject;
 }
 
-interface ColorObject {
-  hex?: string;
-}
+// interface ColorObject {
+//   hex?: string;
+// }
 
 export default defineComponent({
   name: 'ColorPickerModal',
@@ -96,10 +96,10 @@ export default defineComponent({
       props.editorUi.removeListener(openColorPicker);
     });
 
-    function changeColor(colors: any) {
-      const { r, g, b, a } = colors.rgba;
-      color.value = `rgba(${r}, ${g}, ${b}, ${a})`;
-    }
+    // function changeColor(colors: string) {
+    //   const { r, g, b, a } = colors.rgba;
+    //   color.value = `rgba(${r}, ${g}, ${b}, ${a})`;
+    // }
 
     function openSucker(isOpen: boolean) {
       if (isOpen) {
@@ -116,7 +116,7 @@ export default defineComponent({
       close,
       color,
       colorPickerType,
-      changeColor,
+      //changeColor,
       isSucking,
       openSucker,
       show,
