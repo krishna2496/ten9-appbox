@@ -65,6 +65,7 @@ export default defineComponent({
     }
 
     function searchText(): any {
+      //try {
       let { graph } = props.editorUi.editor;
       let lastFound = null;
       let allChecked = false;
@@ -116,7 +117,7 @@ export default defineComponent({
         }
 
         let i;
-
+        //console.log('len ', cells.length);
         for (i = 0; i < cells.length; i++) {
           const state = graph.view.getState(cells[i]);
           let label;
@@ -175,7 +176,7 @@ export default defineComponent({
       }
       //Check other pages
       // else if (!internalCall && allPagesInput.value) {
-        else if (allPagesInput.value) {
+      else if (allPagesInput.value) {
         allChecked = true;
         return searchText();
       } else if (graph.isEnabled()) {
@@ -183,64 +184,71 @@ export default defineComponent({
       }
 
       return searchStr.length == 0 || firstMatch != null;
+      // } catch {
+      //   alert(123);
+      // }
     }
 
     onMounted(() => {
       props.editorUi.addListener('openFindWindow', openFindWindow);
 
-      // setTimeout(() => {
-      //   function dragElement(elmnt: any) {
-      //     let pos1 = 0,
-      //       pos2 = 0,
-      //       pos3 = 0,
-      //       pos4 = 0;
-      //     function dragMouseDown(e: any) {
-      //       e = e || window.event;
-      //       e.preventDefault();
-      //       // get the mouse cursor position at startup:
-      //       pos3 = e.clientX;
-      //       pos4 = e.clientY;
-      //       document.onmouseup = closeDragElement;
-      //       // call a function whenever the cursor moves:
-      //       document.onmousemove = elementDrag;
-      //     }
+      setTimeout(() => {
+        function dragElement(elmnt: any) {
+          let pos1 = 0,
+            pos2 = 0,
+            pos3 = 0,
+            pos4 = 0;
+          function dragMouseDown(e: any) {
+            // eslint-disable-next-line prefer-destructuring
+            const handle = document.getElementsByClassName('card-header')[0];
+            if (handle.contains(e.target)) {
+              e = e || window.event;
+              e.preventDefault();
+              // get the mouse cursor position at startup:
+              pos3 = e.clientX;
+              pos4 = e.clientY;
+              document.onmouseup = closeDragElement;
+              // call a function whenever the cursor moves:
+              document.onmousemove = elementDrag;
+            }
+          }
 
-      //     function closeDragElement() {
-      //       // stop moving when mouse button is released:
-      //       document.onmouseup = null;
-      //       document.onmousemove = null;
-      //     }
+          function closeDragElement() {
+            // stop moving when mouse button is released:
+            document.onmouseup = null;
+            document.onmousemove = null;
+          }
 
-      //     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      //     if (document.getElementById(elmnt.id + 'header')) {
-      //       // if present, the header is where you move the DIV from:
-      //       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      //       document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
-      //     } else {
-      //       // otherwise, move the DIV from anywhere inside the DIV:
-      //       elmnt.onmousedown = dragMouseDown;
-      //     }
+          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+          if (document.getElementById(elmnt.id + 'header')) {
+            // if present, the header is where you move the DIV from:
+            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+            document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
+          } else {
+            // otherwise, move the DIV from anywhere inside the DIV:
+            elmnt.onmousedown = dragMouseDown;
+          }
 
-      //     function elementDrag(e:any) {
-      //       e = e || window.event;
-      //       e.preventDefault();
-      //       // calculate the new cursor position:
-      //       pos1 = pos3 - e.clientX;
-      //       pos2 = pos4 - e.clientY;
-      //       pos3 = e.clientX;
-      //       pos4 = e.clientY;
-      //       // set the element's new position:
-      //       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      //       elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-      //       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      //       elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-      //     }
-      //   }
-      //   // eslint-disable-next-line prefer-destructuring
-      //   const ele = document.getElementsByClassName('card')[0];
-      //   dragElement(ele);
-      // // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      // }, 500);
+          function elementDrag(e:any) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+            elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
+            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+            elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+          }
+        }
+        // eslint-disable-next-line prefer-destructuring
+        const ele = document.getElementsByClassName('card')[0];
+        dragElement(ele);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      }, 500);
     });
 
     onUnmounted(() => {
@@ -249,8 +257,10 @@ export default defineComponent({
 
     watch(
       () => searchInput.value,
-      () => {
-        searchText();
+      (val) => {
+        if (val !== '') {
+          searchText();
+        }
       },
     );
 
