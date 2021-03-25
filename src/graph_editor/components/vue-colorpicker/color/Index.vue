@@ -382,7 +382,7 @@ export default {
     },
     totalWidth() {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      return this.hueHeight + (this.hueWidth + 8) * 2;
+      return this.hueHeight + (this.hueWidth + 18) * 2;
     },
     previewWidth() {
       return this.totalWidth - (this.suckerHide ? 0 : this.previewHeight);

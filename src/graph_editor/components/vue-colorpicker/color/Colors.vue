@@ -81,7 +81,7 @@ export default {
     position: relative;
     width: 16px;
     height: 16px;
-    margin: 10px 0 0 10px;
+    margin: 10px 0 0 10px !important;
     border-radius: 3px;
     box-sizing: border-box;
     vertical-align: top;
