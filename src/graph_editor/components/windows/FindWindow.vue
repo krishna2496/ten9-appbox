@@ -34,10 +34,19 @@ export default defineComponent({
 
     const searchInput = ref<string>('');
 
-    const allPagesInput = ref<boolean>(true);
+    const allPagesInput = ref<boolean>(false);
+
+    const regexInput = ref<boolean>(false);
+
+    const graph = ref(props.editorUi.editor.graph);
 
     function close() {
       show.value = false;
+      lastFound.value = null;
+      allChecked.value = true;
+      searchInput.value = '';
+      allPagesInput.value = false;
+      regexInput.value = false;
     }
 
     function openFindWindow() {
@@ -70,18 +79,18 @@ export default defineComponent({
 
     function searchText(): any {
       //try {
-      let { graph } = props.editorUi.editor;
+      //let { graph } = props.editorUi.editor;
 
       const tmp = document.createElement('div');
-      const cells = graph.model.getDescendants(graph.model.getRoot());
+      const cells = graph.value.model.getDescendants(graph.value.model.getRoot());
       const searchStr = searchInput.value.toLowerCase();
-      //const re = regexInput.checked ? new RegExp(searchStr) : null;
-      let re: any = null;
+      //console.log('reg',regexInput.value);
+      let re = regexInput.value ? new RegExp(searchStr) : null;
+      //let re: any = null;
       let firstMatch = null;
 
       let active = lastFound.value == null;
       let i;
-      debugger;
       if (searchStr.length > 0) {
         if (allChecked.value) {
           allChecked.value = false;
@@ -101,15 +110,13 @@ export default defineComponent({
           lastFound.value = null;
 
           do {
-            console.log(props.editorUi.getCurrentPage());
             console.log('root updated');
             allChecked.value = false;
             nextPage = props.editorUi.pages[nextPageIndex];
-            graph = props.editorUi.createTemporaryGraph(graph.getStylesheet());
+            graph.value = props.editorUi.createTemporaryGraph(graph.value.getStylesheet());
             props.editorUi.updatePageRoot(nextPage);
-            graph.model.setRoot(nextPage.root);
+            graph.value.model.setRoot(nextPage.root);
             nextPageIndex = (nextPageIndex + 1) % props.editorUi.pages.length;
-            console.log(props.editorUi.getCurrentPage());
           } while (!searchText() && nextPageIndex != currentPageIndex);
           if (lastFound.value) {
             lastFound.value = null;
@@ -118,24 +125,24 @@ export default defineComponent({
 
           allChecked.value = false;
           // eslint-disable-next-line prefer-destructuring
-          graph = props.editorUi.editor.graph;
+          graph.value = props.editorUi.editor.graph;
           return searchText();
         }
 
         for (i = 0; i < cells.length; i++) {
-          const state = graph.view.getState(cells[i]);
+          const state = graph.value.view.getState(cells[i]);
           let label;
           if (
             state != null &&
             state.cell.value != null &&
             (active || firstMatch == null) &&
-            (graph.model.isVertex(state.cell) || graph.model.isEdge(state.cell))
+            (graph.value.model.isVertex(state.cell) || graph.value.model.isEdge(state.cell))
           ) {
-            if (graph.isHtmlLabel(state.cell)) {
-              tmp.innerHTML = graph.sanitizeHtml(graph.getLabel(state.cell));
+            if (graph.value.isHtmlLabel(state.cell)) {
+              tmp.innerHTML = graph.value.sanitizeHtml(graph.value.getLabel(state.cell));
               label = mxUtils.extractTextWithWhitespace([tmp]);
             } else {
-              label = graph.getLabel(state.cell);
+              label = graph.value.getLabel(state.cell);
             }
 
             // eslint-disable-next-line no-control-regex
@@ -146,8 +153,6 @@ export default defineComponent({
                   testMeta(re, state.cell, searchStr))) ||
               (re != null && (re.test(label) || testMeta(re, state.cell, searchStr)))
             ) {
-              console.log(11);
-              console.log('active', active);
               if (active) {
                 firstMatch = state;
 
@@ -168,14 +173,13 @@ export default defineComponent({
           allChecked.value = true;
           return searchText();
         }
-        console.log(2);
         lastFound.value = firstMatch;
-        graph.scrollCellToVisible(lastFound.value.cell);
+        graph.value.scrollCellToVisible(lastFound.value.cell);
 
-        if (graph.isEnabled()) {
-          graph.setSelectionCell(lastFound.value.cell);
+        if (graph.value.isEnabled()) {
+          graph.value.setSelectionCell(lastFound.value.cell);
         } else {
-          graph.highlightCell(lastFound.value.cell);
+          graph.value.highlightCell(lastFound.value.cell);
         }
       }
       //Check other pages
@@ -183,10 +187,11 @@ export default defineComponent({
       else if (allPagesInput.value) {
         allChecked.value = true;
         return searchText();
-      } else if (graph.isEnabled()) {
-        graph.clearSelection();
+      } else if (graph.value.isEnabled()) {
+        graph.value.clearSelection();
       }
 
+      console.log('return ', searchStr.length == 0 || firstMatch != null);
       return searchStr.length == 0 || firstMatch != null;
       // } catch {
       //   alert(123);
@@ -255,6 +260,14 @@ export default defineComponent({
       }, 500);
     });
 
+    function checkAllPages() {
+      allPagesInput.value = !allPagesInput.value;
+    }
+
+    function isRegularExpression() {
+      regexInput.value = !regexInput.value;
+    }
+
     onUnmounted(() => {
       console.log('unmount');
     });
@@ -270,8 +283,13 @@ export default defineComponent({
 
     return {
       allChecked,
+      allPagesInput,
+      checkAllPages,
       close,
+      graph,
+      isRegularExpression,
       lastFound,
+      regexInput,
       searchText,
       show,
       searchInput,
@@ -290,10 +308,10 @@ export default defineComponent({
       .row
         input.txt-input(type='text', v-model='searchInput')
       .row.mt-2
-        input(type='checkbox')
+        input(type='checkbox', @change='isRegularExpression')
         label.ml-2 Regular Expression
       .row
-        input(type='checkbox')
+        input(type='checkbox', @change='checkAllPages')
         label.ml-2 All Pages
     button.btn.btn-grey(@click='close') Reset
     button.btn.btn-primary(@click='') Apply
