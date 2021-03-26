@@ -311,7 +311,7 @@ export default {
   props: {
     theme: {
       type: String,
-      default: 'dark',
+      default: 'light',
     },
     suckerHide: {
       type: Boolean,
@@ -467,8 +467,6 @@ export default {
           }
 
           function elementDrag(e) {
-            const handle = document.getElementsByClassName('modal-header')[0];
-            if (handle.contains(e.target)) {
               e = e || window.event;
               e.preventDefault();
               // calculate the new cursor position:
@@ -479,8 +477,6 @@ export default {
               // set the element's new position:
               elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
               elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-            }
-           
           }
 
           function closeDragElement() {
@@ -601,7 +597,7 @@ b-modal(
   @hide='close',
   no-fade='',
 )
-  .hu-color-picker(:class='{ light: isLightTheme }', :style='{ width: totalWidth + "px" }')
+  .hu-color-picker(:class='{ light: isLightTheme }', :style="{ width: totalWidth + 'px', margin:'auto' }")
     .color-set
       saturation(
         ref='saturation',
@@ -641,7 +637,7 @@ b-modal(
     button.btn.btn-primary(@click='apply') Apply
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .hu-color-picker {
   padding: 10px;
   background: #1d2024;
@@ -678,5 +674,8 @@ b-modal(
     margin-top: 8px;
     display: flex;
   }
+}
+.modal-content {
+  width: 250px !important;
 }
 </style>

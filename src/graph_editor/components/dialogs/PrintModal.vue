@@ -473,6 +473,7 @@ export default defineComponent({
             0,
             autoOrigin,
           );
+          pv.open();
           //pv = printGraph(props.editorUi.editor.graph, null, false);
         }
 
@@ -586,7 +587,11 @@ export default defineComponent({
       show.value = true;
       pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
       isMultiplePages.value = props.editorUi.pages.length > 1 ? true : false;
+      pageFormat.value = props.editorUi.editor.graph.pageFormat;
       maxPage.value = props.editorUi.pages.length;
+      if (window.localStorage.getItem('pageStyle') != null) {
+        pageStyle.value = window.localStorage.getItem('pageStyle');
+      }
       if (props.editorUi.pages.length > 1) {
         if (props.editorUi.getCurrentPage() != null) {
           for (let i = 0; i < props.editorUi.pages.length; i++) {
@@ -615,10 +620,11 @@ export default defineComponent({
         if (val.x == 'custom') {
           showCustomPaperSize.value = true;
           pageStyle.value = 'custom';
-        } else {
-          showCustomPaperSize.value = false;
-          pageStyle.value = 'portrait';
         }
+        //  else {
+        //   showCustomPaperSize.value = false;
+        //   pageStyle.value = 'portrait';
+        // }
       },
     );
 
