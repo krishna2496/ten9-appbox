@@ -311,19 +311,19 @@ export default {
   props: {
     theme: {
       type: String,
-      default: 'light',
+      default: 'dark',
     },
     suckerHide: {
       type: Boolean,
-      default: true,
+      default: false,
     },
-    suckerCanvas: {
-      type: null, // HTMLCanvasElement
-      default: null,
-    },
+    // suckerCanvas: {
+    //   type: HTMLCanvasElement, // HTMLCanvasElement
+    //   default: null,
+    // },
     suckerArea: {
       type: Array,
-      default: () => [],
+      default: () => [950,700,900,700],
     },
     colorsDefault: {
       type: Array,
@@ -367,6 +367,7 @@ export default {
       previewHeight: 30,
       modelRgba: '',
       modelHex: '',
+      suckerCanvas: null,
       r: 0,
       g: 0,
       b: 0,
@@ -382,7 +383,7 @@ export default {
     },
     totalWidth() {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      return this.hueHeight + (this.hueWidth + 18) * 2;
+      return this.hueHeight + (this.hueWidth + 27) * 2;
     },
     previewWidth() {
       return this.totalWidth - (this.suckerHide ? 0 : this.previewHeight);
@@ -560,6 +561,7 @@ export default {
     },
     openSucker(isOpen) {
       this.$emit('openSucker', isOpen);
+      this.suckerCanvas = document.createElement('canvas');
     },
     selectSucker(color) {
       const { r, g, b, a, h, s, v } = this.setColorValue(color);
@@ -590,13 +592,17 @@ export default {
 </script>
 
 <template lang="pug">
-b-modal(
+b-modal#color-modal(
   :visible='show',
   no-close-on-backdrop='',
   @close='close',
   @hide='close',
   no-fade='',
+  size='sm',
 )
+  template(v-slot:modal-header)
+    h4 Pick a Color
+    i.fa.fa-times(aria-hidden='true', @click='close')
   .hu-color-picker(:class='{ light: isLightTheme }', :style="{ width: totalWidth + 'px', margin:'auto' }")
     .color-set
       saturation(
@@ -617,13 +623,13 @@ b-modal(
       )
     .color-show(:style='{ height: previewHeight + "px" }')
       preview(:color='rgbaString', :width='previewWidth', :height='previewHeight')
-        sucker(
-          v-if='!suckerHide',
-          :sucker-canvas='suckerCanvas',
-          :sucker-area='suckerArea',
-          @openSucker='openSucker',
-          @selectSucker='selectSucker'
-        )
+      sucker(
+        v-if='!suckerHide',
+        :sucker-canvas='suckerCanvas',
+        :sucker-area='suckerArea',
+        @openSucker='openSucker',
+        @selectSucker='selectSucker'
+      )
     box(name='HEX', :color='modelHex', @inputcolor='inputHex')
     box(name='RGBA', :color='modelRgba', @inputcolor='inputRgba')
     colors(
@@ -674,8 +680,5 @@ b-modal(
     margin-top: 8px;
     display: flex;
   }
-}
-.modal-content {
-  width: 250px !important;
 }
 </style>

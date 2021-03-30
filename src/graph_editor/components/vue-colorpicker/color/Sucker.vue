@@ -62,7 +62,7 @@ export default {
     suckerCanvas(newVal) {
       this.isSucking = false;
       this.suckColor(newVal);
-      // newVal.style.cursor = `url(${imgSucker}) 0 32, default`;
+      newVal.style.cursor = "url('../img/sucker.png') 0 32, default";
     },
   },
   methods: {
@@ -87,7 +87,8 @@ export default {
         document.removeEventListener('mousemove', this.mousemoveHandler);
         document.removeEventListener('mouseup', this.mousemoveHandler);
         if (this.suckerPreview) {
-          document.body.removeChild(this.suckerPreview);
+          //document.body.removeChild(this.suckerPreview);
+          document.getElementById('color-modal').removeChild(this.suckerPreview);
           this.suckerPreview = null;
         }
       }
@@ -127,16 +128,19 @@ export default {
       ) {
         style.display = '';
       } else {
-        style.display = 'none';
+        // style.display = 'none';
+        style.display = '';
       }
     },
     suckColor(dom) {
+      console.log('dom',dom)
       if (dom && dom.tagName !== 'CANVAS') {
         return;
       }
 
       this.suckerPreview = document.createElement('div');
-      document.body.appendChild(this.suckerPreview);
+      document.getElementById('color-modal').appendChild(this.suckerPreview);
+      //document.body.appendChild(this.suckerPreview);
 
       document.addEventListener('mousemove', this.mousemoveHandler);
       document.addEventListener('mouseup', this.mousemoveHandler);
@@ -152,6 +156,7 @@ export default {
         a = parseFloat((a / 255).toFixed(2));
         this.$emit('selectSucker', { r, g, b, a });
       });
+      console.log('here');
     },
   },
 };

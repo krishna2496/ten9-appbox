@@ -1896,7 +1896,9 @@ PageSetupDialog.addPageFormatPanel = function (div, namePostfix, pageFormat, pag
   var update = function (evt, selectChanged) {
     // TEN9: set localstirage for page style
     if (evt) {
-      window.localStorage.setItem('pageStyle', evt.target.value);
+      if (evt.target.value === 'landscape' || evt.target.value === 'portrait') {
+        window.localStorage.setItem('pageStyle', evt.target.value);
+      }
     }
     var f = pf[paperSizeSelect.value];
 
