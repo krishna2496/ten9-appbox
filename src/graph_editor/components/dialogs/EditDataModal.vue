@@ -45,10 +45,8 @@ export default defineComponent({
     const propertyName = ref<string>(null);
 
     const pageId = ref<string>('');
-    // TODO: Use type here
-    const cell = ref(null);
 
-    const innerHtml = ref<string[]>([]);
+    const cell = ref(null);
 
     const names = ref<string[]>([]);
 
@@ -60,7 +58,6 @@ export default defineComponent({
       show.value = false;
       propertyName.value = '';
       cell.value = null;
-      innerHtml.value = [];
       names.value = [];
       count.value = 0;
       propertyValue.value = [];
@@ -132,7 +129,6 @@ export default defineComponent({
     }
 
     function removeProperty(index: number) {
-      innerHtml.value.splice(index, 1);
       names.value.splice(index, 1);
       propertyValue.value.splice(index, 1);
     }
@@ -159,7 +155,6 @@ export default defineComponent({
       cell,
       closeModal,
       disable,
-      innerHtml,
       names,
       pageId,
       propertyName,
