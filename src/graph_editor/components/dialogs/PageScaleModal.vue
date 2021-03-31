@@ -78,7 +78,7 @@ b-modal#modal(
     h4 Set Page Scale
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
-  .row.ml-3
+  .row.ml-3.mt-2
     label.mt-1 Percentage (%)
     input.txt-input.ml-2(type='number', v-model='pageScaleValue')
   template(#modal-footer='')

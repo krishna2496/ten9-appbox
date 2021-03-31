@@ -133,7 +133,6 @@ export default {
       }
     },
     suckColor(dom) {
-      console.log('dom',dom)
       if (dom && dom.tagName !== 'CANVAS') {
         return;
       }
@@ -156,7 +155,6 @@ export default {
         a = parseFloat((a / 255).toFixed(2));
         this.$emit('selectSucker', { r, g, b, a });
       });
-      console.log('here');
     },
   },
 };

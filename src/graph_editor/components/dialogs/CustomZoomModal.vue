@@ -79,7 +79,7 @@ b-modal#modal(
     h4 Custom Zoom
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
-  .row.justify-content-center
+  .row.ml-3.mt-2
     label.mt-1 Percentage (%)
     input.ml-2.txt-input(type='number', v-model='pageScaleValue')
   template(#modal-footer='')

@@ -78,9 +78,9 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
   template(v-slot:modal-header)
     h4 Rename Layer
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
-  .mw-100
+  .mw-100.mt-2
     label Enter Name:
-    input.txt-input(type='text', v-model='name')
+    input.txt-input.ml-2(type='text', v-model='name')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

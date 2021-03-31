@@ -360,8 +360,7 @@ export default defineComponent({
             i0 = pagesFromInput.value - 1;
             imax = pagesToInput.value - 1;
           }
-          console.log('i0=', i0);
-          console.log('imax=', imax);
+
           for (let i = i0; i <= imax; i++) {
             const page = props.editorUi.pages[i];
 
@@ -591,6 +590,14 @@ export default defineComponent({
       maxPage.value = props.editorUi.pages.length;
       if (window.localStorage.getItem('pageStyle') != null) {
         pageStyle.value = window.localStorage.getItem('pageStyle');
+        if (pageStyle.value === 'landscape') {
+          pageFormat.value = new mxRectangle(
+            0,
+            0,
+            props.editorUi.editor.graph.pageFormat.height,
+            props.editorUi.editor.graph.pageFormat.width,
+          );
+        }
       }
       if (props.editorUi.pages.length > 1) {
         if (props.editorUi.getCurrentPage() != null) {
@@ -607,6 +614,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      window.localStorage.setItem('pageStyle', 'portrait');
       props.editorUi.addListener('openPrintModal', openPrintModal);
     });
 

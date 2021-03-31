@@ -52,9 +52,9 @@ export default defineComponent({
 
     const names = ref<string[]>([]);
 
-    const count = ref<number>(0);
+    const propertyValue = ref<string[]>([]);
 
-    const idTrack = ref<Array<number>>([]);
+    const count = ref<number>(0);
 
     function closeModal() {
       show.value = false;
@@ -63,6 +63,7 @@ export default defineComponent({
       innerHtml.value = [];
       names.value = [];
       count.value = 0;
+      propertyValue.value = [];
     }
 
     function setProperty() {
@@ -74,9 +75,7 @@ export default defineComponent({
       let removeLabel = false;
 
       for (let i = 0; i < names.value.length; i++) {
-        const data: HTMLInputElement = document.getElementById(
-          `val${idTrack.value[i]}`,
-        ) as HTMLInputElement;
+        const data: HTMLInputElement = document.getElementById(`val${i}`) as HTMLInputElement;
         if (data.value == null) {
           obj.removeAttribute(names.value[i]);
         } else {
@@ -108,17 +107,13 @@ export default defineComponent({
 
       if (value != undefined) {
         const attrs = value.attributes;
-        //let temp = [];
         const isLayer = props.editorUi.getCellParent(cell.value) == props.editorUi.getPageRoot();
 
         if (attrs != undefined) {
           for (let i = 0; i < attrs.length; i++) {
             if ((isLayer || attrs[i].nodeName != 'label') && attrs[i].nodeName != 'placeholders') {
-              //temp.push({ name: attrs[i].nodeName, value: attrs[i].nodeValue });
               names.value.push(attrs[i].nodeName);
-              const temp = `<div class="row ml-2 mb-3"><label class="col-sm-3">${attrs[i].nodeName}:</label><input type="text" id="val${count.value}"  class="txt-input col-sm-9"value="${attrs[i].nodeValue}" ></div>`;
-              innerHtml.value.push(temp);
-              count.value += 1;
+              propertyValue.value.push(attrs[i].nodeValue);
             }
           }
         }
@@ -129,23 +124,17 @@ export default defineComponent({
       if (propertyName.value.indexOf(' ') >= 0) {
         throw new Error('InvalidCharacterError: Failed to execute setAttribute');
       }
-      const temp = `<div class="row ml-2 mb-3"><label class="col-sm-3">${propertyName.value}:</label><input type="text" id="val${count.value}" r class="txt-input col-sm-9" ></div>`;
-      innerHtml.value.push(temp);
+
       names.value.push(propertyName.value);
       propertyName.value = '';
       disable.value = true;
-      idTrack.value.push(count.value);
-      count.value += 1;
+      propertyValue.value.push('');
     }
 
     function removeProperty(index: number) {
       innerHtml.value.splice(index, 1);
       names.value.splice(index, 1);
-      const value = idTrack.value.indexOf(index);
-      const indexValue = -1;
-      if (value > indexValue) {
-        idTrack.value.splice(value, 1);
-      }
+      propertyValue.value.splice(index, 1);
     }
 
     onMounted(() => {
@@ -170,11 +159,11 @@ export default defineComponent({
       cell,
       closeModal,
       disable,
-      idTrack,
       innerHtml,
       names,
       pageId,
       propertyName,
+      propertyValue,
       removeProperty,
       setProperty,
       show,
@@ -200,8 +189,11 @@ b-modal#modal(
     label ID:
     label.ml-5 {{ pageId }}
   .row
-    template(v-for='(div, index) in innerHtml')
-      .col-sm-11(v-html='div')
+    template(v-for='(name, index) in names')
+      .col-sm-11
+        .row.ml-2
+          label.mt-1 {{ name }}
+          b-form-input.b-txt-input.ml-2.mb-2(:id='`val${index}`', :value='propertyValue[index]')
       .col-sm-1
         label.pointer(@click='removeProperty(index)') X
   .row.ml-3

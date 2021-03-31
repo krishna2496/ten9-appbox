@@ -315,7 +315,7 @@ export default {
     },
     suckerHide: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     // suckerCanvas: {
     //   type: HTMLCanvasElement, // HTMLCanvasElement
