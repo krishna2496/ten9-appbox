@@ -20,8 +20,7 @@
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.8.2",
-    "vue": "^2.6.12",
-    "vue-color": "^2.8.1"
+    "vue": "^2.6.12"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -30,7 +29,6 @@
     "@prettier/plugin-pug": "^1.13.1",
     "@types/lodash": "^4.14.167",
     "@types/prettier": "^2.1.6",
-    "@types/vue-color": "^2.4.3",
     "@typescript-eslint/eslint-plugin": "^4.12.0",
     "@typescript-eslint/parser": "^4.12.0",
     "@typescript-eslint/typescript-estree": "^4.12.0",
