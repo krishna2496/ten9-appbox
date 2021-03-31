@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import colorPicker from '@caohenghu/vue-colorpicker';
+import colorPicker from '../vue-colorpicker';
 const { mxEventSource } = require('../../lib/jgraph/mxClient.js');
 
 interface ColorPickerObject {
