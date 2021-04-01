@@ -14601,6 +14601,80 @@ var SelectedFile;
   EditorUi.prototype.getBoundingBoxFromGeometry = function (cells) {
     this.editor.graph.getBoundingBoxFromGeometry(cells);
   };
+
+  EditorUi.prototype.createThumb = function (
+    cells,
+    width,
+    height,
+    parent,
+    title,
+    showLabel,
+    showTitle,
+    realWidth,
+    realHeight,
+  ) {
+    this.editor.graph.labelsVisible = showLabel == null || showLabel;
+    var fo = mxClient.NO_FO;
+    mxClient.NO_FO = Editor.prototype.originalNoForeignObject;
+    this.editor.graph.view.scaleAndTranslate(1, 0, 0);
+    this.editor.graph.addCells(cells);
+    var bounds = this.editor.graph.getGraphBounds();
+    var s =
+      Math.floor(
+        Math.min(
+          (width - 2 * this.thumbBorder) / bounds.width,
+          (height - 2 * this.thumbBorder) / bounds.height,
+        ) * 100,
+      ) / 100;
+    this.editor.graph.view.scaleAndTranslate(
+      s,
+      Math.floor((width - bounds.width * s) / 2 / s - bounds.x),
+      Math.floor((height - bounds.height * s) / 2 / s - bounds.y),
+    );
+    var node = null;
+
+    // For supporting HTML labels in IE9 standards mode the container is cloned instead
+    if (
+      this.editor.graph.dialect == mxConstants.DIALECT_SVG &&
+      !mxClient.NO_FO &&
+      this.editor.graph.view.getCanvas().ownerSVGElement != null
+    ) {
+      node = this.editor.graph.view.getCanvas().ownerSVGElement.cloneNode(true);
+    }
+    // LATER: Check if deep clone can be used for quirks if container in DOM
+    else {
+      node = this.editor.graph.container.cloneNode(false);
+      node.innerHTML = this.editor.graph.container.innerHTML;
+
+      // Workaround for clipping in older IE versions
+      if (mxClient.IS_QUIRKS || document.documentMode == 8) {
+        node.firstChild.style.overflow = 'visible';
+      }
+    }
+
+    this.editor.graph.getModel().clear();
+    mxClient.NO_FO = fo;
+
+    // Catch-all event handling
+    if (mxClient.IS_IE6) {
+      parent.style.backgroundImage = 'url(' + this.editorUi.editor.transparentImage + ')';
+    }
+
+    node.style.position = 'relative';
+    node.style.overflow = 'hidden';
+    // TEN9: Use default to keep this centered
+    node.style.left = this.thumbBorder + 'px';
+    node.style.top = this.thumbBorder + 'px';
+    node.style.width = width + 'px';
+    node.style.height = height + 'px';
+    node.style.visibility = '';
+    node.style.minWidth = '';
+    node.style.minHeight = '';
+
+    //parent.appendChild(node);
+    //parent.appendChild(node.cloneNode(true));
+    return node;
+  };
 })();
 
 /**

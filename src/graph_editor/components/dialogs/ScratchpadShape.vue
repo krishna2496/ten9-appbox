@@ -15,29 +15,15 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onMounted } from '@vue/composition-api';
 import {
   mxCell,
   mxClient,
-  mxEventObject,
-  mxEventSource,
   mxResources,
   mxUtils,
   mxUrlConverter,
 } from '../../lib/jgraph/mxClient.js';
-import { Editor } from '../../lib/jgraph/Editor.js';
 import { Graph } from '../../lib/jgraph/Graph.js';
-import ScratchpadShape from './ScratchpadShape.vue';
-interface InsertLinkObject {
-  length: number;
-  cell?: typeof mxCell;
-  value?: string;
-}
-
-interface ScratchpadData {
-  getProperty?(propName: string): InsertLinkObject;
-}
-
 interface imageData {
   data: string;
   w: number;
@@ -46,57 +32,26 @@ interface imageData {
   title: string;
   xml?: string;
 }
-
 export default defineComponent({
-  name: 'ScratchpadModal',
-  components: {
-    ScratchpadShape,
-  },
+  name: 'ScratchpadShape',
   props: {
     editorUi: {
       type: Object,
       required: true,
     },
+    shape: {
+      type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
+      required: true,
+    },
   },
+
   setup(props) {
-    const show = ref<boolean>(false);
-    // TODO: Use type here
-    const shapes = ref([]);
-
-    const shapesHtml = ref<string[]>([]);
-
-    const textBoxIndex = ref<number[]>([]);
-
-    function closeModal() {
-      show.value = false;
-      shapes.value = [];
-      shapesHtml.value = [];
-      textBoxIndex.value = [];
-    }
-
-    function saveScratchpad() {
-      for (let i = 0; i < textBoxIndex.value.length; i++) {
-        const textBox: HTMLInputElement = document.getElementById(`txt${i}`) as HTMLInputElement;
-        if (shapes.value[i].title != undefined) {
-          shapes.value[i].title = textBox.value;
-        } else {
-          shapes.value[i].title = textBox.value;
-        }
-      }
-      const xml = props.editorUi.createLibraryDataFromImages(shapes.value);
-      props.editorUi.fireEvent(new mxEventObject('scratchpadDataChanged', 'detail', xml));
-      closeModal();
-    }
-
     // eslint-disable-next-line consistent-return
-    function addButton(
-      data: string,
-      mimeType: string,
-      w: number,
-      h: number,
-      img: imageData,
-      index: number,
-    ) {
+    function addButton(data: string, mimeType: string, w: number, h: number, img: imageData) {
       // // Ignores duplicates
       try {
         props.editorUi.spinner.stop();
@@ -195,28 +150,6 @@ export default defineComponent({
               }
             }
 
-            const rem: HTMLImageElement = document.createElement('img');
-            rem.setAttribute('src', Editor.closeImage);
-            rem.setAttribute('border', '0');
-            rem.setAttribute('title', mxResources.get('delete'));
-            rem.setAttribute('align', 'top');
-            rem.style.paddingTop = '4px';
-            rem.style.position = 'absolute';
-            rem.style.marginLeft = '-12px';
-            rem.style.zIndex = '1';
-            rem.style.cursor = 'pointer';
-            rem.className = 'remove';
-            rem.setAttribute('data-index', index.toString());
-            // rem.onclick = removeShape(index);
-            rem.addEventListener(
-              'click',
-              (evt: MouseEvent) => {
-                console.log(evt);
-              },
-              true,
-            );
-
-            wrapper.appendChild(rem);
             wrapper.style.marginBottom = '30px';
           }
           //else if (!errorShowed) {
@@ -235,9 +168,9 @@ export default defineComponent({
               if (temp != null && temp.length > 0) {
                 for (let i = 0; i < temp.length; i++) {
                   if (temp[i].xml != null) {
-                    addButton(null, null, 0, 0, temp[i], i);
+                    addButton(null, null, 0, 0, temp[i]);
                   } else {
-                    addButton(temp[i].data, null, temp[i].w, temp[i].h, null, i);
+                    addButton(temp[i].data, null, temp[i].w, temp[i].h, null);
                   }
                 }
               }
@@ -270,79 +203,21 @@ export default defineComponent({
       }
     }
 
-    function scratchpadModal(_sender: typeof mxEventSource, event: ScratchpadData) {
-      show.value = true;
-      const images = event.getProperty('scratchpad');
-
-      if (images != null) {
-        for (let i = 0; i < images.length; i++) {
-          const img: imageData = images[i];
-          shapes.value.push(img);
-          const index = i;
-          const temp: HTMLDivElement = addButton(img.data, null, img.w, img.h, img, index);
-          const tmpNode = document.createElement('div');
-          tmpNode.appendChild(temp.cloneNode(true));
-          let str = tmpNode.innerHTML;
-          let label;
-          if (img.title) {
-            label = `<div><input type="text" value="${img.title}" class="w-90" id="txt${i}"></div>`;
-          } else {
-            label = `<div><input type="text" placeholder="Untitled" class="w-90" id="txt${i}"></div>`;
-          }
-          str = str + label;
-          shapesHtml.value.push(str);
-          textBoxIndex.value.push(i);
-        }
-      }
-    }
-
-    function removeShape(index: number) {
-      console.log(index);
-    }
-
     onMounted(() => {
-      props.editorUi.addListener('scratchpadModal', scratchpadModal);
+      const image: any = props.shape;
+      const temp: HTMLDivElement = addButton(image.data, null, image.w, image.h, image);
+      const tmpNode = document.createElement('div');
+      tmpNode.className = 'col-sm-4 col-md-2 mt-4 m-2';
+      tmpNode.appendChild(temp.cloneNode(true));
+      document.getElementById('shape').appendChild(temp);
     });
-
-    onUnmounted(() => {
-      props.editorUi.removeListener(scratchpadModal);
-    });
-
     return {
       addButton,
-      closeModal,
-      removeShape,
-      saveScratchpad,
-      shapes,
-      shapesHtml,
-      show,
-      textBoxIndex,
     };
   },
 });
 </script>
 
 <template lang="pug">
-b-modal#modal(
-  :visible='show',
-  no-close-on-backdrop='',
-  ref='scratchpad',
-  no-fade,
-  size='lg',
-  @hide='closeModal'
-)
-  template(v-slot:modal-header)
-    h4 Scratchpad Data
-    i.fa.fa-times(aria-hidden='true', @click='closeModal')
-  .mw-100
-  //- .row.shape-modal-content
-    //- .col-sm-4.col-md-2.mt-4(v-for='(div, index) in shapesHtml', v-html='div')
-    //- br
-  .scratchpad-data(v-for='(shape, index) in shapes')
-    scratchpad-shape.row(:editorUi='editorUi', :shape='shape', :index='index')
-  template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
-      | Cancel
-    button.btn.btn-primary(type='button', @click='saveScratchpad')
-      | Apply
+#shape
 </template>

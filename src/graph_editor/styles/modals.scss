@@ -105,3 +105,10 @@
 .b-txt-input {
   width: 90% !important;
 }
+
+.shape {
+  display: inline-block;
+  position: relative;
+  transition: transform 0.1s ease-in-out 0s;
+  margin-bottom: 30px;
+}
