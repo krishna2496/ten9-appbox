@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
-import { mxCell, mxUtils } from '../../lib/jgraph/mxClient.js';
+import { mxUtils } from '../../lib/jgraph/mxClient.js';
 export default defineComponent({
   name: 'FindWindow',
   props: {
@@ -40,6 +40,10 @@ export default defineComponent({
 
     const graph = ref(props.editorUi.editor.graph);
 
+    const count = ref<number>(0);
+
+    const notFound = ref<boolean>(false);
+
     function close() {
       show.value = false;
       lastFound.value = null;
@@ -47,6 +51,7 @@ export default defineComponent({
       searchInput.value = '';
       allPagesInput.value = false;
       regexInput.value = false;
+      notFound.value = false;
     }
 
     function openFindWindow() {
@@ -77,15 +82,15 @@ export default defineComponent({
       return false;
     }
 
-    function searchText(): any {
+    function searchText(internalCall: boolean): any {
+      //debugger
       //try {
       //let { graph } = props.editorUi.editor;
-
       const tmp = document.createElement('div');
       const cells = graph.value.model.getDescendants(graph.value.model.getRoot());
       const searchStr = searchInput.value.toLowerCase();
       //console.log('reg',regexInput.value);
-      let re = regexInput.value ? new RegExp(searchStr) : null;
+      const re = regexInput.value ? new RegExp(searchStr) : null;
       //let re: any = null;
       let firstMatch = null;
 
@@ -110,14 +115,15 @@ export default defineComponent({
           lastFound.value = null;
 
           do {
-            console.log('root updated');
             allChecked.value = false;
             nextPage = props.editorUi.pages[nextPageIndex];
             graph.value = props.editorUi.createTemporaryGraph(graph.value.getStylesheet());
             props.editorUi.updatePageRoot(nextPage);
             graph.value.model.setRoot(nextPage.root);
             nextPageIndex = (nextPageIndex + 1) % props.editorUi.pages.length;
-          } while (!searchText() && nextPageIndex != currentPageIndex);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            count.value += 1;
+          } while (!searchText(true) && nextPageIndex != currentPageIndex && count.value < 50);
           if (lastFound.value) {
             lastFound.value = null;
             props.editorUi.selectPage(nextPage);
@@ -126,7 +132,7 @@ export default defineComponent({
           allChecked.value = false;
           // eslint-disable-next-line prefer-destructuring
           graph.value = props.editorUi.editor.graph;
-          return searchText();
+          return searchText(true);
         }
 
         for (i = 0; i < cells.length; i++) {
@@ -171,27 +177,27 @@ export default defineComponent({
         if (i == cells.length && allPagesInput.value) {
           lastFound.value = null;
           allChecked.value = true;
-          return searchText();
+          return searchText(true);
         }
         lastFound.value = firstMatch;
         graph.value.scrollCellToVisible(lastFound.value.cell);
 
         if (graph.value.isEnabled()) {
           graph.value.setSelectionCell(lastFound.value.cell);
+          notFound.value = false;
         } else {
           graph.value.highlightCell(lastFound.value.cell);
         }
       }
       //Check other pages
-      //else if (!internalCall && allPagesInput.value) {
-      else if (allPagesInput.value) {
+      else if (!internalCall && allPagesInput.value) {
         allChecked.value = true;
-        return searchText();
+        return searchText(true);
       } else if (graph.value.isEnabled()) {
         graph.value.clearSelection();
+        notFound.value = true;
       }
 
-      console.log('return ', searchStr.length == 0 || firstMatch != null);
       return searchStr.length == 0 || firstMatch != null;
       // } catch {
       //   alert(123);
@@ -207,35 +213,11 @@ export default defineComponent({
             pos2 = 0,
             pos3 = 0,
             pos4 = 0;
-          function dragMouseDown(e: any) {
-            // eslint-disable-next-line prefer-destructuring
-            const handle = document.getElementsByClassName('card-header')[0];
-            if (handle.contains(e.target)) {
-              e = e || window.event;
-              e.preventDefault();
-              // get the mouse cursor position at startup:
-              pos3 = e.clientX;
-              pos4 = e.clientY;
-              document.onmouseup = closeDragElement;
-              // call a function whenever the cursor moves:
-              document.onmousemove = elementDrag;
-            }
-          }
 
           function closeDragElement() {
             // stop moving when mouse button is released:
             document.onmouseup = null;
             document.onmousemove = null;
-          }
-
-          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-          if (document.getElementById(elmnt.id + 'header')) {
-            // if present, the header is where you move the DIV from:
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
-          } else {
-            // otherwise, move the DIV from anywhere inside the DIV:
-            elmnt.onmousedown = dragMouseDown;
           }
 
           function elementDrag(e: any) {
@@ -251,6 +233,31 @@ export default defineComponent({
             elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
             // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
             elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+          }
+
+          function dragMouseDown(e: any) {
+            // eslint-disable-next-line prefer-destructuring
+            const handle = document.getElementsByClassName('card-header')[0];
+            if (handle.contains(e.target)) {
+              e = e || window.event;
+              e.preventDefault();
+              // get the mouse cursor position at startup:
+              pos3 = e.clientX;
+              pos4 = e.clientY;
+              document.onmouseup = closeDragElement;
+              // call a function whenever the cursor moves:
+              document.onmousemove = elementDrag;
+            }
+          }
+
+          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+          if (document.getElementById(elmnt.id + 'header')) {
+            // if present, the header is where you move the DIV from:
+            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+            document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
+          } else {
+            // otherwise, move the DIV from anywhere inside the DIV:
+            elmnt.onmousedown = dragMouseDown;
           }
         }
         // eslint-disable-next-line prefer-destructuring
@@ -268,6 +275,13 @@ export default defineComponent({
       regexInput.value = !regexInput.value;
     }
 
+    function reset() {
+      lastFound.value = null;
+      allChecked.value = true;
+      searchInput.value = '';
+      notFound.value = false;
+    }
+
     onUnmounted(() => {
       console.log('unmount');
     });
@@ -276,7 +290,7 @@ export default defineComponent({
       () => searchInput.value,
       (val) => {
         if (val !== '') {
-          searchText();
+          searchText(false);
         }
       },
     );
@@ -289,7 +303,9 @@ export default defineComponent({
       graph,
       isRegularExpression,
       lastFound,
+      notFound,
       regexInput,
+      reset,
       searchText,
       show,
       searchInput,
@@ -302,19 +318,19 @@ export default defineComponent({
 .find-window(v-show='show')
   b-card.mb-2(tag='article', style='max-width: 20rem')
     template.row(#header='')
-      h6.mb-0.col-sm-11 Find
-      span.float-right.col.sm-1(@click='close') X
+      h6.mb-1.col-sm-11 Find
+      span.float-right.col.sm-1.close(@click='close') X
     .card-body
       .row
-        input.txt-input(type='text', v-model='searchInput')
+        input.txt-input(type='text', v-model='searchInput', :class='{ bgLightPink: notFound }')
       .row.mt-2
-        input(type='checkbox', @change='isRegularExpression')
+        input.mt-1(type='checkbox', @change='isRegularExpression')
         label.ml-2 Regular Expression
       .row
-        input(type='checkbox', @change='checkAllPages')
+        input.mt-1(type='checkbox', @change='checkAllPages')
         label.ml-2 All Pages
-    button.btn.btn-grey(@click='close') Reset
-    button.btn.btn-primary(@click='') Apply
+    button.btn.btn-grey.ml-3(@click='reset') Reset
+    button.btn.btn-primary.ml-3(@click='') Apply
 </template>
 
 <style scoped>
@@ -323,19 +339,16 @@ export default defineComponent({
 }
 .card {
   z-index: 1000;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 .txt-input {
   border: 1px solid #ddd;
   padding: 5px 10px;
-
-  &::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
+}
+.close {
+  cursor: pointer;
+}
+.bgLightPink {
+  background: lightpink;
 }
 </style>

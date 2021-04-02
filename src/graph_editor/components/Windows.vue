@@ -17,11 +17,13 @@
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
 import FindWindow from './windows/FindWindow.vue';
+import LayersWindow from './windows/LayerWindow.vue';
 
 export default defineComponent({
   name: 'Windows',
   components: {
     FindWindow,
+    LayersWindow,
   },
   props: {
     editorUi: {
@@ -36,4 +38,5 @@ export default defineComponent({
 <template lang="pug">
 .windows-container(v-if='editorUi')
   find-window(:editorUi='editorUi')
+  layers-window(:editorUi='editorUi')
 </template>
