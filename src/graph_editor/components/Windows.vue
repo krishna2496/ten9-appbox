@@ -18,12 +18,14 @@
 import { defineComponent } from '@vue/composition-api';
 import FindWindow from './windows/FindWindow.vue';
 import LayersWindow from './windows/LayerWindow.vue';
+import OutlineWindow from './windows/OutlineWindow.vue';
 
 export default defineComponent({
   name: 'Windows',
   components: {
     FindWindow,
     LayersWindow,
+    OutlineWindow,
   },
   props: {
     editorUi: {
@@ -39,4 +41,5 @@ export default defineComponent({
 .windows-container(v-if='editorUi')
   find-window(:editorUi='editorUi')
   layers-window(:editorUi='editorUi')
+  outline-window(:editorUi='editorUi')
 </template>
