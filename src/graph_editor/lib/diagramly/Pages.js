@@ -928,6 +928,11 @@ EditorUi.prototype.insertPage = function (page, index) {
 
     // TEN9: add fit window calculations
     this.fireEvent(new mxEventObject('fitCurrentPageWindow'));
+
+    // TEN9: add event to enable all pages checkbox for find window
+    if (this.pages.length > 1) {
+      this.fireEvent(new mxEventObject('enableAllPage'));
+    }
   }
 
   return page;
@@ -1017,6 +1022,10 @@ EditorUi.prototype.removePage = function (page) {
 
         // Uses model to fire event to trigger autosave
         graph.model.execute(new ChangePage(this, page, next));
+        // TEN9: add event to disable all pages checkbox for find window
+        if (this.pages.length == 2 || this.pages.length == 1) {
+          this.fireEvent(new mxEventObject('disableAllPage'));
+        }
       } finally {
         graph.model.endUpdate();
       }

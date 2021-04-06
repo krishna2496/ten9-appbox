@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import { mxConstants, mxEvent, mxWindow, mxUtils } from '../../lib/jgraph/mxClient.js';
+import { mxConstants, mxEvent, mxEventObject } from '../../lib/jgraph/mxClient.js';
 export default defineComponent({
   name: 'OutlineWindow',
   props: {
@@ -34,10 +34,11 @@ export default defineComponent({
 
     function openOutlineWindow() {
       show.value = true;
+      const div = document.getElementById('window');
       const { graph } = props.editorUi.editor;
-      const outline: any = props.editorUi.createOutline();
+      const outline: any = props.editorUi.createOutline(div);
       const outlineCreateGraph: any = outline.createGraph;
-      outline.createGraph = function (container: any) {
+      outline.createGraph = function () {
         const g: any = outlineCreateGraph.apply(this, arguments);
         g.gridEnabled = false;
         g.pageScale = graph.pageScale;
@@ -50,8 +51,10 @@ export default defineComponent({
 
         return g;
       };
-      outline.init(document.getElementById('window'));
-
+      outline.init(div);
+      outline.outline.view.validateBackgroundPage(true);
+      debugger;
+      //outline.outline.view.revalidate();
       if (outline.outline.dialect == mxConstants.DIALECT_SVG) {
         const zoomInAction = props.editorUi.actions.get('zoomIn');
         const zoomOutAction = props.editorUi.actions.get('zoomOut');
@@ -137,7 +140,7 @@ export default defineComponent({
           }
         }
         // eslint-disable-next-line prefer-destructuring
-        const ele = document.getElementsByClassName('card')[2];
+        const ele: any = document.getElementsByClassName('card')[2];
         dragElement(ele);
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       }, 500);
@@ -174,6 +177,8 @@ export default defineComponent({
   overflow: hidden;
   resize: both;
   height: 250px;
+  width: 250px;
+  max-width: none !important;
 }
 .close {
   cursor: pointer;

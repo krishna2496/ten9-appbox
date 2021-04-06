@@ -4742,6 +4742,7 @@ EditorUi.prototype.createOutline = function (wnd) {
   });
 
   this.addListener('pageFormatChanged', function () {
+    console.log('here in');
     outline.update();
   });
 

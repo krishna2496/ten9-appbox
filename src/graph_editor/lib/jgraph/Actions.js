@@ -1925,7 +1925,7 @@ Actions.prototype.init = function () {
         //   ui.fireEvent(new mxEventObject('outline'));
         // });
         // this.outlineWindow.window.setVisible(true);
-        // ui.fireEvent(new mxEventObject('outline'));
+        ui.fireEvent(new mxEventObject('outline'));
       } else {
         this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
       }

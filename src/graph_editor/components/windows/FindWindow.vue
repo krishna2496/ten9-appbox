@@ -36,6 +36,8 @@ export default defineComponent({
 
     const allPagesInput = ref<boolean>(false);
 
+    const allPagesDisable = ref<boolean>(true);
+
     const regexInput = ref<boolean>(false);
 
     const graph = ref(props.editorUi.editor.graph);
@@ -204,8 +206,18 @@ export default defineComponent({
       // }
     }
 
+    function enableAllPage() {
+      allPagesDisable.value = false;
+    }
+
+    function disableAllPage() {
+      allPagesDisable.value = true;
+    }
+
     onMounted(() => {
       props.editorUi.addListener('openFindWindow', openFindWindow);
+      props.editorUi.addListener('enableAllPage', enableAllPage);
+      props.editorUi.addListener('disableAllPage', disableAllPage);
 
       setTimeout(() => {
         function dragElement(elmnt: any) {
@@ -229,10 +241,19 @@ export default defineComponent({
             pos3 = e.clientX;
             pos4 = e.clientY;
             // set the element's new position:
+            const cordinates = document.getElementById('container').getBoundingClientRect();
+            // console.log('y',elmnt.offsetTop - pos2);
+            // console.log('x', elmnt.offsetLeft - pos1);
+            // console.log('y1',cordinates.y);
+            // console.log('x1', cordinates.x);
+            // const windowY = elmnt.offsetTop - pos2 + cordinates.y;
+            // const windowX = elmnt.offsetLeft - pos1 + cordinates.x;
+            // if (cordinates.y <= windowY && cordinates.x <= windowX) {
             // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
             elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
             // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
             elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+            //}
           }
 
           function dragMouseDown(e: any) {
@@ -297,9 +318,12 @@ export default defineComponent({
 
     return {
       allChecked,
+      allPagesDisable,
       allPagesInput,
       checkAllPages,
       close,
+      disableAllPage,
+      enableAllPage,
       graph,
       isRegularExpression,
       lastFound,
@@ -318,24 +342,36 @@ export default defineComponent({
 .find-window(v-show='show')
   b-card.mb-2(tag='article', style='max-width: 20rem')
     template.row(#header='')
-      h6.mb-1.col-sm-11 Find
-      span.float-right.col.sm-1.close(@click='close') X
-    .card-body
-      .row
-        input.txt-input(type='text', v-model='searchInput', :class='{ bgLightPink: notFound }')
+      h6.mb-2.col-sm-11.font-20 Find
+      span.float-right.col.sm-1.close.mt-3(@click='close') X
+    .card-body.py-0
+      input.txt-input(type='text', v-model='searchInput', :class='{ bgLightPink: notFound }')
       .row.mt-2
-        input.mt-1(type='checkbox', @change='isRegularExpression')
-        label.ml-2 Regular Expression
+        b-form-checkbox#checkbox-1(name='checkbox-1', @change='isRegularExpression')
+          span.checkbox-text
+            | Regular Expression
       .row
-        input.mt-1(type='checkbox', @change='checkAllPages')
-        label.ml-2 All Pages
-    button.btn.btn-grey.ml-3(@click='reset') Reset
-    button.btn.btn-primary.ml-3(@click='') Apply
+        b-form-checkbox#checkbox-2(
+          name='checkbox-2',
+          @change='checkAllPages',
+          :disabled='allPagesDisable'
+        )
+          span.checkbox-text
+            | All Pages
+    template(#footer)
+      .span.footer-buttons
+        button.btn.btn-grey.ml-3(@click='reset') Reset
+        button.btn.btn-primary.ml-2(@click='searchText(false)') Find
 </template>
 
 <style scoped>
 .card-header {
   display: inline-flex;
+  background-color: #ffff;
+}
+.card-footer {
+  display: inline-flex;
+  background-color: #ffff;
 }
 .card {
   z-index: 1000;
@@ -344,11 +380,24 @@ export default defineComponent({
 .txt-input {
   border: 1px solid #ddd;
   padding: 5px 10px;
+  width: 100%;
 }
 .close {
   cursor: pointer;
+  font-size: 15px;
 }
 .bgLightPink {
   background: lightpink;
+}
+.font-20 {
+  font-size: 20px;
+}
+.checkbox-text {
+  line-height: 25px;
+}
+.footer-buttons {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
 }
 </style>
