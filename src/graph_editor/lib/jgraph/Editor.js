@@ -2348,18 +2348,13 @@ FilenameDialog.createFileTypes = function (editorUi, nameInput, types) {
  */
 (function () {
   // Uses HTML for background pages (to support grid background image)
-  mxGraphView.prototype.validateBackgroundPage = function (status = false) {
+  mxGraphView.prototype.validateBackgroundPage = function () {
     var graph = this.graph;
 
     if (graph.container != null && !graph.transparentBackground) {
       if (graph.pageVisible) {
         var bounds = this.getBackgroundPageBounds();
-        if (status) {
-          //console.log('here',bounds);
-        } else {
-          //debugger
-          //console.log('not here ',bounds);
-        }
+
         if (this.backgroundPageShape == null) {
           // Finds first element in graph container
           var firstChild = graph.container.firstChild;

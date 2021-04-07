@@ -19,7 +19,8 @@
     "@vue/composition-api": "^1.0.0-beta.24",
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.8.2",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "vue-resize-directive": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

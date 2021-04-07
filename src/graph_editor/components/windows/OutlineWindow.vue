@@ -15,10 +15,15 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import { mxConstants, mxEvent, mxEventObject } from '../../lib/jgraph/mxClient.js';
+import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
+import { mxConstants, mxEvent } from '../../lib/jgraph/mxClient.js';
+import dragElement from './Drag.js';
+import resize from 'vue-resize-directive';
 export default defineComponent({
   name: 'OutlineWindow',
+  directives: {
+    resize,
+  },
   props: {
     editorUi: {
       type: Object,
@@ -28,17 +33,23 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
+    const outline = ref(null);
+
     function close() {
       show.value = false;
+    }
+
+    function resizeWindow() {
+      outline.value.update();
     }
 
     function openOutlineWindow() {
       show.value = true;
       const div = document.getElementById('window');
       const { graph } = props.editorUi.editor;
-      const outline: any = props.editorUi.createOutline(div);
-      const outlineCreateGraph: any = outline.createGraph;
-      outline.createGraph = function () {
+      outline.value = props.editorUi.createOutline(div);
+      const outlineCreateGraph: any = outline.value.createGraph;
+      outline.value.createGraph = function createGraphOverride() {
         const g: any = outlineCreateGraph.apply(this, arguments);
         g.gridEnabled = false;
         g.pageScale = graph.pageScale;
@@ -51,11 +62,13 @@ export default defineComponent({
 
         return g;
       };
-      outline.init(div);
-      outline.outline.view.validateBackgroundPage(true);
-      debugger;
-      //outline.outline.view.revalidate();
-      if (outline.outline.dialect == mxConstants.DIALECT_SVG) {
+      outline.value.init(div);
+
+      nextTick(() => {
+        // we need to update the outline when DOM is initialize with outline
+        outline.value.update();
+      });
+      if (outline.value.outline.dialect == mxConstants.DIALECT_SVG) {
         const zoomInAction = props.editorUi.actions.get('zoomIn');
         const zoomOutAction = props.editorUi.actions.get('zoomOut');
 
@@ -64,7 +77,7 @@ export default defineComponent({
           let source = mxEvent.getSource(evt);
 
           while (source != null) {
-            if (source == outline.outline.view.canvas.ownerSVGElement) {
+            if (source == outline.value.outline.view.canvas.ownerSVGElement) {
               outlineWheel = true;
               break;
             }
@@ -85,65 +98,9 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('openOutlineWindow', openOutlineWindow);
-
-      setTimeout(() => {
-        function dragElement(elmnt: any) {
-          let pos1 = 0,
-            pos2 = 0,
-            pos3 = 0,
-            pos4 = 0;
-
-          function closeDragElement() {
-            // stop moving when mouse button is r   eleased:
-            document.onmouseup = null;
-            document.onmousemove = null;
-          }
-
-          function elementDrag(e: any) {
-            e = e || window.event;
-            e.preventDefault();
-            // calculate the new cursor position:
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            // set the element's new position:
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-          }
-
-          function dragMouseDown(e: any) {
-            // eslint-disable-next-line prefer-destructuring
-            const handle = document.getElementsByClassName('card-header')[2];
-            if (handle.contains(e.target)) {
-              e = e || window.event;
-              e.preventDefault();
-              // get the mouse cursor position at startup:
-              pos3 = e.clientX;
-              pos4 = e.clientY;
-              document.onmouseup = closeDragElement;
-              // call a function whenever the cursor moves:
-              document.onmousemove = elementDrag;
-            }
-          }
-
-          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-          if (document.getElementById(elmnt.id + 'header')) {
-            // if present, the header is where you move the DIV from:
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
-          } else {
-            // otherwise, move the DIV from anywhere inside the DIV:
-            elmnt.onmousedown = dragMouseDown;
-          }
-        }
-        // eslint-disable-next-line prefer-destructuring
-        const ele: any = document.getElementsByClassName('card')[2];
-        dragElement(ele);
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 500);
+      // eslint-disable-next-line prefer-destructuring
+      const ele: unknown = document.getElementsByClassName('card')[2];
+      dragElement(ele, 2);
     });
 
     onUnmounted(() => {
@@ -152,6 +109,8 @@ export default defineComponent({
 
     return {
       close,
+      outline,
+      resizeWindow,
       show,
     };
   },
@@ -159,7 +118,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.find-window(v-show='show')
+.outline-window(v-show='show', v-resize='resizeWindow')
   b-card.mb-2(tag='article', style='max-width: 20rem')
     template.row(#header='')
       h6.mb-1.col-sm-11 Outline

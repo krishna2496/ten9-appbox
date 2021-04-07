@@ -111,7 +111,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.find-window(v-show='show')
+.layer-window(v-show='show')
   b-card.mb-2(tag='article', style='max-width: 20rem')
     template.row(#header='')
       h6.mb-1.col-sm-11 Layers

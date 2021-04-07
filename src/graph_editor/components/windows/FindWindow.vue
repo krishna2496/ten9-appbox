@@ -17,6 +17,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 import { mxUtils } from '../../lib/jgraph/mxClient.js';
+import dragElement from './Drag.js';
 export default defineComponent({
   name: 'FindWindow',
   props: {
@@ -219,73 +220,10 @@ export default defineComponent({
       props.editorUi.addListener('enableAllPage', enableAllPage);
       props.editorUi.addListener('disableAllPage', disableAllPage);
 
-      setTimeout(() => {
-        function dragElement(elmnt: any) {
-          let pos1 = 0,
-            pos2 = 0,
-            pos3 = 0,
-            pos4 = 0;
-
-          function closeDragElement() {
-            // stop moving when mouse button is released:
-            document.onmouseup = null;
-            document.onmousemove = null;
-          }
-
-          function elementDrag(e: any) {
-            e = e || window.event;
-            e.preventDefault();
-            // calculate the new cursor position:
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            // set the element's new position:
-            const cordinates = document.getElementById('container').getBoundingClientRect();
-            // console.log('y',elmnt.offsetTop - pos2);
-            // console.log('x', elmnt.offsetLeft - pos1);
-            // console.log('y1',cordinates.y);
-            // console.log('x1', cordinates.x);
-            // const windowY = elmnt.offsetTop - pos2 + cordinates.y;
-            // const windowX = elmnt.offsetLeft - pos1 + cordinates.x;
-            // if (cordinates.y <= windowY && cordinates.x <= windowX) {
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-            //}
-          }
-
-          function dragMouseDown(e: any) {
-            // eslint-disable-next-line prefer-destructuring
-            const handle = document.getElementsByClassName('card-header')[0];
-            if (handle.contains(e.target)) {
-              e = e || window.event;
-              e.preventDefault();
-              // get the mouse cursor position at startup:
-              pos3 = e.clientX;
-              pos4 = e.clientY;
-              document.onmouseup = closeDragElement;
-              // call a function whenever the cursor moves:
-              document.onmousemove = elementDrag;
-            }
-          }
-
-          // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-          if (document.getElementById(elmnt.id + 'header')) {
-            // if present, the header is where you move the DIV from:
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
-          } else {
-            // otherwise, move the DIV from anywhere inside the DIV:
-            elmnt.onmousedown = dragMouseDown;
-          }
-        }
-        // eslint-disable-next-line prefer-destructuring
-        const ele = document.getElementsByClassName('card')[0];
-        dragElement(ele);
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      }, 500);
+      // eslint-disable-next-line prefer-destructuring
+      const ele: unknown = document.getElementsByClassName('card')[0];
+      dragElement(ele, 0);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     });
 
     function checkAllPages() {
@@ -367,7 +305,6 @@ export default defineComponent({
 <style scoped>
 .card-header {
   display: inline-flex;
-  background-color: #ffff;
 }
 .card-footer {
   display: inline-flex;
@@ -399,5 +336,9 @@ export default defineComponent({
   display: flex;
   width: 100%;
   justify-content: flex-end;
+}
+.find-window {
+  height: 235px;
+  width: 320px;
 }
 </style>
