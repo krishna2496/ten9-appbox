@@ -16,32 +16,30 @@
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import FindWindow from './windows/FindWindow.vue';
-import LayersWindow from './windows/LayerWindow.vue';
-import OutlineWindow from './windows/OutlineWindow.vue';
-
-import '../styles/windows.scss';
 
 export default defineComponent({
-  name: 'Windows',
-  components: {
-    FindWindow,
-    LayersWindow,
-    OutlineWindow,
-  },
+  name: 'Header',
   props: {
-    editorUi: {
-      type: Object,
-      required: false,
-      default: null,
+    title: {
+      type: String,
+      require: true,
+      default: '',
     },
+  },
+  setup(_props, ctx) {
+    function close() {
+      ctx.emit('closeWindow');
+    }
+
+    return {
+      close,
+    };
   },
 });
 </script>
 
 <template lang="pug">
-.windows-container(v-if='editorUi')
-  find-window(:editorUi='editorUi')
-  layers-window(:editorUi='editorUi')
-  outline-window(:editorUi='editorUi')
+.d-flex.align-items-center.justify-content-center.w-100
+  h6.mb-1.col-sm-10.pl-0 {{ title }}
+  span.float-right.col-sm-1.close(@click='close') X
 </template>

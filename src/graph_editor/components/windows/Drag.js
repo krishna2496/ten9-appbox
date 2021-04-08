@@ -21,15 +21,19 @@ export default function dragElement(elmnt, index) {
     pos4 = e.clientY;
     // set the element's new position:
     let windowHeight;
+    let windowWidth;
     const paddingTop = document.getElementById('container').getBoundingClientRect();
     if (index == 0) {
       windowHeight = document.getElementsByClassName('find-window')[0].offsetHeight;
+      windowWidth = document.getElementsByClassName('find-window')[0].offsetWidth;
     } else {
       windowHeight = document.getElementsByClassName('outline-window')[0].offsetHeight;
+      windowWidth = document.getElementsByClassName('card')[index].offsetWidth;
     }
 
     if (
       paddingTop.y <= elmnt.offsetTop - pos2 + paddingTop.y &&
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       paddingTop.height >= elmnt.offsetTop - pos2 + paddingTop.y + windowHeight
     ) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
@@ -38,7 +42,8 @@ export default function dragElement(elmnt, index) {
 
     if (
       paddingTop.x <= elmnt.offsetLeft - pos1 + paddingTop.x &&
-      paddingTop.width >= elmnt.offsetLeft - pos1 + paddingTop.x
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+      paddingTop.width + paddingTop.x >= elmnt.offsetLeft - pos1 + paddingTop.x + windowWidth
     ) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';

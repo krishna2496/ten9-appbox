@@ -18,8 +18,12 @@
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 import { mxUtils } from '../../lib/jgraph/mxClient.js';
 import dragElement from './Drag.js';
+import WindowHeader from './Header.vue';
 export default defineComponent({
   name: 'FindWindow',
+  components: {
+    WindowHeader,
+  },
   props: {
     editorUi: {
       type: Object,
@@ -280,8 +284,7 @@ export default defineComponent({
 .find-window(v-show='show')
   b-card.mb-2(tag='article', style='max-width: 20rem')
     template.row(#header='')
-      h6.mb-2.col-sm-11.font-20 Find
-      span.float-right.col.sm-1.close.mt-3(@click='close') X
+      WindowHeader(title='Find', @closeWindow='close')
     .card-body.py-0
       input.txt-input(type='text', v-model='searchInput', :class='{ bgLightPink: notFound }')
       .row.mt-2
@@ -301,44 +304,3 @@ export default defineComponent({
         button.btn.btn-grey.ml-3(@click='reset') Reset
         button.btn.btn-primary.ml-2(@click='searchText(false)') Find
 </template>
-
-<style scoped>
-.card-header {
-  display: inline-flex;
-}
-.card-footer {
-  display: inline-flex;
-  background-color: #ffff;
-}
-.card {
-  z-index: 1000;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-}
-.txt-input {
-  border: 1px solid #ddd;
-  padding: 5px 10px;
-  width: 100%;
-}
-.close {
-  cursor: pointer;
-  font-size: 15px;
-}
-.bgLightPink {
-  background: lightpink;
-}
-.font-20 {
-  font-size: 20px;
-}
-.checkbox-text {
-  line-height: 25px;
-}
-.footer-buttons {
-  display: flex;
-  width: 100%;
-  justify-content: flex-end;
-}
-.find-window {
-  height: 235px;
-  width: 320px;
-}
-</style>

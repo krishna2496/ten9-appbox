@@ -18,11 +18,15 @@
 import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
 import { mxConstants, mxEvent } from '../../lib/jgraph/mxClient.js';
 import dragElement from './Drag.js';
+import WindowHeader from './Header.vue';
 import resize from 'vue-resize-directive';
 export default defineComponent({
   name: 'OutlineWindow',
   directives: {
     resize,
+  },
+  components: {
+    WindowHeader,
   },
   props: {
     editorUi: {
@@ -121,32 +125,6 @@ export default defineComponent({
 .outline-window(v-show='show', v-resize='resizeWindow')
   b-card.mb-2(tag='article', style='max-width: 20rem')
     template.row(#header='')
-      h6.mb-1.col-sm-11 Outline
-      span.float-right.col.sm-1.close(@click='close') X
+      window-header(title='Outline', @closeWindow='close')
     #window
 </template>
-
-<style scoped>
-.card-header {
-  display: inline-flex;
-}
-.card {
-  z-index: 1000;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  resize: both;
-  height: 250px;
-  width: 250px;
-  max-width: none !important;
-}
-.close {
-  cursor: pointer;
-}
-#window {
-  background: lightgray;
-  width: 100%;
-  height: 100%;
-  border: 1px solid whitesmoke;
-  overflow: hidden;
-}
-</style>
