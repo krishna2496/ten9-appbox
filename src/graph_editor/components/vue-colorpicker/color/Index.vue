@@ -601,8 +601,8 @@ b-modal#color-modal(
   size='sm',
 )
   template(v-slot:modal-header)
-    h4 Pick a Color
-    i.fa.fa-times(aria-hidden='true', @click='close')
+    .w-100.d-flex.justify-content-end.cross-icon
+      i.fa.fa-times(aria-hidden='true', @click='close')
   .hu-color-picker(:class='{ light: isLightTheme }', :style="{ width: totalWidth + 'px', margin:'auto' }")
     .color-set
       saturation(
@@ -680,5 +680,9 @@ b-modal#color-modal(
     margin-top: 8px;
     display: flex;
   }
+}
+.cross-icon {
+  height: 5px;
+  margin-top: -7px;
 }
 </style>
