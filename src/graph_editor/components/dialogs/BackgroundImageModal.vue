@@ -18,7 +18,7 @@
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 const { mxImage, mxResources, mxUtils } = require('../../lib/jgraph/mxClient');
 
-interface ImageData {
+interface ImageDimension {
   height: number;
   width: number;
 }
@@ -58,7 +58,7 @@ export default defineComponent({
     function loadUrl() {
       props.editorUi.loadImage(
         imageUrl.value,
-        (img: ImageData) => {
+        (img: ImageDimension) => {
           imageWidth.value = img.width;
           imageHeight.value = img.height;
         },
@@ -76,7 +76,7 @@ export default defineComponent({
         if (imageUrl.value != '' && !props.editorUi.isOffline()) {
           props.editorUi.loadImage(
             imageUrl.value,
-            (img: ImageData) => {
+            (img: ImageDimension) => {
               imageWidth.value = img.width;
               imageHeight.value = img.height;
 
@@ -105,7 +105,7 @@ export default defineComponent({
     }
 
     function done() {
-      const applyFn = mxUtils.bind(props.editorUi, (image: ImageData, failed: string) => {
+      const applyFn = mxUtils.bind(props.editorUi, (image: ImageDimension, failed: string) => {
         if (!failed) {
           props.editorUi.setBackgroundImage(image);
         }
@@ -123,7 +123,7 @@ export default defineComponent({
     function apply() {
       props.editorUi.loadImage(
         imageUrl.value,
-        (img: ImageData) => {
+        (img: ImageDimension) => {
           imageWidth.value = img.width;
           imageHeight.value = img.height;
           if (done != null) {

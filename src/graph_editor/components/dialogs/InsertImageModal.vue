@@ -18,7 +18,7 @@
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import { mxEventSource } from '../../lib/jgraph/mxClient.js';
 
-interface ImageData {
+interface ImagePropertyFunction {
   getProperty: FunctionStringCallback;
 }
 
@@ -51,7 +51,7 @@ export default defineComponent({
       show.value = true;
     }
 
-    function editImage(_sender: typeof mxEventSource, event: ImageData) {
+    function editImage(_sender: typeof mxEventSource, event: ImagePropertyFunction) {
       show.value = true;
       imageLink.value = event.getProperty('image');
       cell.value = props.editorUi.getSelectedCell();

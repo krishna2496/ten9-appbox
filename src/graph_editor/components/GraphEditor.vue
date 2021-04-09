@@ -22,6 +22,7 @@ import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
 import { getImageData } from '../lib/shapes/fileIcons.js';
 import { debounce } from 'lodash';
+import Window from './Windows.vue';
 require('../lib/diagramly/DrawioFile.js');
 require('../lib/diagramly/LocalFile.js');
 require('../lib/diagramly/EditorUi.js');
@@ -95,6 +96,7 @@ export default defineComponent({
   name: 'GraphEditor',
   components: {
     Modals,
+    Window,
   },
   props: {
     shapeLibraries: {
@@ -752,4 +754,5 @@ export default defineComponent({
 .div
   .geEditor(ref='containerRef')
   modals(:editorUi='editorUiRef', @insertImage='imageInsert')
+  window(:editorUi='editorUiRef')
 </template>

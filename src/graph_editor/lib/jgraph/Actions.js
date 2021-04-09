@@ -1875,6 +1875,8 @@ Actions.prototype.init = function () {
         // LATER: Check outline window for initial placement
         // TEN9: Layer window calculation according to
         //this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 280, 120, 220, 196);
+        // TEN9: add bootstrapVue component for layer
+        //ui.fireEvent(new mxEventObject('openLayerWindow'));
         var container = mxClient.getDocumentContainer();
         this.layersWindow = new LayersWindow(ui, container.offsetWidth - 280, 120, 220, 196);
         this.layersWindow.window.addListener('show', function () {
@@ -1927,14 +1929,18 @@ Actions.prototype.init = function () {
     mxUtils.bind(this, function () {
       if (this.outlineWindow == null) {
         // LATER: Check layers window for initial placement
-        this.outlineWindow = new OutlineWindow(ui, document.body.offsetWidth - 260, 100, 180, 180);
-        this.outlineWindow.window.addListener('show', function () {
-          ui.fireEvent(new mxEventObject('outline'));
-        });
-        this.outlineWindow.window.addListener('hide', function () {
-          ui.fireEvent(new mxEventObject('outline'));
-        });
-        this.outlineWindow.window.setVisible(true);
+        // TEN9: add mxWindow to editor container instead of document body
+        // this.outlineWindow = new OutlineWindow(ui, document.body.offsetWidth - 260, 100, 180, 180);
+        // TEN9: add bootstrapVue component for otline window
+        ui.fireEvent(new mxEventObject('openOutlineWindow'));
+        //this.outlineWindow = new OutlineWindow(ui, ui.container.offsetWidth - 260, 100, 180, 180);
+        // this.outlineWindow.window.addListener('show', function () {
+        //   ui.fireEvent(new mxEventObject('outline'));
+        // });
+        // this.outlineWindow.window.addListener('hide', function () {
+        //   ui.fireEvent(new mxEventObject('outline'));
+        // });
+        // this.outlineWindow.window.setVisible(true);
         ui.fireEvent(new mxEventObject('outline'));
       } else {
         this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
