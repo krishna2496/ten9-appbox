@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted } from '@vue/composition-api';
+import { defineComponent, onMounted, PropType } from '@vue/composition-api';
 import {
   mxCell,
   mxClient,
@@ -40,7 +40,7 @@ export default defineComponent({
       required: true,
     },
     shape: {
-      type: Object,
+      type: Object as PropType<imageData>,
       required: true,
     },
     index: {
@@ -204,7 +204,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      const image: any = props.shape;
+      const image: imageData = props.shape;
       const temp: HTMLDivElement = addButton(image.data, null, image.w, image.h, image);
       const tmpNode = document.createElement('div');
       tmpNode.className = 'col-sm-4 col-md-2 mt-4 m-2';
