@@ -17,6 +17,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
 import { mxConstants, mxEvent } from '../../lib/jgraph/mxClient.js';
+import { Graph } from '../../lib/jgraph/Graph.js';
 import dragElement from './Drag.js';
 import WindowHeader from './Header.vue';
 import resize from 'vue-resize-directive';
@@ -63,7 +64,7 @@ export default defineComponent({
       const div = document.getElementById('window');
       const { graph } = props.editorUi.editor;
       outline.value = props.editorUi.createOutline(div);
-      const outlineCreateGraph: any = outline.value.createGraph;
+      const outlineCreateGraph: typeof Graph = outline.value.createGraph;
       outline.value.createGraph = function createGraphOverride() {
         const g: GraphProperty = outlineCreateGraph.apply(this, arguments);
         g.gridEnabled = false;
