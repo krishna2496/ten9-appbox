@@ -28,10 +28,6 @@ interface ColorPickerEvent {
   getProperty?(propName: string): ColorPickerObject;
 }
 
-// interface ColorObject {
-//   hex?: string;
-// }
-
 export default defineComponent({
   name: 'ColorPickerModal',
   components: {
@@ -47,12 +43,6 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const suckerCanvas = ref(null);
-
-    const suckerArea = ref([]);
-
-    const isSucking = ref<boolean>(false);
-
     const colorPickerType = ref<string>('');
 
     const color = ref<string>('#FFFFF');
@@ -66,7 +56,6 @@ export default defineComponent({
       show.value = true;
       const options = event.getProperty('options');
       colorPickerType.value = options.type;
-      console.log(options.color);
       color.value = options.color;
     }
 
@@ -96,32 +85,12 @@ export default defineComponent({
       props.editorUi.removeListener(openColorPicker);
     });
 
-    // function changeColor(colors: string) {
-    //   const { r, g, b, a } = colors.rgba;
-    //   color.value = `rgba(${r}, ${g}, ${b}, ${a})`;
-    // }
-
-    function openSucker(isOpen: boolean) {
-      if (isOpen) {
-        // ... canvas be created
-        // this.suckerCanvas = canvas
-        // this.suckerArea = [x1, y1, x2, y2]
-      } else {
-        // this.suckerCanvas && this.suckerCanvas.remove
-      }
-    }
-
     return {
       apply,
       close,
       color,
       colorPickerType,
-      //changeColor,
-      isSucking,
-      openSucker,
       show,
-      suckerArea,
-      suckerCanvas,
     };
   },
 });
@@ -132,15 +101,7 @@ b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close',
   template(v-slot:modal-header)
     h4 Select Color
     i.fa.fa-times(aria-hidden='true', @click='close')
-    color-picker(
-      theme='light',
-      :color='color',
-      :sucker-hide='false',
-      :sucker-canvas='suckerCanvas',
-      :sucker-area='suckerArea',
-      @changecolor='changeColor',
-      @opensucker='openSucker'
-    )
+    color-picker(theme='light', :color='color', :sucker-hide='true', @changecolor='changeColor')
   template(v-slot:modal-footer)
     button.btn.btn-grey(@click='close') Cancel
     button.btn.btn-primary(@click='apply') Apply
@@ -150,12 +111,15 @@ b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close',
 .image-url {
   width: 370px;
 }
+
 .text-box {
   width: 100px;
 }
+
 .text-box-label {
   margin-bottom: 0;
 }
+
 .image-cordinate {
   align-items: center;
 }
