@@ -11,13 +11,19 @@
   z-index: 1000;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  resize: both;
   width: 250px;
   height: 250px;
   max-width: none !important;
+  position: absolute !important;
 }
 
-.txt-input {
+.outline {
+  resize: both;
+  min-width: 250px;
+  min-height: 250px;
+}
+
+.txt-input-window {
   border: 1px solid #ddd;
   padding: 5px 10px;
   width: 100%;

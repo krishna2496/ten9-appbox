@@ -39,7 +39,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.d-flex.align-items-center.justify-content-center.w-100
+.d-flex.align-items-center.justify-content-between.w-100
   h6.mb-1.col-sm-10.pl-0 {{ title }}
-  span.float-right.col-sm-1.close(@click='close') X
+  span.float-right.col-sm-1.close.text-right(@click='close') X
 </template>

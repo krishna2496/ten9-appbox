@@ -332,7 +332,7 @@ b-modal#modal(
   @hide='closeModal'
 )
   template(v-slot:modal-header)
-    h4 Scratchpad Data
+    h4 Scratchpad
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   //- .row.shape-modal-content

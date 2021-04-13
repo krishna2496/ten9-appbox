@@ -134,9 +134,8 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.outline-window(v-show='show', v-resize='resizeWindow')
-  b-card.mb-2(tag='article', style='max-width: 20rem')
-    template.row(#header='')
-      window-header(title='Outline', @closeWindow='close')
-    #window
+b-card.mb-2.outline(tag='article', style='max-width: 20rem', v-resize='resizeWindow', v-show='show')
+  template.row(#header='')
+    window-header(title='Outline', @closeWindow='close')
+  #window
 </template>

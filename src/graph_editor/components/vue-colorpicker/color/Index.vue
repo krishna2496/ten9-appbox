@@ -457,14 +457,17 @@ export default {
           }
 
           function dragMouseDown(e) {
-            e = e || window.event;
-            e.preventDefault();
-            // get the mouse cursor position at startup:
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            document.onmouseup = closeDragElement;
-            // call a function whenever the cursor moves:
-            document.onmousemove = elementDrag;
+            const handle = document.getElementsByClassName('modal-header')[0];
+            if (handle.contains(e.target)) {
+              e = e || window.event;
+              e.preventDefault();
+              // get the mouse cursor position at startup:
+              pos3 = e.clientX;
+              pos4 = e.clientY;
+              document.onmouseup = closeDragElement;
+              // call a function whenever the cursor moves:
+              document.onmousemove = elementDrag;
+            }
           }
 
           function elementDrag(e) {
@@ -602,7 +605,6 @@ b-modal#color-modal(
 )
   template(v-slot:modal-header)
     .w-100.d-flex.justify-content-end.cross-icon
-      i.fa.fa-times(aria-hidden='true', @click='close')
   .hu-color-picker(:class='{ light: isLightTheme }', :style="{ width: totalWidth + 'px', margin:'auto' }")
     .color-set
       saturation(

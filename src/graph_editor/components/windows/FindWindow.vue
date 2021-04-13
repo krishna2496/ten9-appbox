@@ -301,11 +301,15 @@ export default defineComponent({
 
 <template lang="pug">
 .find-window(v-show='show')
-  b-card.mb-2(tag='article', style='max-width: 20rem')
+  b-card.mb-2.find(tag='article', style='max-width: 20rem')
     template.row(#header='')
       WindowHeader(title='Find', @closeWindow='close')
     .card-body.py-0
-      input.txt-input(type='text', v-model='searchInput', :class='{ bgLightPink: notFound }')
+      input.txt-input-window(
+        type='text',
+        v-model='searchInput',
+        :class='{ bgLightPink: notFound }'
+      )
       .row.mt-2
         b-form-checkbox#checkbox-1(name='checkbox-1', @change='isRegularExpression')
           span.checkbox-text

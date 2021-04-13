@@ -1,3 +1,19 @@
+/*
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
 export default function dragElement(elmnt, index) {
   let pos1 = 0,
     pos2 = 0,
@@ -24,10 +40,10 @@ export default function dragElement(elmnt, index) {
     let windowWidth;
     const paddingTop = document.getElementById('container').getBoundingClientRect();
     if (index == 0) {
-      windowHeight = document.getElementsByClassName('find-window')[0].offsetHeight;
-      windowWidth = document.getElementsByClassName('find-window')[0].offsetWidth;
+      windowHeight = document.getElementsByClassName('find')[0].offsetHeight;
+      windowWidth = document.getElementsByClassName('find')[0].offsetWidth;
     } else {
-      windowHeight = document.getElementsByClassName('outline-window')[0].offsetHeight;
+      windowHeight = document.getElementsByClassName('card')[index].offsetHeight;
       windowWidth = document.getElementsByClassName('card')[index].offsetWidth;
     }
 
@@ -48,6 +64,9 @@ export default function dragElement(elmnt, index) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
     }
+    // else {
+    //   elmnt.style.left = paddingTop.width - windowWidth + 'px';
+    // }
   }
 
   function dragMouseDown(e) {
