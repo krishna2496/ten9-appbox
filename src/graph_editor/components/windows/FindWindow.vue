@@ -90,6 +90,8 @@ export default defineComponent({
         for (let i = 0; i < attrs.length; i++) {
           if (attrs[i].nodeName != 'label') {
             const value = mxUtils
+              // This is an acceptable use of control chars in our regex
+              // since we are looking to convert control chars to spaces for safety.
               // eslint-disable-next-line no-control-regex
               .trim(attrs[i].nodeValue.replace(/[\x00-\x1F\x7F-\x9F]|\s+/g, ' '))
               .toLowerCase();
@@ -175,6 +177,8 @@ export default defineComponent({
               label = graph.value.getLabel(state.cell);
             }
 
+            // This is an acceptable use of control chars in our regex
+            // since we are looking to convert control chars to spaces for safety.
             // eslint-disable-next-line no-control-regex
             label = mxUtils.trim(label.replace(/[\x00-\x1F\x7F-\x9F]|\s+/g, ' ')).toLowerCase();
             if (
