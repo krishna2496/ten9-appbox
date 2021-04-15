@@ -28,6 +28,8 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
+    const pageScaleInput = ref<HTMLInputElement>(null);
+
     const pageScaleValue = ref<number>(null);
 
     const scaleValue = 100;
@@ -49,6 +51,11 @@ export default defineComponent({
       pageScaleValue.value = props.editorUi.getPageScale() * scaleValue;
     }
 
+    function focusOnInput() {
+      pageScaleInput.value?.select();
+      pageScaleInput.value?.focus();
+    }
+
     onMounted(() => {
       props.editorUi.addListener('customZoom', customZoom);
     });
@@ -59,9 +66,11 @@ export default defineComponent({
 
     return {
       closeModal,
+      focusOnInput,
+      pageScaleInput,
       pageScaleValue,
-      zoom,
       show,
+      zoom,
     };
   },
 });
@@ -73,7 +82,8 @@ b-modal#modal(
   no-close-on-backdrop='',
   ref='pageScale',
   no-fade,
-  @hide='closeModal'
+  @hide='closeModal',
+  @shown='focusOnInput'
 )
   template(v-slot:modal-header)
     h6 Custom Zoom
@@ -81,7 +91,7 @@ b-modal#modal(
   .mw-100
   .row.ml-3.mt-2
     label.mt-1 Percentage (%)
-    input.ml-2.txt-input(type='number', v-model='pageScaleValue', autofocus)
+    input.ml-2.txt-input(ref='pageScaleInput', type='number', v-model='pageScaleValue')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel
