@@ -41,5 +41,6 @@ export default defineComponent({
 <template lang="pug">
 .d-flex.align-items-center.justify-content-between.w-100
   h6.mb-1.col-sm-10.pl-0 {{ title }}
-  span.float-right.col-sm-1.close.text-right(@click='close') X
+  i.fa.fa-times(aria-hidden='true', @click='close')
+  //-span.float-right.col-sm-1.close.text-right(@click='close') X
 </template>

@@ -76,7 +76,9 @@ export default defineComponent({
 
     function saveScratchpad() {
       for (let i = 0; i < textBoxIndex.value.length; i++) {
-        const textBox: HTMLInputElement = document.getElementById(`txt${i}`) as HTMLInputElement;
+        const textBox: HTMLInputElement = document.getElementById(
+          `txt${textBoxIndex.value[i]}`,
+        ) as HTMLInputElement;
         if (shapes.value[i].title != undefined) {
           shapes.value[i].title = textBox.value;
         } else {
@@ -88,7 +90,6 @@ export default defineComponent({
       closeModal();
     }
 
-    // eslint-disable-next-line consistent-return
     function addButton(
       data: string,
       mimeType: string,
@@ -298,6 +299,8 @@ export default defineComponent({
 
     function removeShape(index: number) {
       console.log(index);
+      shapes.value.splice(index, 1);
+      textBoxIndex.value.splice(index, 1);
     }
 
     onMounted(() => {
@@ -332,14 +335,20 @@ b-modal#modal(
   @hide='closeModal'
 )
   template(v-slot:modal-header)
-    h4 Scratchpad
+    h6 Scratchpad
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   //- .row.shape-modal-content
     //- .col-sm-4.col-md-2.mt-4(v-for='(div, index) in shapesHtml', v-html='div')
     //- br
-  .scratchpad-data(v-for='(shape, index) in shapes')
-    scratchpad-shape.row(:editorUi='editorUi', :shape='shape', :index='index')
+  .row
+    .scratchpad-data.col-md-3(v-for='(shape, index) in shapes', :key='"shape" + index')
+      scratchpad-shape(
+        :editorUi='editorUi',
+        :shape='shape',
+        :index='index',
+        @removeShape='removeShape'
+      )
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

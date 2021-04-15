@@ -281,14 +281,13 @@ export default defineComponent({
 
         // Switches stylesheet for print output in dark mode
         let temp = null;
-
+        const { editorUi } = props;
         if (
           props.editorUi.editor.graph.themes != null &&
           props.editorUi.editor.graph.defaultThemeName == 'darkTheme'
         ) {
           temp = props.editorUi.editor.graph.stylesheet;
-          // eslint-disable-next-line vue/no-mutating-props
-          props.editorUi.editor.graph.stylesheet = props.editorUi.editor.graph.getDefaultStylesheet();
+          editorUi.editor.graph.stylesheet = props.editorUi.editor.graph.getDefaultStylesheet();
           props.editorUi.editor.graph.refresh();
         }
 
@@ -297,8 +296,7 @@ export default defineComponent({
 
         // Restores the stylesheet
         if (temp != null) {
-          // eslint-disable-next-line vue/no-mutating-props
-          props.editorUi.editor.graph.stylesheet = temp;
+          editorUi.editor.graph.stylesheet = temp;
           props.editorUi.editor.graph.refresh();
         }
       } else {
@@ -336,7 +334,6 @@ export default defineComponent({
 
     // Overall scale for print-out to account for print borders in dialogs etc
     function preview(print: boolean) {
-      //debugger
       let autoOrigin = false;
       let ignorePages = false;
 
@@ -369,8 +366,8 @@ export default defineComponent({
             ); //getStylesheet());
 
             // Restores graph settings that are relevant for printing
-            let pageVisible = true;
-            let mathEnabled = false;
+            let pageVisibleValue = true;
+            let mathEnabledValue = false;
             let bg = null;
             let bgImage = null;
 
@@ -384,10 +381,10 @@ export default defineComponent({
             }
 
             if (page.viewState != null) {
-              // eslint-disable-next-line prefer-destructuring
-              pageVisible = page.viewState.pageVisible;
-              // eslint-disable-next-line prefer-destructuring
-              mathEnabled = page.viewState.mathEnabled;
+              const { pageVisible } = page.viewState;
+              pageVisibleValue = pageVisible;
+              const { mathEnabled } = page.viewState;
+              mathEnabledValue = mathEnabled;
               bg = page.viewState.background;
               bgImage = page.viewState.backgroundImage;
               tempGraph.extFonts = page.viewState.extFonts;
@@ -396,8 +393,8 @@ export default defineComponent({
             tempGraph.background = bg;
             tempGraph.backgroundImage =
               bgImage != null ? new mxImage(bgImage.src, bgImage.width, bgImage.height) : null;
-            tempGraph.pageVisible = pageVisible;
-            tempGraph.mathEnabled = mathEnabled;
+            tempGraph.pageVisible = pageVisibleValue;
+            tempGraph.mathEnabled = mathEnabledValue;
 
             // Redirects placeholders to current page
             const graphGetGlobalVariable = tempGraph.getGlobalVariable;
@@ -675,7 +672,7 @@ export default defineComponent({
 <template lang="pug">
 b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
   template(v-slot:modal-header)
-    h4 Print
+    h6 Print
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
     .pages(v-show='isMultiplePages')

@@ -167,7 +167,7 @@ export default defineComponent({
 <template lang="pug">
 b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close', no-fade)
   template(v-slot:modal-header)
-    h4 Background Image
+    h6 Background Image
     i.fa.fa-times(aria-hidden='true', @click='close')
   .image-container
     .row

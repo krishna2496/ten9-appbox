@@ -99,7 +99,7 @@ export default defineComponent({
 <template lang="pug">
 b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close', no-fade)
   template(v-slot:modal-header)
-    h4 Select Color
+    h6 Select Color
     i.fa.fa-times(aria-hidden='true', @click='close')
     color-picker(theme='light', :color='color', :sucker-hide='true', @changecolor='changeColor')
   template(v-slot:modal-footer)

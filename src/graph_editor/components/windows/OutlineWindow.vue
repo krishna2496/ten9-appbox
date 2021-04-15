@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
-import { mxConstants, mxEvent } from '../../lib/jgraph/mxClient.js';
+import { mxConstants, mxEvent, mxRectangle } from '../../lib/jgraph/mxClient.js';
 import { Graph } from '../../lib/jgraph/Graph.js';
 import dragElement from './Drag.js';
 import WindowHeader from './Header.vue';
@@ -25,10 +25,8 @@ import resize from 'vue-resize-directive';
 interface GraphProperty {
   gridEnabled: boolean;
   pageScale: number;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  pageFormat: object;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  background: object;
+  pageFormat: mxRectangle;
+  background: string;
   pageVisible: boolean;
 }
 
@@ -114,9 +112,8 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('openOutlineWindow', openOutlineWindow);
-      // eslint-disable-next-line prefer-destructuring
-      const ele: unknown = document.getElementsByClassName('card')[2];
-      dragElement(ele, 2);
+      const ele: unknown = document.getElementsByClassName('card');
+      dragElement(ele[2], 2);
     });
 
     onUnmounted(() => {

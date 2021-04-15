@@ -76,12 +76,12 @@ b-modal#modal(
   @hide='closeModal'
 )
   template(v-slot:modal-header)
-    h4 Custom Zoom
+    h6 Custom Zoom
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-3.mt-2
     label.mt-1 Percentage (%)
-    input.ml-2.txt-input(type='number', v-model='pageScaleValue')
+    input.ml-2.txt-input(type='number', v-model='pageScaleValue', autofocus)
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

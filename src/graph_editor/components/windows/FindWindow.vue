@@ -146,7 +146,6 @@ export default defineComponent({
             props.editorUi.updatePageRoot(nextPage);
             graph.value.model.setRoot(nextPage.root);
             nextPageIndex = (nextPageIndex + 1) % props.editorUi.pages.length;
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             count.value += 1;
             // eslint-disable-next-line @typescript-eslint/no-magic-numbers
           } while (!searchText(true) && nextPageIndex != currentPageIndex && count.value < 50);
@@ -156,7 +155,6 @@ export default defineComponent({
           }
 
           allChecked.value = false;
-          // eslint-disable-next-line prefer-destructuring
           graph.value = props.editorUi.editor.graph;
           return searchText(true);
         }
@@ -243,10 +241,8 @@ export default defineComponent({
       props.editorUi.addListener('enableAllPage', enableAllPage);
       props.editorUi.addListener('disableAllPage', disableAllPage);
 
-      // eslint-disable-next-line prefer-destructuring
-      const ele: unknown = document.getElementsByClassName('card')[0];
-      dragElement(ele, 0);
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      const ele: unknown = document.getElementsByClassName('card');
+      dragElement(ele[0], 0);
     });
 
     function checkAllPages() {

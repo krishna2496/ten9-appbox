@@ -177,7 +177,7 @@ b-modal#modal(
   @hide='closeModal'
 )
   template(v-slot:modal-header)
-    h4 Edit Data
+    h6 Edit Data
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-3

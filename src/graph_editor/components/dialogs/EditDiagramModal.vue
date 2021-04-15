@@ -82,7 +82,7 @@ b-modal(
   no-fade
 )
   template(v-slot:modal-header)
-    h4 Edit Diagram
+    h6 Edit Diagram
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .textarea-container
     textarea.xml(v-model='xml') {{ xml }}

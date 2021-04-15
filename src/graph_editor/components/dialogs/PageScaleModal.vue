@@ -80,7 +80,7 @@ b-modal#modal(
   .mw-100
   .row.ml-3.mt-2
     label.mt-1 Percentage (%)
-    input.txt-input.ml-2(type='number', v-model='pageScaleValue')
+    input.txt-input.ml-2(type='number', v-model='pageScaleValue', autofocus)
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

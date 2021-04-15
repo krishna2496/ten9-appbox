@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType } from '@vue/composition-api';
+import { defineComponent, onMounted, PropType, ref } from '@vue/composition-api';
 import {
   mxCell,
   mxClient,
@@ -49,8 +49,8 @@ export default defineComponent({
     },
   },
 
-  setup(props) {
-    // eslint-disable-next-line consistent-return
+  setup(props, ctx) {
+    const title = ref<string>('');
     function addButton(data: string, mimeType: string, w: number, h: number, img: imageData) {
       // // Ignores duplicates
       try {
@@ -206,18 +206,31 @@ export default defineComponent({
     onMounted(() => {
       const image: imageData = props.shape;
       const temp: HTMLDivElement = addButton(image.data, null, image.w, image.h, image);
+      temp.className = 'shape-svg';
       const tmpNode = document.createElement('div');
       tmpNode.className = 'col-sm-4 col-md-2 mt-4 m-2';
       tmpNode.appendChild(temp.cloneNode(true));
-      document.getElementById('shape').appendChild(temp);
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+      document.getElementById('shape' + props.index).appendChild(temp);
+      title.value = image.title;
     });
+
+    function removeShape() {
+      ctx.emit('removeShape', props.index);
+    }
     return {
       addButton,
+      removeShape,
+      title,
     };
   },
 });
 </script>
 
 <template lang="pug">
-#shape
+.shape(:id='`shape${index}`')
+  .shape-close
+    i.fa.fa-times(aria-hidden='true', @click='removeShape')
+  .shape-title
+    b-form-input(:id='`txt${index}`', placeholder='Enter your name', v-model='title')
 </template>

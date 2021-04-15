@@ -76,7 +76,7 @@ export default defineComponent({
 <template lang="pug">
 b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
   template(v-slot:modal-header)
-    h4 Edit Style
+    h6 Edit Style
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
     .textarea-container

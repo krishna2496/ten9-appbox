@@ -80,7 +80,7 @@ export default defineComponent({
 <template lang="pug">
 b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
   template(v-slot:modal-header)
-    h4 Insert Image
+    h6 Insert Image
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-3

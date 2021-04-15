@@ -632,8 +632,8 @@ b-modal#color-modal(
         @openSucker='openSucker',
         @selectSucker='selectSucker'
       )
-    box(name='HEX', :color='modelHex', @inputcolor='inputHex')
-    box(name='RGBA', :color='modelRgba', @inputcolor='inputRgba')
+    box(name='HEX', :color='modelHex', @inputColor='inputHex')
+    box(name='RGBA', :color='modelRgba', @inputColor='inputRgba')
     colors(
       :color='rgbaString',
       :colors-default='colorsDefault',

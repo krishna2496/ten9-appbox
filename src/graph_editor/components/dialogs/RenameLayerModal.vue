@@ -76,11 +76,11 @@ export default defineComponent({
 <template lang="pug">
 b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
   template(v-slot:modal-header)
-    h4 Rename Layer
+    h6 Rename Layer
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100.mt-2
-    label Enter Name:
-    input.txt-input.ml-2(type='text', v-model='name')
+    label Name:
+    input.txt-input.ml-2(type='text', v-model='name', autofocus)
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

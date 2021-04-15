@@ -131,7 +131,7 @@ b-modal#modal(
   @hide='closeModal'
 )
   template(v-slot:modal-header)
-    h4 Shapes
+    h6 Shapes
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-2.shapes

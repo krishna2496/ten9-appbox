@@ -27,8 +27,6 @@ export default function dragElement(elmnt, index) {
   }
 
   function elementDrag(e) {
-    // eslint-disable-next-line no-param-reassign
-    e = e || window.event;
     e.preventDefault();
     // calculate the new cursor position:
     pos1 = pos3 - e.clientX;
@@ -49,32 +47,36 @@ export default function dragElement(elmnt, index) {
 
     if (
       paddingTop.y <= elmnt.offsetTop - pos2 + paddingTop.y &&
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      paddingTop.height >= elmnt.offsetTop - pos2 + paddingTop.y + windowHeight
+      paddingTop.height >=
+        Number(elmnt.offsetTop) - Number(pos2) + Number(paddingTop.y) + Number(windowHeight)
     ) {
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
+      const top = elmnt.offsetTop - pos2;
+      elmnt.style.top = String(top) + 'px';
+    }
+
+    if (paddingTop.x <= elmnt.offsetLeft - pos1 + paddingTop.x) {
+      const left = elmnt.offsetLeft - pos1;
+      elmnt.style.left = String(left) + 'px';
+      console.log(1);
+    } else {
+      elmnt.style.left = String(0) + 'px';
     }
 
     if (
-      paddingTop.x <= elmnt.offsetLeft - pos1 + paddingTop.x &&
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      paddingTop.width + paddingTop.x >= elmnt.offsetLeft - pos1 + paddingTop.x + windowWidth
+      paddingTop.width + paddingTop.x >=
+      Number(elmnt.offsetLeft) - Number(pos1) + Number(paddingTop.x) + Number(windowWidth)
     ) {
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+      const left = elmnt.offsetLeft - pos1;
+      elmnt.style.left = String(left) + 'px';
+    } else {
+      const left = paddingTop.width - windowWidth;
+      elmnt.style.left = String(left) + 'px';
     }
-    // else {
-    //   elmnt.style.left = paddingTop.width - windowWidth + 'px';
-    // }
   }
 
   function dragMouseDown(e) {
-    // eslint-disable-next-line prefer-destructuring
     const handle = document.getElementsByClassName('card-header')[index];
     if (handle.contains(e.target)) {
-      // eslint-disable-next-line no-param-reassign
-      e = e || window.event;
       e.preventDefault();
       // get the mouse cursor position at startup:
       pos3 = e.clientX;
@@ -85,11 +87,9 @@ export default function dragElement(elmnt, index) {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  if (document.getElementById(elmnt.id + 'header')) {
+  if (document.getElementById(String(elmnt.id) + 'header')) {
     // if present, the header is where you move the DIV from:
-    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-    document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
+    document.getElementById(String(elmnt.id) + 'header').onmousedown = dragMouseDown;
   } else {
     // otherwise, move the DIV from anywhere inside the DIV:
     elmnt.onmousedown = dragMouseDown;

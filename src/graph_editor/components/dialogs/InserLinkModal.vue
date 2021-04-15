@@ -171,7 +171,7 @@ export default defineComponent({
 <template lang="pug">
 b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
   template(v-slot:modal-header)
-    h4 Edit Link
+    h6 Edit Link
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-3

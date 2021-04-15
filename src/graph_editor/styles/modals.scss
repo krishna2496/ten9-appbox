@@ -107,8 +107,31 @@
 }
 
 .shape {
-  display: inline-block;
   position: relative;
   transition: transform 0.1s ease-in-out 0s;
   margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  background-color: #fafafa;
+  height: 43px;
+  display: flex;
+  align-items: center;
+}
+
+.shape-title {
+  order: 2;
+}
+
+.shape-svg {
+  order: 1;
+  margin: 0 auto 20px;
+}
+
+.shape-close {
+  top: 0;
+  right: 0;
+  position: absolute;
 }
