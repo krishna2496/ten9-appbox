@@ -35,6 +35,8 @@ export default defineComponent({
 
     const layer = ref(null);
 
+    const layerRenameInput = ref<HTMLInputElement>(null);
+
     function closeModal() {
       show.value = false;
       name.value = '';
@@ -54,8 +56,20 @@ export default defineComponent({
       name.value = props.editorUi.convertValueToString(layer.value);
     }
 
+    function onKeydown(event: KeyboardEvent) {
+      if (event.key == 'Enter') {
+        setLayerName();
+      }
+    }
+
+    function focusOnInput() {
+      layerRenameInput.value?.select();
+      layerRenameInput.value?.focus();
+    }
+
     onMounted(() => {
       props.editorUi.addListener('openLayerRenameDialog', onLayerRenameDialog);
+      document.addEventListener('keydown', onKeydown);
     });
 
     onUnmounted(() => {
@@ -64,7 +78,10 @@ export default defineComponent({
 
     return {
       closeModal,
+      focusOnInput,
       layer,
+      layerRenameInput,
+      onKeydown,
       name,
       setLayerName,
       show,
@@ -74,13 +91,19 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
+b-modal#modal(
+  :visible='show',
+  no-close-on-backdrop='',
+  no-fade,
+  @hide='closeModal',
+  @shown='focusOnInput'
+)
   template(v-slot:modal-header)
     h6 Rename Layer
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100.mt-2
     label Name:
-    input.txt-input.ml-2(type='text', v-model='name', autofocus)
+    input.txt-input.ml-2(ref='layerRenameInput', type='text', v-model='name', autofocus)
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

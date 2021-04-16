@@ -35,6 +35,8 @@ export default defineComponent({
     // TODO: Use type here
     const page = ref(null);
 
+    const pageRenameInput = ref<HTMLInputElement>(null);
+
     function closeModal() {
       show.value = false;
     }
@@ -52,8 +54,20 @@ export default defineComponent({
       name.value = page.value.getName();
     }
 
+    function focusOnInput() {
+      pageRenameInput.value?.select();
+      pageRenameInput.value?.focus();
+    }
+
+    function onKeydown(event: KeyboardEvent) {
+      if (event.key == 'Enter') {
+        setPageName();
+      }
+    }
+
     onMounted(() => {
       props.editorUi.addListener('openPageRename', onOpenPageRename);
+      document.addEventListener('keydown', onKeydown);
     });
 
     onUnmounted(() => {
@@ -62,8 +76,11 @@ export default defineComponent({
 
     return {
       closeModal,
+      focusOnInput,
+      onKeydown,
       page,
       name,
+      pageRenameInput,
       setPageName,
       show,
     };
@@ -72,13 +89,19 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeModal')
+b-modal#modal(
+  :visible='show',
+  no-close-on-backdrop='',
+  no-fade,
+  @hide='closeModal',
+  @shown='focusOnInput'
+)
   template(v-slot:modal-header)
     h6 Rename Page
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100.mt-2
     label Name:
-    input.txt-input.ml-2(type='text', v-model='name', autofocus)
+    input.txt-input.ml-2(ref='pageRenameInput', type='text', v-model='name', autofocus)
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

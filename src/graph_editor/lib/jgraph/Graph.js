@@ -9033,7 +9033,6 @@ if (typeof mxVertexHandler != 'undefined') {
           selectionEmpty = this.isSelectionEmpty();
           menuShowing = this.popupMenuHandler.isMenuShowing();
         }
-
         oldFireMouseEvent.apply(this, arguments);
       };
 

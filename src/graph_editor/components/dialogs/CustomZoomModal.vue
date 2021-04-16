@@ -56,8 +56,15 @@ export default defineComponent({
       pageScaleInput.value?.focus();
     }
 
+    function onKeydown(event: KeyboardEvent) {
+      if (event.key == 'Enter') {
+        zoom();
+      }
+    }
+
     onMounted(() => {
       props.editorUi.addListener('customZoom', customZoom);
+      document.addEventListener('keydown', onKeydown);
     });
 
     onUnmounted(() => {
@@ -67,6 +74,7 @@ export default defineComponent({
     return {
       closeModal,
       focusOnInput,
+      onKeydown,
       pageScaleInput,
       pageScaleValue,
       show,

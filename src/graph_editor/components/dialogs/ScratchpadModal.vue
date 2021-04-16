@@ -16,17 +16,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import {
-  mxCell,
-  mxClient,
-  mxEventObject,
-  mxEventSource,
-  mxResources,
-  mxUtils,
-  mxUrlConverter,
-} from '../../lib/jgraph/mxClient.js';
-import { Editor } from '../../lib/jgraph/Editor.js';
-import { Graph } from '../../lib/jgraph/Graph.js';
+import { mxCell, mxEventObject, mxEventSource } from '../../lib/jgraph/mxClient.js';
 import ScratchpadShape from './ScratchpadShape.vue';
 interface InsertLinkObject {
   length: number;
@@ -75,7 +65,7 @@ export default defineComponent({
     }
 
     function saveScratchpad() {
-      for (let i = 0; i < textBoxIndex.value.length; i++) {
+      for (let i = 0; i < textBoxIndex.value.length - 1; i++) {
         const textBox: HTMLInputElement = document.getElementById(
           `txt${textBoxIndex.value[i]}`,
         ) as HTMLInputElement;
@@ -90,188 +80,9 @@ export default defineComponent({
       closeModal();
     }
 
-    function addButton(
-      data: string,
-      mimeType: string,
-      w: number,
-      h: number,
-      img: imageData,
-      index: number,
-    ) {
-      // // Ignores duplicates
-      try {
-        props.editorUi.spinner.stop();
-        const converter = new mxUrlConverter();
-        const entries = {};
-        const ew = 100;
-        const eh = 100;
-        const div: HTMLDivElement = document.createElement('div');
-        // TEN9: remove the top border of the box
-        // div.style.borderWidth = '1px 0px 1px 0px';
-        div.style.borderWidth = '0px 0px 1px 0px';
-        div.style.borderColor = '#d3d3d3';
-        div.style.borderStyle = 'solid';
-        div.style.marginTop = '6px';
-        div.style.overflow = 'auto';
-        div.style.height = '340px';
-        div.style.backgroundPosition = 'center center';
-        div.style.backgroundRepeat = 'no-repeat';
-
-        const bg: HTMLDivElement = document.createElement('div');
-        bg.style.position = 'absolute';
-        bg.style.width = '640px';
-        bg.style.top = '260px';
-        bg.style.textAlign = 'center';
-        bg.style.fontSize = '22px';
-        bg.style.color = '#a0c3ff';
-
-        const wrapper: HTMLDivElement = document.createElement('div');
-        if (mimeType == null || mimeType.startsWith('image/')) {
-          if ((data == null && img != null) || entries[data] == null) {
-            div.style.backgroundImage = '';
-            bg.style.display = 'none';
-
-            let iw = w;
-            let ih = h;
-
-            if (w > props.editorUi.maxImageSize || h > props.editorUi.maxImageSize) {
-              const s = Math.min(
-                1,
-                Math.min(props.editorUi.maxImageSize / Math.max(1, w)),
-                props.editorUi.maxImageSize / Math.max(1, h),
-              );
-              // eslint-disable-next-line no-param-reassign
-              w *= s;
-              // eslint-disable-next-line no-param-reassign
-              h *= s;
-            }
-
-            if (iw > ih) {
-              ih = Math.round((ih * ew) / iw);
-              iw = ew;
-            } else {
-              iw = Math.round((iw * eh) / ih);
-              ih = eh;
-            }
-            const outer: HTMLDivElement = document.createElement('div');
-            outer.style.height = '100%';
-
-            // TEN9: change placeholder text for the scratchpad save dailog
-            //mxUtils.write(bg, mxResources.get('dragImagesHere'));
-            mxUtils.write(bg, 'Scratchpad is empty');
-            outer.appendChild(bg);
-
-            wrapper.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
-            wrapper.style.position = 'relative';
-
-            mxUtils.setPrefixedStyle(wrapper.style, 'transition', 'transform .1s ease-in-out');
-
-            if (data != null) {
-              const elt: HTMLDivElement = document.createElement('img');
-              elt.setAttribute('src', converter.convert(data));
-              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-              elt.style.width = iw + 'px';
-              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-              elt.style.height = ih + 'px';
-              elt.style.margin = '10px';
-
-              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-              elt.style.paddingBottom = Math.floor((eh - ih) / 2) + 'px';
-              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-              elt.style.paddingLeft = Math.floor((ew - iw) / 2) + 'px';
-
-              wrapper.appendChild(elt);
-            } else if (img != null) {
-              // eslint-disable-next-line no-undef
-              const cells: typeof mxCell = props.editorUi.stringToCells(Graph.decompress(img.xml));
-
-              if (cells.length > 0) {
-                props.editorUi.sidebar.createThumb(cells, ew, eh, wrapper, null, true, false);
-
-                const firstChild = wrapper.firstChild as HTMLElement;
-
-                // Needs inline block on SVG for delete icon to appear on same line
-                firstChild.style.display = mxClient.IS_QUIRKS ? 'inline' : 'inline-block';
-                firstChild.style.cursor = '';
-              }
-            }
-
-            const rem: HTMLImageElement = document.createElement('img');
-            rem.setAttribute('src', Editor.closeImage);
-            rem.setAttribute('border', '0');
-            rem.setAttribute('title', mxResources.get('delete'));
-            rem.setAttribute('align', 'top');
-            rem.style.paddingTop = '4px';
-            rem.style.position = 'absolute';
-            rem.style.marginLeft = '-12px';
-            rem.style.zIndex = '1';
-            rem.style.cursor = 'pointer';
-            rem.className = 'remove';
-            rem.setAttribute('data-index', index.toString());
-            // rem.onclick = removeShape(index);
-            rem.addEventListener(
-              'click',
-              (evt: MouseEvent) => {
-                console.log(evt);
-              },
-              true,
-            );
-
-            wrapper.appendChild(rem);
-            wrapper.style.marginBottom = '30px';
-          }
-          //else if (!errorShowed) {
-          // //errorShowed = true;
-          // props.editorUi.handleError({ message: mxResources.get('fileExists') });
-          // }
-        } else {
-          let done = false;
-
-          try {
-            const doc: HTMLDocument = mxUtils.parseXml(data);
-
-            if (doc.documentElement.nodeName == 'mxlibrary') {
-              const temp = JSON.parse(mxUtils.getTextContent(doc.documentElement));
-
-              if (temp != null && temp.length > 0) {
-                for (let i = 0; i < temp.length; i++) {
-                  if (temp[i].xml != null) {
-                    addButton(null, null, 0, 0, temp[i], i);
-                  } else {
-                    addButton(temp[i].data, null, temp[i].w, temp[i].h, null, i);
-                  }
-                }
-              }
-
-              done = true;
-            } else if (doc.documentElement.nodeName == 'mxfile') {
-              const pages = doc.documentElement.getElementsByTagName('diagram');
-
-              for (let i = 0; i < pages.length; i++) {
-                const temp = mxUtils.getTextContent(pages[i]);
-                const cells = props.editorUi.stringToCells(Graph.decompress(temp));
-                props.editorUi.getBoundingBoxFromGeometry(cells);
-              }
-
-              done = true;
-            }
-          } catch (e) {
-            // ignore
-          }
-
-          if (!done) {
-            props.editorUi.spinner.stop();
-            props.editorUi.handleError({ message: mxResources.get('errorLoadingFile') });
-          }
-        }
-        return wrapper;
-      } catch (e) {
-        // ignore
-        return null;
-      }
-    }
-
     function scratchpadModal(_sender: typeof mxEventSource, event: ScratchpadData) {
+      //this.graph.getSelectionCount()
+      debugger;
       show.value = true;
       const images = event.getProperty('scratchpad');
 
@@ -279,19 +90,6 @@ export default defineComponent({
         for (let i = 0; i < images.length; i++) {
           const img: imageData = images[i];
           shapes.value.push(img);
-          const index = i;
-          const temp: HTMLDivElement = addButton(img.data, null, img.w, img.h, img, index);
-          const tmpNode = document.createElement('div');
-          tmpNode.appendChild(temp.cloneNode(true));
-          let str = tmpNode.innerHTML;
-          let label;
-          if (img.title) {
-            label = `<div><input type="text" value="${img.title}" class="w-90" id="txt${i}"></div>`;
-          } else {
-            label = `<div><input type="text" placeholder="Untitled" class="w-90" id="txt${i}"></div>`;
-          }
-          str = str + label;
-          shapesHtml.value.push(str);
           textBoxIndex.value.push(i);
         }
       }
@@ -312,7 +110,6 @@ export default defineComponent({
     });
 
     return {
-      addButton,
       closeModal,
       removeShape,
       saveScratchpad,

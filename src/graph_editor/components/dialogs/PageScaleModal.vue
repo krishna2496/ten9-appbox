@@ -32,6 +32,8 @@ export default defineComponent({
 
     const scaleValue = 100;
 
+    const pageScaleInput = ref<HTMLInputElement>(null);
+
     function closeModal() {
       show.value = false;
     }
@@ -48,8 +50,20 @@ export default defineComponent({
       pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
     }
 
+    function onKeydown(event: KeyboardEvent) {
+      if (event.key == 'Enter') {
+        setPageScale();
+      }
+    }
+
+    function focusOnInput() {
+      pageScaleInput.value?.select();
+      pageScaleInput.value?.focus();
+    }
+
     onMounted(() => {
       props.editorUi.addListener('openPageScale', openPageScale);
+      document.addEventListener('keydown', onKeydown);
     });
 
     onUnmounted(() => {
@@ -58,6 +72,9 @@ export default defineComponent({
 
     return {
       closeModal,
+      focusOnInput,
+      onKeydown,
+      pageScaleInput,
       pageScaleValue,
       setPageScale,
       show,
@@ -72,15 +89,16 @@ b-modal#modal(
   no-close-on-backdrop='',
   ref='pageScale',
   no-fade,
-  @hide='closeModal'
+  @hide='closeModal',
+  @shown='focusOnInput'
 )
   template(v-slot:modal-header)
-    h4 Set Page Scale
+    h6 Set Page Scale
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-3.mt-2
     label.mt-1 Percentage (%)
-    input.txt-input.ml-2(type='number', v-model='pageScaleValue', autofocus)
+    input.txt-input.ml-2(ref='pageScaleInput', type='number', v-model='pageScaleValue', autofocus)
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

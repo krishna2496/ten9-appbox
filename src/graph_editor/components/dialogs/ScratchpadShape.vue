@@ -88,18 +88,6 @@ export default defineComponent({
             let iw = w;
             let ih = h;
 
-            if (w > props.editorUi.maxImageSize || h > props.editorUi.maxImageSize) {
-              const s = Math.min(
-                1,
-                Math.min(props.editorUi.maxImageSize / Math.max(1, w)),
-                props.editorUi.maxImageSize / Math.max(1, h),
-              );
-              // eslint-disable-next-line no-param-reassign
-              w *= s;
-              // eslint-disable-next-line no-param-reassign
-              h *= s;
-            }
-
             if (iw > ih) {
               ih = Math.round((ih * ew) / iw);
               iw = ew;
@@ -123,20 +111,17 @@ export default defineComponent({
             if (data != null) {
               const elt: HTMLDivElement = document.createElement('img');
               elt.setAttribute('src', converter.convert(data));
-              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-              elt.style.width = iw + 'px';
-              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-              elt.style.height = ih + 'px';
+              elt.style.width = String(iw) + 'px';
+              elt.style.height = String(ih) + 'px';
               elt.style.margin = '10px';
 
-              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-              elt.style.paddingBottom = Math.floor((eh - ih) / 2) + 'px';
-              // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-              elt.style.paddingLeft = Math.floor((ew - iw) / 2) + 'px';
+              const paddingBottom = Math.floor((eh - ih) / 2);
+              elt.style.paddingBottom = String(paddingBottom) + 'px';
+              const paddingLeft = Math.floor((ew - iw) / 2);
+              elt.style.paddingLeft = String(paddingLeft) + 'px';
 
               wrapper.appendChild(elt);
             } else if (img != null) {
-              // eslint-disable-next-line no-undef
               const cells: typeof mxCell = props.editorUi.stringToCells(Graph.decompress(img.xml));
 
               if (cells.length > 0) {
@@ -210,8 +195,7 @@ export default defineComponent({
       const tmpNode = document.createElement('div');
       tmpNode.className = 'col-sm-4 col-md-2 mt-4 m-2';
       tmpNode.appendChild(temp.cloneNode(true));
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      document.getElementById('shape' + props.index).appendChild(temp);
+      document.getElementById('shape' + String(props.index)).appendChild(temp);
       title.value = image.title;
     });
 
