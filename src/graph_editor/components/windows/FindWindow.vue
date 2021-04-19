@@ -65,8 +65,6 @@ export default defineComponent({
 
     const graph = ref(props.editorUi.editor.graph);
 
-    const count = ref<number>(0);
-
     const notFound = ref<boolean>(false);
 
     function close() {
@@ -148,9 +146,7 @@ export default defineComponent({
             props.editorUi.updatePageRoot(nextPage);
             graph.value.model.setRoot(nextPage.root);
             nextPageIndex = (nextPageIndex + 1) % props.editorUi.pages.length;
-            count.value += 1;
-            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-          } while (!searchText(true) && nextPageIndex != currentPageIndex && count.value < 50);
+          } while (!searchText(true) && nextPageIndex != currentPageIndex);
           if (lastFound.value) {
             lastFound.value = null;
             props.editorUi.selectPage(nextPage);

@@ -78,10 +78,11 @@ export default defineComponent({
 
     const customWidth = ref<string>('11.69');
 
+    const scalePercentage = 0.75;
+
     function closeModal() {
       show.value = false;
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      pageFormat.value = new mxRectangle(0, 0, 827, 1169);
+      pageFormat.value = mxConstants.PAGE_FORMAT_A4_PORTRAIT;
       pageStyle.value = 'portrait';
       pageScaleInput.value = '100 %';
     }
@@ -162,8 +163,7 @@ export default defineComponent({
       }
 
       // Workaround to match available paper size in actual print output
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      printScale *= 0.75;
+      printScale *= scalePercentage;
 
       if (autoOrigin) {
         const h = parseInt(sheetsAcrossInput.value);
@@ -439,8 +439,7 @@ export default defineComponent({
             pageScaleValue.value = '100%';
           }
 
-          // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-          printScale *= 0.75;
+          printScale *= scalePercentage;
           let pf = pageFormat.value || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
           if (pageStyle.value == 'landscape') {
             const h = pf.height;
@@ -492,8 +491,7 @@ export default defineComponent({
         }
 
         // Workaround to match available paper size in actual print output
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        printScale *= 0.75;
+        printScale *= scalePercentage;
         const gb = props.editorUi.editor.graph.getGraphBounds();
         let scale = 1 / props.editorUi.editor.graph.pageScale;
         let pf = pageFormat.value || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
