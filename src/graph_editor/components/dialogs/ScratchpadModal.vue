@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import { mxCell, mxEventObject, mxEventSource } from '../../lib/jgraph/mxClient.js';
 import ScratchpadShape from './ScratchpadShape.vue';
 interface InsertLinkObject {
@@ -57,6 +57,8 @@ export default defineComponent({
 
     const textBoxIndex = ref<number[]>([]);
 
+    const visible = new Set();
+
     function closeModal() {
       show.value = false;
       shapes.value = [];
@@ -82,8 +84,6 @@ export default defineComponent({
 
     function scratchpadModal(_sender: typeof mxEventSource, event: ScratchpadData) {
       //this.graph.getSelectionCount()
-      debugger;
-      show.value = true;
       const images = event.getProperty('scratchpad');
 
       if (images != null) {
@@ -93,11 +93,18 @@ export default defineComponent({
           textBoxIndex.value.push(i);
         }
       }
+      show.value = true;
     }
 
     function removeShape(index: number) {
-      console.log(index);
-      shapes.value.splice(index, 1);
+      const tempShapes = shapes.value;
+      tempShapes.splice(index, 1);
+      shapes.value = [];
+
+      nextTick(() => {
+        shapes.value = tempShapes;
+      });
+
       textBoxIndex.value.splice(index, 1);
     }
 
@@ -117,6 +124,7 @@ export default defineComponent({
       shapesHtml,
       show,
       textBoxIndex,
+      visible,
     };
   },
 });
@@ -139,13 +147,15 @@ b-modal#modal(
     //- .col-sm-4.col-md-2.mt-4(v-for='(div, index) in shapesHtml', v-html='div')
     //- br
   .row
-    .scratchpad-data.col-md-3(v-for='(shape, index) in shapes', :key='"shape" + index')
-      scratchpad-shape(
-        :editorUi='editorUi',
-        :shape='shape',
-        :index='index',
-        @removeShape='removeShape'
-      )
+    //-.scratchpad-data.col-md-3(v-for='(shape, index) in shapes', :key='"shape" + index')
+    scratchpad-shape.scratchpad-data.col-md-3(
+      v-for='(shape, index) in shapes',
+      :key='"shape" + index',
+      :editorUi='editorUi',
+      :shape='shape',
+      :index='index',
+      @removeShape='removeShape'
+    )
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

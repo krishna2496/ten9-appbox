@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, ref } from '@vue/composition-api';
+import { defineComponent, onMounted, onUpdated, PropType, ref } from '@vue/composition-api';
 import {
   mxCell,
   mxClient,
@@ -188,7 +188,7 @@ export default defineComponent({
       }
     }
 
-    onMounted(() => {
+    function addShapes() {
       const image: imageData = props.shape;
       const temp: HTMLDivElement = addButton(image.data, null, image.w, image.h, image);
       temp.className = 'shape-svg';
@@ -197,13 +197,23 @@ export default defineComponent({
       tmpNode.appendChild(temp.cloneNode(true));
       document.getElementById('shape' + String(props.index)).appendChild(temp);
       title.value = image.title;
+    }
+
+    onMounted(() => {
+      addShapes();
+    });
+
+    onUpdated(() => {
+      //console.log('updated');
     });
 
     function removeShape() {
       ctx.emit('removeShape', props.index);
     }
+
     return {
       addButton,
+      addShapes,
       removeShape,
       title,
     };
