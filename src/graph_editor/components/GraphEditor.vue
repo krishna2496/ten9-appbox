@@ -15,7 +15,6 @@
 -->
 
 <script lang="ts">
-import Vue from 'vue';
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
