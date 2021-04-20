@@ -93,13 +93,13 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
     // }
   }
 
-  function dragMouseDown(ev: MouseEvent) {
+  function dragMouseDown(e: MouseEvent) {
     const handle = document.getElementsByClassName('card-header')[index];
-    if (handle.contains(ev.target as Node)) {
-      ev.preventDefault();
+    if (handle.contains(e.target as Node)) {
+      e.preventDefault();
       // get the mouse cursor position at startup:
-      pos3 = ev.clientX;
-      pos4 = ev.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
       document.onmouseup = closeDragElement;
       // call a function whenever the cursor moves:
       document.onmousemove = elementDrag;
