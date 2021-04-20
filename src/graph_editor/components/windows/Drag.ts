@@ -38,44 +38,40 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
     let windowWidth;
     const paddingTop = document.getElementById('container').getBoundingClientRect();
     if (index == 0) {
-      const findWindow: any = document.getElementsByClassName('find')[index];
+      const findWindow = document.getElementsByClassName('find')[index] as HTMLElement;
       windowHeight = findWindow.offsetHeight;
       windowWidth = findWindow.offsetWidth;
     } else {
-      const card: any = document.getElementsByClassName('card')[index];
+      const card = document.getElementsByClassName('card')[index] as HTMLElement;
       windowHeight = card.offsetHeight;
       windowWidth = card.offsetWidth;
     }
 
     if (
       paddingTop.y <= elmnt.offsetTop - pos2 + paddingTop.y &&
-      paddingTop.height >=
-        Number(elmnt.offsetTop) - Number(pos2) + Number(paddingTop.y) + Number(windowHeight)
+      paddingTop.height >= elmnt.offsetTop - pos2 + paddingTop.y + windowHeight
     ) {
       const top = elmnt.offsetTop - pos2;
-      elmnt.style.top = String(top) + 'px';
+      elmnt.style.top = `${top}px`;
     }
     let count = 0;
     if (paddingTop.x <= elmnt.offsetLeft - pos1 + paddingTop.x) {
       count = 1;
       const left = elmnt.offsetLeft - pos1;
-      elmnt.style.left = String(left) + 'px';
+      elmnt.style.left = `${left}px`;
     } else {
       count = 0;
-      elmnt.style.left = String(0) + 'px';
+      elmnt.style.left = '0px';
     }
 
-    if (
-      paddingTop.width + paddingTop.x >=
-      Number(elmnt.offsetLeft) - Number(pos1) + Number(paddingTop.x) + Number(windowWidth)
-    ) {
-      if (count == 0) {
+    if (paddingTop.width + paddingTop.x >= elmnt.offsetLeft - pos1 + paddingTop.x + windowWidth) {
+      if (count === 0) {
         const left = elmnt.offsetLeft - pos1;
-        elmnt.style.left = String(left) + 'px';
+        elmnt.style.left = `${left}px`;
       }
     } else {
       const left = paddingTop.width - windowWidth;
-      elmnt.style.left = String(left) + 'px';
+      elmnt.style.left = `${left}px`;
     }
 
     // if (
@@ -97,22 +93,24 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
     // }
   }
 
-  function dragMouseDown(e: any) {
+  function dragMouseDown(ev: MouseEvent) {
     const handle = document.getElementsByClassName('card-header')[index];
-    if (handle.contains(e.target)) {
-      e.preventDefault();
+    if (handle.contains(ev.target as Node)) {
+      ev.preventDefault();
       // get the mouse cursor position at startup:
-      pos3 = e.clientX;
-      pos4 = e.clientY;
+      pos3 = ev.clientX;
+      pos4 = ev.clientY;
       document.onmouseup = closeDragElement;
       // call a function whenever the cursor moves:
       document.onmousemove = elementDrag;
     }
   }
 
-  if (document.getElementById(String(elmnt.id) + 'header')) {
+  const headerEl = document.getElementById(elmnt.id + 'header');
+
+  if (headerEl) {
     // if present, the header is where you move the DIV from:
-    document.getElementById(String(elmnt.id) + 'header').onmousedown = dragMouseDown;
+    headerEl.onmousedown = dragMouseDown;
   } else {
     // otherwise, move the DIV from anywhere inside the DIV:
     elmnt.onmousedown = dragMouseDown;
