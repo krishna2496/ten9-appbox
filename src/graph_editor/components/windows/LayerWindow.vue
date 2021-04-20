@@ -40,7 +40,7 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      console.log('unmount');
+      props.editorUi.removeListener(openLayerWindow);
     });
 
     return {

@@ -67,7 +67,7 @@ export default defineComponent({
     }
 
     function saveScratchpad() {
-      for (let i = 0; i < textBoxIndex.value.length - 1; i++) {
+      for (let i = 0; i < textBoxIndex.value.length; i++) {
         const textBox: HTMLInputElement = document.getElementById(
           `txt${textBoxIndex.value[i]}`,
         ) as HTMLInputElement;

@@ -703,7 +703,6 @@ export default defineComponent({
     }
 
     function imageInsert(url: string) {
-      console.log('2 ', url);
       insertImage(url);
     }
 

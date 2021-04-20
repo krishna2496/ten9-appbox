@@ -62,7 +62,6 @@ export default defineComponent({
   setup(_props, ctx) {
     function insertImage(url: string) {
       ctx.emit('insertImage', url);
-      console.log('image ', url);
     }
     return {
       insertImage,

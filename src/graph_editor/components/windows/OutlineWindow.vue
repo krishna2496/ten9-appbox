@@ -18,7 +18,7 @@
 import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
 import { mxConstants, mxEvent, mxRectangle } from '../../lib/jgraph/mxClient.js';
 import { Graph } from '../../lib/jgraph/Graph.js';
-import dragElement from './Drag.js';
+const dragElement = require('./Drag.ts');
 import WindowHeader from './Header.vue';
 import resize from 'vue-resize-directive';
 
@@ -113,11 +113,11 @@ export default defineComponent({
     onMounted(() => {
       props.editorUi.addListener('openOutlineWindow', openOutlineWindow);
       const ele: unknown = document.getElementsByClassName('card');
-      dragElement(ele[2], 2);
+      dragElement.default(ele[2], 2);
     });
 
     onUnmounted(() => {
-      console.log('unmount');
+      props.editorUi.removeListener(openOutlineWindow);
     });
 
     return {

@@ -102,7 +102,7 @@ b-modal#modal(
     h6 Rename Layer
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100.mt-2
-    label Name:
+    label Name
     input.txt-input.ml-2(ref='layerRenameInput', type='text', v-model='name', autofocus)
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')

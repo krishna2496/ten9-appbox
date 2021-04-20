@@ -14,7 +14,7 @@
  * -----
  */
 
-export default function dragElement(elmnt, index) {
+export default function dragElement(elmnt: HTMLDivElement, index: number) {
   let pos1 = 0,
     pos2 = 0,
     pos3 = 0,
@@ -26,7 +26,7 @@ export default function dragElement(elmnt, index) {
     document.onmousemove = null;
   }
 
-  function elementDrag(e) {
+  function elementDrag(e: MouseEvent) {
     e.preventDefault();
     // calculate the new cursor position:
     pos1 = pos3 - e.clientX;
@@ -38,11 +38,13 @@ export default function dragElement(elmnt, index) {
     let windowWidth;
     const paddingTop = document.getElementById('container').getBoundingClientRect();
     if (index == 0) {
-      windowHeight = document.getElementsByClassName('find')[0].offsetHeight;
-      windowWidth = document.getElementsByClassName('find')[0].offsetWidth;
+      const findWindow: any = document.getElementsByClassName('find')[index];
+      windowHeight = findWindow.offsetHeight;
+      windowWidth = findWindow.offsetWidth;
     } else {
-      windowHeight = document.getElementsByClassName('card')[index].offsetHeight;
-      windowWidth = document.getElementsByClassName('card')[index].offsetWidth;
+      const card: any = document.getElementsByClassName('card')[index];
+      windowHeight = card.offsetHeight;
+      windowWidth = card.offsetWidth;
     }
 
     if (
@@ -53,12 +55,13 @@ export default function dragElement(elmnt, index) {
       const top = elmnt.offsetTop - pos2;
       elmnt.style.top = String(top) + 'px';
     }
-
+    let count = 0;
     if (paddingTop.x <= elmnt.offsetLeft - pos1 + paddingTop.x) {
+      count = 1;
       const left = elmnt.offsetLeft - pos1;
       elmnt.style.left = String(left) + 'px';
-      console.log(1);
     } else {
+      count = 0;
       elmnt.style.left = String(0) + 'px';
     }
 
@@ -66,15 +69,35 @@ export default function dragElement(elmnt, index) {
       paddingTop.width + paddingTop.x >=
       Number(elmnt.offsetLeft) - Number(pos1) + Number(paddingTop.x) + Number(windowWidth)
     ) {
-      const left = elmnt.offsetLeft - pos1;
-      elmnt.style.left = String(left) + 'px';
+      if (count == 0) {
+        const left = elmnt.offsetLeft - pos1;
+        elmnt.style.left = String(left) + 'px';
+      }
     } else {
       const left = paddingTop.width - windowWidth;
       elmnt.style.left = String(left) + 'px';
     }
+
+    // if (
+    //   paddingTop.y <= elmnt.offsetTop - pos2 + paddingTop.y &&
+    //   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    //   paddingTop.height >= elmnt.offsetTop - pos2 + paddingTop.y + windowHeight
+    // ) {
+    //   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    //   elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
+    // }
+
+    // if (
+    //   paddingTop.x <= elmnt.offsetLeft - pos1 + paddingTop.x &&
+    //   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    //   paddingTop.width + paddingTop.x >= elmnt.offsetLeft - pos1 + paddingTop.x + windowWidth
+    // ) {
+    //   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    //   elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+    // }
   }
 
-  function dragMouseDown(e) {
+  function dragMouseDown(e: any) {
     const handle = document.getElementsByClassName('card-header')[index];
     if (handle.contains(e.target)) {
       e.preventDefault();

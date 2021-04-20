@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUpdated, PropType, ref } from '@vue/composition-api';
+import { defineComponent, onMounted, PropType, ref } from '@vue/composition-api';
 import {
   mxCell,
   mxClient,
@@ -203,10 +203,6 @@ export default defineComponent({
       addShapes();
     });
 
-    onUpdated(() => {
-      //console.log('updated');
-    });
-
     function removeShape() {
       ctx.emit('removeShape', props.index);
     }
@@ -226,5 +222,5 @@ export default defineComponent({
   .shape-close
     i.fa.fa-times(aria-hidden='true', @click='removeShape')
   .shape-title
-    b-form-input(:id='`txt${index}`', placeholder='Enter your name', v-model='title')
+    b-form-input(:id='`txt${index}`', placeholder='Untitled', v-model='title')
 </template>

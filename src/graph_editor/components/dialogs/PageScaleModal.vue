@@ -39,7 +39,7 @@ export default defineComponent({
     }
 
     function setPageScale() {
-      if (pageScaleValue.value != 0) {
+      if (pageScaleValue.value != 0 && pageScaleValue.value != null) {
         props.editorUi.setPageScale(pageScaleValue.value / scaleValue);
       }
       closeModal();
@@ -98,7 +98,7 @@ b-modal#modal(
   .mw-100
   .row.ml-3.mt-2
     label.mt-1 Percentage (%)
-    input.txt-input.ml-2(ref='pageScaleInput', type='number', v-model='pageScaleValue', autofocus)
+    input.txt-input.ml-2(ref='pageScaleInput', type='number', v-model='pageScaleValue')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel

@@ -17,7 +17,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 import { mxUtils } from '../../lib/jgraph/mxClient.js';
-import dragElement from './Drag.js';
+const dragElement = require('./Drag.ts');
 import WindowHeader from './Header.vue';
 
 interface RegularExpression {
@@ -108,15 +108,10 @@ export default defineComponent({
     }
 
     function searchText(internalCall: boolean): boolean {
-      //debugger
-      //try {
-      //let { graph } = props.editorUi.editor;
       const tmp = document.createElement('div');
       const cells = graph.value.model.getDescendants(graph.value.model.getRoot());
       const searchStr = searchInput.value.toLowerCase();
-      //console.log('reg',regexInput.value);
       const re = regexInput.value ? new RegExp(searchStr) : null;
-      //let re: any = null;
       let firstMatch = null;
 
       let active = lastFound.value == null;
@@ -242,7 +237,7 @@ export default defineComponent({
       props.editorUi.addListener('disableAllPage', disableAllPage);
 
       const ele: unknown = document.getElementsByClassName('card');
-      dragElement(ele[0], 0);
+      dragElement.default(ele[0], 0);
     });
 
     function checkAllPages() {
@@ -261,7 +256,9 @@ export default defineComponent({
     }
 
     onUnmounted(() => {
-      console.log('unmount');
+      props.editorUi.removeListener(openFindWindow);
+      props.editorUi.removeListener(enableAllPage);
+      props.editorUi.removeListener(disableAllPage);
     });
 
     watch(
