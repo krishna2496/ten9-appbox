@@ -34,9 +34,6 @@ require('../lib/diagramly/DistanceGuides.js');
 require('../lib/diagramly/Minimal.js');
 import Modals from './Modals.vue';
 
-Vue.config.errorHandler = (err) => {
-  console.log(err.message);
-};
 import {
   defineComponent,
   nextTick,
