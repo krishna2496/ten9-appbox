@@ -1,6 +1,6 @@
 <!--
 * ten9, Inc
-* Copyright (c) 2015 - 2021 ten9, Inc
+* Copyright (c) 2015 - 2020 ten9, Inc
 * -----
 * NOTICE:  All information contained herein is, and remains
 * the property of ten9 Incorporated and its suppliers,
@@ -294,7 +294,6 @@ export default defineComponent({
     }
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      console.log('graph changes');
       ctx.emit('graph-changed', event.name);
     }
 
