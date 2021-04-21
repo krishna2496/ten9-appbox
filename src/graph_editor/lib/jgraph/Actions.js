@@ -1,6 +1,6 @@
 /**
  * ten9, Inc
- * Copyright (c) 2015 - 2020 ten9, Inc
+ * Copyright (c) 2015 - 2021 ten9, Inc
  * -----
  * NOTICE:  All information contained herein is, and remains
  * the property of ten9 Incorporated and its suppliers,
@@ -1897,6 +1897,18 @@ Actions.prototype.init = function () {
     null,
     Editor.ctrlKey + '+Shift+L',
   );
+
+  // TEN9: add new layer menu option
+  action = this.addAction(
+    'layers2',
+    mxUtils.bind(this, function () {
+      ui.fireEvent(new mxEventObject('openLayerWindow'));
+    }),
+    null,
+    null,
+    Editor.ctrlKey + '+Shift+L+2',
+  );
+
   // TEN9: add isGraphEnabled property
   action.isEnabled = isGraphEnabled;
   action.setToggleAction(true);
@@ -1965,7 +1977,9 @@ Actions.prototype.init = function () {
  */
 Actions.prototype.addAction = function (key, funct, enabled, iconCls, shortcut) {
   var title;
-
+  // if (key == 'layers') {
+  //   debugger;
+  // }
   if (key.substring(key.length - 3) == '...') {
     key = key.substring(0, key.length - 3);
     title = mxResources.get(key) + '...';

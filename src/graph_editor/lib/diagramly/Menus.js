@@ -3204,7 +3204,8 @@ DriveFile = function () {};
               'insertLink',
               '-',
               // TEN9: Disabling items for our app
-              /* 'createShape', 'insertFreehand', '-', */ 'insertImage',
+              /* 'createShape', 'insertFreehand', '-', */
+              'insertImage',
             ],
             parent,
           );
@@ -3788,7 +3789,7 @@ DriveFile = function () {};
           this.addMenuItems(
             menu,
             (this.editorUi.format != null ? ['formatPanel'] : [])
-              .concat(['outline', 'layers'])
+              .concat(['outline', 'layers', 'layers2'])
               .concat(editorUi.commentsSupported() ? ['comments', '-'] : ['-']),
           );
 

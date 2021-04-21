@@ -37,6 +37,7 @@ export default {
   display: flex;
   margin-top: 8px;
   font-size: 12px;
+
   .name {
     width: 60px;
     height: 30px;
@@ -47,6 +48,7 @@ export default {
     color: #999;
     background: #252930;
   }
+
   .value {
     flex: 1;
     height: 30px;

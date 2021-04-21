@@ -6571,8 +6571,10 @@ if (typeof mxVertexHandler != 'undefined') {
      */
     var graphMoveCells = Graph.prototype.moveCells;
     Graph.prototype.moveCells = function (cells, dx, dy, clone, target, evt, mapping) {
+      // debugger;
       mapping = mapping != null ? mapping : new Object();
-
+      console.log('target');
+      console.log(target);
       // Replaces source tables with rows
       if (this.isTable(target)) {
         var newCells = [];
@@ -9032,6 +9034,11 @@ if (typeof mxVertexHandler != 'undefined') {
           cellSelected = this.isCellSelected(me.getCell());
           selectionEmpty = this.isSelectionEmpty();
           menuShowing = this.popupMenuHandler.isMenuShowing();
+          let selection = false;
+          if (me.getCell() !== null) {
+            selection = true;
+          }
+          this.fireEvent(new mxEventObject('changeSelectionStage', 'selection', selection));
         }
         oldFireMouseEvent.apply(this, arguments);
       };

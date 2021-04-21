@@ -167,6 +167,7 @@ export default {
   background: #2e333a;
   cursor: pointer;
   transition: all 0.3s;
+
   &:hover,
   &.active {
     fill: #1593ff;

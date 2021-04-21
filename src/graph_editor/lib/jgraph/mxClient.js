@@ -14413,6 +14413,7 @@ mxPopupMenu.prototype.addItem = function (
   active,
   noHover,
 ) {
+  // debugger;
   parent = parent || this;
   this.itemCount++;
 
@@ -14472,6 +14473,7 @@ mxPopupMenu.prototype.addItem = function (
     mxEvent.addGestureListeners(
       tr,
       mxUtils.bind(this, function (evt) {
+        // debugger;
         this.eventReceiver = tr;
 
         if (parent.activeRow != tr && parent.activeRow != parent) {

@@ -1981,7 +1981,6 @@ var OutlineWindow = function (editorUi, x, y, w, h) {
 
 var LayersWindow = function (editorUi, x, y, w, h) {
   var graph = editorUi.editor.graph;
-
   var div = document.createElement('div');
   div.style.userSelect = 'none';
   div.style.background = Dialog.backdropColor == 'white' ? 'whiteSmoke' : Dialog.backdropColor;
@@ -2061,6 +2060,7 @@ var LayersWindow = function (editorUi, x, y, w, h) {
     if (graph.isEnabled()) {
       graph.model.beginUpdate();
       try {
+        console.log('delete');
         var index = graph.model.root.getIndex(selectionLayer);
         graph.removeCells([selectionLayer], false);
 
@@ -2101,11 +2101,14 @@ var LayersWindow = function (editorUi, x, y, w, h) {
       editorUi.showPopupMenu(
         mxUtils.bind(this, function (menu, parent) {
           for (var i = layerCount - 1; i >= 0; i--) {
+            // debugger;
             mxUtils.bind(this, function (child) {
               var item = menu.addItem(
                 graph.convertValueToString(child) || mxResources.get('background'),
                 null,
                 mxUtils.bind(this, function () {
+                  console.log('child', child);
+                  console.log('selection', graph.getSelectionCells());
                   graph.moveCells(graph.getSelectionCells(), 0, 0, false, child);
                 }),
                 parent,
@@ -2339,6 +2342,8 @@ var LayersWindow = function (editorUi, x, y, w, h) {
       }
 
       mxEvent.addListener(inp, 'click', function (evt) {
+        console.log('checkbox click');
+        console.log(child);
         graph.model.setVisible(child, !graph.model.isVisible(child));
         mxEvent.consume(evt);
       });
@@ -2437,6 +2442,7 @@ var LayersWindow = function (editorUi, x, y, w, h) {
         selectionLayer = child;
       } else {
         mxEvent.addListener(ldiv, 'click', function (evt) {
+          console.log('selection');
           if (graph.isEnabled()) {
             graph.setDefaultParent(defaultParent);
             graph.view.setCurrentRoot(null);

@@ -35,6 +35,9 @@ export default defineComponent({
       required: false,
       default: null,
     },
+    isEnableBind: {
+      type: Boolean,
+    },
   },
 });
 </script>
@@ -42,6 +45,6 @@ export default defineComponent({
 <template lang="pug">
 .windows-container(v-if='editorUi')
   find-window(:editorUi='editorUi')
-  layers-window(:editorUi='editorUi')
+  layers-window(:editorUi='editorUi', :isEnableBind='isEnableBind')
   outline-window(:editorUi='editorUi')
 </template>

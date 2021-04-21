@@ -177,6 +177,7 @@ invalidOrMissingFile=Invalid or missing file
 isometric=Isometric
 italic=Italic
 layers=Layers
+newLayers=New
 landscape=Landscape
 laneColor=Lanecolor
 layout=Layout

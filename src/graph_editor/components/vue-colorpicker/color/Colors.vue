@@ -73,10 +73,12 @@ export default {
 .colors {
   padding: 0;
   margin: 0;
+
   &.history {
     margin-top: 10px;
     border-top: 1px solid #2e333a;
   }
+
   .item {
     position: relative;
     width: 16px;
@@ -88,16 +90,20 @@ export default {
     display: inline-block;
     transition: all 0.1s;
     cursor: pointer;
+
     &:nth-child(8n + 1) {
       margin-left: 0;
     }
+
     &:hover {
       transform: scale(1.4);
     }
+
     .alpha {
       height: 100%;
       border-radius: 4px; // 大一像素，否则四个角会看到白点
     }
+
     .color {
       position: absolute;
       left: 0;

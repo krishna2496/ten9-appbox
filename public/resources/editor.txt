@@ -421,6 +421,7 @@ italic=Italic
 kennedy=Kennedy
 keyboardShortcuts=Keyboard Shortcuts
 layers=Layers
+newLayers=New
 landscape=Landscape
 language=Language
 leanMapping=Lean Mapping

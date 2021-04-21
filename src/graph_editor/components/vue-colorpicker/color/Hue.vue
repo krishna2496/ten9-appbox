@@ -103,6 +103,7 @@ export default {
   position: relative;
   margin-left: 8px;
   cursor: pointer;
+
   .slide {
     position: absolute;
     left: 0;

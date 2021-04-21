@@ -652,37 +652,46 @@ b-modal#color-modal(
   border-radius: 4px;
   box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.16);
   z-index: 1;
+
   &.light {
     background: #f7f8f9;
+
     .color-show {
       .sucker {
         background: #eceef0;
       }
     }
+
     .color-type {
       .name {
         background: #e7e8e9;
       }
+
       .value {
         color: #666;
         background: #eceef0;
       }
     }
+
     .colors.history {
       border-top: 1px solid #eee;
     }
   }
+
   canvas {
     vertical-align: top;
   }
+
   .color-set {
     display: flex;
   }
+
   .color-show {
     margin-top: 8px;
     display: flex;
   }
 }
+
 .cross-icon {
   height: 5px;
   margin-top: -7px;

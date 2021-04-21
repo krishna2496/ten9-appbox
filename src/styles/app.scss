@@ -19,6 +19,12 @@
 // @import 'node_modules/bootstrap/scss/bootstrap';
 // @import 'node_modules/bootstrap-vue/src/index.scss';
 
+// Font icons
+
+$fa-font-path: '~font-awesome/fonts';
+
+@import 'font-awesome/scss/font-awesome';
+
 .ge-container {
   // TODO Part 2
   position: relative;

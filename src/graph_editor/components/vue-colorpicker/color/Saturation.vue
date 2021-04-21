@@ -113,6 +113,7 @@ export default {
 .saturation {
   position: relative;
   cursor: pointer;
+
   .slide {
     position: absolute;
     left: 100px;

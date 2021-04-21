@@ -5308,6 +5308,7 @@ Sidebar.prototype.createDragSource = function (elt, dropHandler, preview, cells,
   });
 
   dragSource.stopDrag = function () {
+    graph.fireEvent(new mxEventObject('changeSelectionStage', 'selection', true));
     mxDragSource.prototype.stopDrag.apply(this, arguments);
 
     var elts = [roundSource, roundTarget, styleTarget, arrowUp, arrowRight, arrowDown, arrowLeft];

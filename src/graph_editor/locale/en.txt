@@ -211,6 +211,7 @@ invalidOrMissingFile=Invalid or missing file
 isometric=Isometric
 italic=Italic
 layers=Layers
+layers2=Layers2
 landscape=Landscape
 laneColor=Lanecolor
 layout=Layout

@@ -190,12 +190,15 @@ b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close',
 .image-url {
   width: 370px;
 }
+
 .text-box {
   width: 100px;
 }
+
 .text-box-label {
   margin-bottom: 0;
 }
+
 .image-cordinate {
   align-items: center;
 }
