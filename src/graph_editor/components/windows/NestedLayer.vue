@@ -16,6 +16,14 @@
 <script lang="ts">
 import { computed, defineComponent } from '@vue/composition-api';
 import draggable from 'vuedraggable';
+interface simpleInt {
+  id: string;
+  style: string;
+  value: string;
+  visible: boolean;
+}
+type LayerProperty = simpleInt[];
+
 export default defineComponent({
   name: 'NestedLayers',
   components: {
@@ -34,7 +42,7 @@ export default defineComponent({
     },
     selectedLayer: {
       required: false,
-      type: Number,
+      type: String,
       default: null,
     },
   },
@@ -50,14 +58,7 @@ export default defineComponent({
     const realValue = computed(() => {
       return props.value ? props.value : props.list;
     });
-    // const instance = getCurrentInstance();
-    // console.log(instance.parent.parent);
-    // // const selectedLayer = computed(() => store.getters['nested/getSelectedLayer']);
-    // const selectedLayer = 1;
 
-    // function emitter(value: any) {
-    //   // context.emit('input', value);
-    // }
     function changeSelectedLayer(id: number) {
       context.emit('changeSelectedLayer', id);
     }
@@ -73,11 +74,32 @@ export default defineComponent({
       context.emit('sortUp', id, key);
     }
 
+    function lockLayer(id: number) {
+      context.emit('lockLayer', id, true);
+    }
+
+    function checkLayer(layer: LayerProperty) {
+      let checked: boolean;
+
+      if (!Object.prototype.hasOwnProperty.call(layer, 'visible')) {
+        checked = false;
+      } else {
+        if (layer['visible'] === true) {
+          checked = false;
+        } else {
+          checked = true;
+        }
+      }
+      context.emit('checkLayer', layer['id'], checked);
+    }
+
     return {
       changeSelectedLayer,
+      checkLayer,
       dragOptions,
       editLayer,
       // emitter,
+      lockLayer,
       realValue,
       sortDown,
       sortUp,
@@ -88,21 +110,21 @@ export default defineComponent({
 
 <template lang="pug">
 draggable.item-container(v-bind='dragOptions', tag='div', :list='list')
-  .item-group(:key='key', v-for='(el, key) in realValue')
+  .item-group(:key='el.id', v-for='(el, key) in realValue')
     .item(:class='{ active: el.id === selectedLayer }')
       .check
-        span(@click='el.checked = !el.checked', title='Hide/Show')
-          i.fa.fa-eye.ml-2(v-if='el.checked')
+        span(@click='checkLayer(el)', title='Hide/Show')
+          i.fa.fa-eye.ml-2(v-if='el["visible"]')
           i.fa.fa-eye-slash.ml-2(v-else)
       .layer_name(
         @click='changeSelectedLayer(el.id)',
-        @dblclick='editLayer(el.id, el.name)',
-        :title='el.name'
+        @dblclick='editLayer(el.id, el.value)',
+        :title='el.value'
       )
-        span.ml-2 {{ el.name }}
+        span.ml-2 {{ el.visible }}
       .lock
-        span.cursor-pointer(@click='el.lock = !el.lock', title='Lock/Unlock')
-          i.fa.fa-lock.mr-2(v-if='el.lock')
+        span.cursor-pointer(@click='lockLayer(el.id)', title='Lock/Unlock')
+          i.fa.fa-lock.mr-2(v-if='el["style"]')
           i.fa.fa-unlock.mr-2(v-else)
 </template>
 

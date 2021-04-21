@@ -21,13 +21,22 @@ const { mxEventSource, mxEventObject } = require('../../lib/jgraph/mxClient');
 
 const dragElement = require('./Drag.ts');
 
-interface LayerProperty {
-  id: number;
-  name: string;
-  lock: boolean;
-  checked: boolean;
-  selected: boolean;
+// interface LayerProperty {
+//   id: string;
+//   name: string;
+//   lock: boolean;
+//   checked: boolean;
+//   selected: boolean;
+// }
+
+interface simpleInt {
+  geometry: string;
+  id: string;
+  style: string;
+  value: string;
+  visible: boolean;
 }
+type LayerProperty = simpleInt[];
 interface boxCoordinate {
   left: string;
   top: string;
@@ -61,35 +70,12 @@ export default defineComponent({
   setup(props, context) {
     const show = ref<boolean>(false);
     const isEnableBind = ref<boolean>(false);
-    const layers = ref([
-      {
-        id: 1,
-        name: 'Shrek',
-        lock: false,
-        checked: false,
-        selected: false,
-      },
-      {
-        id: 2,
-        name: 'Fiona',
-        lock: false,
-        checked: false,
-        selected: false,
-      },
-      {
-        id: 3,
-        name: 'Donkey',
-        lock: false,
-        checked: false,
-        selected: false,
-      },
-    ]);
-
+    const layers = ref<LayerProperty>();
     const isShow = ref<boolean>(false);
-    const dropDownId = ref<number>(layers.value[layers.value.length - 1].id);
+    // const dropDownId = ref<number>(layers.value[layers.value.length - 1].id);
     const dropdownCoordinates = ref<dropdownCoordinates>({ top: '97', left: '622' });
 
-    const selectedLayer = ref<number>(1);
+    const selectedLayer = ref<string>('1');
     const layerWindow = ref<coordinateProperty>();
     const layerWindowCoordinates = ref<{
       left: string;
@@ -98,13 +84,13 @@ export default defineComponent({
       width: string;
     }>({ left: '', top: '', height: '', width: '' });
 
-    const defaultLayer = ref({
-      id: 0,
-      name: 'Untitled Layer',
-      lock: false,
-      checked: true,
-      selected: false,
-    });
+    // const defaultLayer = ref({
+    //   id: 0,
+    //   name: 'Untitled Layer',
+    //   lock: false,
+    //   checked: true,
+    //   selected: false,
+    // });
 
     function close() {
       show.value = false;
@@ -120,6 +106,10 @@ export default defineComponent({
     function openLayerWindow() {
       show.value = true;
       const timeOut = 10;
+      layers.value = props.editorUi.editor.graph.model.root.children;
+      if (!layers.value[0]['value']) {
+        layers.value[0]['value'] = 'Background';
+      }
 
       setTimeout(() => {
         layerWindow.value = document.getElementById('layerWindow');
@@ -163,82 +153,57 @@ export default defineComponent({
     const isMin = ref<boolean | undefined>(false);
 
     const editLayerName = ref<string>('');
-    const editLayerId = ref<number>();
+    const editLayerId = ref<string>('');
 
-    function changeSelectedLayer(id: number) {
+    function changeSelectedLayer(id: string) {
       selectedLayer.value = id;
     }
 
     function addLayer() {
-      const layer = defaultLayer.value;
-      layer.id = Math.random();
-
-      const tempRef = {
-        ...layer,
-      };
-      layers.value.unshift(tempRef);
-      changeSelectedLayer(layer.id);
+      // const layer = defaultLayer.value;
+      // layer.id = Math.random();
+      // const tempRef = {
+      //   ...layer,
+      // };
+      // layers.value.unshift(tempRef);
+      // changeSelectedLayer(layer.id);
     }
 
     function deleteLayer() {
-      layers.value = layers.value.filter((o: LayerProperty) => {
-        // if (o.layers) return (o.layers = o.layers.filter(f)).length;
-        return o.id != selectedLayer.value;
-      });
-      if (layers.value.length === 0) {
-        layers.value.unshift({
-          id: Math.random(),
-          name: 'Background',
-          lock: false,
-          checked: true,
-          selected: false,
-        });
-      }
-
-      //   if (props.editorUi.editor.graph.isEnabled()) {
-      //   props.editorUi.editor.graph.model.beginUpdate();
-      //   try {
-      //     var index = props.editorUi.editor.graph.model.root.getIndex(selectionLayer);
-      //     props.editorUi.editor.graph.removeCells([selectionLayer], false);
-
-      //     // Creates default layer if no layer exists
-      //     if (props.editorUi.editor.graph.model.getChildCount(props.editorUi.editor.graph.model.root) == 0) {
-      //       props.editorUi.editor.graph.model.add(props.editorUi.editor.graph.model.root, new mxCell());
-      //       props.editorUi.editor.graph.setDefaultParent(null);
-      //     } else if (index > 0 && index <= props.editorUi.editor.graph.model.getChildCount(props.editorUi.editor.graph.model.root)) {
-      //       props.editorUi.editor.graph.setDefaultParent(props.editorUi.editor.graph.model.getChildAt(props.editorUi.editor.graph.model.root, index - 1));
-      //     } else {
-      //       props.editorUi.editor.graph.setDefaultParent(null);
-      //     }
-      //   } finally {
-      //     props.editorUi.editor.graph.model.endUpdate();
-      //   }
+      // layers.value = layers.value.filter((o: LayerProperty) => {
+      //   // if (o.layers) return (o.layers = o.layers.filter(f)).length;
+      //   return o.id != selectedLayer.value;
+      // });
+      // if (layers.value.length === 0) {
+      //   layers.value.unshift({
+      //     id: Math.random(),
+      //     name: 'Background',
+      //     lock: false,
+      //     checked: true,
+      //     selected: false,
+      //   });
       // }
-
-      changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      // changeSelectedLayer(layers.value[layers.value.length - 1].id);
     }
 
     function duplicateLayer() {
-      const temp = layers.value.find((layer) => layer.id === selectedLayer.value);
-      const duplicate = { ...temp };
-      duplicate.id = Math.random();
-      layers.value.push(duplicate);
+      // const temp = layers.value.find((layer) => layer.id === selectedLayer.value);
+      // const duplicate = { ...temp };
+      // duplicate.id = Math.random();
+      // layers.value.push(duplicate);
     }
 
-    function editLayer(id: number, name: string) {
+    function editLayer(id: string, name: string) {
       editLayerName.value = name;
       editLayerId.value = id;
       context.root.$bvModal.show('renameLayer');
     }
+
     function editLayerFinal() {
-      const edit = layers.value.find((layer) => layer.id === editLayerId.value);
-      edit.name = editLayerName.value;
+      // const edit = layers.value.find((layer) => layer['id'].toString() === editLayerId.value);
+      // edit['value'] = editLayerName.value;
     }
 
-    // function updateLayers(value: any) {
-    //   console.log(value);
-    //   layers.value = value;
-    // }
     function setLayerWindowCoordinates() {
       const layerWindowStyle = layerWindow.value.style;
 
@@ -264,71 +229,91 @@ export default defineComponent({
     }
 
     function moveSelection() {
-      const timeOut = 150;
-      if (isShow.value === true) {
-        setTimeout(() => {
-          isShow.value = !isShow.value;
-        }, timeOut);
+      // const timeOut = 150;
+      // if (isShow.value === true) {
+      //   setTimeout(() => {
+      //     isShow.value = !isShow.value;
+      //   }, timeOut);
+      // }
+      // isShow.value = !isShow.value;
+      // setLayerWindowCoordinates();
+      // props.editorUi.editor.graph.moveCells(
+      //   props.editorUi.editor.graph.getSelectionCells(),
+      //   0,
+      //   0,
+      //   false,
+      //   null,
+      // );
+    }
+
+    // function selectLayerForMoveSelection(id: string) {
+    //   const timeOut = 300;
+    //   dropDownId.value = id;
+    //   setTimeout(() => {
+    //     moveSelection();
+    //   }, timeOut);
+    // }
+
+    function getIndexFromId(id: string) {
+      const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
+      return index;
+    }
+
+    function lockLayer(id: string, locked: boolean) {
+      const index = getIndexFromId(id);
+      const defaultParent = layers.value;
+      if (props.editorUi.editor.graph.isEnabled()) {
+        let value = null;
+        if (locked) {
+          value = '1';
+        }
+        props.editorUi.editor.graph.getModel().beginUpdate();
+        try {
+          props.editorUi.editor.graph.setCellStyles('locked', value, [defaultParent[index]]);
+        } finally {
+          props.editorUi.editor.graph.getModel().endUpdate();
+        }
+
+        if (value == '1') {
+          props.editorUi.editor.graph.removeSelectionCells(
+            props.editorUi.editor.graph.getModel().getDescendants(defaultParent[index]),
+          );
+        }
       }
-      isShow.value = !isShow.value;
-      setLayerWindowCoordinates();
-      // let childNode = props.editorUi.editor.graph.model.getChildAt(props.editorUi.editor.graph.model.root, 1)
-      props.editorUi.editor.graph.moveCells(
-        props.editorUi.editor.graph.getSelectionCells(),
-        0,
-        0,
-        false,
-        null,
-      );
-      //  graph.moveCells(graph.getSelectionCells(), 0, 0, false, child);
     }
 
-    function sortDown(id: number, key: number) {
-      const temp = layers.value.find((layer) => layer.id === id);
-      layers.value.splice(key, 1);
-      layers.value.splice(key + 1, 0, temp);
-      changeSelectedLayer(id);
-    }
-
-    function sortUp(id: number, key: number) {
-      const temp = layers.value.find((layer) => layer.id === id);
-      layers.value.splice(key, 1);
-      layers.value.splice(key - 1, 0, temp);
-      changeSelectedLayer(id);
-    }
-
-    function selectLayerForMoveSelection(id: number) {
-      const timeOut = 300;
-      dropDownId.value = id;
-      setTimeout(() => {
-        moveSelection();
-      }, timeOut);
+    function checkLayer(id: string, checked: boolean) {
+      const index = getIndexFromId(id);
+      const defaultParent = layers.value;
+      props.editorUi.editor.graph.model.setVisible(defaultParent[index], checked);
+      defaultParent[index].style = checked.toString();
     }
 
     return {
       addLayer,
       changeLayerWindowCoordinates,
       changeSelectedLayer,
+      checkLayer,
       close,
       deleteLayer,
       dropdownCoordinates,
-      dropDownId,
+      // dropDownId,
       duplicateLayer,
       editLayerFinal,
       editLayer,
       editLayerId,
       editLayerName,
+      getIndexFromId,
       isEnableBind,
       isMin,
       isShow,
       layers,
+      lockLayer,
       moveSelection,
       selectedLayer,
       show,
-      selectLayerForMoveSelection,
+      // selectLayerForMoveSelection,
       setLayerWindowCoordinates,
-      sortDown,
-      sortUp,
       // updateLayers,
     };
   },
@@ -361,11 +346,7 @@ export default defineComponent({
           )
             i.fa.fa-window-maximize.mr-1(v-if='isMin')
             i.fa.fa-window-minimize.mr-1(v-else)
-          span.cursor-pointer.btn(
-            aria-hidden='true',
-            @click='show = false; setLayerWindowCoordinates()',
-            title='Close'
-          )
+          span.cursor-pointer.btn(aria-hidden='true', @click='show = false', title='Close')
             i.fa.fa-times.fa-lg.mr-1
       b-card-body.card-body-main(v-if='!isMin')
         nested-layers(
@@ -373,8 +354,8 @@ export default defineComponent({
           :selectedLayer='selectedLayer',
           @editLayer='editLayer',
           @changeSelectedLayer='changeSelectedLayer',
-          @sortUp='sortUp',
-          @sortDown='sortDown'
+          @lockLayer='lockLayer',
+          @checkLayer='checkLayer'
         )
       template(#footer='', v-if='!isMin')
         span.mr-15.cursor-pointer(aria-hidden='true', @click='deleteLayer', title='Delete Layer')
@@ -395,32 +376,32 @@ export default defineComponent({
         )
           i.fa.fa-clone.fa-md.footerBtn
 
-    b-card.dropdown(
-      v-if='isShow',
-      :style='{ top: dropdownCoordinates.top + "px", left: dropdownCoordinates.left + "px" }'
-    )
-      b-card-body.dropdownBody 
-        b-row.dropdownRow(
-          :key='key',
-          v-for='(layer, key) in layers',
-          @click='selectLayerForMoveSelection(layer.id)'
-        )
-          span.dropdownTick
-            i.fa.fa-check(v-if='layer.id === dropDownId')
-          span.dropdownLayerName {{ layer.name }}
+    //- b-card.dropdown(
+    //-   v-if='isShow',
+    //-   :style='{ top: dropdownCoordinates.top + "px", left: dropdownCoordinates.left + "px" }'
+    //- )
+    //-   b-card-body.dropdownBody 
+    //-     b-row.dropdownRow(
+    //-       :key='key',
+    //-       v-for='(layer, key) in layers',
+    //-       @click='selectLayerForMoveSelection(layer.id)'
+    //-     )
+    //-       span.dropdownTick
+    //-         i.fa.fa-check(v-if='layer.id === dropDownId')
+    //-       span.dropdownLayerName {{ layer.name }}
 
-    b-modal#renameLayer(
-      ref='modal',
-      title='Edit Layer Name',
-      ok-title='Rename',
-      @ok='editLayerFinal'
-    )
-      b-form
-        b-row
-          b-col(cols='2')
-            label(for='edit111') Name :
-          b-col(cols='10')
-            b-form-input#edit111(v-model='editLayerName')
+    //- b-modal#renameLayer(
+    //-   ref='modal',
+    //-   title='Edit Layer Name',
+    //-   ok-title='Rename',
+    //-   @ok='editLayerFinal'
+    //- )
+    //-   b-form
+    //-     b-row
+    //-       b-col(cols='2')
+    //-         label(for='edit111') Name :
+    //-       b-col(cols='10')
+    //-         b-form-input#edit111(v-model='editLayerName')
 </template>
 
 <style lang="scss" scoped>
