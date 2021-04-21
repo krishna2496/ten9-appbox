@@ -68,9 +68,7 @@ export default defineComponent({
 
     function saveScratchpad() {
       for (let i = 0; i < textBoxIndex.value.length; i++) {
-        const textBox: HTMLInputElement = document.getElementById(
-          `txt${textBoxIndex.value[i]}`,
-        ) as HTMLInputElement;
+        const textBox: HTMLInputElement = document.getElementById(`txt${i}`) as HTMLInputElement;
         if (shapes.value[i].title != undefined) {
           shapes.value[i].title = textBox.value;
         } else {
