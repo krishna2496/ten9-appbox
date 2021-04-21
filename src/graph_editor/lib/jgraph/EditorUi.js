@@ -614,7 +614,7 @@ EditorUi = function (editor, container, lightbox) {
     // Implements a global current style for edges and vertices that is applied to new cells
     var insertHandler = function (cells, asText, model) {
       model = model != null ? model : graph.getModel();
-      
+
       model.beginUpdate();
       try {
         for (var i = 0; i < cells.length; i++) {

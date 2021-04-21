@@ -348,7 +348,7 @@ export default defineComponent({
       header-tag='header',
       footer-tag='footer',
       v-show='show',
-      v-resize
+      v-resize,
       :class='{ minHeight111: isMin === false, minHeight222: isMin === true }'
     )
       template(#header='')
@@ -553,5 +553,4 @@ ul {
   padding: 7px 0;
   background-color: #fafafa;
 }
-
 </style>
