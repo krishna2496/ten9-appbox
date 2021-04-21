@@ -928,6 +928,11 @@ EditorUi.prototype.insertPage = function (page, index) {
 
     // TEN9: add fit window calculations
     this.fireEvent(new mxEventObject('fitCurrentPageWindow'));
+
+    // TEN9: add event to enable all pages checkbox for find window
+    if (this.pages.length > 1) {
+      this.fireEvent(new mxEventObject('enableAllPage'));
+    }
   }
 
   return page;
@@ -1017,6 +1022,10 @@ EditorUi.prototype.removePage = function (page) {
 
         // Uses model to fire event to trigger autosave
         graph.model.execute(new ChangePage(this, page, next));
+        // TEN9: add event to disable all pages checkbox for find window
+        if (this.pages.length == 2 || this.pages.length == 1) {
+          this.fireEvent(new mxEventObject('disableAllPage'));
+        }
       } finally {
         graph.model.endUpdate();
       }
@@ -1088,8 +1097,10 @@ EditorUi.prototype.renamePage = function (page) {
       }),
       mxResources.get('rename'),
     );
-    this.showDialog(dlg.container, 300, 80, true, true);
-    dlg.init();
+    // TEN9: add custom modal for rename page
+    // this.showDialog(dlg.container, 300, 80, true, true);
+    // dlg.init();
+    this.fireEvent(new mxEventObject('openPageRename', 'page', page));
   }
 
   return page;
@@ -2001,4 +2012,5 @@ EditorUi.prototype.createPageMenu = function (page, label) {
 
 module.exports = {
   DiagramPage,
+  RenamePage,
 };

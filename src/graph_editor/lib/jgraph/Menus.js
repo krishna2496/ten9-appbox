@@ -1300,6 +1300,13 @@ Menus.prototype.pickColor = function (key, cmd, defaultValue) {
     this.editorUi.showDialog(this.colorDialog.container, 230, h, true, true);
     this.colorDialog.init();
   }
+  // TEN9: add custom modal for color picker
+  if (key == 'fillColor') {
+    var type = 'Fill';
+  } else {
+    var type = 'Line';
+  }
+  this.editorUi.fireEvent(new mxEventObject('openColorPicker', 'options', { type, color }));
 };
 
 /**

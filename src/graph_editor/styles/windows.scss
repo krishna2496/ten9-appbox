@@ -1,0 +1,85 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2021 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+.card-header {
+  display: inline-flex;
+}
+
+.card-footer {
+  display: inline-flex;
+  background-color: #ffff;
+}
+
+.card {
+  z-index: 1000;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  width: 250px;
+  height: 250px;
+  // TODO: REVIEW: auto was in layer branch.
+  // Do we need auto? Setting to auto here creates a bug in Outline window.
+  // height: auto;
+  max-width: none !important;
+  position: absolute !important;
+}
+
+.outline {
+  resize: both;
+  min-width: 250px;
+  min-height: 250px;
+}
+
+.txt-input-window {
+  border: 1px solid #ddd;
+  padding: 5px 10px;
+  width: 100%;
+}
+
+.close {
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.bgLightPink {
+  background: lightpink;
+}
+
+.font-20 {
+  font-size: 20px;
+}
+
+.checkbox-text {
+  line-height: 25px;
+}
+
+.footer-buttons {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.find-window {
+  width: 320px;
+  height: 235px;
+}
+
+#window {
+  background: lightgray;
+  width: 100%;
+  height: 100%;
+  border: 1px solid whitesmoke;
+  overflow: hidden;
+}

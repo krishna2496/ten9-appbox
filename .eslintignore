@@ -7,3 +7,4 @@ src/graph_editor/lib/diagramly/
 src/graph_editor/lib/jscolor/
 src/graph_editor/lib/shapes/
 src/graph_editor/lib/spin/
+src/graph_editor/components/vue-colorpicker

@@ -1,6 +1,6 @@
 /**
  * ten9, Inc
- * Copyright (c) 2015 - 2020 ten9, Inc
+ * Copyright (c) 2015 - 2021 ten9, Inc
  * -----
  * NOTICE:  All information contained herein is, and remains
  * the property of ten9 Incorporated and its suppliers,
@@ -131,9 +131,11 @@ Actions.prototype.init = function () {
     ui.showDialog(new ExportDialog(ui).container, 300, 296, true, true);
   });
   this.addAction('editDiagram...', function () {
-    var dlg = new EditDiagramDialog(ui);
-    ui.showDialog(dlg.container, 620, 420, true, false);
-    dlg.init();
+    // TEN9: add custom dialog for edit diagram
+    // var dlg = new EditDiagramDialog(ui);
+    // ui.showDialog(dlg.container, 620, 420, true, false);
+    // dlg.init();
+    ui.fireEvent(new mxEventObject('openEditDiagram'));
   }).isEnabled = isGraphEnabled; // TEN9: Enabled when graph is enabled
   this.addAction('pageSetup...', function () {
     ui.showDialog(new PageSetupDialog(ui, ChangePageSetup).container, 320, 220, true, true);
@@ -618,7 +620,9 @@ Actions.prototype.init = function () {
     'editData...',
     function () {
       var cell = graph.getSelectionCell() || graph.getModel().getRoot();
-      ui.showDataDialog(cell);
+      // TEN9: add custom modal for edit data
+      //ui.showDataDialog(cell);
+      ui.fireEvent(new mxEventObject('editData', 'cell', cell));
     },
     null,
     null,
@@ -681,10 +685,12 @@ Actions.prototype.init = function () {
         var cell = graph.getSelectionCell();
         var value = graph.getLinkForCell(cell) || '';
 
-        ui.showLinkDialog(value, mxResources.get('apply'), function (link) {
-          link = mxUtils.trim(link);
-          graph.setLinkForCell(cell, link.length > 0 ? link : null);
-        });
+        // TEN9: add custom modal for edit link
+        // ui.showLinkDialog(value, mxResources.get('apply'), function (link) {
+        //   link = mxUtils.trim(link);
+        //   graph.setLinkForCell(cell, link.length > 0 ? link : null);
+        // });
+        ui.fireEvent(new mxEventObject('openEditLink', 'cells', { cell, value }));
       }
     },
     null,
@@ -696,7 +702,9 @@ Actions.prototype.init = function () {
     new Action(mxResources.get('image') + '...', function () {
       if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())) {
         graph.clearSelection();
-        ui.actions.get('image').funct();
+        // TEN9: add custom modal for insert image
+        //ui.actions.get('image').funct();
+        ui.fireEvent(new mxEventObject('openInsertImage'));
       }
     }),
   ).isEnabled = isGraphEnabled;
@@ -756,7 +764,9 @@ Actions.prototype.init = function () {
     'insertLink',
     new Action(mxResources.get('link') + '...', function () {
       if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())) {
-        ui.showLinkDialog('', mxResources.get('insert'), insertLink);
+        // TEN9: add custom modal for insert link
+        //ui.showLinkDialog('', mxResources.get('insert'), insertLink);
+        ui.fireEvent(new mxEventObject('openInsertLink'));
       }
     }),
   ).isEnabled = isGraphEnabled;
@@ -1120,8 +1130,10 @@ Actions.prototype.init = function () {
           }),
           mxResources.get('zoom') + ' (%)',
         );
-        this.editorUi.showDialog(dlg.container, 300, 80, true, true);
-        dlg.init();
+        // TEN9: add custom modal for custom zoom
+        //  this.editorUi.showDialog(dlg.container, 300, 80, true, true);
+        //  dlg.init();
+        this.editorUi.fireEvent(new mxEventObject('customZoom'));
       }),
       null,
       null,
@@ -1148,9 +1160,12 @@ Actions.prototype.init = function () {
         }),
         mxResources.get('pageScale') + ' (%)',
       );
-      this.editorUi.showDialog(dlg.container, 300, 80, true, true);
+      // TEN9: add custom dialog for page scale
+      //this.editorUi.showDialog(dlg.container, 300, 80, true, true);
+      ui.fireEvent(new mxEventObject('openPageScale'));
       dlg.init();
     }),
+    //ui.fireEvent(new mxEventObject('openPageScale'))
   );
   // TEN9: Add isEnabled to show/hide when graph is enabled/disabled
   action.isEnabled = isGraphEnabled;
@@ -1617,8 +1632,10 @@ Actions.prototype.init = function () {
           400,
           220,
         );
-        this.editorUi.showDialog(dlg.container, 420, 300, true, true);
-        dlg.init();
+        // TEN9: add custom modal for edit styles
+        // this.editorUi.showDialog(dlg.container, 420, 300, true, true);
+        // dlg.init();
+        this.editorUi.fireEvent(new mxEventObject('openEditStyle', 'cell', cells));
       }
     }),
     null,
@@ -1775,7 +1792,6 @@ Actions.prototype.init = function () {
             graph.insertImage(newValue, w, h);
           } else {
             var cells = graph.getSelectionCells();
-
             if (newValue != null && (newValue.length > 0 || cells.length > 0)) {
               var select = null;
 
@@ -1859,6 +1875,8 @@ Actions.prototype.init = function () {
         // LATER: Check outline window for initial placement
         // TEN9: Layer window calculation according to
         //this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 280, 120, 220, 196);
+        // TEN9: add bootstrapVue component for layer
+        //ui.fireEvent(new mxEventObject('openLayerWindow'));
         var container = mxClient.getDocumentContainer();
         this.layersWindow = new LayersWindow(ui, container.offsetWidth - 280, 120, 220, 196);
         this.layersWindow.window.addListener('show', function () {
@@ -1879,6 +1897,18 @@ Actions.prototype.init = function () {
     null,
     Editor.ctrlKey + '+Shift+L',
   );
+
+  // TEN9: add new layer menu option
+  action = this.addAction(
+    'layers2',
+    mxUtils.bind(this, function () {
+      ui.fireEvent(new mxEventObject('openLayerWindow'));
+    }),
+    null,
+    null,
+    Editor.ctrlKey + '+Shift+L+2',
+  );
+
   // TEN9: add isGraphEnabled property
   action.isEnabled = isGraphEnabled;
   action.setToggleAction(true);
@@ -1911,14 +1941,18 @@ Actions.prototype.init = function () {
     mxUtils.bind(this, function () {
       if (this.outlineWindow == null) {
         // LATER: Check layers window for initial placement
-        this.outlineWindow = new OutlineWindow(ui, document.body.offsetWidth - 260, 100, 180, 180);
-        this.outlineWindow.window.addListener('show', function () {
-          ui.fireEvent(new mxEventObject('outline'));
-        });
-        this.outlineWindow.window.addListener('hide', function () {
-          ui.fireEvent(new mxEventObject('outline'));
-        });
-        this.outlineWindow.window.setVisible(true);
+        // TEN9: add mxWindow to editor container instead of document body
+        // this.outlineWindow = new OutlineWindow(ui, document.body.offsetWidth - 260, 100, 180, 180);
+        // TEN9: add bootstrapVue component for otline window
+        ui.fireEvent(new mxEventObject('openOutlineWindow'));
+        //this.outlineWindow = new OutlineWindow(ui, ui.container.offsetWidth - 260, 100, 180, 180);
+        // this.outlineWindow.window.addListener('show', function () {
+        //   ui.fireEvent(new mxEventObject('outline'));
+        // });
+        // this.outlineWindow.window.addListener('hide', function () {
+        //   ui.fireEvent(new mxEventObject('outline'));
+        // });
+        // this.outlineWindow.window.setVisible(true);
         ui.fireEvent(new mxEventObject('outline'));
       } else {
         this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
@@ -1943,7 +1977,6 @@ Actions.prototype.init = function () {
  */
 Actions.prototype.addAction = function (key, funct, enabled, iconCls, shortcut) {
   var title;
-
   if (key.substring(key.length - 3) == '...') {
     key = key.substring(0, key.length - 3);
     title = mxResources.get(key) + '...';

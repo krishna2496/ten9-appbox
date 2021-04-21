@@ -1637,7 +1637,6 @@ var BackgroundImageDialog = function (editorUi, applyFn, img) {
 
   applyBtn = mxUtils.button(mxResources.get('apply'), function () {
     editorUi.hideDialog();
-
     urlChanged(null, function (url) {
       applyFn(
         url != '' && url != null

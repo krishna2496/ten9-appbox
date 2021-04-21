@@ -9032,8 +9032,12 @@ if (typeof mxVertexHandler != 'undefined') {
           cellSelected = this.isCellSelected(me.getCell());
           selectionEmpty = this.isSelectionEmpty();
           menuShowing = this.popupMenuHandler.isMenuShowing();
+          let selection = false;
+          if (me.getCell() !== null) {
+            selection = true;
+          }
+          this.fireEvent(new mxEventObject('changeSelectionStage', 'selection', selection));
         }
-
         oldFireMouseEvent.apply(this, arguments);
       };
 

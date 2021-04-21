@@ -1061,27 +1061,28 @@ DriveFile = function () {};
     action = editorUi.actions.addAction(
       'find...',
       mxUtils.bind(this, function () {
-        if (this.findWindow == null) {
-          // TEN9: adjust findWindow height
-          // this.findWindow = new FindWindow(editorUi, document.body.offsetWidth - 300, 110, 240, 155);
-          this.findWindow = new FindWindow(
-            editorUi,
-            document.body.offsetWidth - 300,
-            110,
-            240,
-            175,
-          );
-          this.findWindow.window.addListener('show', function () {
-            editorUi.fireEvent(new mxEventObject('find'));
-          });
-          this.findWindow.window.addListener('hide', function () {
-            editorUi.fireEvent(new mxEventObject('find'));
-          });
-          this.findWindow.window.setVisible(true);
-          editorUi.fireEvent(new mxEventObject('find'));
-        } else {
-          this.findWindow.window.setVisible(!this.findWindow.window.isVisible());
-        }
+        editorUi.fireEvent(new mxEventObject('openFindWindow'));
+        // if (this.findWindow == null) {
+        //   // TEN9: adjust findWindow height and dd fit window in to container instead of document body
+        //   // this.findWindow = new FindWindow(editorUi, document.body.offsetWidth - 300, 110, 240, 155);
+        //   this.findWindow = new FindWindow(
+        //     editorUi,
+        //     editorUi.container.offsetWidth - 300,
+        //     110,
+        //     240,
+        //     175,
+        //   );
+        //   this.findWindow.window.addListener('show', function () {
+        //     editorUi.fireEvent(new mxEventObject('find'));
+        //   });
+        //   this.findWindow.window.addListener('hide', function () {
+        //     editorUi.fireEvent(new mxEventObject('find'));
+        //   });
+        //   this.findWindow.window.setVisible(true);
+        //   editorUi.fireEvent(new mxEventObject('find'));
+        // } else {
+        //   this.findWindow.window.setVisible(!this.findWindow.window.isVisible());
+        // }
       }),
     );
     action.setToggleAction(true);
@@ -1169,8 +1170,8 @@ DriveFile = function () {};
                           '#_CONFIG_' +
                           Graph.compress(JSON.stringify(obj));
                         var dlg = new EmbedDialog(editorUi, url);
-                        editorUi.showDialog(dlg.container, 440, 240, true);
-                        dlg.init();
+                        // editorUi.showDialog(dlg.container, 440, 240, true);
+                        // dlg.init();
                       } catch (e) {
                         editorUi.handleError(e);
                       }
@@ -1956,23 +1957,25 @@ DriveFile = function () {};
 
     editorUi.actions.addAction('shapes...', function () {
       if (graph.isEnabled()) {
-        if (mxClient.IS_CHROMEAPP || !editorUi.isOffline()) {
-          editorUi.showDialog(
-            new MoreShapesDialog(editorUi, true).container,
-            640,
-            isLocalStorage ? (mxClient.IS_IOS ? 480 : 460) : 440,
-            true,
-            true,
-          );
-        } else {
-          editorUi.showDialog(
-            new MoreShapesDialog(editorUi, false).container,
-            360,
-            isLocalStorage ? (mxClient.IS_IOS ? 300 : 280) : 260,
-            true,
-            true,
-          );
-        }
+        // TEN9: add custom modal for more shape
+        // if (mxClient.IS_CHROMEAPP || !editorUi.isOffline()) {
+        //   editorUi.showDialog(
+        //     new MoreShapesDialog(editorUi, true).container,
+        //     640,
+        //     isLocalStorage ? (mxClient.IS_IOS ? 480 : 460) : 440,
+        //     true,
+        //     true,
+        //   );
+        // } else {
+        //   editorUi.showDialog(
+        //     new MoreShapesDialog(editorUi, false).container,
+        //     360,
+        //     isLocalStorage ? (mxClient.IS_IOS ? 300 : 280) : 260,
+        //     true,
+        //     true,
+        //   );
+        // }
+        editorUi.fireEvent(new mxEventObject('moreShapes'));
       }
     }).isEnabled = isGraphEnabled;
 
@@ -2716,89 +2719,89 @@ DriveFile = function () {};
     // }))).isEnabled = isGraphEnabled;
 
     // TEN9: remove theme menu
-    this.put(
-      'theme',
-      new Menu(
-        mxUtils.bind(this, function (menu, parent) {
-          var theme = this.editorUi.theme;
+    // this.put(
+    //   'theme',
+    //   new Menu(
+    //     mxUtils.bind(this, function (menu, parent) {
+    //       var theme = this.editorUi.theme;
 
-          // 	var item = menu.addItem(mxResources.get('automatic'), null, function()
-          // 	{
-          // 		mxSettings.setUi('');
-          // 		mxSettings.save();
-          // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-          // 	}, parent);
+    //       // 	var item = menu.addItem(mxResources.get('automatic'), null, function()
+    //       // 	{
+    //       // 		mxSettings.setUi('');
+    //       // 		mxSettings.save();
+    //       // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+    //       // 	}, parent);
 
-          // 	if (theme != 'kennedy' && theme != 'atlas' &&
-          // 		theme != 'dark' && theme != 'min')
-          // 	{
-          // 		menu.addCheckmark(item, Editor.checkmarkImage);
-          // 	}
+    //       // 	if (theme != 'kennedy' && theme != 'atlas' &&
+    //       // 		theme != 'dark' && theme != 'min')
+    //       // 	{
+    //       // 		menu.addCheckmark(item, Editor.checkmarkImage);
+    //       // 	}
 
-          // 	menu.addSeparator(parent);
+    //       // 	menu.addSeparator(parent);
 
-          item = menu.addItem(
-            'Default',
-            null,
-            function () {
-              mxSettings.setUi('kennedy');
-              mxSettings.save();
-              editorUi.fireEvent(new mxEventObject('themeChanged', 'detail', 'kennedy'));
-              if (theme != 'kennedy') {
-                editorUi.alert(mxResources.get('restartForChangeRequired'));
-              }
-            },
-            parent,
-          );
+    //       item = menu.addItem(
+    //         'Default',
+    //         null,
+    //         function () {
+    //           mxSettings.setUi('kennedy');
+    //           mxSettings.save();
+    //           editorUi.fireEvent(new mxEventObject('themeChanged', 'detail', 'kennedy'));
+    //           if (theme != 'kennedy') {
+    //             editorUi.alert(mxResources.get('restartForChangeRequired'));
+    //           }
+    //         },
+    //         parent,
+    //       );
 
-          if (theme == 'kennedy') {
-            menu.addCheckmark(item, Editor.checkmarkImage);
-          }
+    //       if (theme == 'kennedy') {
+    //         menu.addCheckmark(item, Editor.checkmarkImage);
+    //       }
 
-          item = menu.addItem(
-            'Mobile',
-            null,
-            function () {
-              mxSettings.setUi('min');
-              mxSettings.save();
-              editorUi.fireEvent(new mxEventObject('themeChanged', 'detail', 'min'));
-              if (theme != 'min') {
-                editorUi.alert(mxResources.get('restartForChangeRequired'));
-              }
-            },
-            parent,
-          );
+    //       item = menu.addItem(
+    //         'Mobile',
+    //         null,
+    //         function () {
+    //           mxSettings.setUi('min');
+    //           mxSettings.save();
+    //           editorUi.fireEvent(new mxEventObject('themeChanged', 'detail', 'min'));
+    //           if (theme != 'min') {
+    //             editorUi.alert(mxResources.get('restartForChangeRequired'));
+    //           }
+    //         },
+    //         parent,
+    //       );
 
-          if (theme == 'min') {
-            menu.addCheckmark(item, Editor.checkmarkImage);
-          }
+    //       if (theme == 'min') {
+    //         menu.addCheckmark(item, Editor.checkmarkImage);
+    //       }
 
-          // 	item = menu.addItem(mxResources.get('atlas'), null, function()
-          // 	{
-          // 		mxSettings.setUi('atlas');
-          // 		mxSettings.save();
-          // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-          // 	}, parent);
+    //       // 	item = menu.addItem(mxResources.get('atlas'), null, function()
+    //       // 	{
+    //       // 		mxSettings.setUi('atlas');
+    //       // 		mxSettings.save();
+    //       // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+    //       // 	}, parent);
 
-          // 	if (theme == 'atlas')
-          // 	{
-          // 		menu.addCheckmark(item, Editor.checkmarkImage);
-          // 	}
+    //       // 	if (theme == 'atlas')
+    //       // 	{
+    //       // 		menu.addCheckmark(item, Editor.checkmarkImage);
+    //       // 	}
 
-          // 	item = menu.addItem(mxResources.get('dark'), null, function()
-          // 	{
-          // 		mxSettings.setUi('dark');
-          // 		mxSettings.save();
-          // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
-          // 	}, parent);
+    //       // 	item = menu.addItem(mxResources.get('dark'), null, function()
+    //       // 	{
+    //       // 		mxSettings.setUi('dark');
+    //       // 		mxSettings.save();
+    //       // 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+    //       // 	}, parent);
 
-          // 	if (theme == 'dark')
-          // 	{
-          // 		menu.addCheckmark(item, Editor.checkmarkImage);
-          // 	}
-        }),
-      ),
-    );
+    //       // 	if (theme == 'dark')
+    //       // 	{
+    //       // 		menu.addCheckmark(item, Editor.checkmarkImage);
+    //       // 	}
+    //     }),
+    //   ),
+    // );
 
     var renameAction = this.editorUi.actions.addAction(
       'rename...',
@@ -3201,7 +3204,8 @@ DriveFile = function () {};
               'insertLink',
               '-',
               // TEN9: Disabling items for our app
-              /* 'createShape', 'insertFreehand', '-', */ 'insertImage',
+              /* 'createShape', 'insertFreehand', '-', */
+              'insertImage',
             ],
             parent,
           );
@@ -3785,7 +3789,7 @@ DriveFile = function () {};
           this.addMenuItems(
             menu,
             (this.editorUi.format != null ? ['formatPanel'] : [])
-              .concat(['outline', 'layers'])
+              .concat(['outline', 'layers', 'layers2'])
               .concat(editorUi.commentsSupported() ? ['comments', '-'] : ['-']),
           );
 

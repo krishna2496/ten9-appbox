@@ -1268,7 +1268,9 @@ var ErrorDialog = function (
  * Constructs a new print dialog.
  */
 var PrintDialog = function (editorUi, title) {
-  this.create(editorUi, title);
+  // TEN9: add custom modal for print
+  //this.create(editorUi, title);
+  editorUi.fireEvent(new mxEventObject('openPrintModal'));
 };
 
 /**
@@ -1892,6 +1894,12 @@ PageSetupDialog.addPageFormatPanel = function (div, namePostfix, pageFormat, pag
   var currentPageFormat = pageFormat;
 
   var update = function (evt, selectChanged) {
+    // TEN9: set localstirage for page style
+    if (evt) {
+      if (evt.target.value === 'landscape' || evt.target.value === 'portrait') {
+        window.localStorage.setItem('pageStyle', evt.target.value);
+      }
+    }
     var f = pf[paperSizeSelect.value];
 
     if (f.format != null) {

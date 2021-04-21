@@ -21,6 +21,7 @@ import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
 import { getImageData } from '../lib/shapes/fileIcons.js';
 import { debounce } from 'lodash';
+import Window from './Windows.vue';
 require('../lib/diagramly/DrawioFile.js');
 require('../lib/diagramly/LocalFile.js');
 require('../lib/diagramly/EditorUi.js');
@@ -30,6 +31,7 @@ require('../lib/diagramly/Menus.js');
 require('../lib/diagramly/Pages.js');
 require('../lib/diagramly/DistanceGuides.js');
 require('../lib/diagramly/Minimal.js');
+import Modals from './Modals.vue';
 
 import {
   defineComponent,
@@ -88,7 +90,10 @@ import '../styles/main.scss';
 
 export default defineComponent({
   name: 'GraphEditor',
-
+  components: {
+    Modals,
+    Window,
+  },
   props: {
     shapeLibraries: {
       required: true,
@@ -693,6 +698,10 @@ export default defineComponent({
       return !!editorUiRef.value?.dialog;
     }
 
+    function imageInsert(url: string) {
+      insertImage(url);
+    }
+
     watch(
       () => props.enabled,
       (val) => {
@@ -718,6 +727,7 @@ export default defineComponent({
       insertImage,
       insertLink,
       insertFile,
+      imageInsert,
       loadXmlData,
       loadImage,
       pagesToFit,
@@ -736,5 +746,8 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.geEditor(ref='containerRef')
+.div
+  .geEditor(ref='containerRef')
+  modals(:editorUi='editorUiRef', @insertImage='imageInsert')
+  window(:editorUi='editorUiRef')
 </template>

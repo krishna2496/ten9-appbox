@@ -39,7 +39,7 @@ const {
 const { LocalLibrary } = require('./LocalLibrary.js');
 const { StorageLibrary } = require('./StorageLibrary.js');
 const { mxSettings } = require('./Settings.js');
-const { DiagramPage } = require('./Pages.js');
+const { DiagramPage, RenamePage } = require('./Pages.js');
 const { Dialog, ErrorDialog, PrintDialog } = require('../jgraph/Editor.js');
 const { appPages, ChangePageSetup } = require('../jgraph/EditorUi.js');
 const {
@@ -3139,8 +3139,10 @@ var SelectedFile;
         var spinBtn = null;
 
         var editLibrary = mxUtils.bind(this, function (evt) {
-          this.showLibraryDialog(file.getTitle(), contentDiv, images, file, file.getMode());
+          // TEN9: add custom modal for scratchpad
+          // this.showLibraryDialog(file.getTitle(), contentDiv, images, file, file.getMode());
           mxEvent.consume(evt);
+          this.fireEvent(new mxEventObject('scratchpadModal', 'scratchpad', images));
         });
 
         var saveLibrary = mxUtils.bind(this, function (evt) {
@@ -4186,15 +4188,17 @@ var SelectedFile;
    */
   EditorUi.prototype.showImageDialog = function (title, value, fn, ignoreExisting, convertDataUri) {
     // KNOWN: IE+FF don't return keyboard focus after image dialog (calling focus doesn't help)
-    var dlg = new ImageDialog(this, title, value, fn, ignoreExisting, convertDataUri);
-    this.showDialog(
-      dlg.container,
-      Graph.fileSupport ? 480 : 360,
-      Graph.fileSupport ? 200 : 90,
-      true,
-      true,
-    );
-    dlg.init();
+    // TEN9: add custom modal for edit image
+    // var dlg = new ImageDialog(this, title, value, fn, ignoreExisting, convertDataUri);
+    // this.showDialog(
+    //   dlg.container,
+    //   Graph.fileSupport ? 480 : 360,
+    //   Graph.fileSupport ? 200 : 90,
+    //   true,
+    //   true,
+    // );
+    // dlg.init();
+    this.fireEvent(new mxEventObject('editImage', 'image', value));
   };
 
   /**
@@ -4292,8 +4296,10 @@ var SelectedFile;
       elt2,
       'click',
       mxUtils.bind(this, function (evt) {
-        this.actions.get('shapes').funct();
-        mxEvent.consume(evt);
+        // TEN9: add custom modal for more shapes
+        // this.actions.get('shapes').funct();
+        // mxEvent.consume(evt);
+        this.fireEvent(new mxEventObject('moreShapes'));
       }),
     );
 
@@ -9260,7 +9266,9 @@ var SelectedFile;
       };
 
       if (onerror != null) {
-        img.onerror = onerror;
+        // TEN9: throw error so at app level we can show the alert
+        throw new Error(mxResources.get('fileNotFound'));
+        //img.onerror = onerror;
       }
 
       img.src = uri;
@@ -9526,6 +9534,7 @@ var SelectedFile;
     }
 
     // Overrides print dialog size
+    // TEN9:
     ui.actions.get('print').funct = function () {
       ui.showDialog(
         new PrintDialog(ui).container,
@@ -14498,6 +14507,173 @@ var SelectedFile;
 
   EditorUi.prototype.setMigratedFlag = function () {
     localStorage.setItem('.localStorageMigrated', '1');
+  };
+
+  // TEN9: set graph background color
+  EditorUi.prototype.setGraphBackgroundColor = function (color) {
+    this.editor.graph.setGridEnabled(true);
+    const change = new ChangePageSetup(this, color);
+    change.ignoreImage = true;
+    this.editor.graph.model.execute(change);
+  };
+
+  // TEN9: set shape color
+  EditorUi.prototype.setShapeColor = function (colorKey, color) {
+    this.editor.graph.setCellStyles(colorKey, color, this.editor.graph.getSelectionCells());
+  };
+
+  // TEN9: get page scale
+  EditorUi.prototype.getPageScale = function () {
+    return this.editor.graph.getView().getScale();
+  };
+
+  // TEN9: get cell value
+  EditorUi.prototype.getCellValue = function (cell) {
+    return this.editor.graph.getModel().getValue(cell);
+  };
+
+  // TEN9: set cell value
+  EditorUi.prototype.setCellValue = function (cell, obj) {
+    return this.editor.graph.getModel().setValue(cell, obj);
+  };
+
+  // TEN9: get cell parent
+  EditorUi.prototype.getCellParent = function (cell) {
+    return this.editor.graph.getModel().getParent(cell);
+  };
+
+  // TEN9: get page root
+  EditorUi.prototype.getPageRoot = function () {
+    return this.editor.graph.getModel().getRoot();
+  };
+
+  // TEN9: get graph xml data
+  EditorUi.prototype.getGraphXml = function () {
+    return this.editor.getGraphXml();
+  };
+
+  // TEN9: set graph xml data
+  EditorUi.prototype.setGraphData = function (xml) {
+    try {
+      this.editor.graph.model.beginUpdate();
+      this.editor.setGraphXml(mxUtils.parseXml(xml).documentElement);
+      this.editor.graph.model.endUpdate();
+    } catch {
+      throw new Error(mxResources.get('notADiagramFile'));
+    }
+  };
+
+  // TEN9: set cell style
+  EditorUi.prototype.setCellStyle = function (style, cell) {
+    this.editor.graph.setCellStyle(mxUtils.trim(style), cell);
+  };
+
+  // TEN9: get cell style
+  EditorUi.prototype.getCellStyle = function (cell) {
+    return this.editor.graph.model.getStyle(cell);
+  };
+
+  // TEN9: set link for cell
+  EditorUi.prototype.setCellLink = function (cell, url) {
+    return this.editor.graph.setLinkForCell(cell, url.length > 0 ? url : null);
+  };
+
+  // TEN9: get selected cell
+  EditorUi.prototype.getSelectedCell = function () {
+    return this.editor.graph.getSelectionCells();
+  };
+
+  // TEN9: Rename page
+  EditorUi.prototype.pageRename = function (page, name) {
+    this.editor.graph.model.execute(new RenamePage(this, page, name));
+  };
+
+  // TEN9: set layer name
+  EditorUi.prototype.setLayerName = function (layer, name) {
+    this.editor.graph.cellLabelChanged(layer, name);
+  };
+
+  // TEN9: conver layer value to string
+  EditorUi.prototype.convertValueToString = function (layer) {
+    return this.editor.graph.convertValueToString(layer) || 'Background';
+  };
+
+  EditorUi.prototype.getBoundingBoxFromGeometry = function (cells) {
+    this.editor.graph.getBoundingBoxFromGeometry(cells);
+  };
+
+  EditorUi.prototype.createThumb = function (
+    cells,
+    width,
+    height,
+    parent,
+    title,
+    showLabel,
+    showTitle,
+    realWidth,
+    realHeight,
+  ) {
+    this.editor.graph.labelsVisible = showLabel == null || showLabel;
+    var fo = mxClient.NO_FO;
+    mxClient.NO_FO = Editor.prototype.originalNoForeignObject;
+    this.editor.graph.view.scaleAndTranslate(1, 0, 0);
+    this.editor.graph.addCells(cells);
+    var bounds = this.editor.graph.getGraphBounds();
+    var s =
+      Math.floor(
+        Math.min(
+          (width - 2 * this.thumbBorder) / bounds.width,
+          (height - 2 * this.thumbBorder) / bounds.height,
+        ) * 100,
+      ) / 100;
+    this.editor.graph.view.scaleAndTranslate(
+      s,
+      Math.floor((width - bounds.width * s) / 2 / s - bounds.x),
+      Math.floor((height - bounds.height * s) / 2 / s - bounds.y),
+    );
+    var node = null;
+
+    // For supporting HTML labels in IE9 standards mode the container is cloned instead
+    if (
+      this.editor.graph.dialect == mxConstants.DIALECT_SVG &&
+      !mxClient.NO_FO &&
+      this.editor.graph.view.getCanvas().ownerSVGElement != null
+    ) {
+      node = this.editor.graph.view.getCanvas().ownerSVGElement.cloneNode(true);
+    }
+    // LATER: Check if deep clone can be used for quirks if container in DOM
+    else {
+      node = this.editor.graph.container.cloneNode(false);
+      node.innerHTML = this.editor.graph.container.innerHTML;
+
+      // Workaround for clipping in older IE versions
+      if (mxClient.IS_QUIRKS || document.documentMode == 8) {
+        node.firstChild.style.overflow = 'visible';
+      }
+    }
+
+    this.editor.graph.getModel().clear();
+    mxClient.NO_FO = fo;
+
+    // Catch-all event handling
+    if (mxClient.IS_IE6) {
+      parent.style.backgroundImage = 'url(' + this.editorUi.editor.transparentImage + ')';
+    }
+
+    node.style.position = 'relative';
+    node.style.overflow = 'hidden';
+    // TEN9: Use default to keep this centered
+    node.style.left = this.thumbBorder + 'px';
+    node.style.top = this.thumbBorder + 'px';
+    node.style.width = width + 'px';
+    node.style.height = height + 'px';
+    node.style.visibility = '';
+    node.style.minWidth = '';
+    node.style.minHeight = '';
+
+    //parent.appendChild(node);
+    //parent.appendChild(node.cloneNode(true));
+    return node;
   };
 })();
 

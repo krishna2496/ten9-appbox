@@ -25,6 +25,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -108,8 +109,18 @@ module.exports = {
 
       // Load CSS files: css-loader, then minify, then apply vue style loader.
       {
-        test: /\.css$/,
-        use: ['vue-style-loader', MiniCssExtractPlugin.loader, 'css-loader'],
+        test: /\.(less|css)$/,
+        use: [
+          'vue-style-loader',
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              esModule: false,
+            },
+          },
+          'css-loader',
+          'less-loader',
+        ],
       },
 
       // Load SCSS files
@@ -121,7 +132,12 @@ module.exports = {
         test: /\.scss$/,
         use: [
           'vue-style-loader',
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              esModule: false,
+            },
+          },
           'css-loader',
           {
             loader: 'sass-loader',
@@ -141,6 +157,61 @@ module.exports = {
       {
         test: /\.pug$/,
         loader: 'pug-plain-loader',
+      },
+
+      // Use vue-svg-loader on inline SVGs and external SVGs.
+      // We will only run one of the rule sets depending if the SVG is inlined or external.
+      {
+        test: /\.(svg)(\?.*)?$/,
+        oneOf: [
+          // inline svgs
+          {
+            resourceQuery: /inline/,
+            use: [
+              {
+                loader: 'babel-loader',
+              },
+              {
+                loader: 'vue-svg-loader',
+              },
+            ],
+          },
+          // external svgs
+          {
+            use: [
+              {
+                loader: 'file-loader',
+                options: {
+                  name: IS_PRODUCTION
+                    ? 'assets/[name].[contenthash:8].[ext]'
+                    : 'assets/[name].[ext]',
+                  esModule: false,
+                },
+              },
+            ],
+          },
+        ],
+      },
+
+      // Use url-loader to convert fonts to data URIs. Use file-loader if the file is larger than 2K.
+      {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 2048,
+              esModule: false,
+              fallback: {
+                loader: 'file-loader',
+                options: {
+                  name: IS_PRODUCTION ? 'fonts/[name].[contenthash:8].[ext]' : 'fonts/[name].[ext]',
+                  esModule: false,
+                },
+              },
+            },
+          },
+        ],
       },
 
       // ts-loader transpiles Typescript code to Javascript.
@@ -221,6 +292,10 @@ module.exports = {
     }),
 
     new CaseSensitivePathsPlugin(),
+
+    new ESLintPlugin({
+      extensions: ['js', 'ts', 'vue'],
+    }),
 
     new FriendlyErrorsWebpackPlugin({
       compilationSuccessInfo: {

@@ -1588,7 +1588,6 @@ var EditDataDialog = function (ui, cell) {
   var applyBtn = mxUtils.button(mxResources.get('apply'), function () {
     try {
       ui.hideDialog.apply(ui, arguments);
-
       // Clones and updates the value
       value = value.cloneNode(true);
       var removeLabel = false;
@@ -1982,7 +1981,6 @@ var OutlineWindow = function (editorUi, x, y, w, h) {
 
 var LayersWindow = function (editorUi, x, y, w, h) {
   var graph = editorUi.editor.graph;
-
   var div = document.createElement('div');
   div.style.userSelect = 'none';
   div.style.background = Dialog.backdropColor == 'white' ? 'whiteSmoke' : Dialog.backdropColor;
@@ -2425,8 +2423,10 @@ var LayersWindow = function (editorUi, x, y, w, h) {
         var nodeName = mxEvent.getSource(evt).nodeName;
 
         if (nodeName != 'INPUT' && nodeName != 'IMG') {
-          renameLayer(child);
-          mxEvent.consume(evt);
+          // TEN9: add custom modal for layer rename dialog
+          //  renameLayer(child);
+          //  mxEvent.consume(evt);
+          editorUi.fireEvent(new mxEventObject('openLayerRenameDialog', 'layer', child));
         }
       });
 
@@ -2787,7 +2787,6 @@ var MoreShapesDialog = function (editorUi, expanded, entries) {
           libs.push(lib);
         }
       }
-
       editorUi.sidebar.showEntries(libs.join(';'), cb.checked, true);
       // TEN9: fire shape-libraries-changed event
       editorUi.fireEvent(new mxEventObject('shape-libraries-changed'));

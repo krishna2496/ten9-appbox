@@ -1147,7 +1147,8 @@ BaseFormatPanel.prototype.createColorOption = function (
 
         // Checks if the color value needs to be updated in the model
         if (forceUpdate || hideCheckbox || getColorFn() != value) {
-          setColorFn(value);
+          // TEN9: add cutom modal for changing the color picker value
+          // setColorFn(value);
         }
       }
 
@@ -1158,10 +1159,14 @@ BaseFormatPanel.prototype.createColorOption = function (
   btn = mxUtils.button(
     '',
     mxUtils.bind(this, function (evt) {
-      this.editorUi.pickColor(value, function (color) {
-        apply(color, null, true);
-      });
+      // TEN9: add custom modal for color picker
+      // this.editorUi.pickColor(value, function (color) {
+      //   apply(color, null, true);
+      // });
       mxEvent.consume(evt);
+      var color = getColorFn();
+      var type = label;
+      this.editorUi.fireEvent(new mxEventObject('openColorPicker', 'options', { type, color }));
     }),
   );
 
@@ -7364,8 +7369,10 @@ DiagramFormatPanel.prototype.addView = function (div) {
 
     if (this.showBackgroundImageOption) {
       var btn = mxUtils.button(mxResources.get('image'), function (evt) {
-        ui.showBackgroundImageDialog(null, ui.editor.graph.backgroundImage);
-        mxEvent.consume(evt);
+        // TEN9: add custom modal for background image
+        // ui.showBackgroundImageDialog(null, ui.editor.graph.backgroundImage);
+        // mxEvent.consume(evt);
+        ui.fireEvent(new mxEventObject('openBackgroundImage'));
       });
 
       btn.classList.add('background-panel__button', 'geColorBtn');
