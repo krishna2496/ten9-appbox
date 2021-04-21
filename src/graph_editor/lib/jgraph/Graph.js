@@ -6571,10 +6571,8 @@ if (typeof mxVertexHandler != 'undefined') {
      */
     var graphMoveCells = Graph.prototype.moveCells;
     Graph.prototype.moveCells = function (cells, dx, dy, clone, target, evt, mapping) {
-      // debugger;
       mapping = mapping != null ? mapping : new Object();
-      console.log('target');
-      console.log(target);
+
       // Replaces source tables with rows
       if (this.isTable(target)) {
         var newCells = [];

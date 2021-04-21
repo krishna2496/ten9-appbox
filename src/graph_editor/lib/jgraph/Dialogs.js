@@ -2060,7 +2060,6 @@ var LayersWindow = function (editorUi, x, y, w, h) {
     if (graph.isEnabled()) {
       graph.model.beginUpdate();
       try {
-        console.log('delete');
         var index = graph.model.root.getIndex(selectionLayer);
         graph.removeCells([selectionLayer], false);
 
@@ -2101,14 +2100,11 @@ var LayersWindow = function (editorUi, x, y, w, h) {
       editorUi.showPopupMenu(
         mxUtils.bind(this, function (menu, parent) {
           for (var i = layerCount - 1; i >= 0; i--) {
-            // debugger;
             mxUtils.bind(this, function (child) {
               var item = menu.addItem(
                 graph.convertValueToString(child) || mxResources.get('background'),
                 null,
                 mxUtils.bind(this, function () {
-                  console.log('child', child);
-                  console.log('selection', graph.getSelectionCells());
                   graph.moveCells(graph.getSelectionCells(), 0, 0, false, child);
                 }),
                 parent,

@@ -1977,9 +1977,6 @@ Actions.prototype.init = function () {
  */
 Actions.prototype.addAction = function (key, funct, enabled, iconCls, shortcut) {
   var title;
-  // if (key == 'layers') {
-  //   debugger;
-  // }
   if (key.substring(key.length - 3) == '...') {
     key = key.substring(0, key.length - 3);
     title = mxResources.get(key) + '...';
