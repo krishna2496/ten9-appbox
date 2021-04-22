@@ -15,10 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
 import BackgroundImageModal from './dialogs/BackgroundImageModal.vue';
-import ColorPickerModal from '../components/vue-colorpicker/color/Index.vue';
-//import ColorPickerModal from './dialogs/ColorPickerModal.vue';
 import CustomZoomModal from './dialogs/CustomZoomModal.vue';
 import EditDataModal from './dialogs/EditDataModal.vue';
 import EditDiagramModal from './dialogs/EditDiagramModal.vue';
@@ -31,6 +28,8 @@ import PageRenameModal from './dialogs/PageRenameModal.vue';
 import PageScaleModal from './dialogs/PageScaleModal.vue';
 import PrintModal from './dialogs/PrintModal.vue';
 import ScratchpadModal from './dialogs/ScratchpadModal.vue';
+import ColorPickerModal from '../components/vue-colorpicker/color/Index.vue';
+import { defineComponent } from '@vue/composition-api';
 
 import '../styles/modals.scss';
 
@@ -61,7 +60,7 @@ export default defineComponent({
   },
   setup(_props, ctx) {
     function insertImage(url: string) {
-      ctx.emit('insertImage', url);
+      ctx.emit('insert-image', url);
     }
     return {
       insertImage,
@@ -78,7 +77,7 @@ export default defineComponent({
   edit-data-modal(:editorUi='editorUi')
   edit-diagram-modal(:editorUi='editorUi')
   edit-style-modal(:editorUi='editorUi')
-  insert-image-modal(:editorUi='editorUi', @insertImage='insertImage')
+  insert-image-modal(:editorUi='editorUi', @insert-image='insertImage')
   insert-link-modal(:editorUi='editorUi')
   more-shapes-modal(:editorUi='editorUi')
   layer-rename-modal(:editorUi='editorUi')

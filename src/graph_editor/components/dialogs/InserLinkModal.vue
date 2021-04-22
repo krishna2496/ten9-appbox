@@ -15,7 +15,6 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import {
   mxCell,
   mxEventObject,
@@ -23,6 +22,7 @@ import {
   mxGeometry,
   mxUtils,
 } from '../../lib/jgraph/mxClient.js';
+import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 
 interface InsertLinkObject {
   cell?: typeof mxCell;

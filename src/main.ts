@@ -14,9 +14,9 @@
  * -----
  */
 
+import App from './App.vue';
 import Vue from 'vue';
 import VueCompositionAPI from '@vue/composition-api';
-import App from './App.vue';
 import { BootstrapVue, IconsPlugin, VBModal } from 'bootstrap-vue';
 
 Vue.use(VueCompositionAPI);

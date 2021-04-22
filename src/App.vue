@@ -17,6 +17,7 @@
 <script lang="ts">
 import GraphEditor from './graph_editor/components/GraphEditor.vue';
 import OpenFile from './components/OpenFile.vue';
+import { mxCell } from './graph_editor/lib/jgraph/mxClient';
 
 import {
   defineComponent,
@@ -27,7 +28,6 @@ import {
   watch,
 } from '@vue/composition-api';
 import { debounce } from 'lodash';
-import { mxCell } from './graph_editor/lib/jgraph/mxClient';
 
 interface EventFileInfo {
   file?: File;
@@ -217,7 +217,7 @@ export default defineComponent({
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.addEventListener('load', () => {
-          const src = <string>reader.result;
+          const src = reader.result as string;
           resolve(src);
         });
         reader.readAsDataURL(file);

@@ -28,7 +28,7 @@ export default defineComponent({
   },
   setup(_props, ctx) {
     function close() {
-      ctx.emit('closeWindow');
+      ctx.emit('close-window');
     }
 
     return {

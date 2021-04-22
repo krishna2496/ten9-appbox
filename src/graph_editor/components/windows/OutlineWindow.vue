@@ -15,12 +15,12 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
+import WindowHeader from './Header.vue';
 import { mxConstants, mxEvent, mxRectangle } from '../../lib/jgraph/mxClient.js';
 import { Graph } from '../../lib/jgraph/Graph.js';
-const dragElement = require('./Drag.ts');
-import WindowHeader from './Header.vue';
+import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
+const dragElement = require('./Drag.ts');
 
 interface GraphProperty {
   gridEnabled: boolean;
@@ -133,6 +133,6 @@ export default defineComponent({
 <template lang="pug">
 b-card.mb-2.outline(tag='article', style='max-width: 20rem', v-resize='resizeWindow', v-show='show')
   template.row(#header='')
-    window-header(title='Outline', @closeWindow='close')
+    window-header(title='Outline', @close-window='close')
   #window
 </template>

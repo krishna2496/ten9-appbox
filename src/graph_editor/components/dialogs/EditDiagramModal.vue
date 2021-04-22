@@ -15,8 +15,8 @@
 -->
 
 <script lang="ts">
-const { mxResources, mxUtils } = require('../../lib/jgraph/mxClient');
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+const { mxResources, mxUtils } = require('../../lib/jgraph/mxClient');
 
 export default defineComponent({
   name: 'EditDiagramModal',

@@ -32,6 +32,9 @@ module.exports = {
     'plugin:@typescript-eslint/recommended', // The intention is that you can use all the configs together, as they build upon one-another:
     'plugin:@typescript-eslint/recommended-requiring-type-checking', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
     'plugin:json/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
     'plugin:vue/essential',
     'plugin:vue/recommended',
     'plugin:prettier/recommended',
@@ -167,26 +170,28 @@ module.exports = {
       },
     ],
     'linebreak-style': ['error', 'unix'],
-    'vue/html-self-closing': [
-      'error',
-      {
-        html: {
-          void: 'always', // prettier requires it
-        },
-      },
-    ],
+
+    // 'vue/html-self-closing': [
+    //   'error',
+    //   {
+    //     html: {
+    //       void: 'always', // prettier requires it
+    //     },
+    //   },
+    // ],
+
     // TODO: Turning this off for now. Need to revisit to enforce
     // 1 attribute per line AND have prettier work.
-    'vue/max-attributes-per-line': 'off',
+    // 'vue/max-attributes-per-line': 'off',
 
     // TODO: Add import rules when import order is sorted out
-    // 'import/no-unresolved': 'error',
-    // 'import/prefer-default-export': 'error',
-    // 'import/no-cycle': 'error',
-    // 'import/order': [
-    //   'error',
-    //   { groups: ['index', 'sibling', 'parent', 'internal', 'external', 'builtin', 'object'] },
-    // ],
+    'import/no-unresolved': 'error',
+    'import/prefer-default-export': 'error',
+    'import/no-cycle': 'error',
+    'import/order': [
+      'error',
+      { groups: ['index', 'sibling', 'parent', 'internal', 'external', 'builtin', 'object'] },
+    ],
     // 'import/extensions': [
     //   'error',
     //   'ignorePackages',
@@ -197,5 +202,106 @@ module.exports = {
     //     tsx: 'always',
     //   },
     // ],
+
+    // Base Rules (Enabling Correct ESLint Parsing)
+    // -------------------------
+    'vue/comment-directive': 'error', // plugin:vue/recommended
+    'vue/jsx-uses-vars': 'error', // plugin:vue/recommended
+
+    // Priority A: Essential (Error Prevention)
+    // -------------------------
+    'vue/no-async-in-computed-properties': 'error', // plugin:vue/recommended
+    'vue/no-dupe-keys': 'error', // plugin:vue/recommended
+    'vue/no-duplicate-attributes': 'error', // plugin:vue/recommended
+    'vue/no-parsing-error': 'error', // plugin:vue/recommended
+    'vue/no-reserved-keys': 'error', // plugin:vue/recommended
+    'vue/no-shared-component-data': 'error', // plugin:vue/recommended fixable
+    'vue/no-side-effects-in-computed-properties': 'error', // plugin:vue/recommended
+    'vue/no-template-key': 'error', // plugin:vue/recommended
+    'vue/no-textarea-mustache': 'error', // plugin:vue/recommended
+    'vue/no-unused-components': 'error', // plugin:vue/recommended
+    'vue/no-unused-vars': 'error', // plugin:vue/recommended
+    'vue/no-use-v-if-with-v-for': 'error', // plugin:vue/recommended
+    'vue/require-component-is': 'error', // plugin:vue/recommended
+    'vue/require-prop-type-constructor': 'error', // plugin:vue/recommended fixable
+    'vue/require-render-return': 'error', // plugin:vue/recommended
+    'vue/require-v-for-key': 'error', // plugin:vue/recommended
+    'vue/require-valid-default-prop': 'error', // TODO plugin:vue/recommended
+    'vue/return-in-computed-property': 'error', // plugin:vue/recommended
+    'vue/use-v-on-exact': 'error', // plugin:vue/recommended
+    'vue/valid-template-root': 'error', // plugin:vue/recommended
+    'vue/valid-v-bind': 'error', // plugin:vue/recommended
+    'vue/valid-v-cloak': 'error', // plugin:vue/recommended
+    'vue/valid-v-else-if': 'error', // plugin:vue/recommended
+    'vue/valid-v-else': 'error', // plugin:vue/recommended
+    'vue/valid-v-for': 'error', // plugin:vue/recommended
+    'vue/valid-v-html': 'error', // plugin:vue/recommended
+    'vue/valid-v-if': 'error', // plugin:vue/recommended
+    'vue/valid-v-model': 'error', // plugin:vue/recommended
+    'vue/valid-v-on': 'error', // plugin:vue/recommended
+    'vue/valid-v-once': 'error', // plugin:vue/recommended
+    'vue/valid-v-pre': 'error', // plugin:vue/recommended
+    'vue/valid-v-show': 'error', // plugin:vue/recommended
+    'vue/valid-v-text': 'error', // plugin:vue/recommended
+
+    // Priority B: Strongly Recommended (Improving Readability)
+    // -------------------------
+    'vue/attribute-hyphenation': 'error', // plugin:vue/recommended fixable
+    'vue/html-closing-bracket-newline': 'error', // plugin:vue/recommended fixable
+    'vue/html-closing-bracket-spacing': 'error', // plugin:vue/recommended fixable
+    'vue/html-end-tags': 'error', // plugin:vue/recommended fixable
+    'vue/html-indent': 'error', // plugin:vue/recommended fixable
+    'vue/html-quotes': 'error', // plugin:vue/recommended fixable
+    'vue/html-self-closing': 'error', // plugin:vue/recommended fixable
+    'vue/max-attributes-per-line': 'error', // plugin:vue/recommended fixable
+    'vue/multiline-html-element-content-newline': 'error', // plugin:vue/recommended fixable
+    'vue/mustache-interpolation-spacing': 'error', // plugin:vue/recommended fixable
+    'vue/name-property-casing': 'error', // plugin:vue/recommended fixable
+    'vue/no-multi-spaces': 'error', // plugin:vue/recommended fixable
+    'vue/no-spaces-around-equal-signs-in-attribute': 'error', // plugin:vue/recommended fixable
+    'vue/no-template-shadow': 'error', // plugin:vue/recommended
+    'vue/prop-name-casing': 'error', // plugin:vue/recommended fixable
+    'vue/require-default-prop': 'error', // TODO plugin:vue/recommended
+    'vue/require-prop-types': 'error', // plugin:vue/recommended
+    'vue/singleline-html-element-content-newline': 'error', // plugin:vue/recommended fixable
+    'vue/v-bind-style': 'error', // plugin:vue/recommended fixable
+    'vue/v-on-style': 'error', // plugin:vue/recommended fixable
+
+    // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
+    // -------------------------
+    'vue/attributes-order': 'error', // plugin:vue/recommended fixable
+    'vue/no-v-html': 'error', // plugin:vue/recommended
+    'vue/order-in-components': 'error', // plugin:vue/recommended fixable
+    'vue/this-in-template': 'error', // plugin:vue/recommended
+
+    // Uncategorized
+    // -------------------------
+    'vue/custom-event-name-casing': 'error',
+    'vue/array-bracket-spacing': 'error', // fixable
+    'vue/arrow-spacing': 'error', // fixable
+    'vue/block-spacing': 'error', // fixable
+    'vue/brace-style': 'error', // fixable
+    'vue/camelcase': 'error',
+    'vue/comma-dangle': 'error', // fixable
+    'vue/component-name-in-template-casing': 'error', // fixable
+    'vue/dot-location': 'error', // fixable
+    'vue/eqeqeq': 'error', // fixable
+    'vue/key-spacing': 'error', // fixable
+    'vue/keyword-spacing': 'error', // fixable
+    'vue/match-component-file-name': 'error',
+    'vue/no-boolean-default': ['error', 'default-false'],
+    'vue/no-deprecated-scope-attribute': 'error', // fixable
+    'vue/no-empty-pattern': 'error',
+    'vue/no-restricted-syntax': 'error',
+    'vue/object-curly-spacing': 'error', // fixable
+    'vue/require-direct-export': 'off', // Doesn't work with Composition APIs defineComponent
+    indent: 'off', //note you must disable the base rule as it can report incorrect errors when used with TS
+    'vue/script-indent': 'off', // off since it needs to use @typescript-eslint/indent for TS code: https://eslint.vuejs.org/rules/script-indent.html
+    '@typescript-eslint/indent': 'off', // off since we have prettier for indent and this: https://github.com/typescript-eslint/typescript-eslint/issues/1824
+    'vue/space-infix-ops': 'error', // fixable
+    'vue/space-unary-ops': 'error', // fixable
+    'vue/v-on-function-call': 'error', // fixable
+    'vue/v-slot-style': 'error', // fixable
+    'vue/valid-v-slot': 'error',
   },
 };
