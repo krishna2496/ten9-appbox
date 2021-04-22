@@ -28,9 +28,9 @@ module.exports = {
 
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended', // Disable rules that are incompatible with or better handled by TypeScript
-    'plugin:@typescript-eslint/recommended', // The intention is that you can use all the configs together, as they build upon one-another:
-    'plugin:@typescript-eslint/recommended-requiring-type-checking', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:json/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
@@ -58,7 +58,6 @@ module.exports = {
 
   plugins: ['pug', 'vue', 'prettier', '@typescript-eslint'],
 
-  // TODO: Add import settings and rules when import order is sorted out
   settings: {
     'import/extensions': allExtensions,
     'import/resolver': {
@@ -171,20 +170,6 @@ module.exports = {
     ],
     'linebreak-style': ['error', 'unix'],
 
-    // 'vue/html-self-closing': [
-    //   'error',
-    //   {
-    //     html: {
-    //       void: 'always', // prettier requires it
-    //     },
-    //   },
-    // ],
-
-    // TODO: Turning this off for now. Need to revisit to enforce
-    // 1 attribute per line AND have prettier work.
-    // 'vue/max-attributes-per-line': 'off',
-
-    // TODO: Add import rules when import order is sorted out
     'import/no-unresolved': 'error',
     'import/prefer-default-export': 'error',
     'import/no-cycle': 'error',
@@ -192,16 +177,6 @@ module.exports = {
       'error',
       { groups: ['index', 'sibling', 'parent', 'internal', 'external', 'builtin', 'object'] },
     ],
-    // 'import/extensions': [
-    //   'error',
-    //   'ignorePackages',
-    //   {
-    //     js: 'never',
-    //     jsx: 'never',
-    //     ts: 'always',
-    //     tsx: 'always',
-    //   },
-    // ],
 
     // Base Rules (Enabling Correct ESLint Parsing)
     // -------------------------
