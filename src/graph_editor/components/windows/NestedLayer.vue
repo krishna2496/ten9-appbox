@@ -60,22 +60,22 @@ export default defineComponent({
     });
 
     function changeSelectedLayer(id: number) {
-      context.emit('changeSelectedLayer', id);
+      context.emit('change-selected-layer', id);
     }
     function editLayer(id: number, name: string) {
-      context.emit('editLayer', id, name);
+      context.emit('edit-layer', id, name);
     }
 
     function sortDown(id: number, key: number) {
-      context.emit('sortDown', id, key);
+      context.emit('sort-down', id, key);
     }
 
     function sortUp(id: number, key: number) {
-      context.emit('sortUp', id, key);
+      context.emit('sort-up', id, key);
     }
 
     function lockLayer(id: number) {
-      context.emit('lockLayer', id, true);
+      context.emit('lock-layer', id, true);
     }
 
     function checkLayer(layer: LayerProperty) {
@@ -90,7 +90,7 @@ export default defineComponent({
           checked = true;
         }
       }
-      context.emit('checkLayer', layer['id'], checked);
+      context.emit('check-layer', layer['id'], checked);
     }
 
     return {

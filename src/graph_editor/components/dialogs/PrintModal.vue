@@ -15,6 +15,7 @@
 -->
 
 <script lang="ts">
+import PageSize from '../../lib/PageSize.js';
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 const {
   mxConstants,
@@ -29,7 +30,6 @@ const {
 } = require('../../lib/jgraph/mxClient.js');
 const { Graph } = require('../../lib/jgraph/Graph.js');
 const { PrintDialog } = require('../../lib/jgraph/Editor.js');
-import PageSize from '../../lib/PageSize.js';
 
 export default defineComponent({
   name: 'PrintModel',

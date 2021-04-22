@@ -15,7 +15,6 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, ref } from '@vue/composition-api';
 import {
   mxCell,
   mxClient,
@@ -24,6 +23,8 @@ import {
   mxUrlConverter,
 } from '../../lib/jgraph/mxClient.js';
 import { Graph } from '../../lib/jgraph/Graph.js';
+import { defineComponent, onMounted, PropType, ref } from '@vue/composition-api';
+
 interface imageData {
   data: string;
   w: number;
@@ -32,6 +33,7 @@ interface imageData {
   title: string;
   xml?: string;
 }
+
 export default defineComponent({
   name: 'ScratchpadShape',
   props: {
@@ -204,7 +206,7 @@ export default defineComponent({
     });
 
     function removeShape() {
-      ctx.emit('removeShape', props.index);
+      ctx.emit('remove-shape', props.index);
     }
 
     return {

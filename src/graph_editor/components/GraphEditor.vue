@@ -15,13 +15,14 @@
 -->
 
 <script lang="ts">
+import Modals from './Modals.vue';
+import Window from './Windows.vue';
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
 import { getImageData } from '../lib/shapes/fileIcons.js';
 import { debounce } from 'lodash';
-import Window from './Windows.vue';
 require('../lib/diagramly/DrawioFile.js');
 require('../lib/diagramly/LocalFile.js');
 require('../lib/diagramly/EditorUi.js');
@@ -31,7 +32,6 @@ require('../lib/diagramly/Menus.js');
 require('../lib/diagramly/Pages.js');
 require('../lib/diagramly/DistanceGuides.js');
 require('../lib/diagramly/Minimal.js');
-import Modals from './Modals.vue';
 
 import {
   defineComponent,
@@ -748,6 +748,6 @@ export default defineComponent({
 <template lang="pug">
 .div
   .geEditor(ref='containerRef')
-  modals(:editorUi='editorUiRef', @insertImage='imageInsert')
+  modals(:editorUi='editorUiRef', @insert-image='imageInsert')
   window(:editorUi='editorUiRef')
 </template>

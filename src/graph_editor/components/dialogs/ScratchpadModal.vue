@@ -15,9 +15,10 @@
 -->
 
 <script lang="ts">
-import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
-import { mxCell, mxEventObject, mxEventSource } from '../../lib/jgraph/mxClient.js';
 import ScratchpadShape from './ScratchpadShape.vue';
+import { mxCell, mxEventObject, mxEventSource } from '../../lib/jgraph/mxClient.js';
+import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
+
 interface InsertLinkObject {
   length: number;
   cell?: typeof mxCell;
@@ -152,7 +153,7 @@ b-modal#modal(
       :editorUi='editorUi',
       :shape='shape',
       :index='index',
-      @removeShape='removeShape'
+      @remove-shape='removeShape'
     )
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')

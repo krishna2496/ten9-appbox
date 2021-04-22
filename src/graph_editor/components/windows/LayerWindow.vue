@@ -14,12 +14,11 @@
 * -----
 -->
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import NestedLayers from './NestedLayer.vue';
+import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
-const { mxEventSource, mxEventObject } = require('../../lib/jgraph/mxClient');
-
 const dragElement = require('./Drag.ts');
+const { mxEventSource, mxEventObject } = require('../../lib/jgraph/mxClient');
 
 // interface LayerProperty {
 //   id: string;
@@ -351,10 +350,10 @@ export default defineComponent({
         nested-layers(
           v-model='layers',
           :selectedLayer='selectedLayer',
-          @editLayer='editLayer',
-          @changeSelectedLayer='changeSelectedLayer',
-          @lockLayer='lockLayer',
-          @checkLayer='checkLayer'
+          @edit-layer='editLayer',
+          @change-selected-layer='changeSelectedLayer',
+          @lock-layer='lockLayer',
+          @check-layer='checkLayer'
         )
       template(#footer='', v-if='!isMin')
         span.mr-15.cursor-pointer(aria-hidden='true', @click='deleteLayer', title='Delete Layer')

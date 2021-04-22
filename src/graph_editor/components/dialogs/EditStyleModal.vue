@@ -15,8 +15,8 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import { mxEventSource } from '../../lib/jgraph/mxClient';
+import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 interface CustomEvent {
   getProperty: FunctionStringCallback;
 }

@@ -15,10 +15,10 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
-import { mxUtils } from '../../lib/jgraph/mxClient.js';
-const dragElement = require('./Drag.ts');
 import WindowHeader from './Header.vue';
+import { mxUtils } from '../../lib/jgraph/mxClient.js';
+import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
+const dragElement = require('./Drag.ts');
 
 interface RegularExpression {
   test: FunctionStringCallback;
@@ -296,7 +296,7 @@ export default defineComponent({
 .find-window(v-show='show')
   b-card.mb-2.find(tag='article', style='max-width: 20rem')
     template.row(#header='')
-      WindowHeader(title='Find', @closeWindow='close')
+      WindowHeader(title='Find', @close-window='close')
     .card-body.py-0
       input.txt-input-window(
         type='text',

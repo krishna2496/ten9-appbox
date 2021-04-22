@@ -15,10 +15,10 @@
 -->
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
 import FindWindow from './windows/FindWindow.vue';
 import LayersWindow from './windows/LayerWindow.vue';
 import OutlineWindow from './windows/OutlineWindow.vue';
+import { defineComponent } from '@vue/composition-api';
 
 import '../styles/windows.scss';
 

@@ -15,8 +15,8 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import { mxEventSource } from '../../lib/jgraph/mxClient.js';
+import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 
 interface ImagePropertyFunction {
   getProperty: FunctionStringCallback;
@@ -43,7 +43,7 @@ export default defineComponent({
     }
 
     function insertImage() {
-      ctx.emit('insertImage', imageLink.value);
+      ctx.emit('insert-image', imageLink.value);
       closeModal();
     }
 
