@@ -18,15 +18,7 @@ import NestedLayers from './NestedLayer.vue';
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
 const dragElement = require('./Drag.ts');
-const { mxEventSource, mxEventObject } = require('../../lib/jgraph/mxClient');
-
-// interface LayerProperty {
-//   id: string;
-//   name: string;
-//   lock: boolean;
-//   checked: boolean;
-//   selected: boolean;
-// }
+const { mxEventSource, mxEventObject, mxCell, mxResources } = require('../../lib/jgraph/mxClient');
 
 interface simpleInt {
   geometry: string;
@@ -46,7 +38,6 @@ interface boxCoordinate {
 interface coordinateProperty {
   style: boxCoordinate;
 }
-
 interface dropdownCoordinates {
   top: string;
   left: string;
@@ -66,14 +57,12 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, context) {
+  setup(props) {
     const show = ref<boolean>(false);
     const isEnableBind = ref<boolean>(false);
     const layers = ref<LayerProperty>();
     const isShow = ref<boolean>(false);
-    // const dropDownId = ref<number>(layers.value[layers.value.length - 1].id);
     const dropdownCoordinates = ref<dropdownCoordinates>({ top: '97', left: '622' });
-
     const selectedLayer = ref<string>('1');
     const layerWindow = ref<coordinateProperty>();
     const layerWindowCoordinates = ref<{
@@ -82,17 +71,18 @@ export default defineComponent({
       height: string;
       width: string;
     }>({ left: '', top: '', height: '', width: '' });
-
-    // const defaultLayer = ref({
-    //   id: 0,
-    //   name: 'Untitled Layer',
-    //   lock: false,
-    //   checked: true,
-    //   selected: false,
-    // });
+    const isMin = ref<boolean | undefined>(false);
+    const editLayerName = ref<string>('');
+    const editLayerId = ref<string>('');
+    const dropDownId = ref<string>(selectedLayer.value);
 
     function close() {
       show.value = false;
+    }
+
+    function getIndexFromId(id: string) {
+      const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
+      return index;
     }
 
     function changeLayerWindowCoordinates() {
@@ -100,6 +90,26 @@ export default defineComponent({
       layerWindow.value.style.left = layerWindowCoordinates.value.left + 'px';
       layerWindow.value.style.height = layerWindowCoordinates.value.height + 'px';
       layerWindow.value.style.width = layerWindowCoordinates.value.width + 'px';
+
+      const topDeviation = 22;
+      const leftDeviation = 30;
+
+      dropdownCoordinates.value.top = (
+        parseInt(layerWindow.value.style.top) - topDeviation
+      ).toString();
+      dropdownCoordinates.value.left = (
+        parseInt(layerWindow.value.style.left) + leftDeviation
+      ).toString();
+    }
+
+    function changeSelectedLayer(id: string) {
+      selectedLayer.value = id;
+      const index = getIndexFromId(id);
+      const defaultParent = layers.value;
+      if (props.editorUi.editor.graph.isEnabled()) {
+        props.editorUi.editor.graph.setDefaultParent(defaultParent[index]);
+        props.editorUi.editor.graph.view.setCurrentRoot(null);
+      }
     }
 
     function openLayerWindow() {
@@ -109,7 +119,6 @@ export default defineComponent({
       if (!layers.value[0]['value']) {
         layers.value[0]['value'] = 'Background';
       }
-
       setTimeout(() => {
         layerWindow.value = document.getElementById('layerWindow');
         if (layerWindowCoordinates.value.top !== '') {
@@ -133,10 +142,8 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('openLayerWindow', openLayerWindow);
-
       const ele: unknown = document.getElementsByClassName('card');
       dragElement.default(ele[1], 1);
-
       props.editorUi.editor.graph.addListener('changeSelectionStage', changeSelectionStage);
       document.addEventListener('click', (event) => {
         if (event.target['classList'][1] !== 'fa-share-square-o') {
@@ -149,63 +156,99 @@ export default defineComponent({
       props.editorUi.removeListener(openLayerWindow);
     });
 
-    const isMin = ref<boolean | undefined>(false);
-
-    const editLayerName = ref<string>('');
-    const editLayerId = ref<string>('');
-
-    function changeSelectedLayer(id: string) {
-      selectedLayer.value = id;
-    }
-
     function addLayer() {
-      // const layer = defaultLayer.value;
-      // layer.id = Math.random();
-      // const tempRef = {
-      //   ...layer,
-      // };
-      // layers.value.unshift(tempRef);
-      // changeSelectedLayer(layer.id);
+      if (props.editorUi.editor.graph.isEnabled()) {
+        props.editorUi.editor.graph.model.beginUpdate();
+        try {
+          const cell = props.editorUi.editor.graph.addCell(
+            new mxCell(mxResources.get('untitledLayer')),
+            props.editorUi.editor.graph.model.root,
+          );
+          cell['children'] = [];
+          props.editorUi.editor.graph.setDefaultParent(cell);
+        } finally {
+          props.editorUi.editor.graph.model.endUpdate();
+        }
+      }
+      changeSelectedLayer(layers.value[layers.value.length - 1].id);
     }
 
     function deleteLayer() {
-      // layers.value = layers.value.filter((o: LayerProperty) => {
-      //   // if (o.layers) return (o.layers = o.layers.filter(f)).length;
-      //   return o.id != selectedLayer.value;
-      // });
-      // if (layers.value.length === 0) {
-      //   layers.value.unshift({
-      //     id: Math.random(),
-      //     name: 'Background',
-      //     lock: false,
-      //     checked: true,
-      //     selected: false,
-      //   });
-      // }
-      // changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      const i = getIndexFromId(selectedLayer.value);
+      const defaultParent = layers.value;
+
+      if (props.editorUi.editor.graph.isEnabled()) {
+        props.editorUi.editor.graph.model.beginUpdate();
+        try {
+          const index = props.editorUi.editor.graph.model.root.getIndex(defaultParent[i]);
+          props.editorUi.editor.graph.removeCells([defaultParent[i]], false);
+
+          // Creates default layer if no layer exists
+          if (
+            props.editorUi.editor.graph.model.getChildCount(
+              props.editorUi.editor.graph.model.root,
+            ) == 0
+          ) {
+            props.editorUi.editor.graph.model.add(
+              props.editorUi.editor.graph.model.root,
+              new mxCell('Background'),
+            );
+            props.editorUi.editor.graph.setDefaultParent();
+          } else if (
+            index > 0 &&
+            index <=
+              props.editorUi.editor.graph.model.getChildCount(
+                props.editorUi.editor.graph.model.root,
+              )
+          ) {
+            props.editorUi.editor.graph.setDefaultParent(
+              props.editorUi.editor.graph.model.getChildAt(
+                props.editorUi.editor.graph.model.root,
+                index - 1,
+              ),
+            );
+          } else {
+            props.editorUi.editor.graph.setDefaultParent(null);
+          }
+        } finally {
+          props.editorUi.editor.graph.model.endUpdate();
+        }
+        changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      }
     }
 
     function duplicateLayer() {
-      // const temp = layers.value.find((layer) => layer.id === selectedLayer.value);
-      // const duplicate = { ...temp };
-      // duplicate.id = Math.random();
-      // layers.value.push(duplicate);
+      const index = getIndexFromId(selectedLayer.value);
+      if (props.editorUi.editor.graph.isEnabled()) {
+        let newCell = null;
+        props.editorUi.editor.graph.model.beginUpdate();
+        try {
+          newCell = props.editorUi.editor.graph.cloneCell(layers.value[index]);
+          newCell = props.editorUi.editor.graph.addCell(
+            newCell,
+            props.editorUi.editor.graph.model.root,
+          );
+          props.editorUi.editor.graph.setDefaultParent(newCell);
+        } finally {
+          changeSelectedLayer(newCell.id);
+          props.editorUi.editor.graph.model.endUpdate();
+        }
+
+        if (newCell != null && !props.editorUi.editor.graph.isCellLocked(newCell)) {
+          props.editorUi.editor.graph.selectAll(newCell);
+        }
+      }
     }
 
-    function editLayer(id: string, name: string) {
-      editLayerName.value = name;
-      editLayerId.value = id;
-      context.root.$bvModal.show('renameLayer');
-    }
-
-    function editLayerFinal() {
-      // const edit = layers.value.find((layer) => layer['id'].toString() === editLayerId.value);
-      // edit['value'] = editLayerName.value;
+    function editLayer(id: string) {
+      const index = getIndexFromId(id);
+      props.editorUi.fireEvent(
+        new mxEventObject('openLayerRenameDialog', 'layer', layers.value[index]),
+      );
     }
 
     function setLayerWindowCoordinates() {
       const layerWindowStyle = layerWindow.value.style;
-
       const layerWindowStyleTop = layerWindowStyle.top.split('px');
       const layerWindowStyleLeft = layerWindowStyle.left.split('px');
       const layerWindowStyleHeight = layerWindowStyle.height.split('px');
@@ -216,46 +259,40 @@ export default defineComponent({
       [layerWindowCoordinates.value.height] = layerWindowStyleHeight;
       [layerWindowCoordinates.value.width] = layerWindowStyleWidth;
 
-      const topDeviation = 22;
-      const leftDeviation = 30;
-
-      dropdownCoordinates.value.top = (parseInt(layerWindowStyleTop[0]) - topDeviation).toString();
-      dropdownCoordinates.value.left = (
-        parseInt(layerWindowStyleLeft[0]) + leftDeviation
-      ).toString();
-
       changeLayerWindowCoordinates();
     }
 
     function moveSelection() {
-      // const timeOut = 150;
-      // if (isShow.value === true) {
-      //   setTimeout(() => {
-      //     isShow.value = !isShow.value;
-      //   }, timeOut);
-      // }
-      // isShow.value = !isShow.value;
-      // setLayerWindowCoordinates();
-      // props.editorUi.editor.graph.moveCells(
-      //   props.editorUi.editor.graph.getSelectionCells(),
-      //   0,
-      //   0,
-      //   false,
-      //   null,
-      // );
+      setLayerWindowCoordinates();
+      layers.value.forEach((layer) => {
+        if (
+          props.editorUi.editor.graph.getSelectionCount() == 1 &&
+          props.editorUi.editor.graph.model.isAncestor(
+            layer,
+            props.editorUi.editor.graph.getSelectionCell(),
+          )
+        ) {
+          dropDownId.value = layer.id;
+        }
+      });
+      if (isShow.value === true) {
+        isShow.value = !isShow.value;
+      }
+      isShow.value = !isShow.value;
     }
 
-    // function selectLayerForMoveSelection(id: string) {
-    //   const timeOut = 300;
-    //   dropDownId.value = id;
-    //   setTimeout(() => {
-    //     moveSelection();
-    //   }, timeOut);
-    // }
-
-    function getIndexFromId(id: string) {
-      const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
-      return index;
+    function selectLayerForMoveSelection(id: string) {
+      dropDownId.value = id;
+      const index = getIndexFromId(id);
+      props.editorUi.editor.graph.moveCells(
+        props.editorUi.editor.graph.getSelectionCells(),
+        0,
+        0,
+        false,
+        layers.value[index],
+      );
+      console.log('layers array after', layers.value);
+      moveSelection();
     }
 
     function lockLayer(id: string, locked: boolean) {
@@ -283,9 +320,16 @@ export default defineComponent({
 
     function checkLayer(id: string, checked: boolean) {
       const index = getIndexFromId(id);
+      const temp = layers.value[index];
+      layers.value.splice(index, 1);
+      layers.value.splice(index, 0, temp);
       const defaultParent = layers.value;
       props.editorUi.editor.graph.model.setVisible(defaultParent[index], checked);
-      defaultParent[index].style = checked.toString();
+    }
+
+    function dragLayer(newIndex: number) {
+      const temp = layers.value[newIndex];
+      props.editorUi.editor.graph.addCell(temp, props.editorUi.editor.graph.model.root, newIndex);
     }
 
     return {
@@ -295,10 +339,10 @@ export default defineComponent({
       checkLayer,
       close,
       deleteLayer,
+      dragLayer,
       dropdownCoordinates,
-      // dropDownId,
+      dropDownId,
       duplicateLayer,
-      editLayerFinal,
       editLayer,
       editLayerId,
       editLayerName,
@@ -310,10 +354,9 @@ export default defineComponent({
       lockLayer,
       moveSelection,
       selectedLayer,
-      show,
-      // selectLayerForMoveSelection,
+      selectLayerForMoveSelection,
       setLayerWindowCoordinates,
-      // updateLayers,
+      show,
     };
   },
   data: function () {
@@ -332,6 +375,7 @@ export default defineComponent({
       header-tag='header',
       footer-tag='footer',
       v-show='show',
+      v-resize,
       :class='{ minHeight111: isMin === false, minHeight222: isMin === true }'
     )
       template(#header='')
@@ -344,7 +388,11 @@ export default defineComponent({
           )
             i.fa.fa-window-maximize.mr-1(v-if='isMin')
             i.fa.fa-window-minimize.mr-1(v-else)
-          span.cursor-pointer.btn(aria-hidden='true', @click='show = false', title='Close')
+          span.cursor-pointer.btn(
+            aria-hidden='true',
+            @click='show = false; setLayerWindowCoordinates()',
+            title='Close'
+          )
             i.fa.fa-times.fa-lg.mr-1
       b-card-body.card-body-main(v-if='!isMin')
         nested-layers(
@@ -353,7 +401,8 @@ export default defineComponent({
           @edit-layer='editLayer',
           @change-selected-layer='changeSelectedLayer',
           @lock-layer='lockLayer',
-          @check-layer='checkLayer'
+          @check-layer='checkLayer',
+          @drag-layer='dragLayer'
         )
       template(#footer='', v-if='!isMin')
         span.mr-15.cursor-pointer(aria-hidden='true', @click='deleteLayer', title='Delete Layer')
@@ -374,35 +423,30 @@ export default defineComponent({
         )
           i.fa.fa-clone.fa-md.footerBtn
 
-    //- b-card.dropdown(
-    //-   v-if='isShow',
-    //-   :style='{ top: dropdownCoordinates.top + "px", left: dropdownCoordinates.left + "px" }'
-    //- )
-    //-   b-card-body.dropdownBody 
-    //-     b-row.dropdownRow(
-    //-       :key='key',
-    //-       v-for='(layer, key) in layers',
-    //-       @click='selectLayerForMoveSelection(layer.id)'
-    //-     )
-    //-       span.dropdownTick
-    //-         i.fa.fa-check(v-if='layer.id === dropDownId')
-    //-       span.dropdownLayerName {{ layer.name }}
-
-    //- b-modal#renameLayer(
-    //-   ref='modal',
-    //-   title='Edit Layer Name',
-    //-   ok-title='Rename',
-    //-   @ok='editLayerFinal'
-    //- )
-    //-   b-form
-    //-     b-row
-    //-       b-col(cols='2')
-    //-         label(for='edit111') Name :
-    //-       b-col(cols='10')
-    //-         b-form-input#edit111(v-model='editLayerName')
+    b-card.dropdown(
+      v-if='isShow',
+      :style='{ top: dropdownCoordinates.top + "px", left: dropdownCoordinates.left + "px" }'
+    )
+      b-card-body.dropdownBody 
+        b-row.dropdownRow(
+          :key='key',
+          v-for='(layer, key) in layers',
+          @click='selectLayerForMoveSelection(layer.id)'
+        )
+          span.dropdownTick
+            i.fa.fa-check(v-if='layer.id === dropDownId')
+          span.dropdownLayerName {{ layer.value }}
 </template>
 
 <style lang="scss" scoped>
+.layercard {
+  z-index: 1000;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  height: auto;
+  opacity: 0;
+  resize: both;
+}
+
 .layer {
   margin-right: 202px;
   width: 85%;
@@ -415,14 +459,6 @@ export default defineComponent({
   padding: 0;
   height: 40px;
   cursor: move;
-}
-
-.layercard {
-  z-index: 1000;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  height: auto;
-  opacity: 0;
-  resize: both;
 }
 
 .minHeight222 {
@@ -439,8 +475,6 @@ export default defineComponent({
   padding: 0;
   background-color: #dcdcdc !important;
   overflow-y: scroll;
-
-  /* height: auto; */
 }
 
 ul {
@@ -480,6 +514,8 @@ ul {
 
 .dropdown {
   margin: 0;
+  height: fit-content;
+  position: relative;
 }
 
 .card-body {
@@ -490,8 +526,6 @@ ul {
   padding: 0;
   width: 180px;
 }
-
-/* --------------------------- */
 
 .txt-input {
   border: 1px solid #ddd;

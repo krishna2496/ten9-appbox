@@ -16,13 +16,20 @@
 <script lang="ts">
 import { computed, defineComponent } from '@vue/composition-api';
 import draggable from 'vuedraggable';
+
 interface simpleInt {
   id: string;
   style: string;
   value: string;
   visible: boolean;
 }
+
 type LayerProperty = simpleInt[];
+
+interface dragInt {
+  newIndex: number;
+  oldIndex: number;
+}
 
 export default defineComponent({
   name: 'NestedLayers',
@@ -47,6 +54,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
+    // Define drag option for layers
     const dragOptions = computed(() => {
       return {
         animation: 200,
@@ -55,32 +63,50 @@ export default defineComponent({
         ghostClass: 'ghost',
       };
     });
+
+    // Get layer listing
     const realValue = computed(() => {
       return props.value ? props.value : props.list;
     });
 
+    // Change selected layer
     function changeSelectedLayer(id: number) {
       context.emit('change-selected-layer', id);
     }
-    function editLayer(id: number, name: string) {
-      context.emit('edit-layer', id, name);
+
+    // Edit selected layer
+    function editLayer(id: number) {
+      context.emit('edit-layer', id);
     }
 
+    // Sorting down layer
     function sortDown(id: number, key: number) {
       context.emit('sort-down', id, key);
     }
 
+    // Sorting up layer
     function sortUp(id: number, key: number) {
       context.emit('sort-up', id, key);
     }
 
-    function lockLayer(id: number) {
-      context.emit('lock-layer', id, true);
+    // Lock/Unlock selected layer
+    function lockLayer(layer: LayerProperty) {
+      let locked: boolean;
+
+      // check if layer is lock or unlock
+      if (layer['style'] && layer['style'].includes('locked=1;')) {
+        locked = false;
+      } else {
+        locked = true;
+      }
+      context.emit('lock-layer', layer['id'], locked);
     }
 
+    // Check/Uncheck layer
     function checkLayer(layer: LayerProperty) {
       let checked: boolean;
 
+      // check if layer is check or uncheck
       if (!Object.prototype.hasOwnProperty.call(layer, 'visible')) {
         checked = false;
       } else {
@@ -93,12 +119,20 @@ export default defineComponent({
       context.emit('check-layer', layer['id'], checked);
     }
 
+    // Drag layers
+    function dragLayer(evt: dragInt) {
+      // On layer drop get dropped index
+      const { newIndex: newIndex } = evt;
+      context.emit('drag-layer', newIndex);
+      return true;
+    }
+
     return {
       changeSelectedLayer,
       checkLayer,
+      dragLayer,
       dragOptions,
       editLayer,
-      // emitter,
       lockLayer,
       realValue,
       sortDown,
@@ -109,21 +143,21 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-draggable.item-container(v-bind='dragOptions', tag='div', :list='list')
+draggable.item-container(v-bind='dragOptions', tag='div', :list='realValue', @end='dragLayer')
   .item-group(:key='el.id', v-for='(el, key) in realValue')
     .item(:class='{ active: el.id === selectedLayer }')
       .check
         span(@click='checkLayer(el)', title='Hide/Show')
-          i.fa.fa-eye.ml-2(v-if='el["visible"]')
+          i.fa.fa-eye.ml-2(v-if='el["visible"] == undefined || el.visible')
           i.fa.fa-eye-slash.ml-2(v-else)
       .layer_name(
         @click='changeSelectedLayer(el.id)',
-        @dblclick='editLayer(el.id, el.value)',
+        @dblclick='editLayer(el.id)',
         :title='el.value'
       )
-        span.ml-2 {{ el.visible }}
+        span.ml-2 {{ el.value }}
       .lock
-        span.cursor-pointer(@click='lockLayer(el.id)', title='Lock/Unlock')
+        span.cursor-pointer(@click='lockLayer(el)', title='Lock/Unlock')
           i.fa.fa-lock.mr-2(v-if='el["style"]')
           i.fa.fa-unlock.mr-2(v-else)
 </template>
@@ -131,6 +165,8 @@ draggable.item-container(v-bind='dragOptions', tag='div', :list='list')
 <style lang="scss" scoped>
 .item-container {
   margin: 0;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .item {
