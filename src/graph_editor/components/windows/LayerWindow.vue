@@ -375,7 +375,6 @@ export default defineComponent({
       header-tag='header',
       footer-tag='footer',
       v-show='show',
-      v-resize,
       :class='{ minHeight111: isMin === false, minHeight222: isMin === true }'
     )
       template(#header='')
