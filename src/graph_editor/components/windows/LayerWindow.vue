@@ -291,7 +291,7 @@ export default defineComponent({
         false,
         layers.value[index],
       );
-      console.log('layers array after', layers.value);
+      // console.log('layers array after', layers.value);
       moveSelection();
     }
 
