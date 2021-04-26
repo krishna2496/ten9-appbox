@@ -138,7 +138,7 @@ export default defineComponent({
         layers.value[0]['value'] = 'Background';
       }
       setTimeout(() => {
-        layerWindow.value = document.getElementById('layerWindow');
+        layerWindow.value = document.getElementById('layer-window-id');
         if (layerWindowCoordinates.value.top !== '') {
           // Change default window coordinates to last open
           changeLayerWindowCoordinates();
@@ -397,32 +397,32 @@ export default defineComponent({
 .layer-window
   div
     b-button(v-if='!show', @click='show = true', variant='primary') Show Layer Window
-    b-card#layerWindow.layercard(
+    b-card#layer-window-id.layer-window-card(
       no-body='',
       style='min-width: 20rem',
       header-tag='header',
       footer-tag='footer',
       v-show='show',
       v-resize,
-      :class='{ minHeight111: isMin === false, minHeight222: isMin === true }'
+      :class='{ "layer-window-maximize": isMin === false, "layer-window-minimize": isMin === true }'
     )
       template(#header='')
         span.mr-15.mb-0.float-left.layer Layers
-        .headerBtn
-          span.cursor-pointer.btn(
+        .layer-window-headerBtn
+          span.cursor-pointer.layer-window-btn(
             aria-hidden='true',
             @click='isMin = !isMin',
             :title='!isMin ? "Minimize" : "Maximize"'
           )
             i.fa.fa-window-maximize.mr-1(v-if='isMin')
             i.fa.fa-window-minimize.mr-1(v-else)
-          span.cursor-pointer.btn(
+          span.cursor-pointer.layer-window-btn(
             aria-hidden='true',
             @click='show = false; setLayerWindowCoordinates()',
             title='Close'
           )
             i.fa.fa-times.fa-lg.mr-1
-      b-card-body.card-body-main(v-if='!isMin')
+      b-card-body.layer-window-card-body-main(v-if='!isMin')
         nested-layers(
           v-model='layers',
           :selectedLayer='selectedLayer',
@@ -434,164 +434,34 @@ export default defineComponent({
         )
       template(#footer='', v-if='!isMin')
         span.mr-15.cursor-pointer(aria-hidden='true', @click='deleteLayer', title='Delete Layer')
-          i.fa.fa-trash.fa-lg.footerBtn
-        span.mr-15.cursor-pointer(
+          i.fa.fa-trash.fa-lg.layer-window-footerBtn
+        span#layer-window-moveSelectionBtn.mr-15.cursor-pointer(
           aria-hidden='true',
           @click='isEnableBind ? moveSelection() : null',
           :title='isEnableBind ? "Move Selection to..." : "Disabled"',
           :class='{ isEnableBind: !isEnableBind, mxDisabled: !isEnableBind }'
         )
-          i.fa.fa-share-square-o.fa-lg.footerBtn
+          i.fa.fa-share-square-o.fa-lg.layer-window-footerBtn
         span.mr-15.cursor-pointer(aria-hidden='true', @click='addLayer', title='Add Layer')
-          i.fa.fa-plus.fa-lg.footerBtn
+          i.fa.fa-plus.fa-lg.layer-window-footerBtn
         span.mr-15.cursor-pointer(
           aria-hidden='true',
           @click='duplicateLayer',
           title='Duplicate Layer'
         )
-          i.fa.fa-clone.fa-md.footerBtn
+          i.fa.fa-clone.fa-md.layer-window-footerBtn
 
-    b-card.dropdown(
+    b-card.layer-window-dropdown(
       v-if='isShow',
       :style='{ top: dropdownCoordinates.top + "px", left: dropdownCoordinates.left + "px" }'
     )
-      b-card-body.dropdownBody 
-        b-row.dropdownRow(
+      b-card-body.layer-window-dropdownBody 
+        b-row.layer-window-dropdownRow(
           :key='key',
           v-for='(layer, key) in layers',
           @click='selectLayerForMoveSelection(layer.id)'
         )
-          span.dropdownTick
+          span.layer-window-dropdownTick
             i.fa.fa-check(v-if='layer.id === dropDownId')
           span.dropdownLayerName {{ layer.value }}
 </template>
-
-<style lang="scss" scoped>
-.layercard {
-  z-index: 1000;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  height: auto;
-  opacity: 0;
-  resize: both;
-}
-
-.layer {
-  margin-right: 202px;
-  width: 85%;
-  margin-left: 10px;
-  font-weight: 600;
-}
-
-.card-header {
-  display: inline-flex;
-  padding: 0;
-  height: 40px;
-  cursor: move;
-}
-
-.minHeight222 {
-  min-height: 40px;
-  max-height: 40px;
-}
-
-.minHeight111 {
-  height: 165px;
-  min-height: 165px;
-}
-
-.card-body-main {
-  padding: 0;
-  background-color: #dcdcdc !important;
-  overflow-y: scroll;
-}
-
-ul {
-  list-style: none;
-}
-
-.footerBtn {
-  margin-left: 13px;
-  color: gray;
-}
-
-.footerBtn:hover {
-  color: black;
-}
-
-.fa-trash.footerBtn {
-  margin-left: 8px;
-}
-
-.isEnableBind {
-  color: lightgray;
-}
-
-.dropdownRow {
-  padding: 5px;
-}
-
-.dropdownRow:hover {
-  background-color: lightgray;
-  cursor: pointer;
-}
-
-.dropdownTick {
-  min-width: 30px;
-  padding: 0 5px;
-}
-
-.dropdown {
-  margin: 0;
-  height: fit-content;
-  position: relative;
-}
-
-.card-body {
-  padding: 0 !important;
-}
-
-.card {
-  padding: 0;
-  width: 180px;
-}
-
-.txt-input {
-  border: 1px solid #ddd;
-  padding: 5px 10px;
-}
-
-.close {
-  cursor: pointer;
-}
-
-.bgLightPink {
-  background: lightpink;
-}
-
-.card-header span img,
-.card-footer span img,
-.card-body span img {
-  width: 20px;
-  cursor: pointer;
-}
-
-.headerBtn {
-  width: 15%;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.btn {
-  padding: 0;
-  height: 70%;
-  margin: auto 0;
-  margin-right: 3%;
-  background-color: transparent !important;
-  border-color: transparent !important;
-}
-
-.card-footer {
-  padding: 7px 0;
-  background-color: #fafafa;
-}
-</style>

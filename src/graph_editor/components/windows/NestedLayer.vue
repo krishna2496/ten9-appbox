@@ -143,99 +143,26 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-draggable.item-container(v-bind='dragOptions', tag='div', :list='realValue', @end='dragLayer')
-  .item-group(:key='el.id', v-for='(el, key) in realValue')
-    .item(:class='{ active: el.id === selectedLayer }')
-      .check
+draggable.layer-window-body-container(
+  v-bind='dragOptions',
+  tag='div',
+  :list='realValue',
+  :move='dragLayer'
+)
+  .layer-window-item-group(:key='el.id', v-for='(el, key) in realValue')
+    .layer-window-item(:class='{ active: el.id === selectedLayer }')
+      .layer-window-check
         span(@click='checkLayer(el)', title='Hide/Show')
           i.fa.fa-eye.ml-2(v-if='el["visible"] == undefined || el.visible')
           i.fa.fa-eye-slash.ml-2(v-else)
-      .layer_name(
+      .layer-window-name(
         @click='changeSelectedLayer(el.id)',
         @dblclick='editLayer(el.id)',
         :title='el.value'
       )
         span.ml-2 {{ el.value }}
-      .lock
+      .layer-window-lock
         span.cursor-pointer(@click='lockLayer(el)', title='Lock/Unlock')
           i.fa.fa-lock.mr-2(v-if='el["style"]')
           i.fa.fa-unlock.mr-2(v-else)
 </template>
-
-<style lang="scss" scoped>
-.item-container {
-  margin: 0;
-}
-
-.item {
-  padding: 5px;
-  background-color: #fefefe;
-  text-align: left;
-  border-bottom: solid 1px #e6e6e6;
-  width: 100%;
-  display: inline-flex;
-}
-
-.item-sub {
-  margin: 0 0 0 1rem;
-}
-
-.item.active {
-  background-color: rgb(230, 239, 248);
-  font-weight: bold;
-
-  /* color: rgb(230, 239, 248); */
-}
-
-.cursor-pointer {
-  padding-left: 6px !important;
-}
-
-.item input {
-  vertical-align: middle;
-}
-
-.item span {
-  vertical-align: middle;
-}
-
-.layer_name {
-  flex-grow: 100;
-  cursor: move;
-  padding: 5px 0;
-}
-
-.sortDown,
-.sortUp {
-  color: gray;
-  float: right;
-  padding-right: 3px;
-  cursor: pointer;
-}
-
-.sortDown {
-  padding-right: 6px;
-}
-
-.sortDown:hover,
-.sortUp:hover {
-  color: black;
-}
-
-.sortBtns {
-  float: right;
-}
-
-.check {
-  margin: auto 0;
-  color: gray;
-
-  /* padding: 5px 0; */
-}
-
-.lock {
-  float: right;
-  margin: auto 0;
-  color: gray;
-}
-</style>

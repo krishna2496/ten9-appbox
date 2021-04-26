@@ -80,3 +80,143 @@
   border: 1px solid whitesmoke;
   overflow: hidden;
 }
+
+#layer-window-id {
+  opacity: 0;
+}
+
+.layer {
+  margin-right: 202px;
+  width: 85%;
+  margin-left: 10px;
+  font-weight: 600;
+}
+
+.layer-window .card-header {
+  display: inline-flex;
+  padding: 0;
+  height: 40px;
+  cursor: move;
+}
+
+.layer-window-card {
+  z-index: 1000;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  height: auto;
+  opacity: 0;
+  resize: both;
+}
+
+.layer-window-minimize {
+  min-height: 40px;
+  max-height: 40px;
+}
+
+.layer-window-maximize {
+  height: 165px;
+  min-height: 165px;
+}
+
+.layer-window-card-body-main {
+  padding: 0;
+  background-color: #dcdcdc !important;
+  overflow-y: scroll;
+}
+
+.layer-window-footerBtn {
+  margin-left: 13px;
+  color: gray;
+}
+
+.layer-window-footerBtn:hover {
+  color: black;
+}
+
+.fa-trash.layer-window-footerBtn {
+  margin-left: 8px;
+}
+
+.isEnableBind {
+  color: lightgray;
+}
+
+.layer-window-dropdownRow {
+  padding: 5px;
+}
+
+.layer-window-dropdownRow:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.layer-window-dropdownTick {
+  min-width: 30px;
+  padding: 0 5px;
+}
+
+.layer-window-dropdown {
+  margin: 0;
+  height: fit-content;
+  position: relative !important;
+}
+
+.layer-window-card-body,
+.layer-window-dropdown,
+.layer-window-dropdownBody,
+.card-body {
+  padding: 0 !important;
+}
+
+.layer-window-dropdown {
+  width: 180px;
+}
+
+.layer-window-headerBtn {
+  width: 15%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.layer-window-btn {
+  padding: 0;
+  margin: auto 0;
+  margin-right: 3%;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+.layer-window .card-footer {
+  padding: 7px 0;
+  background-color: #fafafa;
+}
+
+.layer-window-body-container {
+  margin: 0;
+  .layer-window-item {
+    padding: 5px;
+    background-color: #fefefe;
+    text-align: left;
+    border-bottom: solid 1px #e6e6e6;
+    width: 100%;
+    display: inline-flex;
+  }
+  .layer-window-item.active {
+    background-color: rgb(230, 239, 248);
+    font-weight: bold;
+  }
+  .layer-window-name {
+    flex-grow: 100;
+    cursor: move;
+    padding: 5px 0;
+  }
+  .layer-window-check {
+    margin: auto 0;
+    color: gray;
+  }
+
+  .layer-window-lock {
+    float: right;
+    margin: auto 0;
+    color: gray;
+  }
+}
