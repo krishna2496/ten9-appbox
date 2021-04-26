@@ -3789,7 +3789,7 @@ DriveFile = function () {};
           this.addMenuItems(
             menu,
             (this.editorUi.format != null ? ['formatPanel'] : [])
-              .concat(['outline', 'layers', 'layers2'])
+              .concat(['outline', 'layers'])
               .concat(editorUi.commentsSupported() ? ['comments', '-'] : ['-']),
           );
 

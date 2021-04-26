@@ -1871,27 +1871,27 @@ Actions.prototype.init = function () {
   action = this.addAction(
     'layers',
     mxUtils.bind(this, function () {
-      if (this.layersWindow == null) {
-        // LATER: Check outline window for initial placement
-        // TEN9: Layer window calculation according to
-        //this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 280, 120, 220, 196);
-        // TEN9: add bootstrapVue component for layer
-        //ui.fireEvent(new mxEventObject('openLayerWindow'));
-        var container = mxClient.getDocumentContainer();
-        this.layersWindow = new LayersWindow(ui, container.offsetWidth - 280, 120, 220, 196);
-        this.layersWindow.window.addListener('show', function () {
-          ui.fireEvent(new mxEventObject('layers'));
-        });
-        this.layersWindow.window.addListener('hide', function () {
-          ui.fireEvent(new mxEventObject('layers'));
-        });
-        this.layersWindow.window.setVisible(true);
-        ui.fireEvent(new mxEventObject('layers'));
-
-        this.layersWindow.init();
-      } else {
-        this.layersWindow.window.setVisible(!this.layersWindow.window.isVisible());
-      }
+      // if (this.layersWindow == null) {
+      //   // LATER: Check outline window for initial placement
+      //   // TEN9: Layer window calculation according to
+      //   //this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 280, 120, 220, 196);
+      //   // TEN9: add bootstrapVue component for layer
+      //   //ui.fireEvent(new mxEventObject('openLayerWindow'));
+      //   var container = mxClient.getDocumentContainer();
+      //   this.layersWindow = new LayersWindow(ui, container.offsetWidth - 280, 120, 220, 196);
+      //   this.layersWindow.window.addListener('show', function () {
+      //     ui.fireEvent(new mxEventObject('layers'));
+      //   });
+      //   this.layersWindow.window.addListener('hide', function () {
+      //     ui.fireEvent(new mxEventObject('layers'));
+      //   });
+      //   this.layersWindow.window.setVisible(true);
+      //   ui.fireEvent(new mxEventObject('layers'));
+      //   this.layersWindow.init();
+      // } else {
+      //   this.layersWindow.window.setVisible(!this.layersWindow.window.isVisible());
+      // }
+      ui.fireEvent(new mxEventObject('openLayerWindow'));
     }),
     null,
     null,
@@ -1899,15 +1899,15 @@ Actions.prototype.init = function () {
   );
 
   // TEN9: add new layer menu option
-  action = this.addAction(
-    'layers2',
-    mxUtils.bind(this, function () {
-      ui.fireEvent(new mxEventObject('openLayerWindow'));
-    }),
-    null,
-    null,
-    Editor.ctrlKey + '+Shift+L+2',
-  );
+  // action = this.addAction(
+  //   'layers2',
+  //   mxUtils.bind(this, function () {
+  //     ui.fireEvent(new mxEventObject('openLayerWindow'));
+  //   }),
+  //   null,
+  //   null,
+  //   Editor.ctrlKey + '+Shift+L+2',
+  // );
 
   // TEN9: add isGraphEnabled property
   action.isEnabled = isGraphEnabled;

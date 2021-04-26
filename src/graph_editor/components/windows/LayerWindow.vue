@@ -76,15 +76,18 @@ export default defineComponent({
     const editLayerId = ref<string>('');
     const dropDownId = ref<string>(selectedLayer.value);
 
+    // Close layer window
     function close() {
       show.value = false;
     }
 
+    // Get index of layer from it's id
     function getIndexFromId(id: string) {
       const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
       return index;
     }
 
+    // Change Layer window co ordinates with last open
     function changeLayerWindowCoordinates() {
       layerWindow.value.style.top = layerWindowCoordinates.value.top + 'px';
       layerWindow.value.style.left = layerWindowCoordinates.value.left + 'px';
@@ -114,6 +117,7 @@ export default defineComponent({
       ).toString();
     }
 
+    // Change selected layer on layer selection
     function changeSelectedLayer(id: string) {
       selectedLayer.value = id;
       const index = getIndexFromId(id);
@@ -124,18 +128,22 @@ export default defineComponent({
       }
     }
 
+    // Open layer window
     function openLayerWindow() {
       show.value = true;
       const timeOut = 10;
       layers.value = props.editorUi.editor.graph.model.root.children;
       if (!layers.value[0]['value']) {
+        // Set default name if there is empty layer
         layers.value[0]['value'] = 'Background';
       }
       setTimeout(() => {
         layerWindow.value = document.getElementById('layerWindow');
         if (layerWindowCoordinates.value.top !== '') {
+          // Change default window coordinates to last open
           changeLayerWindowCoordinates();
         } else {
+          // Set default window coordinates to default
           layerWindow.value.style.top = '120px';
           layerWindow.value.style.left = '690px';
         }
@@ -143,20 +151,29 @@ export default defineComponent({
       }, timeOut);
     }
 
+    // Enable/disable move selection button on graph selection changes
     function changeSelectionStage(_sender: typeof mxEventSource, event: typeof mxEventObject) {
       if (event.getProperty('selection')) {
+        // Enable move selection button if any shape is selected.
         isEnableBind.value = true;
       } else {
+        // Disable move selection button if no shape is selected
         isEnableBind.value = false;
         isShow.value = false;
       }
     }
 
     onMounted(() => {
+      // Open layer window
       props.editorUi.addListener('openLayerWindow', openLayerWindow);
+
       const ele: unknown = document.getElementsByClassName('card');
+      // Add drag property on layer window.
       dragElement.default(ele[1], 1);
+
+      // Enable/Disable move selection button on window open if any shape selected.
       props.editorUi.editor.graph.addListener('changeSelectionStage', changeSelectionStage);
+
       document.addEventListener('click', (event) => {
         if (event.target['classList'][1] !== 'fa-share-square-o') {
           isShow.value = false;
