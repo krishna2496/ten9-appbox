@@ -165,8 +165,6 @@ draggable.item-container(v-bind='dragOptions', tag='div', :list='realValue', @en
 <style lang="scss" scoped>
 .item-container {
   margin: 0;
-  display: flex;
-  flex-direction: column-reverse;
 }
 
 .item {
