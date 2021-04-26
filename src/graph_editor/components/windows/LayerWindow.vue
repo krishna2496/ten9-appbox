@@ -75,6 +75,8 @@ export default defineComponent({
     const editLayerName = ref<string>('');
     const editLayerId = ref<string>('');
     const dropDownId = ref<string>(selectedLayer.value);
+    const { graph } = props.editorUi.editor;
+    const graphModel = graph.model;
 
     // Close layer window
     function close() {
@@ -122,9 +124,9 @@ export default defineComponent({
       selectedLayer.value = id;
       const index = getIndexFromId(id);
       const defaultParent = layers.value;
-      if (props.editorUi.editor.graph.isEnabled()) {
-        props.editorUi.editor.graph.setDefaultParent(defaultParent[index]);
-        props.editorUi.editor.graph.view.setCurrentRoot(null);
+      if (graph.isEnabled()) {
+        graph.setDefaultParent(defaultParent[index]);
+        graph.view.setCurrentRoot(null);
       }
     }
 
@@ -132,7 +134,7 @@ export default defineComponent({
     function openLayerWindow() {
       show.value = true;
       const timeOut = 10;
-      layers.value = props.editorUi.editor.graph.model.root.children;
+      layers.value = graphModel.root.children;
       if (!layers.value[0]['value']) {
         // Set default name if there is empty layer
         layers.value[0]['value'] = 'Background';
@@ -172,7 +174,7 @@ export default defineComponent({
       dragElement.default(ele[1], 1);
 
       // Enable/Disable move selection button on window open if any shape selected.
-      props.editorUi.editor.graph.addListener('changeSelectionStage', changeSelectionStage);
+      graph.addListener('changeSelectionStage', changeSelectionStage);
 
       document.addEventListener('click', (event) => {
         if (event.target['classList'][1] !== 'fa-share-square-o') {
@@ -185,90 +187,70 @@ export default defineComponent({
       props.editorUi.removeListener(openLayerWindow);
     });
 
+    // Add new layer to layer window
     function addLayer() {
-      if (props.editorUi.editor.graph.isEnabled()) {
-        props.editorUi.editor.graph.model.beginUpdate();
+      if (graph.isEnabled()) {
+        graphModel.beginUpdate();
         try {
-          const cell = props.editorUi.editor.graph.addCell(
-            new mxCell(mxResources.get('untitledLayer')),
-            props.editorUi.editor.graph.model.root,
-          );
+          const cell = graph.addCell(new mxCell(mxResources.get('untitledLayer')), graphModel.root);
           cell['children'] = [];
-          props.editorUi.editor.graph.setDefaultParent(cell);
+          graph.setDefaultParent(cell);
         } finally {
-          props.editorUi.editor.graph.model.endUpdate();
+          graphModel.endUpdate();
         }
       }
       changeSelectedLayer(layers.value[layers.value.length - 1].id);
     }
 
+    // Delete selected layer from layers listing
     function deleteLayer() {
       const i = getIndexFromId(selectedLayer.value);
       const defaultParent = layers.value;
 
-      if (props.editorUi.editor.graph.isEnabled()) {
-        props.editorUi.editor.graph.model.beginUpdate();
+      if (graph.isEnabled()) {
+        graphModel.beginUpdate();
         try {
-          const index = props.editorUi.editor.graph.model.root.getIndex(defaultParent[i]);
-          props.editorUi.editor.graph.removeCells([defaultParent[i]], false);
+          const index = graphModel.root.getIndex(defaultParent[i]);
+          graph.removeCells([defaultParent[i]], false);
 
           // Creates default layer if no layer exists
-          if (
-            props.editorUi.editor.graph.model.getChildCount(
-              props.editorUi.editor.graph.model.root,
-            ) == 0
-          ) {
-            props.editorUi.editor.graph.model.add(
-              props.editorUi.editor.graph.model.root,
-              new mxCell('Background'),
-            );
-            props.editorUi.editor.graph.setDefaultParent();
-          } else if (
-            index > 0 &&
-            index <=
-              props.editorUi.editor.graph.model.getChildCount(
-                props.editorUi.editor.graph.model.root,
-              )
-          ) {
-            props.editorUi.editor.graph.setDefaultParent(
-              props.editorUi.editor.graph.model.getChildAt(
-                props.editorUi.editor.graph.model.root,
-                index - 1,
-              ),
-            );
+          if (graphModel.getChildCount(graphModel.root) == 0) {
+            graphModel.add(graphModel.root, new mxCell('Background'));
+            graph.setDefaultParent();
+          } else if (index > 0 && index <= graphModel.getChildCount(graphModel.root)) {
+            graph.setDefaultParent(graphModel.getChildAt(graphModel.root, index - 1));
           } else {
-            props.editorUi.editor.graph.setDefaultParent(null);
+            graph.setDefaultParent(null);
           }
         } finally {
-          props.editorUi.editor.graph.model.endUpdate();
+          graphModel.endUpdate();
         }
         changeSelectedLayer(layers.value[layers.value.length - 1].id);
       }
     }
 
+    // Create new duplicate of selected layer
     function duplicateLayer() {
       const index = getIndexFromId(selectedLayer.value);
-      if (props.editorUi.editor.graph.isEnabled()) {
+      if (graph.isEnabled()) {
         let newCell = null;
-        props.editorUi.editor.graph.model.beginUpdate();
+        graphModel.beginUpdate();
         try {
-          newCell = props.editorUi.editor.graph.cloneCell(layers.value[index]);
-          newCell = props.editorUi.editor.graph.addCell(
-            newCell,
-            props.editorUi.editor.graph.model.root,
-          );
-          props.editorUi.editor.graph.setDefaultParent(newCell);
+          newCell = graph.cloneCell(layers.value[index]);
+          newCell = graph.addCell(newCell, graphModel.root);
+          graph.setDefaultParent(newCell);
         } finally {
           changeSelectedLayer(newCell.id);
-          props.editorUi.editor.graph.model.endUpdate();
+          graphModel.endUpdate();
         }
 
-        if (newCell != null && !props.editorUi.editor.graph.isCellLocked(newCell)) {
-          props.editorUi.editor.graph.selectAll(newCell);
+        if (newCell != null && !graph.isCellLocked(newCell)) {
+          graph.selectAll(newCell);
         }
       }
     }
 
+    // Edit selected layer name
     function editLayer(id: string) {
       const index = getIndexFromId(id);
       props.editorUi.fireEvent(
@@ -276,6 +258,7 @@ export default defineComponent({
       );
     }
 
+    // Set layer window's coordinates on window close for next open
     function setLayerWindowCoordinates() {
       const layerWindowStyle = layerWindow.value.style;
       const layerWindowStyleTop = layerWindowStyle.top.split('px');
@@ -291,15 +274,13 @@ export default defineComponent({
       changeLayerWindowCoordinates();
     }
 
+    // Get graph selection to link with selected layer
     function moveSelection() {
       setLayerWindowCoordinates();
       layers.value.forEach((layer) => {
         if (
-          props.editorUi.editor.graph.getSelectionCount() == 1 &&
-          props.editorUi.editor.graph.model.isAncestor(
-            layer,
-            props.editorUi.editor.graph.getSelectionCell(),
-          )
+          graph.getSelectionCount() == 1 &&
+          graphModel.isAncestor(layer, graph.getSelectionCell())
         ) {
           dropDownId.value = layer.id;
         }
@@ -310,54 +291,50 @@ export default defineComponent({
       isShow.value = !isShow.value;
     }
 
+    // Select layer for move selection
     function selectLayerForMoveSelection(id: string) {
       dropDownId.value = id;
       const index = getIndexFromId(id);
-      props.editorUi.editor.graph.moveCells(
-        props.editorUi.editor.graph.getSelectionCells(),
-        0,
-        0,
-        false,
-        layers.value[index],
-      );
+      graph.moveCells(graph.getSelectionCells(), 0, 0, false, layers.value[index]);
       moveSelection();
     }
 
+    // Lock/unlock selected layer
     function lockLayer(id: string, locked: boolean) {
       const index = getIndexFromId(id);
       const defaultParent = layers.value;
-      if (props.editorUi.editor.graph.isEnabled()) {
+      if (graph.isEnabled()) {
         let value = null;
         if (locked) {
           value = '1';
         }
-        props.editorUi.editor.graph.getModel().beginUpdate();
+        graph.getModel().beginUpdate();
         try {
-          props.editorUi.editor.graph.setCellStyles('locked', value, [defaultParent[index]]);
+          graph.setCellStyles('locked', value, [defaultParent[index]]);
         } finally {
-          props.editorUi.editor.graph.getModel().endUpdate();
+          graph.getModel().endUpdate();
         }
 
         if (value == '1') {
-          props.editorUi.editor.graph.removeSelectionCells(
-            props.editorUi.editor.graph.getModel().getDescendants(defaultParent[index]),
-          );
+          graph.removeSelectionCells(graph.getModel().getDescendants(defaultParent[index]));
         }
       }
     }
 
+    // Check/uncheck layer
     function checkLayer(id: string, checked: boolean) {
       const index = getIndexFromId(id);
       const temp = layers.value[index];
       layers.value.splice(index, 1);
       layers.value.splice(index, 0, temp);
       const defaultParent = layers.value;
-      props.editorUi.editor.graph.model.setVisible(defaultParent[index], checked);
+      graphModel.setVisible(defaultParent[index], checked);
     }
 
+    // Drag layers
     function dragLayer(newIndex: number) {
       const temp = layers.value[newIndex];
-      props.editorUi.editor.graph.addCell(temp, props.editorUi.editor.graph.model.root, newIndex);
+      graph.addCell(temp, graphModel.root, newIndex);
     }
 
     return {
