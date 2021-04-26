@@ -91,14 +91,26 @@ export default defineComponent({
       layerWindow.value.style.height = layerWindowCoordinates.value.height + 'px';
       layerWindow.value.style.width = layerWindowCoordinates.value.width + 'px';
 
-      const topDeviation = 22;
+      const topDeviation = 5;
+      const height = 165;
       const leftDeviation = 30;
 
-      dropdownCoordinates.value.top = (
-        parseInt(layerWindow.value.style.top) - topDeviation
-      ).toString();
+      if (layerWindowCoordinates.value.height) {
+        dropdownCoordinates.value.top = (
+          parseInt(layerWindowCoordinates.value.top) +
+          parseInt(layerWindowCoordinates.value.height) -
+          topDeviation
+        ).toString();
+      } else {
+        dropdownCoordinates.value.top = (
+          parseInt(layerWindowCoordinates.value.top) +
+          height -
+          topDeviation
+        ).toString();
+      }
+
       dropdownCoordinates.value.left = (
-        parseInt(layerWindow.value.style.left) + leftDeviation
+        parseInt(layerWindowCoordinates.value.left) + leftDeviation
       ).toString();
     }
 
@@ -125,7 +137,7 @@ export default defineComponent({
           changeLayerWindowCoordinates();
         } else {
           layerWindow.value.style.top = '120px';
-          layerWindow.value.style.left = '590px';
+          layerWindow.value.style.left = '690px';
         }
         layerWindow.value.style.opacity = '1';
       }, timeOut);
@@ -291,7 +303,6 @@ export default defineComponent({
         false,
         layers.value[index],
       );
-      console.log('layers array after', layers.value);
       moveSelection();
     }
 
