@@ -136,7 +136,6 @@ export default defineComponent({
       show.value = true;
       const timeOut = 10;
       layers.value = graphModel.root.children;
-      console.log(layers.value.length);
 
       if (!layers.value[0]['value']) {
         // Set default name if there is empty layer

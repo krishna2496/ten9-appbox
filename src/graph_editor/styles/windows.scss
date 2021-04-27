@@ -161,9 +161,8 @@
 }
 
 .layer-window-card-body,
-.layer-window-dropdown,
-.layer-window-dropdownBody,
-.card-body {
+.layer-window-dropdown > .card-body,
+.layer-window-dropdownBody {
   padding: 0 !important;
 }
 
