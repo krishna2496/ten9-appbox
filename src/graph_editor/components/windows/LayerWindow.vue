@@ -488,13 +488,14 @@ export default defineComponent({
       v-if='isShow',
       :style='{ top: dropdownCoordinates.top + "px", left: dropdownCoordinates.left + "px" }'
     )
-      b-card-body.layer-window-dropdownBody 
-        b-row.layer-window-dropdownRow(
-          :key='key',
-          v-for='(layer, key) in layers',
-          @click='selectLayerForMoveSelection(layer.id)'
-        )
-          span.layer-window-dropdownTick
-            i.fa.fa-check(v-if='layer.id === dropDownId')
-          span.dropdownLayerName {{ layer.value }}
+      b-row.layer-window-dropdownRow(
+        :key='key',
+        v-for='(layer, key) in layers',
+        @click='!layer.style ? selectLayerForMoveSelection(layer.id) : null',
+        :class='{ dropDownRowDisable: layer.style }'
+      )
+        span.layer-window-dropdownTick
+          i.fa.fa-check(v-if='layer.id === dropDownId')
+        span.dropdownLayerName {{ layer.value }}
+        span(v-if='layer.style') - Locked
 </template>
