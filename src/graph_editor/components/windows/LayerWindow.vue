@@ -89,6 +89,43 @@ export default defineComponent({
 
     // Change Layer window co ordinates with last open
     function changeLayerWindowCoordinates() {
+      const containerCoordinates = document.getElementById('container').getBoundingClientRect();
+
+      // if layer - bottom is out of container
+      const bottomCoordinate =
+        parseInt(layerWindowCoordinates.value.top) + parseInt(layerWindowCoordinates.value.height);
+
+      if (bottomCoordinate > containerCoordinates.height) {
+        // if layer - height  >  container- height
+        const deviationBottom = 58;
+        if (parseInt(layerWindowCoordinates.value.height) > containerCoordinates.height) {
+          layerWindowCoordinates.value.height = (
+            containerCoordinates.height - deviationBottom
+          ).toString();
+        } else {
+          const deviation = bottomCoordinate - containerCoordinates.height + deviationBottom;
+          layerWindowCoordinates.value.top = Math.floor(
+            parseInt(layerWindowCoordinates.value.top) - deviation,
+          ).toString();
+        }
+      }
+
+      // if layer - right is out of container
+      const rightCoordinate =
+        parseInt(layerWindowCoordinates.value.left) + parseInt(layerWindowCoordinates.value.width);
+      if (rightCoordinate > containerCoordinates.width) {
+        // if layer - width  >  container- width
+        if (parseInt(layerWindowCoordinates.value.width) > containerCoordinates.width) {
+          layerWindowCoordinates.value.width = containerCoordinates.width.toString();
+        } else {
+          const deviationRight = 0;
+          const deviation = rightCoordinate - containerCoordinates.width + deviationRight;
+          layerWindowCoordinates.value.left = Math.floor(
+            parseInt(layerWindowCoordinates.value.left) - deviation,
+          ).toString();
+        }
+      }
+
       layerWindow.value.style.top = layerWindowCoordinates.value.top + 'px';
       layerWindow.value.style.left = layerWindowCoordinates.value.left + 'px';
       layerWindow.value.style.height = layerWindowCoordinates.value.height + 'px';
