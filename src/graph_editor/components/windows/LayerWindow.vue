@@ -437,7 +437,7 @@ export default defineComponent({
         span#layer-window-moveSelectionBtn.mr-15.cursor-pointer(
           aria-hidden='true',
           @click='isEnableBind ? moveSelection() : null',
-          :title='isEnableBind ? "Move Selection to..." : "Disabled"',
+          title='Move Selection to...',
           :class='{ isEnableBind: !isEnableBind, mxDisabled: !isEnableBind }'
         )
           i.fa.fa-share-square-o.fa-lg.layer-window-footerBtn
