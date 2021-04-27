@@ -1868,9 +1868,11 @@ Actions.prototype.init = function () {
       );
     }
   }).isEnabled = isGraphEnabled;
+
   action = this.addAction(
     'layers',
     mxUtils.bind(this, function () {
+      ui.fireEvent(new mxEventObject('openLayerWindow'));
       // if (this.layersWindow == null) {
       //   // LATER: Check outline window for initial placement
       //   // TEN9: Layer window calculation according to
@@ -1891,30 +1893,22 @@ Actions.prototype.init = function () {
       // } else {
       //   this.layersWindow.window.setVisible(!this.layersWindow.window.isVisible());
       // }
-      ui.fireEvent(new mxEventObject('openLayerWindow'));
     }),
     null,
     null,
     Editor.ctrlKey + '+Shift+L',
   );
 
-  // TEN9: add new layer menu option
-  // action = this.addAction(
-  //   'layers2',
-  //   mxUtils.bind(this, function () {
-  //     ui.fireEvent(new mxEventObject('openLayerWindow'));
-  //   }),
-  //   null,
-  //   null,
-  //   Editor.ctrlKey + '+Shift+L+2',
-  // );
-
-  // TEN9: add isGraphEnabled property
   action.isEnabled = isGraphEnabled;
   action.setToggleAction(true);
   action.setSelectedCallback(
     mxUtils.bind(this, function () {
-      return this.layersWindow != null && this.layersWindow.window.isVisible();
+      let isLayerWindowShow = document.querySelector('#layer-window-id').style.display;
+      if (isLayerWindowShow == 'none') {
+        return false;
+      } else {
+        return true;
+      }
     }),
   );
 
