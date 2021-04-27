@@ -75,8 +75,6 @@ export default defineComponent({
     const editLayerName = ref<string>('');
     const editLayerId = ref<string>('');
     const dropDownId = ref<string>(selectedLayer.value);
-    const { graph } = props.editorUi.editor;
-    const graphModel = graph.model;
 
     // Close layer window
     function close() {
@@ -121,6 +119,7 @@ export default defineComponent({
 
     // Change selected layer on layer selection
     function changeSelectedLayer(id: string) {
+      const { graph } = props.editorUi.editor;
       selectedLayer.value = id;
       const index = getIndexFromId(id);
       const defaultParent = layers.value;
@@ -132,6 +131,7 @@ export default defineComponent({
 
     // Open layer window
     function openLayerWindow() {
+      const graphModel = props.editorUi.editor.graph.model;
       show.value = true;
       const timeOut = 10;
       layers.value = graphModel.root.children;
@@ -166,6 +166,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      const { graph } = props.editorUi.editor;
       // Open layer window
       props.editorUi.addListener('openLayerWindow', openLayerWindow);
 
@@ -189,6 +190,8 @@ export default defineComponent({
 
     // Add new layer to layer window
     function addLayer() {
+      const { graph } = props.editorUi.editor;
+      const graphModel = graph.model;
       if (graph.isEnabled()) {
         graphModel.beginUpdate();
         try {
@@ -204,6 +207,8 @@ export default defineComponent({
 
     // Delete selected layer from layers listing
     function deleteLayer() {
+      const { graph } = props.editorUi.editor;
+      const graphModel = graph.model;
       const i = getIndexFromId(selectedLayer.value);
       const defaultParent = layers.value;
 
@@ -231,6 +236,8 @@ export default defineComponent({
 
     // Create new duplicate of selected layer
     function duplicateLayer() {
+      const { graph } = props.editorUi.editor;
+      const graphModel = graph.model;
       const index = getIndexFromId(selectedLayer.value);
       if (graph.isEnabled()) {
         let newCell = null;
@@ -276,6 +283,8 @@ export default defineComponent({
 
     // Get graph selection to link with selected layer
     function moveSelection() {
+      const { graph } = props.editorUi.editor;
+      const graphModel = graph.model;
       setLayerWindowCoordinates();
       layers.value.forEach((layer) => {
         if (
@@ -293,6 +302,7 @@ export default defineComponent({
 
     // Select layer for move selection
     function selectLayerForMoveSelection(id: string) {
+      const { graph } = props.editorUi.editor;
       dropDownId.value = id;
       const index = getIndexFromId(id);
       graph.moveCells(graph.getSelectionCells(), 0, 0, false, layers.value[index]);
@@ -303,6 +313,7 @@ export default defineComponent({
     function lockLayer(id: string, locked: boolean) {
       const index = getIndexFromId(id);
       const defaultParent = layers.value;
+      const { graph } = props.editorUi.editor;
       if (graph.isEnabled()) {
         let value = null;
         if (locked) {
@@ -323,6 +334,7 @@ export default defineComponent({
 
     // Check/uncheck layer
     function checkLayer(id: string, checked: boolean) {
+      const graphModel = props.editorUi.editor.graph.model;
       const index = getIndexFromId(id);
       const temp = layers.value[index];
       layers.value.splice(index, 1);
@@ -333,6 +345,8 @@ export default defineComponent({
 
     // Drag layers
     function dragLayer(newIndex: number) {
+      const { graph } = props.editorUi.editor;
+      const graphModel = graph.model;
       const temp = layers.value[newIndex];
       graph.addCell(temp, graphModel.root, newIndex);
     }
@@ -380,7 +394,6 @@ export default defineComponent({
       header-tag='header',
       footer-tag='footer',
       v-show='show',
-      v-resize,
       :class='{ "layer-window-maximize": isMin === false, "layer-window-minimize": isMin === true }'
     )
       template(#header='')
