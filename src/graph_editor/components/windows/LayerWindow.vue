@@ -97,13 +97,10 @@ export default defineComponent({
 
       if (bottomCoordinate > containerCoordinates.height) {
         // if layer - height  >  container- height
-        const deviationBottom = 58;
         if (parseInt(layerWindowCoordinates.value.height) > containerCoordinates.height) {
-          layerWindowCoordinates.value.height = (
-            containerCoordinates.height - deviationBottom
-          ).toString();
+          layerWindowCoordinates.value.height = containerCoordinates.height.toString();
         } else {
-          const deviation = bottomCoordinate - containerCoordinates.height + deviationBottom;
+          const deviation = bottomCoordinate - containerCoordinates.height;
           layerWindowCoordinates.value.top = Math.floor(
             parseInt(layerWindowCoordinates.value.top) - deviation,
           ).toString();
