@@ -155,8 +155,9 @@
 }
 
 .layer-window-dropdown {
-  margin: 0;
+  width: 180px;
   height: fit-content;
+  margin: 0;
   position: relative !important;
 }
 
@@ -191,6 +192,7 @@
 
 .layer-window-body-container {
   margin: 0;
+
   .layer-window-item {
     padding: 5px;
     background-color: #fefefe;
@@ -199,15 +201,18 @@
     width: 100%;
     display: inline-flex;
   }
+
   .layer-window-item.active {
     background-color: rgb(230, 239, 248);
     font-weight: bold;
   }
+
   .layer-window-name {
     flex-grow: 100;
     cursor: move;
     padding: 5px 0;
   }
+
   .layer-window-check {
     margin: auto 0;
     color: gray;
