@@ -131,14 +131,23 @@ export default defineComponent({
 
     // Open layer window
     function openLayerWindow() {
-      const graphModel = props.editorUi.editor.graph.model;
+      const { graph } = props.editorUi.editor;
+      const graphModel = graph.model;
       show.value = true;
       const timeOut = 10;
       layers.value = graphModel.root.children;
+      console.log(layers.value.length);
+
       if (!layers.value[0]['value']) {
         // Set default name if there is empty layer
         layers.value[0]['value'] = 'Background';
       }
+
+      // If there is only one layer in list make it selected
+      if (layers.value.length == 1) {
+        changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      }
+      changeSelectedLayer(layers.value[layers.value.length - 1].id);
       setTimeout(() => {
         layerWindow.value = document.getElementById('layer-window-id');
         if (layerWindowCoordinates.value.top !== '') {
@@ -167,6 +176,7 @@ export default defineComponent({
 
     onMounted(() => {
       const { graph } = props.editorUi.editor;
+
       // Open layer window
       props.editorUi.addListener('openLayerWindow', openLayerWindow);
 

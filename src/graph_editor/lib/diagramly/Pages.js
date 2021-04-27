@@ -137,7 +137,7 @@ RenamePage.prototype.execute = function () {
   this.previous = tmp;
 
   // Required to update page name in placeholders
-  this.ui.editor.graph.updatePlaceholders();
+  this.ui.updatePlaceholders();
   this.ui.editor.fireEvent(new mxEventObject('pageRenamed'));
 };
 
@@ -430,6 +430,7 @@ EditorUi.prototype.initPages = function () {
         lastPage = p;
       }
 
+      this.fireEvent(new mxEventObject('openLayerWindow'));
       // Updates layers window
       if (this.actions.layersWindow != null) {
         this.actions.layersWindow.refreshLayers();

@@ -1221,7 +1221,7 @@ DriveFile = function () {};
                   parent,
                 );
 
-                if (id == mxLanguage || (id == '' && mxLanguage == null)) {
+                if (id == mxLanguage || (id == '' && mxLanguage == null)) {s
                   menu.addCheckmark(item, Editor.checkmarkImage);
                 }
               }
