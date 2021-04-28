@@ -19,7 +19,13 @@ import WindowHeader from './Header.vue';
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
 const dragElement = require('./Drag.ts');
-const { mxEventSource, mxEventObject, mxCell, mxResources } = require('../../lib/jgraph/mxClient');
+const {
+  mxEventSource,
+  mxEventObject,
+  mxCell,
+  mxResources,
+  mxClient,
+} = require('../../lib/jgraph/mxClient');
 
 interface simpleInt {
   geometry: string;
@@ -108,7 +114,9 @@ export default defineComponent({
 
     // Change Layer window co ordinates with last open
     function changeLayerWindowCoordinates() {
-      const containerCoordinates = document.getElementById('container').getBoundingClientRect();
+      const containerCoordinates = mxClient
+        .getDocumentContainer()
+        .parentElement.parentElement.getBoundingClientRect();
 
       // if layer - bottom is out of container
       const bottomCoordinate =
