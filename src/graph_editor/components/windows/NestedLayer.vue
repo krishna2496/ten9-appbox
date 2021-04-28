@@ -16,6 +16,7 @@
 <script lang="ts">
 import { computed, defineComponent } from '@vue/composition-api';
 import draggable from 'vuedraggable';
+import VClamp from 'vue-clamp';
 
 interface simpleInt {
   id: string;
@@ -35,6 +36,7 @@ export default defineComponent({
   name: 'NestedLayers',
   components: {
     draggable,
+    VClamp,
   },
   props: {
     value: {
@@ -151,7 +153,7 @@ draggable.layer-window-body-container(
 )
   .layer-window-item-group(:key='el.id', v-for='(el, key) in realValue')
     .layer-window-item(:class='{ active: el.id === selectedLayer }')
-      .layer-window-check
+      .layer-window-check.mr-2
         span(@click='checkLayer(el)', title='Hide/Show')
           i.fa.fa-eye.ml-2(v-if='el["visible"] == undefined || el.visible')
           i.fa.fa-eye-slash.ml-2(v-else)
@@ -160,8 +162,8 @@ draggable.layer-window-body-container(
         @dblclick='editLayer(el.id)',
         :title='el.value'
       )
-        span.ml-2 {{ el.value }}
-      .layer-window-lock
+        v-clamp(autoresize, :max-lines='1') {{ el.value }}
+      .layer-window-lock.ml-2
         span.cursor-pointer(@click='lockLayer(el)', title='Lock/Unlock')
           i.fa.fa-lock.mr-2(v-if='el["style"]')
           i.fa.fa-unlock.mr-2(v-else)
