@@ -95,7 +95,7 @@
 .layer-window .card-header {
   display: inline-flex;
   padding: 0;
-  height: 40px;
+  //height: 40px;
   cursor: move;
 }
 
@@ -224,4 +224,12 @@
 .dropDownRowDisable {
   color: darkgray;
   cursor: not-allowed !important;
+}
+
+.minimize { 
+  height: 50px !important;
+}
+
+.justify-content-between {
+  justify-content: center !important; 
 }

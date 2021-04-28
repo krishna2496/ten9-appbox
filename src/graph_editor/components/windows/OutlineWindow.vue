@@ -49,6 +49,8 @@ export default defineComponent({
 
     const outline = ref(null);
 
+    const isMin = ref<boolean>(false);
+
     function close() {
       show.value = false;
     }
@@ -110,6 +112,10 @@ export default defineComponent({
       }
     }
 
+    function changeMinStatus() {
+      isMin.value = !isMin.value;
+    }
+
     onMounted(() => {
       props.editorUi.addListener('openOutlineWindow', openOutlineWindow);
       const ele: unknown = document.getElementsByClassName('card');
@@ -121,7 +127,9 @@ export default defineComponent({
     });
 
     return {
+      changeMinStatus,
       close,
+      isMin,
       outline,
       resizeWindow,
       show,
@@ -131,8 +139,19 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-card.mb-2.outline(tag='article', style='max-width: 20rem', v-resize='resizeWindow', v-show='show')
+b-card.mb-2(
+  tag='article',
+  style='max-width: 20rem',
+  v-resize='resizeWindow',
+  v-show='show',
+  :class='isMin ? "minimize" : "outline"'
+)
   template.row(#header='')
-    window-header(title='Outline', @close-window='close')
+    window-header(
+      title='Outline',
+      @close-window='close',
+      :isMin='isMin',
+      @change-min-status='changeMinStatus'
+    )
   #window
 </template>
