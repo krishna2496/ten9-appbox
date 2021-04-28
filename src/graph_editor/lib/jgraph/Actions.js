@@ -1872,7 +1872,14 @@ Actions.prototype.init = function () {
   action = this.addAction(
     'layers',
     mxUtils.bind(this, function () {
-      ui.fireEvent(new mxEventObject('openLayerWindow'));
+      let isLayerWindowShow = document.querySelector('#layer-window-id').style.display;
+      if (isLayerWindowShow == 'none') {
+        document.querySelector('#layer-window-id').style.removeProperty('display');
+        ui.fireEvent(new mxEventObject('openLayerWindow'));
+      } else {
+        document.querySelector('#layer-window-id').style.display = 'none';
+      }
+
       // if (this.layersWindow == null) {
       //   // LATER: Check outline window for initial placement
       //   // TEN9: Layer window calculation according to
