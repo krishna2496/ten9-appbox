@@ -437,7 +437,7 @@ export default defineComponent({
       header-tag='header',
       footer-tag='footer',
       v-show='show',
-      :class='{ "layer-window-maximize": isMin === false, "layer-window-minimize": isMin === true }'
+      :class='{ "show-window": show, "layer-window-maximize": isMin === false, "layer-window-minimize": isMin === true }'
     )
       template(#header='')
         span.mr-15.mb-0.float-left.layer Layers

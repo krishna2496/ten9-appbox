@@ -1872,11 +1872,15 @@ Actions.prototype.init = function () {
   action = this.addAction(
     'layers',
     mxUtils.bind(this, function () {
-      let isLayerWindowShow = document.querySelector('#layer-window-id').style.display;
-      if (isLayerWindowShow == 'none') {
+      let isLayerWindowShow = document
+        .querySelector('#layer-window-id')
+        .classList.contains('show-window');
+      if (!isLayerWindowShow) {
         document.querySelector('#layer-window-id').style.removeProperty('display');
         ui.fireEvent(new mxEventObject('openLayerWindow'));
+        document.querySelector('#layer-window-id').classList.add('show-window');
       } else {
+        document.querySelector('#layer-window-id').classList.remove('show-window');
         document.querySelector('#layer-window-id').style.display = 'none';
       }
 

@@ -430,7 +430,10 @@ EditorUi.prototype.initPages = function () {
         lastPage = p;
       }
 
-      this.fireEvent(new mxEventObject('openLayerWindow'));
+      let isLayerWindowShow = document.querySelector('#layer-window-id');
+      if (isLayerWindowShow && isLayerWindowShow.classList.contains('show-window')) {
+        this.fireEvent(new mxEventObject('openLayerWindow'));
+      }
       // Updates layers window
       if (this.actions.layersWindow != null) {
         this.actions.layersWindow.refreshLayers();
