@@ -17,10 +17,10 @@
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
 
 export default function dragElement(elmnt: HTMLDivElement, index: number) {
-  let pos1 = 0,
-    pos2 = 0,
-    pos3 = 0,
-    pos4 = 0;
+  let newX = 0,
+    newY = 0,
+    prevX = 0,
+    prevY = 0;
 
   function closeDragElement() {
     // stop moving when mouse button is released:
@@ -31,10 +31,10 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
   function elementDrag(e: MouseEvent) {
     e.preventDefault();
     // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
+    newX = prevX - e.clientX;
+    newY = prevY - e.clientY;
+    prevX = e.clientX;
+    prevY = e.clientY;
     // set the element's new position:
     let windowHeight;
     let windowWidth;
@@ -51,16 +51,16 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
     }
 
     if (
-      containerRect.y <= elmnt.offsetTop - pos2 + containerRect.y &&
-      containerRect.height >= elmnt.offsetTop - pos2 + containerRect.y + windowHeight
+      containerRect.y <= elmnt.offsetTop - newY + containerRect.y &&
+      containerRect.height >= elmnt.offsetTop - newY + containerRect.y + windowHeight
     ) {
-      const top = elmnt.offsetTop - pos2;
+      const top = elmnt.offsetTop - newY;
       elmnt.style.top = `${top}px`;
     }
     let count = 0;
-    if (containerRect.x <= elmnt.offsetLeft - pos1 + containerRect.x) {
+    if (containerRect.x <= elmnt.offsetLeft - newX + containerRect.x) {
       count = 1;
-      const left = elmnt.offsetLeft - pos1;
+      const left = elmnt.offsetLeft - newX;
       elmnt.style.left = `${left}px`;
     } else {
       count = 0;
@@ -69,10 +69,10 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
 
     if (
       containerRect.width + containerRect.x >=
-      elmnt.offsetLeft - pos1 + containerRect.x + windowWidth
+      elmnt.offsetLeft - newX + containerRect.x + windowWidth
     ) {
       if (count === 0) {
-        const left = elmnt.offsetLeft - pos1;
+        const left = elmnt.offsetLeft - newX;
         elmnt.style.left = `${left}px`;
       }
     } else {
@@ -86,8 +86,8 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
     if (handle.contains(e.target as Node)) {
       e.preventDefault();
       // get the mouse cursor position at startup:
-      pos3 = e.clientX;
-      pos4 = e.clientY;
+      prevX = e.clientX;
+      prevY = e.clientY;
       document.onmouseup = closeDragElement;
       // call a function whenever the cursor moves:
       document.onmousemove = elementDrag;
