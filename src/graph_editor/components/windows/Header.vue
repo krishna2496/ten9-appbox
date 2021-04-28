@@ -25,13 +25,22 @@ export default defineComponent({
       require: true,
       default: '',
     },
+    isMin: {
+      type: Boolean,
+      require: true,
+      default: false,
+    },
   },
   setup(_props, ctx) {
     function close() {
       ctx.emit('close-window');
     }
 
+    function changeMinStatus() {
+      ctx.emit('change-min-status');
+    }
     return {
+      changeMinStatus,
       close,
     };
   },
@@ -41,6 +50,12 @@ export default defineComponent({
 <template lang="pug">
 .d-flex.align-items-center.justify-content-between.w-100
   h6.mb-1.col-sm-10.pl-0 {{ title }}
+  span.cursor-pointer.layer-window-btn(
+    aria-hidden='true',
+    @click='changeMinStatus',
+    :title='!isMin ? "Minimize" : "Maximize"'
+  )
+    i.fa.fa-window-maximize.mr-1(v-if='isMin')
+    i.fa.fa-window-minimize.mr-1(v-else)
   i.fa.fa-times(aria-hidden='true', @click='close')
-  //-span.float-right.col-sm-1.close.text-right(@click='close') X
 </template>

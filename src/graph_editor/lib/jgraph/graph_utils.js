@@ -14,7 +14,7 @@
  * -----
  */
 
-const { mxPoint, mxRectangle } = require('./mxClient.js');
+const { mxClient, mxPoint, mxRectangle } = require('./mxClient.js');
 
 export function getOffset(originEl, el) {
   const originRect = originEl.getBoundingClientRect();
@@ -106,4 +106,13 @@ export function fit(node, container) {
   if (top + height > bottom) {
     node.style.top = Math.max(st, bottom - height) + 'px';
   }
+}
+
+export function getDocumentContainerRect() {
+  let container = mxClient.getDocumentContainer();
+
+  if (container.offsetHeight === 0) {
+    container = container.offsetParent;
+  }
+  return container.getBoundingClientRect();
 }
