@@ -77,6 +77,7 @@ export default defineComponent({
     const editLayerName = ref<string>('');
     const editLayerId = ref<string>('');
     const dropDownId = ref<string>(selectedLayer.value);
+    const isEnableBindMove = ref<boolean>(false);
 
     // Close layer window
     function close() {
@@ -87,6 +88,22 @@ export default defineComponent({
     function getIndexFromId(id: string) {
       const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
       return index;
+    }
+
+    function isMoveSelectionEnable(id: string) {
+      const isGraphSelected = ref<boolean>(true);
+      if (id) {
+        const index = getIndexFromId(id);
+        if (id === selectedLayer.value && layers.value[index]['style']) {
+          isGraphSelected.value = false;
+        }
+      }
+      if (isEnableBind.value && isGraphSelected.value) {
+        isEnableBindMove.value = true;
+      } else {
+        isEnableBindMove.value = false;
+        isShow.value = false;
+      }
     }
 
     // Change Layer window co ordinates with last open
@@ -163,6 +180,7 @@ export default defineComponent({
         graph.setDefaultParent(defaultParent[index]);
         graph.view.setCurrentRoot(null);
       }
+      isMoveSelectionEnable(id);
     }
 
     // Open layer window
@@ -207,6 +225,7 @@ export default defineComponent({
         isEnableBind.value = false;
         isShow.value = false;
       }
+      isMoveSelectionEnable('');
     }
 
     onMounted(() => {
@@ -375,6 +394,7 @@ export default defineComponent({
           graph.removeSelectionCells(graph.getModel().getDescendants(defaultParent[index]));
         }
       }
+      isMoveSelectionEnable(id);
     }
 
     // Check/uncheck layer
@@ -400,8 +420,21 @@ export default defineComponent({
       isMin.value = !isMin.value;
     }
 
+    // Display short name of layer in move selection dropdown
+    function breakWord(word: string) {
+      const maxChar = 16;
+      if (word.length > maxChar) {
+        const tmp = word.slice(0, maxChar) + '...';
+        return tmp;
+      } else {
+        return word;
+      }
+    }
+
     return {
       addLayer,
+      breakWord,
+      changeSelectionStage,
       changeLayerWindowCoordinates,
       changeMinStatus,
       changeSelectedLayer,
@@ -417,6 +450,7 @@ export default defineComponent({
       editLayerName,
       getIndexFromId,
       isEnableBind,
+      isEnableBindMove,
       isMin,
       isShow,
       layers,
@@ -468,9 +502,9 @@ export default defineComponent({
           i.fa.fa-trash.fa-lg.layer-window-footerBtn
         span#layer-window-moveSelectionBtn.mr-15.cursor-pointer(
           aria-hidden='true',
-          @click='isEnableBind ? moveSelection() : null',
+          @click='isEnableBindMove ? moveSelection() : null',
           title='Move Selection to...',
-          :class='{ isEnableBind: !isEnableBind, mxDisabled: !isEnableBind }'
+          :class='{ isEnableBindMove: !isEnableBindMove, mxDisabled: !isEnableBindMove }'
         )
           i.fa.fa-share-square-o.fa-lg.layer-window-footerBtn
         span.mr-15.cursor-pointer(aria-hidden='true', @click='addLayer', title='Add Layer')
@@ -494,6 +528,6 @@ export default defineComponent({
       )
         span.layer-window-dropdownTick
           i.fa.fa-check(v-if='layer.id === dropDownId')
-        span.dropdownLayerName {{ layer.value }}
+        span.layer-window-dropdown-layer-name {{ breakWord(layer.value) }}
         span(v-if='layer.style') - Locked
 </template>

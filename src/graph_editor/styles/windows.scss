@@ -95,7 +95,6 @@
 .layer-window .card-header {
   display: inline-flex;
   padding: 0;
-  //height: 40px;
   cursor: move;
 }
 
@@ -155,16 +154,21 @@
 }
 
 .layer-window-dropdown {
-  width: 220px;
+  width: 180px;
   height: fit-content;
   margin: 0;
   position: relative !important;
+  width: 240px !important;
 }
 
 .layer-window-card-body,
 .layer-window-dropdown > .card-body,
 .layer-window-dropdownBody {
   padding: 0 !important;
+}
+
+.layer-window-dropdown-layer-name {
+  width: 130px;
 }
 
 .layer-window-headerBtn {
@@ -227,10 +231,14 @@
   cursor: not-allowed !important;
 }
 
-.minimize { 
+.minimize {
   height: 50px !important;
 }
 
 .justify-content-between {
-  justify-content: center !important; 
+  justify-content: center !important;
+}
+.fa-window-minimize,
+.fa-window-maximize {
+  font-size: 11px !important;
 }
