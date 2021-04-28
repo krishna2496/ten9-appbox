@@ -154,11 +154,10 @@
 }
 
 .layer-window-dropdown {
-  width: 180px;
+  width: 240px !important;
   height: fit-content;
   margin: 0;
   position: relative !important;
-  width: 240px !important;
 }
 
 .layer-window-card-body,
@@ -238,6 +237,7 @@
 .justify-content-between {
   justify-content: center !important;
 }
+
 .fa-window-minimize,
 .fa-window-maximize {
   font-size: 11px !important;
