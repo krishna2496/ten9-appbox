@@ -537,5 +537,5 @@ export default defineComponent({
         span.layer-window-dropdownTick
           i.fa.fa-check(v-if='layer.id === dropDownId')
         span.layer-window-dropdown-layer-name {{ breakWord(layer.value) }}
-        span(v-if='layer.style') - Locked
+        span(v-if='layer.style') (Locked)
 </template>
