@@ -23,7 +23,7 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
     pos4 = 0;
 
   function closeDragElement() {
-    // stop moving when mouse button is r   eleased:
+    // stop moving when mouse button is released:
     document.onmouseup = null;
     document.onmousemove = null;
   }
