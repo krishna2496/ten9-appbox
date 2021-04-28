@@ -14,6 +14,8 @@
  * -----
  */
 
+const graphUtils = require('../../lib/jgraph/graph_utils.js');
+
 export default function dragElement(elmnt: HTMLDivElement, index: number) {
   let pos1 = 0,
     pos2 = 0,
@@ -36,7 +38,8 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
     // set the element's new position:
     let windowHeight;
     let windowWidth;
-    const paddingTop = document.getElementById('container').getBoundingClientRect();
+
+    const containerRect = graphUtils.getDocumentContainerRect() as DOMRect;
     if (index == 0) {
       const findWindow = document.getElementsByClassName('find')[index] as HTMLElement;
       windowHeight = findWindow.offsetHeight;
@@ -48,14 +51,14 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
     }
 
     if (
-      paddingTop.y <= elmnt.offsetTop - pos2 + paddingTop.y &&
-      paddingTop.height >= elmnt.offsetTop - pos2 + paddingTop.y + windowHeight
+      containerRect.y <= elmnt.offsetTop - pos2 + containerRect.y &&
+      containerRect.height >= elmnt.offsetTop - pos2 + containerRect.y + windowHeight
     ) {
       const top = elmnt.offsetTop - pos2;
       elmnt.style.top = `${top}px`;
     }
     let count = 0;
-    if (paddingTop.x <= elmnt.offsetLeft - pos1 + paddingTop.x) {
+    if (containerRect.x <= elmnt.offsetLeft - pos1 + containerRect.x) {
       count = 1;
       const left = elmnt.offsetLeft - pos1;
       elmnt.style.left = `${left}px`;
@@ -64,33 +67,18 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
       elmnt.style.left = '0px';
     }
 
-    if (paddingTop.width + paddingTop.x >= elmnt.offsetLeft - pos1 + paddingTop.x + windowWidth) {
+    if (
+      containerRect.width + containerRect.x >=
+      elmnt.offsetLeft - pos1 + containerRect.x + windowWidth
+    ) {
       if (count === 0) {
         const left = elmnt.offsetLeft - pos1;
         elmnt.style.left = `${left}px`;
       }
     } else {
-      const left = paddingTop.width - windowWidth;
+      const left = containerRect.width - windowWidth;
       elmnt.style.left = `${left}px`;
     }
-
-    // if (
-    //   paddingTop.y <= elmnt.offsetTop - pos2 + paddingTop.y &&
-    //   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-    //   paddingTop.height >= elmnt.offsetTop - pos2 + paddingTop.y + windowHeight
-    // ) {
-    //   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-    //   elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-    // }
-
-    // if (
-    //   paddingTop.x <= elmnt.offsetLeft - pos1 + paddingTop.x &&
-    //   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-    //   paddingTop.width + paddingTop.x >= elmnt.offsetLeft - pos1 + paddingTop.x + windowWidth
-    // ) {
-    //   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-    //   elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-    // }
   }
 
   function dragMouseDown(e: MouseEvent) {
