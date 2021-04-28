@@ -67,6 +67,8 @@ export default defineComponent({
 
     const notFound = ref<boolean>(false);
 
+    const isMin = ref<boolean>(false);
+
     function close() {
       show.value = false;
       lastFound.value = null;
@@ -255,6 +257,10 @@ export default defineComponent({
       notFound.value = false;
     }
 
+    function changeMinStatus() {
+      isMin.value = !isMin.value;
+    }
+
     onUnmounted(() => {
       props.editorUi.removeListener(openFindWindow);
       props.editorUi.removeListener(enableAllPage);
@@ -274,11 +280,13 @@ export default defineComponent({
       allChecked,
       allPagesDisable,
       allPagesInput,
+      changeMinStatus,
       checkAllPages,
       close,
       disableAllPage,
       enableAllPage,
       graph,
+      isMin,
       isRegularExpression,
       lastFound,
       notFound,
@@ -294,10 +302,20 @@ export default defineComponent({
 
 <template lang="pug">
 .find-window(v-show='show')
-  b-card.mb-2.find(tag='article', style='max-width: 20rem')
+  b-card.mb-2.find(
+    tag='article',
+    style='max-width: 20rem',
+    no-body,
+    :class='isMin ? "minimize" : ""'
+  )
     template.row(#header='')
-      WindowHeader(title='Find', @close-window='close')
-    .card-body.py-0
+      WindowHeader(
+        title='Find',
+        @close-window='close',
+        :isMin='isMin',
+        @change-min-status='changeMinStatus'
+      )
+    .card-body.py-0.mt-4.mb-4
       input.txt-input-window(
         type='text',
         v-model='searchInput',

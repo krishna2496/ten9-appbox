@@ -15,6 +15,7 @@
 -->
 <script lang="ts">
 import NestedLayers from './NestedLayer.vue';
+import WindowHeader from './Header.vue';
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
 const dragElement = require('./Drag.ts');
@@ -50,6 +51,7 @@ export default defineComponent({
   },
   components: {
     NestedLayers,
+    WindowHeader,
   },
   props: {
     editorUi: {
@@ -394,9 +396,14 @@ export default defineComponent({
       graph.addCell(temp, graphModel.root, newIndex);
     }
 
+    function changeMinStatus() {
+      isMin.value = !isMin.value;
+    }
+
     return {
       addLayer,
       changeLayerWindowCoordinates,
+      changeMinStatus,
       changeSelectedLayer,
       checkLayer,
       close,
@@ -434,27 +441,18 @@ export default defineComponent({
     b-card#layer-window-id.layer-window-card(
       no-body='',
       style='min-width: 20rem',
-      header-tag='header',
+      header-tag='div',
       footer-tag='footer',
       v-show='show',
-      :class='{ "show-window": show, "layer-window-maximize": isMin === false, "layer-window-minimize": isMin === true }'
+      :class='{ "show-window": show, "layer-window-maximize": isMin === false, minimize: isMin === true }'
     )
-      template(#header='')
-        span.mr-15.mb-0.float-left.layer Layers
-        .layer-window-headerBtn
-          span.cursor-pointer.layer-window-btn(
-            aria-hidden='true',
-            @click='isMin = !isMin',
-            :title='!isMin ? "Minimize" : "Maximize"'
-          )
-            i.fa.fa-window-maximize.mr-1(v-if='isMin')
-            i.fa.fa-window-minimize.mr-1(v-else)
-          span.cursor-pointer.layer-window-btn(
-            aria-hidden='true',
-            @click='show = false; setLayerWindowCoordinates()',
-            title='Close'
-          )
-            i.fa.fa-times.fa-lg.mr-1
+      template.row(#header='')
+        WindowHeader.ml-2.mb-2(
+          title='Layers',
+          @close-window='close',
+          :isMin='isMin',
+          @change-min-status='changeMinStatus'
+        )
       b-card-body.layer-window-card-body-main(v-if='!isMin')
         nested-layers(
           v-model='layers',
