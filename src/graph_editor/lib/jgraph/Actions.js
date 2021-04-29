@@ -1959,20 +1959,30 @@ Actions.prototype.init = function () {
         // });
         // this.outlineWindow.window.setVisible(true);
         ui.fireEvent(new mxEventObject('outline'));
+        this.outlineWindow = true;
       } else {
-        this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
+        this.outlineWindow = null;
+        ui.fireEvent(new mxEventObject('hideOutline'));
+        // this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
       }
     }),
     null,
     null,
     Editor.ctrlKey + '+Shift+O',
   );
+  // TEN9: add custom action to close the event by close button
+  this.addAction(
+    'hideOutlineWindows',
+    mxUtils.bind(this, function () {
+      this.outlineWindow = null;
+    }),
+  );
   // TEN9: add isGraphEnabled property
   action.isEnabled = isGraphEnabled;
   action.setToggleAction(true);
   action.setSelectedCallback(
     mxUtils.bind(this, function () {
-      return this.outlineWindow != null && this.outlineWindow.window.isVisible();
+      return this.outlineWindow != null;
     }),
   );
 };

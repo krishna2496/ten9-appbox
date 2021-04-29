@@ -48,14 +48,20 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.d-flex.align-items-center.justify-content-between.w-100
-  h6.mb-1.col-sm-10.pl-0 {{ title }}
-  span.cursor-pointer.layer-window-btn(
-    aria-hidden='true',
-    @click='changeMinStatus',
-    :title='!isMin ? "Minimize" : "Maximize"'
-  )
-    i.fa.fa-window-maximize.mr-1(v-if='isMin')
-    i.fa.fa-window-minimize.mr-1(v-else)
-  i.fa.fa-times(aria-hidden='true', @click='close')
+.d-flex.align-items-center.w-100.display-content-space-between
+  h6.mb-1.pl-0 {{ title }}
+  span.d-flex
+    span.cursor-pointer(
+      aria-hidden='true',
+      @click='changeMinStatus',
+      :title='!isMin ? "Minimize" : "Maximize"'
+    )
+      i.fa.fa-window-maximize.mr-1(v-if='isMin')
+      i.fa.fa-window-minimize.mr-1(v-else)
+    span.cursor-pointer.layer-window-btn.mr-2.ml-2(
+      aria-hidden='true',
+      @click='close',
+      title='close'
+    )
+      i.fa.fa-times(aria-hidden='true')
 </template>

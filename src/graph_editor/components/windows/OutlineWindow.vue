@@ -53,6 +53,8 @@ export default defineComponent({
 
     function close() {
       show.value = false;
+      const outlineWindow = props.editorUi.actions.get('hideOutlineWindows');
+      outlineWindow.funct();
     }
 
     function resizeWindow() {
@@ -118,6 +120,8 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('openOutlineWindow', openOutlineWindow);
+      props.editorUi.addListener('hideOutline', close);
+
       const ele: unknown = document.getElementsByClassName('card');
       dragElement.default(ele[2], 2);
     });
