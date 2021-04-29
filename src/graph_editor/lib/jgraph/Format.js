@@ -4462,7 +4462,7 @@ StyleFormatPanel.prototype.init = function () {
     var opacityPanel = this.createRelativeOption(
       mxResources.get('opacity'),
       mxConstants.STYLE_OPACITY,
-      41,
+      44,
     );
     opacityPanel.classList.add('opacity-panel');
     // opacityPanel.style.paddingTop = '8px';
@@ -6161,7 +6161,7 @@ StyleFormatPanel.prototype.addStroke = function (container) {
   perimeterPanel.appendChild(lineAttributesLabel);
 
   var perimeterUpdate;
-  var perimeterSpacing = this.addUnitInput(perimeterPanel, 'pt', 20, 41, function () {
+  var perimeterSpacing = this.addUnitInput(perimeterPanel, 'pt', 20, 44, function () {
     perimeterUpdate.apply(this, arguments);
   });
 
