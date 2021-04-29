@@ -389,6 +389,9 @@ export default defineComponent({
         }
 
         if (value == '1') {
+          if (id == selectedLayer.value) {
+            isEnableBind.value = false;
+          }
           graph.removeSelectionCells(graph.getModel().getDescendants(defaultParent[index]));
         }
       }
