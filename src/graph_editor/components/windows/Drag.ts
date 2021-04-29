@@ -82,7 +82,15 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
   }
 
   function dragMouseDown(e: MouseEvent) {
+    const children = document.getElementsByClassName('card');
+    const currentSelected = children[index] as HTMLElement;
+    for (const selectedEle of children) {
+      const selectedHtml = selectedEle as HTMLElement;
+      selectedHtml.style.zIndex = '800';
+    }
+    currentSelected.style.zIndex = '1000';
     const handle = document.getElementsByClassName('card-header')[index];
+
     if (handle.contains(e.target as Node)) {
       e.preventDefault();
       // get the mouse cursor position at startup:
@@ -93,7 +101,6 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
       document.onmousemove = elementDrag;
     }
   }
-
   const headerEl = document.getElementById(elmnt.id + 'header');
 
   if (headerEl) {
