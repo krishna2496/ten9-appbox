@@ -1061,34 +1061,44 @@ DriveFile = function () {};
     action = editorUi.actions.addAction(
       'find...',
       mxUtils.bind(this, function () {
-        editorUi.fireEvent(new mxEventObject('openFindWindow'));
-        // if (this.findWindow == null) {
-        //   // TEN9: adjust findWindow height and dd fit window in to container instead of document body
-        //   // this.findWindow = new FindWindow(editorUi, document.body.offsetWidth - 300, 110, 240, 155);
-        //   this.findWindow = new FindWindow(
-        //     editorUi,
-        //     editorUi.container.offsetWidth - 300,
-        //     110,
-        //     240,
-        //     175,
-        //   );
-        //   this.findWindow.window.addListener('show', function () {
-        //     editorUi.fireEvent(new mxEventObject('find'));
-        //   });
-        //   this.findWindow.window.addListener('hide', function () {
-        //     editorUi.fireEvent(new mxEventObject('find'));
-        //   });
-        //   this.findWindow.window.setVisible(true);
-        //   editorUi.fireEvent(new mxEventObject('find'));
-        // } else {
-        //   this.findWindow.window.setVisible(!this.findWindow.window.isVisible());
-        // }
+        if (this.findWindow == null) {
+          this.findWindow = true;
+          editorUi.fireEvent(new mxEventObject('openFindWindow'));
+          //   // TEN9: adjust findWindow height and dd fit window in to container instead of document body
+          //   // this.findWindow = new FindWindow(editorUi, document.body.offsetWidth - 300, 110, 240, 155);
+          //   this.findWindow = new FindWindow(
+          //     editorUi,
+          //     editorUi.container.offsetWidth - 300,
+          //     110,
+          //     240,
+          //     175,
+          //   );
+          //   this.findWindow.window.addListener('show', function () {
+          //     editorUi.fireEvent(new mxEventObject('find'));
+          //   });
+          //   this.findWindow.window.addListener('hide', function () {
+          //     editorUi.fireEvent(new mxEventObject('find'));
+          //   });
+          //   this.findWindow.window.setVisible(true);
+          //   editorUi.fireEvent(new mxEventObject('find'));
+        } else {
+          this.outlineWindow = null;
+          editorUi.fireEvent(new mxEventObject('hideFind'));
+          //   this.findWindow.window.setVisible(!this.findWindow.window.isVisible());
+        }
+      }),
+    );
+    // TEN9: add custom action to close the event by close button
+    editorUi.actions.addAction(
+      'hideFindWindows',
+      mxUtils.bind(this, function () {
+        this.findWindow = null;
       }),
     );
     action.setToggleAction(true);
     action.setSelectedCallback(
       mxUtils.bind(this, function () {
-        return this.findWindow != null && this.findWindow.window.isVisible();
+        return this.findWindow != null;
       }),
     );
 

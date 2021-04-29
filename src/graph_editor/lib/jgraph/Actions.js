@@ -1970,6 +1970,13 @@ Actions.prototype.init = function () {
     null,
     Editor.ctrlKey + '+Shift+O',
   );
+  // TEN9: add custom action to close the event by close button
+  this.addAction(
+    'hideOutlineWindows',
+    mxUtils.bind(this, function () {
+      this.outlineWindow = null;
+    }),
+  );
   // TEN9: add isGraphEnabled property
   action.isEnabled = isGraphEnabled;
   action.setToggleAction(true);

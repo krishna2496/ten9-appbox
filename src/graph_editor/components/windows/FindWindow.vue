@@ -77,6 +77,8 @@ export default defineComponent({
       allPagesInput.value = false;
       regexInput.value = false;
       notFound.value = false;
+      const FindWindow = props.editorUi.actions.get('hideFindWindows');
+      FindWindow.funct();
     }
 
     function openFindWindow() {
@@ -237,6 +239,7 @@ export default defineComponent({
       props.editorUi.addListener('openFindWindow', openFindWindow);
       props.editorUi.addListener('enableAllPage', enableAllPage);
       props.editorUi.addListener('disableAllPage', disableAllPage);
+      props.editorUi.addListener('hideFind', close);
 
       const ele: unknown = document.getElementsByClassName('card');
       dragElement.default(ele[0], 0);

@@ -53,6 +53,8 @@ export default defineComponent({
 
     function close() {
       show.value = false;
+      const outlineWindow = props.editorUi.actions.get('hideOutlineWindows');
+      outlineWindow.funct();
     }
 
     function resizeWindow() {
