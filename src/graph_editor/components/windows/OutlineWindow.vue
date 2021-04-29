@@ -118,6 +118,8 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('openOutlineWindow', openOutlineWindow);
+      props.editorUi.addListener('hideOutline', close);
+
       const ele: unknown = document.getElementsByClassName('card');
       dragElement.default(ele[2], 2);
     });

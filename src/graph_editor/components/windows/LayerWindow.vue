@@ -80,11 +80,6 @@ export default defineComponent({
     const dropDownId = ref<string>(selectedLayer.value);
     const isEnableBindMove = ref<boolean>(false);
 
-    // Close layer window
-    function close() {
-      show.value = false;
-    }
-
     // Get index of layer from it's id
     function getIndexFromId(id: string) {
       const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
@@ -99,6 +94,7 @@ export default defineComponent({
           isGraphSelected.value = false;
         }
       }
+
       if (isEnableBind.value && isGraphSelected.value) {
         isEnableBindMove.value = true;
       } else {
@@ -110,7 +106,6 @@ export default defineComponent({
     // Change Layer window co ordinates with last open
     function changeLayerWindowCoordinates() {
       const containerCoordinates = graphUtils.getDocumentContainerRect();
-
       // if layer - bottom is out of container
       const bottomCoordinate =
         parseInt(layerWindowCoordinates.value.top) + parseInt(layerWindowCoordinates.value.height);
@@ -119,6 +114,7 @@ export default defineComponent({
         // if layer - height  >  container- height
         if (parseInt(layerWindowCoordinates.value.height) > containerCoordinates.height) {
           layerWindowCoordinates.value.height = containerCoordinates.height.toString();
+          layerWindowCoordinates.value.top = '0';
         } else {
           const deviation = bottomCoordinate - containerCoordinates.height;
           layerWindowCoordinates.value.top = Math.floor(
@@ -134,6 +130,7 @@ export default defineComponent({
         // if layer - width  >  container- width
         if (parseInt(layerWindowCoordinates.value.width) > containerCoordinates.width) {
           layerWindowCoordinates.value.width = containerCoordinates.width.toString();
+          layerWindowCoordinates.value.left = '0';
         } else {
           const deviationRight = 0;
           const deviation = rightCoordinate - containerCoordinates.width + deviationRight;
@@ -430,6 +427,12 @@ export default defineComponent({
       } else {
         return word;
       }
+    }
+
+    // Close layer window
+    function close() {
+      show.value = false;
+      setLayerWindowCoordinates();
     }
 
     return {

@@ -1959,8 +1959,11 @@ Actions.prototype.init = function () {
         // });
         // this.outlineWindow.window.setVisible(true);
         ui.fireEvent(new mxEventObject('outline'));
+        this.outlineWindow = true;
       } else {
-        this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
+        this.outlineWindow = null;
+        ui.fireEvent(new mxEventObject('hideOutline'));
+        // this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
       }
     }),
     null,
@@ -1972,7 +1975,7 @@ Actions.prototype.init = function () {
   action.setToggleAction(true);
   action.setSelectedCallback(
     mxUtils.bind(this, function () {
-      return this.outlineWindow != null && this.outlineWindow.window.isVisible();
+      return this.outlineWindow != null;
     }),
   );
 };
