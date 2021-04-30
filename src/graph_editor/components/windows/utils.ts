@@ -14,10 +14,19 @@
  * -----
  */
 
-const common = require('./Common.ts');
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
 
-export default function dragElement(elmnt: HTMLDivElement, index: number) {
+export function bringWindowToFront(index: number) {
+  const children = document.getElementsByClassName('card');
+  const currentSelected = children[index] as HTMLElement;
+  for (const selectedEle of children) {
+    const selectedHtml = selectedEle as HTMLElement;
+    selectedHtml.style.zIndex = '800';
+  }
+  currentSelected.style.zIndex = '1000';
+}
+
+export function dragElement(elmnt: HTMLDivElement, index: number) {
   let newX = 0,
     newY = 0,
     prevX = 0,
@@ -40,8 +49,9 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
     let windowHeight;
     let windowWidth;
 
+    // TODO: Need to abstract out the 'find'/'card' and indexes
     const containerRect = graphUtils.getDocumentContainerRect() as DOMRect;
-    if (index == 0) {
+    if (index === 0) {
       const findWindow = document.getElementsByClassName('find')[index] as HTMLElement;
       windowHeight = findWindow.offsetHeight;
       windowWidth = findWindow.offsetWidth;
@@ -83,7 +93,7 @@ export default function dragElement(elmnt: HTMLDivElement, index: number) {
   }
 
   function dragMouseDown(e: MouseEvent) {
-    common.default(index);
+    bringWindowToFront(index);
     const handle = document.getElementsByClassName('card-header')[index];
 
     if (handle.contains(e.target as Node)) {

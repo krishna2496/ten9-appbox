@@ -20,8 +20,8 @@ import { mxConstants, mxEvent, mxRectangle } from '../../lib/jgraph/mxClient.js'
 import { Graph } from '../../lib/jgraph/Graph.js';
 import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
-const dragElement = require('./Drag.ts');
-const common = require('./Common.ts');
+// TODO: Figure out why we can't import here
+const { dragElement, bringWindowToFront } = require('./utils.ts');
 
 interface GraphProperty {
   gridEnabled: boolean;
@@ -82,7 +82,7 @@ export default defineComponent({
         return g;
       };
       outline.value.init(div);
-      common.default(2);
+      bringWindowToFront(2);
       nextTick(() => {
         // we need to update the outline when DOM is initialize with outline
         outline.value.update();
@@ -124,7 +124,7 @@ export default defineComponent({
       props.editorUi.addListener('hideOutline', close);
 
       const ele: unknown = document.getElementsByClassName('card');
-      dragElement.default(ele[2], 2);
+      dragElement(ele[2], 2);
     });
 
     onUnmounted(() => {

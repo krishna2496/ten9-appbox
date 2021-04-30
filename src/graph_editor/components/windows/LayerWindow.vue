@@ -18,8 +18,8 @@ import NestedLayers from './NestedLayer.vue';
 import WindowHeader from './Header.vue';
 import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
-const dragElement = require('./Drag.ts');
-const common = require('./Common.ts');
+// TODO: Figure out why we can't import here
+const { dragElement, bringWindowToFront } = require('./utils.ts');
 const { mxEventSource, mxEventObject, mxCell, mxResources } = require('../../lib/jgraph/mxClient');
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
 
@@ -210,7 +210,7 @@ export default defineComponent({
         layerWindow.value.style.opacity = '1';
       });
 
-      common.default(1);
+      bringWindowToFront(1);
     }
 
     // Enable/disable move selection button on graph selection changes
@@ -234,7 +234,7 @@ export default defineComponent({
 
       const ele: unknown = document.getElementsByClassName('card');
       // Add drag property on layer window.
-      dragElement.default(ele[1], 1);
+      dragElement(ele[1], 1);
 
       // Enable/Disable move selection button on window open if any shape selected.
       graph.addListener('changeSelectionStage', changeSelectionStage);
