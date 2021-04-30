@@ -488,7 +488,7 @@ export default defineComponent({
       header-tag='div',
       footer-tag='footer',
       v-show='show',
-      :class='{ "show-window": show, "layer-window-maximize": isMin === false, minimize: isMin === true }'
+      :class='{ "show-window": show, "layer-window-maximize": isMin === false, "layer-window-minimize": isMin === true }'
     )
       template.row(#header='')
         WindowHeader.ml-2.mb-2(
