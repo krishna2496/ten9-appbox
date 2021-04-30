@@ -16,7 +16,7 @@
 <script lang="ts">
 import NestedLayers from './NestedLayer.vue';
 import WindowHeader from './Header.vue';
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
 const dragElement = require('./Drag.ts');
 const { mxEventSource, mxEventObject, mxCell, mxResources } = require('../../lib/jgraph/mxClient');
@@ -186,7 +186,6 @@ export default defineComponent({
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
       show.value = true;
-      const timeOut = 10;
       layers.value = graphModel.root.children;
 
       if (!layers.value[0]['value']) {
@@ -199,7 +198,8 @@ export default defineComponent({
         changeSelectedLayer(layers.value[layers.value.length - 1].id);
       }
       changeSelectedLayer(layers.value[layers.value.length - 1].id);
-      setTimeout(() => {
+
+      nextTick(() => {
         layerWindow.value = document.getElementById('layer-window-id');
         if (layerWindowCoordinates.value.top !== '') {
           // Change default window coordinates to last open
@@ -210,7 +210,7 @@ export default defineComponent({
           layerWindow.value.style.left = '690px';
         }
         layerWindow.value.style.opacity = '1';
-      }, timeOut);
+      });
     }
 
     // Enable/disable move selection button on graph selection changes
@@ -505,21 +505,31 @@ export default defineComponent({
           @drag-layer='dragLayer'
         )
       template(#footer='', v-if='!isMin')
-        span.mr-15.cursor-pointer(aria-hidden='true', @click='deleteLayer', title='Delete Layer')
-          i.fa.fa-trash.fa-lg.layer-window-footerBtn
+        span.mr-15.cursor-pointer(aria-hidden='true', @click='deleteLayer', title='Delete layer')
+          i.fa.fa-trash-o.fa-lg.layer-window-footerBtn
         span#layer-window-moveSelectionBtn.mr-15.cursor-pointer(
           aria-hidden='true',
           @click='isEnableBindMove ? moveSelection() : null',
-          title='Move Selection to...',
+          title='Move to...',
           :class='{ isEnableBindMove: !isEnableBindMove, mxDisabled: !isEnableBindMove }'
         )
           i.fa.fa-share-square-o.fa-lg.layer-window-footerBtn
-        span.mr-15.cursor-pointer(aria-hidden='true', @click='addLayer', title='Add Layer')
+        span.mr-15.cursor-pointer(
+          aria-hidden='true',
+          title='Create a new group',
+          :class='{ mxDisabled: true }'
+        )
+          i.fa.fa-folder-open-o.fa-lg.layer-window-footerBtn
+        span.mr-15.cursor-pointer(
+          aria-hidden='true',
+          @click='addLayer',
+          title='Create a new layer'
+        )
           i.fa.fa-plus.fa-lg.layer-window-footerBtn
         span.mr-15.cursor-pointer(
           aria-hidden='true',
           @click='duplicateLayer',
-          title='Duplicate Layer'
+          title='Duplicate...'
         )
           i.fa.fa-clone.fa-md.layer-window-footerBtn
 
