@@ -7674,6 +7674,8 @@ DiagramFormatPanel.prototype.addPaperSize = function (div) {
         graph.model.execute(change);
       }
     },
+    // TEN9: pass editorUi so I can access the page style value in format page
+    ui,
   );
 
   this.addKeyHandler(accessor.widthInput, function () {

@@ -1739,7 +1739,13 @@ var PageSetupDialog = function (editorUi, changePageSetupClass) {
 /**
  *
  */
-PageSetupDialog.addPageFormatPanel = function (div, namePostfix, pageFormat, pageFormatListener) {
+PageSetupDialog.addPageFormatPanel = function (
+  div,
+  namePostfix,
+  pageFormat,
+  pageFormatListener,
+  ui,
+) {
   var formatName = 'format-' + namePostfix;
 
   var portraitCheckBox = document.createElement('input');
@@ -1894,10 +1900,10 @@ PageSetupDialog.addPageFormatPanel = function (div, namePostfix, pageFormat, pag
   var currentPageFormat = pageFormat;
 
   var update = function (evt, selectChanged) {
-    // TEN9: set localstirage for page style
+    // TEN9: set editorui style for page style
     if (evt) {
       if (evt.target.value === 'landscape' || evt.target.value === 'portrait') {
-        window.localStorage.setItem('pageStyle', evt.target.value);
+        ui.setPageStyle(evt.target.value);
       }
     }
     var f = pf[paperSizeSelect.value];
