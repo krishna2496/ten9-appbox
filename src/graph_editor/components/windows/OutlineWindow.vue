@@ -21,6 +21,7 @@ import { Graph } from '../../lib/jgraph/Graph.js';
 import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
 const dragElement = require('./Drag.ts');
+const common = require('./Common.ts');
 
 interface GraphProperty {
   gridEnabled: boolean;
@@ -81,7 +82,7 @@ export default defineComponent({
         return g;
       };
       outline.value.init(div);
-
+      common.default(2);
       nextTick(() => {
         // we need to update the outline when DOM is initialize with outline
         outline.value.update();

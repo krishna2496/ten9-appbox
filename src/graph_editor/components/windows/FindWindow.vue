@@ -19,6 +19,7 @@ import WindowHeader from './Header.vue';
 import { mxUtils } from '../../lib/jgraph/mxClient.js';
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 const dragElement = require('./Drag.ts');
+const common = require('./Common.ts');
 
 interface RegularExpression {
   test: FunctionStringCallback;
@@ -83,6 +84,7 @@ export default defineComponent({
 
     function openFindWindow() {
       show.value = true;
+      common.default(0);
     }
 
     function testMeta(re: RegularExpression, cell: CellProperty, search: string) {

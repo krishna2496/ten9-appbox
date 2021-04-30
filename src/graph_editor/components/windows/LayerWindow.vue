@@ -19,6 +19,7 @@ import WindowHeader from './Header.vue';
 import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
 const dragElement = require('./Drag.ts');
+const common = require('./Common.ts');
 const { mxEventSource, mxEventObject, mxCell, mxResources } = require('../../lib/jgraph/mxClient');
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
 
@@ -211,6 +212,8 @@ export default defineComponent({
         }
         layerWindow.value.style.opacity = '1';
       });
+
+      common.default(1);
     }
 
     // Enable/disable move selection button on graph selection changes
