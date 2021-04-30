@@ -296,7 +296,7 @@ export default defineComponent({
         } finally {
           graphModel.endUpdate();
         }
-        changeSelectedLayer(layers.value[0].id);
+        changeSelectedLayer(layers.value[i].id);
       }
     }
 
