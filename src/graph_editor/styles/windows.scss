@@ -36,7 +36,7 @@
 .outline {
   resize: both;
   min-width: 240px;
-  min-height: 250px;
+  min-height: 260px;
 }
 
 .txt-input-window {
@@ -101,9 +101,10 @@
 .layer-window-card {
   z-index: 1000;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  height: auto;
-  opacity: 0;
+  min-width: 240px !important;
+  min-height: 260px !important;
   resize: both;
+  opacity: 0;
 }
 
 .layer-window-minimize {

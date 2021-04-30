@@ -484,7 +484,6 @@ export default defineComponent({
     b-button(v-if='!show', @click='show = true', variant='primary') Show Layer Window
     b-card#layer-window-id.layer-window-card(
       no-body='',
-      style='min-width: 20rem',
       header-tag='div',
       footer-tag='footer',
       v-show='show',
