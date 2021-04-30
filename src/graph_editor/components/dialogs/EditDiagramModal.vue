@@ -16,10 +16,19 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { codemirror } from 'vue-codemirror';
+
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/javascript/javascript.js';
+import 'codemirror/theme/base16-dark.css';
+
 const { mxResources, mxUtils } = require('../../lib/jgraph/mxClient');
 
 export default defineComponent({
   name: 'EditDiagramModal',
+  components: {
+    codemirror,
+  },
   props: {
     editorUi: {
       type: Object,
@@ -27,9 +36,20 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const code = ref('');
+
     const show = ref<boolean>(false);
 
     const xml = ref<string>('');
+
+    const cmOptions = ref({
+      tabSize: 4,
+      mode: 'text/html',
+      theme: 'base16-dark',
+      lineNumbers: true,
+      line: true,
+      // more CodeMirror options...
+    });
 
     function openEditDiagram() {
       show.value = true;
@@ -55,6 +75,7 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('openEditDiagram', openEditDiagram);
+      console.log('the current CodeMirror instance object:', codemirror);
     });
 
     onUnmounted(() => {
@@ -63,6 +84,8 @@ export default defineComponent({
 
     return {
       closeModal,
+      code,
+      cmOptions,
       setGraphData,
       show,
       xml,
@@ -85,7 +108,7 @@ b-modal(
     h6 Edit Diagram
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .textarea-container
-    textarea.xml(v-model='xml') {{ xml }}
+    codemirror(v-model='xml', :options='cmOptions')
   template(v-slot:modal-footer)
     button.btn.btn-grey(@click='closeModal') Cancel
     button.btn.btn-primary(@click='setGraphData(xml)') OK

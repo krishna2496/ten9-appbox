@@ -106,7 +106,8 @@
     "./src/main.ts",
     "./src/types/shims-vue.d.ts",
     "./src/types/shims-vue-resize-directive.d.ts",
-    "./src/types/shims-vue-clamp.d.ts"
+    "./src/types/shims-vue-clamp.d.ts",
+    "./src/types/shims-vue-codemirror.d.ts",
     // "node_modules/mxgraph-type-definitions/model/mxCell.d.ts",
     // "./node_modules/mxgraph-type-definitions/index.d.ts", // src/types/shims-mxgraph-type-definitions.d.ts",
   ],
