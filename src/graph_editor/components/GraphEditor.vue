@@ -748,6 +748,6 @@ export default defineComponent({
 <template lang="pug">
 .div
   .geEditor(ref='containerRef')
-  modals(:editorUi='editorUiRef', @insert-image='imageInsert')
+  modals(:editorUi='editorUiRef', :shape-libraries='shapeLibraries', @insert-image='imageInsert')
   window(:editorUi='editorUiRef')
 </template>
