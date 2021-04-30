@@ -67,7 +67,7 @@ export default defineComponent({
     const layers = ref<LayerProperty>();
     const isShow = ref<boolean>(false);
     const dropdownCoordinates = ref<dropdownCoordinates>({ top: '97', left: '622' });
-    const selectedLayer = ref<string>('1');
+    const selectedLayer = ref<string>('');
     const layerWindow = ref<coordinateProperty>();
     const layerWindowCoordinates = ref<{
       left: string;
@@ -194,11 +194,8 @@ export default defineComponent({
         layers.value[0]['value'] = 'Background';
       }
 
-      // If there is only one layer in list make it selected
-      if (layers.value.length == 1) {
-        changeSelectedLayer(layers.value[layers.value.length - 1].id);
-      }
-      changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      layers.value.length == 1 && changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      selectedLayer.value && changeSelectedLayer(selectedLayer.value);
 
       nextTick(() => {
         layerWindow.value = document.getElementById('layer-window-id');
@@ -260,14 +257,18 @@ export default defineComponent({
       if (graph.isEnabled()) {
         graphModel.beginUpdate();
         try {
-          const cell = graph.addCell(new mxCell(mxResources.get('untitledLayer')), graphModel.root);
+          const cell = graph.addCell(
+            new mxCell(mxResources.get('untitledLayer')),
+            graphModel.root,
+            0,
+          );
           cell['children'] = [];
           graph.setDefaultParent(cell);
         } finally {
           graphModel.endUpdate();
         }
       }
-      changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      changeSelectedLayer(layers.value[0].id);
     }
 
     // Delete selected layer from layers listing
@@ -295,7 +296,7 @@ export default defineComponent({
         } finally {
           graphModel.endUpdate();
         }
-        changeSelectedLayer(layers.value[layers.value.length - 1].id);
+        changeSelectedLayer(layers.value[0].id);
       }
     }
 
@@ -309,7 +310,7 @@ export default defineComponent({
         graphModel.beginUpdate();
         try {
           newCell = graph.cloneCell(layers.value[index]);
-          newCell = graph.addCell(newCell, graphModel.root);
+          newCell = graph.addCell(newCell, graphModel.root, index);
           graph.setDefaultParent(newCell);
         } finally {
           changeSelectedLayer(newCell.id);
