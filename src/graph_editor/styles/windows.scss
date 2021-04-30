@@ -150,7 +150,7 @@
 }
 
 .layer-window-dropdownTick {
-  min-width: 30px;
+  min-width: 1.5rem;
   padding: 0 5px;
 }
 
@@ -250,4 +250,7 @@
 
 .display-content-space-between {
   justify-content: space-between;
+}
+.moveSelectionIndex {
+  z-index: 2000 !important;
 }

@@ -147,7 +147,7 @@ export default defineComponent({
       layerWindow.value.style.width = layerWindowCoordinates.value.width + 'px';
 
       const topDeviation = 5;
-      const height = 165;
+      const height = 260;
       const leftDeviation = 30;
 
       if (layerWindowCoordinates.value.height) {
@@ -538,6 +538,7 @@ export default defineComponent({
 
     b-card.layer-window-dropdown(
       v-if='isShow',
+      :class='{ moveSelectionIndex: isShow }',
       :style='{ top: dropdownCoordinates.top + "px", left: dropdownCoordinates.left + "px" }'
     )
       b-row.layer-window-dropdownRow(
