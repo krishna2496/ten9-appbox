@@ -351,15 +351,19 @@ export default defineComponent({
     function moveSelection() {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
+
       setLayerWindowCoordinates();
-      layers.value.forEach((layer) => {
+      dropDownId.value = '';
+      for (let i = layers.value.length - 1; i >= 0; i--) {
+        const child = graphModel.getChildAt(graphModel.root, i);
         if (
           graph.getSelectionCount() == 1 &&
-          graphModel.isAncestor(layer, graph.getSelectionCell())
+          graphModel.isAncestor(child, graph.getSelectionCell())
         ) {
-          dropDownId.value = layer.id;
+          dropDownId.value = layers.value[i].id;
         }
-      });
+      }
+
       if (isShow.value === true) {
         isShow.value = !isShow.value;
       }
