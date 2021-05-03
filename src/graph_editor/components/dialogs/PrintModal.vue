@@ -583,8 +583,8 @@ export default defineComponent({
       isMultiplePages.value = props.editorUi.pages.length > 1 ? true : false;
       pageFormat.value = props.editorUi.editor.graph.pageFormat;
       maxPage.value = props.editorUi.pages.length;
-      if (window.localStorage.getItem('pageStyle') != null) {
-        pageStyle.value = window.localStorage.getItem('pageStyle');
+      if (props.editorUi.getPageStyle() != null) {
+        pageStyle.value = props.editorUi.getPageStyle();
         if (pageStyle.value === 'landscape') {
           pageFormat.value = new mxRectangle(
             0,
@@ -609,7 +609,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      window.localStorage.setItem('pageStyle', 'portrait');
+      // window.localStorage.setItem('pageStyle', 'portrait');
       props.editorUi.addListener('openPrintModal', openPrintModal);
     });
 

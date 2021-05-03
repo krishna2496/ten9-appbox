@@ -14603,7 +14603,7 @@ var SelectedFile;
 
   // TEN9: get page style function
   EditorUi.prototype.getPageStyle = function () {
-    EditorUi.prototype.pageStyle = 'portrait';
+    return EditorUi.prototype.pageStyle;
   };
 
   // TEN9: set page style function
