@@ -36,7 +36,7 @@
 .outline {
   resize: both;
   min-width: 240px;
-  min-height: 250px;
+  min-height: 260px;
 }
 
 .txt-input-window {
@@ -101,9 +101,9 @@
 .layer-window-card {
   z-index: 1000;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  height: auto;
-  opacity: 0;
   resize: both;
+  opacity: 0;
+  min-width: 240px;
 }
 
 .layer-window-minimize {
@@ -112,8 +112,8 @@
 }
 
 .layer-window-maximize {
-  height: 165px;
-  min-height: 165px;
+  height: 260px;
+  min-height: 260px;
 }
 
 .layer-window-card-body-main {
@@ -149,7 +149,7 @@
 }
 
 .layer-window-dropdownTick {
-  min-width: 30px;
+  min-width: 1.5rem;
   padding: 0 5px;
 }
 
@@ -249,4 +249,8 @@
 
 .display-content-space-between {
   justify-content: space-between;
+}
+
+.moveSelectionIndex {
+  z-index: 2000 !important;
 }
