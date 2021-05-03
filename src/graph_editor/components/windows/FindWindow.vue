@@ -314,7 +314,7 @@ export default defineComponent({
     :class='isMin ? "minimize" : ""'
   )
     template.row(#header='')
-      WindowHeader.ml-2(
+      window-header(
         title='Find',
         @close-window='close',
         :isMin='isMin',
