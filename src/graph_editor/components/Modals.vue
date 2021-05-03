@@ -57,6 +57,11 @@ export default defineComponent({
       required: false,
       default: null,
     },
+    shapeLibraries: {
+      type: String,
+      required: false,
+      default: '',
+    },
   },
   setup(_props, ctx) {
     function insertImage(url: string) {
@@ -79,7 +84,7 @@ export default defineComponent({
   edit-style-modal(:editorUi='editorUi')
   insert-image-modal(:editorUi='editorUi', @insert-image='insertImage')
   insert-link-modal(:editorUi='editorUi')
-  more-shapes-modal(:editorUi='editorUi')
+  more-shapes-modal(:editorUi='editorUi', :shape-libraries='shapeLibraries')
   layer-rename-modal(:editorUi='editorUi')
   page-rename-modal(:editorUi='editorUi')
   page-scale-modal(:editorUi='editorUi')

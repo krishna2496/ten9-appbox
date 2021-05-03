@@ -41,7 +41,7 @@ interface FileLogEvent extends EventFileInfo {
   title: string;
 }
 
-const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows;clipart;flowchart';
+const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows2;clipart;flowchart';
 const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
 const DEFAULT_THEME = 'kennedy';
 
