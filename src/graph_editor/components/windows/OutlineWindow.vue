@@ -152,7 +152,7 @@ b-card.mb-2(
   :class='isMin ? "minimize" : "outline"'
 )
   template.row(#header='')
-    window-header(
+    window-header.ml-2(
       title='Outline',
       @close-window='close',
       :isMin='isMin',

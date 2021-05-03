@@ -495,7 +495,7 @@ export default defineComponent({
       :class='{ "show-window": show, "layer-window-maximize": isMin === false, "layer-window-minimize": isMin === true }'
     )
       template.row(#header='')
-        WindowHeader.ml-2.mb-2(
+        WindowHeader.ml-2(
           title='Layers',
           @close-window='close',
           :isMin='isMin',
