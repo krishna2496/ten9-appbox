@@ -36,18 +36,22 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const code = ref('');
+    const code = ref(null);
 
     const show = ref<boolean>(false);
 
     const xml = ref<string>('');
 
     const cmOptions = ref({
+      autoRefresh: true,
       tabSize: 4,
-      mode: 'text/html',
+      mode: 'application/xml',
       theme: 'base16-dark',
       lineNumbers: true,
       line: true,
+      htmlMode: false,
+      foldGutter: true,
+      autofocus: true,
       // more CodeMirror options...
     });
 
@@ -108,7 +112,8 @@ b-modal(
     h6 Edit Diagram
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .textarea-container
-    codemirror(v-model='xml', :options='cmOptions')
+    //- textarea#txtarea(v-model='xml')
+    codemirror(v-model='xml', :options='cmOptions', v-if='show')
   template(v-slot:modal-footer)
     button.btn.btn-grey(@click='closeModal') Cancel
     button.btn.btn-primary(@click='setGraphData(xml)') OK
