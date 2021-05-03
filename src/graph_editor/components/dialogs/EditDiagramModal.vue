@@ -42,13 +42,15 @@ export default defineComponent({
 
     const xml = ref<string>('');
 
+    const cmRef = ref(null);
+
     const cmOptions = ref({
       autofocus: true,
       foldGutter: true,
       line: true,
       lineNumbers: true,
       lineWrapping: true,
-      mode: 'text/xml',
+      mode: 'application/xml',
       styleActiveLine: true,
       tabSize: 4,
       theme: 'base16-light',
@@ -57,6 +59,10 @@ export default defineComponent({
     function openEditDiagram() {
       show.value = true;
       xml.value = mxUtils.getPrettyXml(props.editorUi.getGraphXml());
+    }
+
+    function onShown() {
+      cmRef.value.refresh();
     }
 
     function closeModal() {
@@ -86,8 +92,10 @@ export default defineComponent({
 
     return {
       closeModal,
-      code,
       cmOptions,
+      cmRef,
+      code,
+      onShown,
       setGraphData,
       show,
       xml,
@@ -104,13 +112,14 @@ b-modal(
   size='lg',
   @close='closeModal',
   @hide='closeModal',
+  @shown='onShown',
   no-fade
 )
   template(v-slot:modal-header)
     h6 Edit Diagram
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .textarea-container
-    codemirror(v-model='xml', :options='cmOptions')
+    codemirror(v-model='xml', ref='cmRef', :options='cmOptions')
   template(v-slot:modal-footer)
     button.btn.btn-grey(@click='closeModal') Cancel
     button.btn.btn-primary(@click='setGraphData(xml)') OK
