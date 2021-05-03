@@ -326,6 +326,7 @@ export default defineComponent({
         graphModel.beginUpdate();
         try {
           newCell = graph.cloneCell(layers.value[index]);
+          newCell.value = `${newCell.value} copy`;
           newCell = graph.addCell(newCell, graphModel.root, index);
           graph.setDefaultParent(newCell);
         } finally {
