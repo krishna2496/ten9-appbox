@@ -290,7 +290,7 @@ export default defineComponent({
     function deleteLayer() {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
-      const i = getIndexFromId(selectedLayer.value);
+      let i = getIndexFromId(selectedLayer.value);
       const defaultParent = layers.value;
 
       if (graph.isEnabled()) {
@@ -305,6 +305,7 @@ export default defineComponent({
             graph.setDefaultParent();
           } else if (index > 0 && index <= graphModel.getChildCount(graphModel.root)) {
             graph.setDefaultParent(graphModel.getChildAt(graphModel.root, index - 1));
+            i = index - 1;
           } else {
             graph.setDefaultParent(null);
           }
