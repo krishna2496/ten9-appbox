@@ -40,7 +40,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const code = ref('');
+    const code = ref(null);
 
     const show = ref<boolean>(false);
 
