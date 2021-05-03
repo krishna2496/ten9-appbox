@@ -226,12 +226,27 @@ export default defineComponent({
       isMoveSelectionEnable('');
     }
 
+    // Set layer window's coordinates on window close for next open
+    function setLayerWindowCoordinates() {
+      const layerWindowStyle = layerWindow.value.style;
+      const layerWindowStyleTop = layerWindowStyle.top.split('px');
+      const layerWindowStyleLeft = layerWindowStyle.left.split('px');
+      const layerWindowStyleHeight = layerWindowStyle.height.split('px');
+      const layerWindowStyleWidth = layerWindowStyle.width.split('px');
+
+      [layerWindowCoordinates.value.top] = layerWindowStyleTop;
+      [layerWindowCoordinates.value.left] = layerWindowStyleLeft;
+      [layerWindowCoordinates.value.height] = layerWindowStyleHeight;
+      [layerWindowCoordinates.value.width] = layerWindowStyleWidth;
+
+      changeLayerWindowCoordinates();
+    }
     onMounted(() => {
       const { graph } = props.editorUi.editor;
 
       // Open layer window
       props.editorUi.addListener('openLayerWindow', openLayerWindow);
-
+      props.editorUi.addListener('setLayerWindowCoordinates', setLayerWindowCoordinates);
       const ele: unknown = document.getElementsByClassName('card');
       // Add drag property on layer window.
       dragElement(ele[1], 1);
@@ -331,35 +346,23 @@ export default defineComponent({
       );
     }
 
-    // Set layer window's coordinates on window close for next open
-    function setLayerWindowCoordinates() {
-      const layerWindowStyle = layerWindow.value.style;
-      const layerWindowStyleTop = layerWindowStyle.top.split('px');
-      const layerWindowStyleLeft = layerWindowStyle.left.split('px');
-      const layerWindowStyleHeight = layerWindowStyle.height.split('px');
-      const layerWindowStyleWidth = layerWindowStyle.width.split('px');
-
-      [layerWindowCoordinates.value.top] = layerWindowStyleTop;
-      [layerWindowCoordinates.value.left] = layerWindowStyleLeft;
-      [layerWindowCoordinates.value.height] = layerWindowStyleHeight;
-      [layerWindowCoordinates.value.width] = layerWindowStyleWidth;
-
-      changeLayerWindowCoordinates();
-    }
-
     // Get graph selection to link with selected layer
     function moveSelection() {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
+
       setLayerWindowCoordinates();
-      layers.value.forEach((layer) => {
+      dropDownId.value = '';
+      for (let i = layers.value.length - 1; i >= 0; i--) {
+        const child = graphModel.getChildAt(graphModel.root, i);
         if (
           graph.getSelectionCount() == 1 &&
-          graphModel.isAncestor(layer, graph.getSelectionCell())
+          graphModel.isAncestor(child, graph.getSelectionCell())
         ) {
-          dropDownId.value = layer.id;
+          dropDownId.value = layers.value[i].id;
         }
-      });
+      }
+
       if (isShow.value === true) {
         isShow.value = !isShow.value;
       }
@@ -491,7 +494,7 @@ export default defineComponent({
       :class='{ "show-window": show, "layer-window-maximize": isMin === false, "layer-window-minimize": isMin === true }'
     )
       template.row(#header='')
-        WindowHeader.ml-2.mb-2(
+        window-header(
           title='Layers',
           @close-window='close',
           :isMin='isMin',
