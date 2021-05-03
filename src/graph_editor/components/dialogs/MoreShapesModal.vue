@@ -24,6 +24,11 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    shapeLibraries: {
+      type: String,
+      required: false,
+      default: '',
+    },
   },
   setup(props) {
     const show = ref<boolean>(false);
@@ -70,7 +75,7 @@ export default defineComponent({
     function openmoreShapes() {
       show.value = true;
       entries.value = props.editorUi.sidebar.entries;
-      const shapes = window.localStorage.getItem('shapeLibraries');
+      const shapes = props.shapeLibraries;
       libs.value = shapes.split(';');
     }
 

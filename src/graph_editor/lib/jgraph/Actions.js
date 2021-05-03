@@ -1882,6 +1882,7 @@ Actions.prototype.init = function () {
       } else {
         document.querySelector('#layer-window-id').classList.remove('show-window');
         document.querySelector('#layer-window-id').style.display = 'none';
+        ui.fireEvent(new mxEventObject('setLayerWindowCoordinates'));
       }
 
       // if (this.layersWindow == null) {
