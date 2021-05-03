@@ -18,7 +18,8 @@
 import WindowHeader from './Header.vue';
 import { mxUtils } from '../../lib/jgraph/mxClient.js';
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
-const dragElement = require('./Drag.ts');
+// TODO: Figure out why we can't import here
+const { dragElement, bringWindowToFront } = require('./utils.ts');
 
 interface RegularExpression {
   test: FunctionStringCallback;
@@ -83,6 +84,7 @@ export default defineComponent({
 
     function openFindWindow() {
       show.value = true;
+      bringWindowToFront(0);
     }
 
     function testMeta(re: RegularExpression, cell: CellProperty, search: string) {
@@ -242,7 +244,7 @@ export default defineComponent({
       props.editorUi.addListener('hideFind', close);
 
       const ele: unknown = document.getElementsByClassName('card');
-      dragElement.default(ele[0], 0);
+      dragElement(ele[0], 0);
     });
 
     function checkAllPages() {

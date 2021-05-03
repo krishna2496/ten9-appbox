@@ -43,16 +43,15 @@ export default defineComponent({
     const xml = ref<string>('');
 
     const cmOptions = ref({
-      autoRefresh: true,
-      tabSize: 4,
-      mode: 'application/xml',
-      theme: 'base16-dark',
-      lineNumbers: true,
-      line: true,
-      htmlMode: false,
-      foldGutter: true,
       autofocus: true,
-      // more CodeMirror options...
+      foldGutter: true,
+      line: true,
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: 'text/xml',
+      styleActiveLine: true,
+      tabSize: 4,
+      theme: 'base16-light',
     });
 
     function openEditDiagram() {
@@ -79,7 +78,6 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('openEditDiagram', openEditDiagram);
-      console.log('the current CodeMirror instance object:', codemirror);
     });
 
     onUnmounted(() => {

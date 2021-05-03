@@ -18,7 +18,8 @@ import NestedLayers from './NestedLayer.vue';
 import WindowHeader from './Header.vue';
 import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
-const dragElement = require('./Drag.ts');
+// TODO: Figure out why we can't import here
+const { dragElement, bringWindowToFront } = require('./utils.ts');
 const { mxEventSource, mxEventObject, mxCell, mxResources } = require('../../lib/jgraph/mxClient');
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
 
@@ -66,7 +67,7 @@ export default defineComponent({
     const layers = ref<LayerProperty>();
     const isShow = ref<boolean>(false);
     const dropdownCoordinates = ref<dropdownCoordinates>({ top: '97', left: '622' });
-    const selectedLayer = ref<string>('1');
+    const selectedLayer = ref<string>('');
     const layerWindow = ref<coordinateProperty>();
     const layerWindowCoordinates = ref<{
       left: string;
@@ -146,7 +147,7 @@ export default defineComponent({
       layerWindow.value.style.width = layerWindowCoordinates.value.width + 'px';
 
       const topDeviation = 5;
-      const height = 165;
+      const height = 260;
       const leftDeviation = 30;
 
       if (layerWindowCoordinates.value.height) {
@@ -193,11 +194,8 @@ export default defineComponent({
         layers.value[0]['value'] = 'Background';
       }
 
-      // If there is only one layer in list make it selected
-      if (layers.value.length == 1) {
-        changeSelectedLayer(layers.value[layers.value.length - 1].id);
-      }
-      changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      layers.value.length == 1 && changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      selectedLayer.value && changeSelectedLayer(selectedLayer.value);
 
       nextTick(() => {
         layerWindow.value = document.getElementById('layer-window-id');
@@ -211,6 +209,8 @@ export default defineComponent({
         }
         layerWindow.value.style.opacity = '1';
       });
+
+      bringWindowToFront(1);
     }
 
     // Enable/disable move selection button on graph selection changes
@@ -234,7 +234,7 @@ export default defineComponent({
 
       const ele: unknown = document.getElementsByClassName('card');
       // Add drag property on layer window.
-      dragElement.default(ele[1], 1);
+      dragElement(ele[1], 1);
 
       // Enable/Disable move selection button on window open if any shape selected.
       graph.addListener('changeSelectionStage', changeSelectionStage);
@@ -257,14 +257,18 @@ export default defineComponent({
       if (graph.isEnabled()) {
         graphModel.beginUpdate();
         try {
-          const cell = graph.addCell(new mxCell(mxResources.get('untitledLayer')), graphModel.root);
+          const cell = graph.addCell(
+            new mxCell(mxResources.get('untitledLayer')),
+            graphModel.root,
+            0,
+          );
           cell['children'] = [];
           graph.setDefaultParent(cell);
         } finally {
           graphModel.endUpdate();
         }
       }
-      changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      changeSelectedLayer(layers.value[0].id);
     }
 
     // Delete selected layer from layers listing
@@ -292,7 +296,7 @@ export default defineComponent({
         } finally {
           graphModel.endUpdate();
         }
-        changeSelectedLayer(layers.value[layers.value.length - 1].id);
+        changeSelectedLayer(layers.value[i].id);
       }
     }
 
@@ -306,7 +310,7 @@ export default defineComponent({
         graphModel.beginUpdate();
         try {
           newCell = graph.cloneCell(layers.value[index]);
-          newCell = graph.addCell(newCell, graphModel.root);
+          newCell = graph.addCell(newCell, graphModel.root, index);
           graph.setDefaultParent(newCell);
         } finally {
           changeSelectedLayer(newCell.id);
@@ -481,11 +485,10 @@ export default defineComponent({
     b-button(v-if='!show', @click='show = true', variant='primary') Show Layer Window
     b-card#layer-window-id.layer-window-card(
       no-body='',
-      style='min-width: 20rem',
       header-tag='div',
       footer-tag='footer',
       v-show='show',
-      :class='{ "show-window": show, "layer-window-maximize": isMin === false, minimize: isMin === true }'
+      :class='{ "show-window": show, "layer-window-maximize": isMin === false, "layer-window-minimize": isMin === true }'
     )
       template.row(#header='')
         WindowHeader.ml-2.mb-2(
@@ -535,6 +538,7 @@ export default defineComponent({
 
     b-card.layer-window-dropdown(
       v-if='isShow',
+      :class='{ moveSelectionIndex: isShow }',
       :style='{ top: dropdownCoordinates.top + "px", left: dropdownCoordinates.left + "px" }'
     )
       b-row.layer-window-dropdownRow(
