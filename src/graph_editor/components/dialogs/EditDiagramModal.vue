@@ -1,6 +1,6 @@
 <!--
 * ten9, Inc
-* Copyright (c) 2015 - 2020 ten9, Inc
+* Copyright (c) 2015 - 2021 ten9, Inc
 * -----
 * NOTICE:  All information contained herein is, and remains
 * the property of ten9 Incorporated and its suppliers,
@@ -19,8 +19,12 @@ import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-a
 import { codemirror } from 'vue-codemirror';
 
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/javascript/javascript.js';
-import 'codemirror/theme/base16-dark.css';
+import 'codemirror/theme/neat.css';
+import 'codemirror/mode/xml/xml.js';
+import 'codemirror/addon/fold/foldgutter.css';
+import 'codemirror/addon/fold/foldcode.js';
+import 'codemirror/addon/fold/foldgutter.js';
+import 'codemirror/addon/fold/xml-fold.js';
 
 const { mxResources, mxUtils } = require('../../lib/jgraph/mxClient');
 
@@ -47,13 +51,14 @@ export default defineComponent({
     const cmOptions = ref({
       autofocus: true,
       foldGutter: true,
+      gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+      htmlMode: false,
       line: true,
       lineNumbers: true,
       lineWrapping: true,
       mode: 'application/xml',
-      styleActiveLine: true,
       tabSize: 4,
-      theme: 'base16-light',
+      theme: 'neat',
     });
 
     function openEditDiagram() {
