@@ -83,7 +83,6 @@ export default defineComponent({
     function closeModal() {
       show.value = false;
       pageFormat.value = mxConstants.PAGE_FORMAT_A4_PORTRAIT;
-      pageStyle.value = 'portrait';
       pageScaleInput.value = '100 %';
     }
 
@@ -584,7 +583,8 @@ export default defineComponent({
       pageFormat.value = props.editorUi.editor.graph.pageFormat;
       maxPage.value = props.editorUi.pages.length;
       if (props.editorUi.getPageStyle() != null) {
-        pageStyle.value = props.editorUi.getPageStyle();
+        console.log(props.editorUi.pageStyle);
+        pageStyle.value = props.editorUi.pageStyle;
         if (pageStyle.value === 'landscape') {
           pageFormat.value = new mxRectangle(
             0,
@@ -675,22 +675,18 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
   .mw-100
     .pages(v-show='isMultiplePages')
       .row.ml-3.mb-3
-        input#pages.mt-1(type='radio', name='page', value='all_page', v-model='pageType')
-        label.ml-2(for='pages') Print All Pages
+        b-form-radio.label-center(v-model='pageType', name='page', value='all_page') Print All Pages
       .row.ml-3.mb-3
-        input#page.mt-2(type='radio', name='page', value='page', v-model='pageType')
-        label.ml-2.mt-1(for='page') Pages:
+        b-form-radio.label-center(v-model='pageType', name='page', value='page') Pages
         input.ml-2.w-25(type='number', v-model='pagesFromInput', :max='maxPage', min='1')
         label.ml-2.mt-1 to
         input.ml-2.w-25(type='number', v-model='pagesToInput', :max='maxPage', min='1')
       .row.bottom-border
   .row.ml-3.mb-3.mt-4
-    input#adjust.mt-2(type='radio', name='printZoom', value='adjust', v-model='printZoom')
-    label.ml-2.mt-1(for='adjust') Adjust to
+    b-form-radio.label-center(v-model='printZoom', name='printZoom', value='adjust') Adjust to
     input.ml-2.txt-input(type='text', v-model='zoomInput')
   .row.ml-3.mb-3
-    input#to.mt-2(type='radio', name='printZoom', value='fit', v-model='printZoom')
-    label.ml-2.mt-1(for='to') Fit to
+    b-form-radio.label-center(v-model='printZoom', name='printZoom', value='fit') Fit to
     input.ml-2.txt-input(type='text', v-model='sheetsAcrossInput')
     label.ml-2.mt-1 sheet(s) across
   .row.ml-5.mb-3
@@ -709,15 +705,8 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     input.mt-1.txt-input(type='text', v-model='customWidth')
     label.ml-2.mt-2 in
   .row.ml-3.mb-3(v-show='!showCustomPaperSize')
-    input#portrait.mt-1(type='radio', name='page_type', value='portrait', v-model='pageStyle')
-    label.ml-2(for='portrait') Portrait
-    input#landscape.ml-4.mt-1(
-      type='radio',
-      name='page_type',
-      value='landscape',
-      v-model='pageStyle'
-    )
-    label.ml-2(for='landscape') Landscape
+    b-form-radio.label-center(v-model='pageStyle', name='page_type', value='portrait') Portrait
+    b-form-radio.label-center.ml-2(v-model='pageStyle', name='page_type', value='landscape') Landscape
   .row.ml-3.mb-3
     label.ml-2.mt-2 Page Scale
     input.txt-input.ml-2(type='text', v-model='pageScaleInput')

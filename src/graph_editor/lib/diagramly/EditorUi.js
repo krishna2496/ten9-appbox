@@ -14603,12 +14603,12 @@ var SelectedFile;
 
   // TEN9: get page style function
   EditorUi.prototype.getPageStyle = function () {
-    return EditorUi.prototype.pageStyle;
+    return this.pageStyle;
   };
 
   // TEN9: set page style function
   EditorUi.prototype.setPageStyle = function (style) {
-    EditorUi.prototype.pageStyle = style;
+    this.pageStyle = style;
   };
 
   EditorUi.prototype.getBoundingBoxFromGeometry = function (cells) {

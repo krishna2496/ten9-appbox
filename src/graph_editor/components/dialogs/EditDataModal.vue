@@ -195,8 +195,7 @@ b-modal#modal(
     input.txt-input.w-70(type='text', v-model='propertyName')
     button.btn.ml-3(type='button', :class='{ disable: disable }', @click='addProperty') Add Property
   template(#modal-footer='')
-    input(type='checkbox')
-    label Placeholders
+    b-form-checkbox.label-centers Placeholders
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel
     button.btn.btn-primary(type='button', @click='setProperty')

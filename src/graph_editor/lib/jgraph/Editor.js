@@ -1904,6 +1904,8 @@ PageSetupDialog.addPageFormatPanel = function (
     if (evt) {
       if (evt.target.value === 'landscape' || evt.target.value === 'portrait') {
         ui.setPageStyle(evt.target.value);
+      } else {
+        ui.setPageStyle(evt.target.innerText.toLowerCase());
       }
     }
     var f = pf[paperSizeSelect.value];

@@ -177,11 +177,11 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
   .row.ml-3
     label Edit Link:
   .row.ml-3.form-inline
-    input.mr-4.radio-btn(type='radio', name='option', value='customLink', v-model='option')
+    b-form-radio(v-model='option', name='option', value='customLink')
     input.txt-input.w-90(type='text', v-model='link')
   .row.ml-3.mt-2.form-inline
-    input(type='radio', name='option', value='pageLink', v-model='option')
-    select.form-control.ml-4.w-90(v-model='pageId')
+    b-form-radio(v-model='option', name='option', value='pageLink')
+    select.form-control.w-90(v-model='pageId')
       option(v-for='(page, index) in pages', :value='page.getId()') {{ page.getName() }}
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
