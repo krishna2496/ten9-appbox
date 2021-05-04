@@ -80,7 +80,6 @@ export default defineComponent({
     const editLayerId = ref<string>('');
     const dropDownId = ref<string>(selectedLayer.value);
     const isEnableBindMove = ref<boolean>(false);
-
     // Get index of layer from it's id
     function getIndexFromId(id: string) {
       const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
@@ -272,18 +271,14 @@ export default defineComponent({
       if (graph.isEnabled()) {
         graphModel.beginUpdate();
         try {
-          const cell = graph.addCell(
-            new mxCell(mxResources.get('untitledLayer')),
-            graphModel.root,
-            0,
-          );
+          const cell = graph.addCell(new mxCell(mxResources.get('untitledLayer')), graphModel.root);
           cell['children'] = [];
           graph.setDefaultParent(cell);
         } finally {
           graphModel.endUpdate();
         }
       }
-      changeSelectedLayer(layers.value[0].id);
+      changeSelectedLayer(layers.value[layers.value.length - 1].id);
     }
 
     // Delete selected layer from layers listing
@@ -327,7 +322,7 @@ export default defineComponent({
         try {
           newCell = graph.cloneCell(layers.value[index]);
           newCell.value = `${newCell.value} copy`;
-          newCell = graph.addCell(newCell, graphModel.root, index);
+          newCell = graph.addCell(newCell, graphModel.root, index + 1);
           graph.setDefaultParent(newCell);
         } finally {
           changeSelectedLayer(newCell.id);
@@ -419,11 +414,11 @@ export default defineComponent({
     }
 
     // Drag layers
-    function dragLayer(newIndex: number) {
+    function dragLayer(draggedElement: simpleInt, newIndex: number) {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
-      const temp = layers.value[newIndex];
-      graph.addCell(temp, graphModel.root, newIndex);
+      graph.addCell(draggedElement, graphModel.root, newIndex);
+      graph.getModel().endUpdate();
     }
 
     function changeMinStatus() {
@@ -548,7 +543,7 @@ export default defineComponent({
     )
       b-row.layer-window-dropdownRow(
         :key='key',
-        v-for='(layer, key) in layers',
+        v-for='(layer, key) in layers.slice().reverse()',
         @click='!layer.style ? selectLayerForMoveSelection(layer.id) : null',
         :class='{ dropDownRowDisable: layer.style }'
       )

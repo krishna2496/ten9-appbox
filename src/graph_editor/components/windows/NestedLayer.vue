@@ -27,10 +27,10 @@ interface simpleInt {
 
 type LayerProperty = simpleInt[];
 
-interface dragInt {
-  newIndex: number;
-  oldIndex: number;
-}
+// interface dragInt {
+//   newIndex: number;
+//   oldIndex: number;
+// }
 
 export default defineComponent({
   name: 'NestedLayers',
@@ -122,11 +122,15 @@ export default defineComponent({
     }
 
     // Drag layers
-    function dragLayer(evt: dragInt) {
-      // On layer drop get dropped index
-      const { newIndex: newIndex } = evt;
-      context.emit('drag-layer', newIndex);
-      return true;
+    function dragLayer(elm: any) {
+      const layerData = Array.from(document.getElementsByClassName('layer-window-name'));
+      let newIndex = 0;
+      layerData.forEach((element, key) => {
+        if (element.id == elm.id) {
+          newIndex = key;
+        }
+      });
+      context.emit('drag-layer', elm, newIndex);
     }
 
     return {
@@ -145,13 +149,12 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-draggable.layer-window-body-container(
-  v-bind='dragOptions',
-  tag='div',
-  :list='realValue',
-  :move='dragLayer'
-)
-  .layer-window-item-group(:key='el.id', v-for='(el, key) in realValue')
+draggable.layer-window-body-container(v-bind='dragOptions', tag='div')
+  .layer-window-item-group(
+    :key='el.id',
+    v-for='(el, key) in realValue.slice().reverse()',
+    @drop='dragLayer(el)'
+  )
     .layer-window-item(:class='{ active: el.id === selectedLayer }')
       .layer-window-check.mr-2
         span(@click='checkLayer(el)', title='Hide/Show')
@@ -160,6 +163,8 @@ draggable.layer-window-body-container(
       .layer-window-name(
         @click='changeSelectedLayer(el.id)',
         @dblclick='editLayer(el.id)',
+        :id='el.id',
+        :class='el.value',
         :title='el.value'
       )
         v-clamp(autoresize, :max-lines='1') {{ el.value }}
