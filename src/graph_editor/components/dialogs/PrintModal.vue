@@ -617,6 +617,9 @@ export default defineComponent({
         pageStyle.value = 'custom';
       } else {
         showCustomPaperSize.value = false;
+        if (pageStyle.value == 'custom') {
+          pageStyle.value = 'portrait';
+        }
       }
     }
 
@@ -717,10 +720,10 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     select.form-control.w-90(v-model='pageFormat', @change='hideCustomPageSize')
       option(v-for='(page, index) in PageSize', :key='index', :value='page.format') {{ page.title }}
   .row.ml-3.mb-3(v-show='showCustomPaperSize')
-    input.mt-1.txt-input(type='text', v-model='customWidth')
+    input.mt-1.txt-input.w-30.ml-5(type='text', v-model='customWidth')
     label.ml-2.mt-2 in x
-    input.mt-1.txt-input(type='text', v-model='customHeight')
-    label.ml-2.mt-2 in
+    input.mt-1.txt-input.w-30.ml-2(type='text', v-model='customHeight')
+    label.ml-2.mt-2 in.
   .row.ml-3.mb-3(v-show='!showCustomPaperSize')
     b-form-radio.label-center(v-model='pageStyle', name='page_type', value='portrait') Portrait
     b-form-radio.label-center.ml-2(v-model='pageStyle', name='page_type', value='landscape') Landscape
