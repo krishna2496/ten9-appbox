@@ -193,8 +193,9 @@ export default defineComponent({
         layers.value[0]['value'] = 'Background';
       }
 
-      layers.value.length == 1 && changeSelectedLayer(layers.value[layers.value.length - 1].id);
-      selectedLayer.value && changeSelectedLayer(selectedLayer.value);
+      // layers.value.length == 1 && changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      const { id: id } = graph.getDefaultParent();
+      changeSelectedLayer(id);
 
       nextTick(() => {
         layerWindow.value = document.getElementById('layer-window-id');
@@ -282,6 +283,7 @@ export default defineComponent({
           graphModel.endUpdate();
         }
       }
+
       changeSelectedLayer(layers.value[layers.value.length - 1].id);
     }
 
