@@ -508,6 +508,7 @@ export default defineComponent({
         )
       b-card-body.layer-window-card-body-main(v-if='!isMin')
         nested-layers(
+          v-if='show',
           v-model='layers',
           :selectedLayer='selectedLayer',
           @edit-layer='editLayer',
