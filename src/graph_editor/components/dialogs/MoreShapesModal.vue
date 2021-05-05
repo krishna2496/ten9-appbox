@@ -16,9 +16,9 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+const { getImage } = require('./ShapeImages.js');
 const { mxEventObject } = require('../../lib/jgraph/mxClient.js');
-const sidebarGeneralImage = require('~images/sidebar-aws.png');
-const sidebarGeneralImage2 = require('~images/sidebar-atlassian.png');
+const sidebarGeneralImage = getImage('general');
 
 export default defineComponent({
   name: 'MoreShapesModel',
@@ -100,8 +100,8 @@ export default defineComponent({
       defaultSelected.value = ind.toString() + '' + index.toString();
     }
 
-    function showImage(_url: string, ind: number, index: number) {
-      imageUrl.value = sidebarGeneralImage2;
+    function showImage(id: string, ind: number, index: number) {
+      imageUrl.value = getImage(id);
       selectShape(ind, index);
     }
 
@@ -149,7 +149,7 @@ b-modal#modal(
         label.row.bg-lightgray {{ entry.title }}
         template(v-for='(shape, index) in entry.entries')
           .row
-            .heading(@click='showImage(shape.image, ind, index)', :id='`title${ind}${index}`')
+            .heading(@click='showImage(shape.id, ind, index)', :id='`title${ind}${index}`')
               input(
                 type='checkbox',
                 @change='addRemoveShape(shape.id)',

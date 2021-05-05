@@ -69,7 +69,7 @@ module.exports = {
     alias: {
       '@': path.resolve(ROOT_PATH, 'src'),
       vue$: 'vue/dist/vue.runtime.esm.js',
-      '~images': path.resolve(ROOT_PATH, 'src/graph_editor/images'),
+      '~images': path.resolve(ROOT_PATH, 'src/graph_editor/assets/images'),
     },
     modules: ['node_modules', path.resolve(ROOT_PATH, 'node_modules')],
   },
