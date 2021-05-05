@@ -271,7 +271,11 @@ export default defineComponent({
       if (graph.isEnabled()) {
         graphModel.beginUpdate();
         try {
-          const cell = graph.addCell(new mxCell(mxResources.get('untitledLayer')), graphModel.root);
+          const cell = graph.addCell(
+            new mxCell(mxResources.get('untitledLayer')),
+            graphModel.root,
+            layers.value.length,
+          );
           cell['children'] = [];
           graph.setDefaultParent(cell);
         } finally {

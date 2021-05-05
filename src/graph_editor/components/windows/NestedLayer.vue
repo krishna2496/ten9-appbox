@@ -27,11 +27,6 @@ interface simpleInt {
 
 type LayerProperty = simpleInt[];
 
-// interface dragInt {
-//   newIndex: number;
-//   oldIndex: number;
-// }
-
 export default defineComponent({
   name: 'NestedLayers',
   components: {
@@ -122,12 +117,15 @@ export default defineComponent({
     }
 
     // Drag layers
-    function dragLayer(elm: any) {
-      const layerData = Array.from(document.getElementsByClassName('layer-window-name'));
+    function dragLayer(elm: simpleInt) {
+      // Get layer list
+      console.log(elm);
+      let layerData = Array.from(document.getElementsByClassName('layer-window-name'));
       let newIndex = 0;
+      layerData = layerData.reverse();
       layerData.forEach((element, key) => {
         if (element.id == elm.id) {
-          newIndex = key;
+          newIndex = key; // find new index of dragged element
         }
       });
       context.emit('drag-layer', elm, newIndex);
