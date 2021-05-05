@@ -90,8 +90,6 @@ require('./Sidebar-Veeam2.js');
 require('./Sidebar-VVD.js');
 require('./Sidebar-WebIcons.js');
 
-// TEN9: add new image path from webpack
-const sidebarImage = '../../images/';
 // TEN9: Consolidate
 const IMAGE_PATH = '/images';
 const GRAPH_IMAGE_PATH = IMAGE_PATH;
@@ -1023,8 +1021,7 @@ const urlParams = {};
           {
             title: mxResources.get('general'),
             id: 'general',
-            //TEN9: add new path
-            image: sidebarImage + '/sidebar-general.png',
+            image: IMAGE_PATH + '/sidebar-general.png',
           },
           {
             title: mxResources.get('basic'),
