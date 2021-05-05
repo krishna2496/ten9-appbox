@@ -736,5 +736,5 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     button.btn.btn-grey(type='button', @click='preview(false)')
       | Preview
     button.btn.btn-primary(type='button', @click='preview(true)')
-      | Apply
+      | Print
 </template>
