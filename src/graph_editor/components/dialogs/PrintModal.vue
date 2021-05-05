@@ -74,11 +74,13 @@ export default defineComponent({
 
     const showCustomPaperSize = ref<boolean>(false);
 
-    const customHeight = ref<string>('8.27');
+    const customHeight = ref<number>(0);
 
-    const customWidth = ref<string>('11.69');
+    const customWidth = ref<number>(0);
 
     const scalePercentage = 0.75;
+
+    const pageSizeDivider = 100;
 
     function closeModal() {
       show.value = false;
@@ -143,8 +145,8 @@ export default defineComponent({
         const newPageFormat: typeof mxRectangle = new mxRectangle(
           0,
           0,
-          Math.floor(parseFloat(customWidth.value) * scaleValue),
-          Math.floor(parseFloat(customHeight.value) * scaleValue),
+          customWidth.value * scaleValue,
+          customHeight.value * scaleValue,
         );
         pf = new mxRectangle(0, 0, newPageFormat.height, newPageFormat.width);
       }
@@ -449,8 +451,8 @@ export default defineComponent({
             const newPageFormat: typeof mxRectangle = new mxRectangle(
               0,
               0,
-              Math.floor(parseFloat(customWidth.value) * scaleValue),
-              Math.floor(parseFloat(customHeight.value) * scaleValue),
+              customWidth.value * scaleValue,
+              customHeight.value * scaleValue,
             );
             pf = new mxRectangle(0, 0, newPageFormat.height, newPageFormat.width);
           }
@@ -503,8 +505,8 @@ export default defineComponent({
           const newPageFormat: typeof mxRectangle = new mxRectangle(
             0,
             0,
-            Math.floor(parseFloat(customWidth.value) * scaleValue),
-            Math.floor(parseFloat(customHeight.value) * scaleValue),
+            customWidth.value * scaleValue,
+            customHeight.value * scaleValue,
           );
           pf = new mxRectangle(0, 0, newPageFormat.height, newPageFormat.width);
         }
@@ -580,19 +582,21 @@ export default defineComponent({
       show.value = true;
       pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
       isMultiplePages.value = props.editorUi.pages.length > 1 ? true : false;
-      pageFormat.value = props.editorUi.editor.graph.pageFormat;
+      const pageFDiamension = props.editorUi.editor.graph.pageFormat;
       maxPage.value = props.editorUi.pages.length;
-      if (props.editorUi.getPageStyle() != null) {
-        console.log(props.editorUi.pageStyle);
+      if (props.editorUi.pageStyle !== 'custom') {
         pageStyle.value = props.editorUi.pageStyle;
         if (pageStyle.value === 'landscape') {
-          pageFormat.value = new mxRectangle(
-            0,
-            0,
-            props.editorUi.editor.graph.pageFormat.height,
-            props.editorUi.editor.graph.pageFormat.width,
-          );
+          pageFormat.value = new mxRectangle(0, 0, pageFDiamension.height, pageFDiamension.width);
+        } else {
+          pageFormat.value = props.editorUi.editor.graph.pageFormat;
         }
+      } else {
+        pageStyle.value = props.editorUi.pageStyle;
+        customWidth.value = pageFDiamension.width / pageSizeDivider;
+        customHeight.value = pageFDiamension.height / pageSizeDivider;
+        pageFormat.value = new mxRectangle(0, 0, 0, 0);
+        showCustomPaperSize.value = true;
       }
       if (props.editorUi.pages.length > 1) {
         if (props.editorUi.getCurrentPage() != null) {
@@ -608,6 +612,14 @@ export default defineComponent({
       }
     }
 
+    function hideCustomPageSize() {
+      if (pageFormat.value.height == 0) {
+        pageStyle.value = 'custom';
+      } else {
+        showCustomPaperSize.value = false;
+      }
+    }
+
     onMounted(() => {
       // window.localStorage.setItem('pageStyle', 'portrait');
       props.editorUi.addListener('openPrintModal', openPrintModal);
@@ -618,16 +630,19 @@ export default defineComponent({
     });
 
     watch(
-      () => pageFormat.value,
+      () => pageStyle.value,
       (val) => {
-        if (val.x == 'custom') {
+        if (val == 'custom') {
           showCustomPaperSize.value = true;
           pageStyle.value = 'custom';
+          customWidth.value = props.editorUi.editor.graph.pageFormat.width / pageSizeDivider;
+          customHeight.value = props.editorUi.editor.graph.pageFormat.height / pageSizeDivider;
+          pageFormat.value = new mxRectangle(0, 0, 0, 0);
+        } else {
+          showCustomPaperSize.value = false;
+          pageStyle.value = val;
+          pageFormat.value = props.editorUi.editor.graph.pageFormat;
         }
-        //  else {
-        //   showCustomPaperSize.value = false;
-        //   pageStyle.value = 'portrait';
-        // }
       },
     );
 
@@ -644,6 +659,7 @@ export default defineComponent({
       closeModal,
       customHeight,
       customWidth,
+      hideCustomPageSize,
       isMultiplePages,
       maxPage,
       pageFormat,
@@ -651,6 +667,7 @@ export default defineComponent({
       pageScaleInput,
       pageScaleValue,
       PageSize,
+      pageSizeDivider,
       pageType,
       pagesToInput,
       pageStyle,
@@ -697,12 +714,12 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
   .row.ml-3.mb-3.mt-3
     h5 Paper Size
   .row.ml-3.mb-3
-    select.form-control.w-90(v-model='pageFormat')
+    select.form-control.w-90(v-model='pageFormat', @change='hideCustomPageSize')
       option(v-for='(page, index) in PageSize', :key='index', :value='page.format') {{ page.title }}
   .row.ml-3.mb-3(v-show='showCustomPaperSize')
-    input.mt-1.txt-input(type='text', v-model='customHeight')
-    label.ml-2.mt-2 in x
     input.mt-1.txt-input(type='text', v-model='customWidth')
+    label.ml-2.mt-2 in x
+    input.mt-1.txt-input(type='text', v-model='customHeight')
     label.ml-2.mt-2 in
   .row.ml-3.mb-3(v-show='!showCustomPaperSize')
     b-form-radio.label-center(v-model='pageStyle', name='page_type', value='portrait') Portrait
