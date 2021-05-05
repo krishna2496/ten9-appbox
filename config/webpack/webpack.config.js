@@ -254,20 +254,6 @@ module.exports = {
           },
         ],
       },
-      // // We bundle these image files and so we don't have to downaload separately at runtime
-      // {
-      //   test: /\.(jpg|png)$/,
-      //   use: [
-      //     {
-      //       loader: 'file-loader',
-      //       options: {
-      //         name: '[name].[ext]',
-      //         outputPath: 'img/',
-      //         publicPath: 'img/',
-      //       },
-      //     },
-      //   ],
-      // },
     ],
   },
 
