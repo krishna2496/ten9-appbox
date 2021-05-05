@@ -67,7 +67,10 @@ module.exports = {
       },
       webpack: './config/webpack/webpack.config.js',
       alias: {
-        map: [['@', './src/']],
+        map: [
+          ['@', './src/'],
+          ['~images', './src/graph_editor/images'],
+        ],
         extensions: allExtensions,
       },
     },

@@ -69,6 +69,7 @@ module.exports = {
     alias: {
       '@': path.resolve(ROOT_PATH, 'src'),
       vue$: 'vue/dist/vue.runtime.esm.js',
+      '~images': path.resolve(ROOT_PATH, 'src/graph_editor/images'),
     },
     modules: ['node_modules', path.resolve(ROOT_PATH, 'node_modules')],
   },
@@ -233,20 +234,40 @@ module.exports = {
         test: /(default\.xml|en\.txt)$/,
         loader: 'raw-loader',
       },
-      // We bundle these image files and so we don't have to downaload separately at runtime
+      // Use url-loader to convert images to data URIs. Use file-loader if the file is larger than 2K.
       {
-        test: /\.(jpg|png)$/,
+        test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
         use: [
           {
-            loader: 'file-loader',
+            loader: 'url-loader',
             options: {
-              name: '[name].[ext]',
-              outputPath: 'img/',
-              publicPath: 'img/',
+              limit: 2048,
+              esModule: false,
+              fallback: {
+                loader: 'file-loader',
+                options: {
+                  name: IS_PRODUCTION ? 'img/[name].[contenthash:8].[ext]' : 'img/[name].[ext]',
+                  esModule: false,
+                },
+              },
             },
           },
         ],
       },
+      // // We bundle these image files and so we don't have to downaload separately at runtime
+      // {
+      //   test: /\.(jpg|png)$/,
+      //   use: [
+      //     {
+      //       loader: 'file-loader',
+      //       options: {
+      //         name: '[name].[ext]',
+      //         outputPath: 'img/',
+      //         publicPath: 'img/',
+      //       },
+      //     },
+      //   ],
+      // },
     ],
   },
 

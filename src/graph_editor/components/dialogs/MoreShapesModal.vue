@@ -17,6 +17,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 const { mxEventObject } = require('../../lib/jgraph/mxClient.js');
+const sidebarGeneralImage = require('~images/sidebar-aws.png');
+
 export default defineComponent({
   name: 'MoreShapesModel',
   props: {
@@ -35,7 +37,8 @@ export default defineComponent({
 
     const entries = ref<string>(null);
 
-    const imageUrl = ref<string>('images/sidebar-general.png');
+    // const imageUrl = ref<string>('images/sidebar-general.png');
+    const imageUrl = ref<string>(sidebarGeneralImage);
 
     const libs = ref<string[]>([]);
 
@@ -96,8 +99,8 @@ export default defineComponent({
       defaultSelected.value = ind.toString() + '' + index.toString();
     }
 
-    function showImage(url: string, ind: number, index: number) {
-      imageUrl.value = url;
+    function showImage(_url: string, ind: number, index: number) {
+      // imageUrl.value = url;
       selectShape(ind, index);
     }
 
