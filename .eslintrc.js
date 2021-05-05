@@ -174,7 +174,7 @@ module.exports = {
     'linebreak-style': ['error', 'unix'],
 
     'import/no-unresolved': 'error',
-    'import/prefer-default-export': 'error',
+    'import/prefer-default-export': 'off', // disagree with this rule, let's leave it off
     'import/no-cycle': 'error',
     'import/order': [
       'error',
