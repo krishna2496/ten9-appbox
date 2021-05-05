@@ -80,7 +80,6 @@ export default defineComponent({
     const editLayerId = ref<string>('');
     const dropDownId = ref<string>(selectedLayer.value);
     const isEnableBindMove = ref<boolean>(false);
-
     // Get index of layer from it's id
     function getIndexFromId(id: string) {
       const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
@@ -194,8 +193,9 @@ export default defineComponent({
         layers.value[0]['value'] = 'Background';
       }
 
-      layers.value.length == 1 && changeSelectedLayer(layers.value[layers.value.length - 1].id);
-      selectedLayer.value && changeSelectedLayer(selectedLayer.value);
+      // layers.value.length == 1 && changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      const { id: id } = graph.getDefaultParent();
+      changeSelectedLayer(id);
 
       nextTick(() => {
         layerWindow.value = document.getElementById('layer-window-id');
@@ -275,7 +275,7 @@ export default defineComponent({
           const cell = graph.addCell(
             new mxCell(mxResources.get('untitledLayer')),
             graphModel.root,
-            0,
+            layers.value.length,
           );
           cell['children'] = [];
           graph.setDefaultParent(cell);
@@ -283,7 +283,8 @@ export default defineComponent({
           graphModel.endUpdate();
         }
       }
-      changeSelectedLayer(layers.value[0].id);
+
+      changeSelectedLayer(layers.value[layers.value.length - 1].id);
     }
 
     // Delete selected layer from layers listing
@@ -327,7 +328,7 @@ export default defineComponent({
         try {
           newCell = graph.cloneCell(layers.value[index]);
           newCell.value = `${newCell.value} copy`;
-          newCell = graph.addCell(newCell, graphModel.root, index);
+          newCell = graph.addCell(newCell, graphModel.root, index + 1);
           graph.setDefaultParent(newCell);
         } finally {
           changeSelectedLayer(newCell.id);
@@ -419,11 +420,16 @@ export default defineComponent({
     }
 
     // Drag layers
-    function dragLayer(newIndex: number) {
+    function dragLayer(draggedElement: simpleInt, newIndex: number) {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
-      const temp = layers.value[newIndex];
-      graph.addCell(temp, graphModel.root, newIndex);
+
+      graph.getModel().beginUpdate();
+      try {
+        graph.addCell(draggedElement, graphModel.root, newIndex);
+      } finally {
+        graph.getModel().endUpdate();
+      }
     }
 
     function changeMinStatus() {
@@ -504,6 +510,7 @@ export default defineComponent({
         )
       b-card-body.layer-window-card-body-main(v-if='!isMin')
         nested-layers(
+          v-if='show',
           v-model='layers',
           :selectedLayer='selectedLayer',
           @edit-layer='editLayer',
@@ -548,7 +555,7 @@ export default defineComponent({
     )
       b-row.layer-window-dropdownRow(
         :key='key',
-        v-for='(layer, key) in layers',
+        v-for='(layer, key) in layers.slice().reverse()',
         @click='!layer.style ? selectLayerForMoveSelection(layer.id) : null',
         :class='{ dropDownRowDisable: layer.style }'
       )
