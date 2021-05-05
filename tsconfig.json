@@ -59,7 +59,7 @@
     "paths": {
       /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
       "@/*": ["./src/*"],
-      "~graphEditorImages/*": ["./src/graph_editor/assets/images/*"],
+      "@graphEditorImages/*": ["./src/graph_editor/assets/images/*"],
       "*": [
         /* https://www.typescriptlang.org/docs/handbook/module-resolution.html */
         "./node_modules/*",
