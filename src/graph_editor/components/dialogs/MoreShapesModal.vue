@@ -15,8 +15,12 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
+const { getImage } = require('./shape_images.ts');
 const { mxEventObject } = require('../../lib/jgraph/mxClient.js');
+
+const sidebarGeneralImage = getImage('general');
+
 export default defineComponent({
   name: 'MoreShapesModel',
   props: {
@@ -35,7 +39,7 @@ export default defineComponent({
 
     const entries = ref<string>(null);
 
-    const imageUrl = ref<string>('images/sidebar-general.png');
+    const imageUrl = ref<string>(sidebarGeneralImage);
 
     const libs = ref<string[]>([]);
 
@@ -43,6 +47,11 @@ export default defineComponent({
 
     function closeModal() {
       show.value = false;
+
+      // Reset image back to default
+      nextTick(() => {
+        imageUrl.value = sidebarGeneralImage;
+      });
     }
 
     function addRemoveShape(shape: string) {
@@ -67,19 +76,18 @@ export default defineComponent({
 
     function loadShapes() {
       props.editorUi.sidebar.showEntries(libs.value.join(';'), false, true);
-      // TEN9: fire shape-libraries-changed event
       props.editorUi.fireEvent(new mxEventObject('shape-libraries-changed'));
       closeModal();
     }
 
-    function openmoreShapes() {
+    function openMoreShapes() {
       show.value = true;
       entries.value = props.editorUi.sidebar.entries;
       const shapes = props.shapeLibraries;
       libs.value = shapes.split(';');
     }
 
-    function selectShape(ind: number, index: number) {
+    function selectShape(groupIndex: number, shapesIndex: number) {
       if (defaultSelected.value !== '') {
         const previousSelected: HTMLLabelElement = document.getElementById(
           `title${defaultSelected.value}`,
@@ -88,25 +96,25 @@ export default defineComponent({
       }
 
       const label: HTMLLabelElement = document.getElementById(
-        `title${ind}${index}`,
+        `title${groupIndex}${shapesIndex}`,
       ) as HTMLLabelElement;
 
       label.className = 'heading bg-light-blue';
 
-      defaultSelected.value = ind.toString() + '' + index.toString();
+      defaultSelected.value = `${groupIndex}${shapesIndex}`;
     }
 
-    function showImage(url: string, ind: number, index: number) {
-      imageUrl.value = url;
-      selectShape(ind, index);
+    function showImage(shapesName: string, groupIndex: number, shapesIndex: number) {
+      imageUrl.value = getImage(shapesName);
+      selectShape(groupIndex, shapesIndex);
     }
 
     onMounted(() => {
-      props.editorUi.addListener('moreShapes', openmoreShapes);
+      props.editorUi.addListener('moreShapes', openMoreShapes);
     });
 
     onUnmounted(() => {
-      props.editorUi.removeListener(openmoreShapes);
+      props.editorUi.removeListener(openMoreShapes);
     });
 
     return {
@@ -141,11 +149,14 @@ b-modal#modal(
   .mw-100
   .row.ml-2.shapes
     .col-md-4.shape-modal-content.right-border
-      template(v-for='(entry, ind) in entries')
+      template(v-for='(entry, groupIndex) in entries')
         label.row.bg-lightgray {{ entry.title }}
-        template(v-for='(shape, index) in entry.entries')
+        template(v-for='(shape, shapesIndex) in entry.entries')
           .row
-            .heading(@click='showImage(shape.image, ind, index)', :id='`title${ind}${index}`')
+            .heading(
+              @click='showImage(shape.id, groupIndex, shapesIndex)',
+              :id='`title${groupIndex}${shapesIndex}`'
+            )
               input(
                 type='checkbox',
                 @change='addRemoveShape(shape.id)',
