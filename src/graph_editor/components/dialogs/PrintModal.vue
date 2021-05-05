@@ -74,16 +74,17 @@ export default defineComponent({
 
     const showCustomPaperSize = ref<boolean>(false);
 
-    const customHeight = ref<string>('8.27');
+    const customHeight = ref<number>(0);
 
-    const customWidth = ref<string>('11.69');
+    const customWidth = ref<number>(0);
 
     const scalePercentage = 0.75;
+
+    const pageSizeDivider = 100;
 
     function closeModal() {
       show.value = false;
       pageFormat.value = mxConstants.PAGE_FORMAT_A4_PORTRAIT;
-      pageStyle.value = 'portrait';
       pageScaleInput.value = '100 %';
     }
 
@@ -144,8 +145,8 @@ export default defineComponent({
         const newPageFormat: typeof mxRectangle = new mxRectangle(
           0,
           0,
-          Math.floor(parseFloat(customWidth.value) * scaleValue),
-          Math.floor(parseFloat(customHeight.value) * scaleValue),
+          customWidth.value * scaleValue,
+          customHeight.value * scaleValue,
         );
         pf = new mxRectangle(0, 0, newPageFormat.height, newPageFormat.width);
       }
@@ -450,8 +451,8 @@ export default defineComponent({
             const newPageFormat: typeof mxRectangle = new mxRectangle(
               0,
               0,
-              Math.floor(parseFloat(customWidth.value) * scaleValue),
-              Math.floor(parseFloat(customHeight.value) * scaleValue),
+              customWidth.value * scaleValue,
+              customHeight.value * scaleValue,
             );
             pf = new mxRectangle(0, 0, newPageFormat.height, newPageFormat.width);
           }
@@ -504,8 +505,8 @@ export default defineComponent({
           const newPageFormat: typeof mxRectangle = new mxRectangle(
             0,
             0,
-            Math.floor(parseFloat(customWidth.value) * scaleValue),
-            Math.floor(parseFloat(customHeight.value) * scaleValue),
+            customWidth.value * scaleValue,
+            customHeight.value * scaleValue,
           );
           pf = new mxRectangle(0, 0, newPageFormat.height, newPageFormat.width);
         }
@@ -581,18 +582,21 @@ export default defineComponent({
       show.value = true;
       pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
       isMultiplePages.value = props.editorUi.pages.length > 1 ? true : false;
-      pageFormat.value = props.editorUi.editor.graph.pageFormat;
+      const pageFDiamension = props.editorUi.editor.graph.pageFormat;
       maxPage.value = props.editorUi.pages.length;
-      if (window.localStorage.getItem('pageStyle') != null) {
-        pageStyle.value = window.localStorage.getItem('pageStyle');
+      if (props.editorUi.pageStyle !== 'custom') {
+        pageStyle.value = props.editorUi.pageStyle;
         if (pageStyle.value === 'landscape') {
-          pageFormat.value = new mxRectangle(
-            0,
-            0,
-            props.editorUi.editor.graph.pageFormat.height,
-            props.editorUi.editor.graph.pageFormat.width,
-          );
+          pageFormat.value = new mxRectangle(0, 0, pageFDiamension.height, pageFDiamension.width);
+        } else {
+          pageFormat.value = props.editorUi.editor.graph.pageFormat;
         }
+      } else {
+        pageStyle.value = props.editorUi.pageStyle;
+        customWidth.value = pageFDiamension.width / pageSizeDivider;
+        customHeight.value = pageFDiamension.height / pageSizeDivider;
+        pageFormat.value = new mxRectangle(0, 0, 0, 0);
+        showCustomPaperSize.value = true;
       }
       if (props.editorUi.pages.length > 1) {
         if (props.editorUi.getCurrentPage() != null) {
@@ -608,8 +612,19 @@ export default defineComponent({
       }
     }
 
+    function hideCustomPageSize() {
+      if (pageFormat.value.height == 0) {
+        pageStyle.value = 'custom';
+      } else {
+        showCustomPaperSize.value = false;
+        if (pageStyle.value == 'custom') {
+          pageStyle.value = 'portrait';
+        }
+      }
+    }
+
     onMounted(() => {
-      window.localStorage.setItem('pageStyle', 'portrait');
+      // window.localStorage.setItem('pageStyle', 'portrait');
       props.editorUi.addListener('openPrintModal', openPrintModal);
     });
 
@@ -618,16 +633,19 @@ export default defineComponent({
     });
 
     watch(
-      () => pageFormat.value,
+      () => pageStyle.value,
       (val) => {
-        if (val.x == 'custom') {
+        if (val == 'custom') {
           showCustomPaperSize.value = true;
           pageStyle.value = 'custom';
+          customWidth.value = props.editorUi.editor.graph.pageFormat.width / pageSizeDivider;
+          customHeight.value = props.editorUi.editor.graph.pageFormat.height / pageSizeDivider;
+          pageFormat.value = new mxRectangle(0, 0, 0, 0);
+        } else {
+          showCustomPaperSize.value = false;
+          pageStyle.value = val;
+          pageFormat.value = props.editorUi.editor.graph.pageFormat;
         }
-        //  else {
-        //   showCustomPaperSize.value = false;
-        //   pageStyle.value = 'portrait';
-        // }
       },
     );
 
@@ -644,6 +662,7 @@ export default defineComponent({
       closeModal,
       customHeight,
       customWidth,
+      hideCustomPageSize,
       isMultiplePages,
       maxPage,
       pageFormat,
@@ -651,6 +670,7 @@ export default defineComponent({
       pageScaleInput,
       pageScaleValue,
       PageSize,
+      pageSizeDivider,
       pageType,
       pagesToInput,
       pageStyle,
@@ -675,22 +695,18 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
   .mw-100
     .pages(v-show='isMultiplePages')
       .row.ml-3.mb-3
-        input.mt-1(type='radio', name='page', value='all_page', v-model='pageType')
-        label.ml-2 Print All Pages
+        b-form-radio.label-center(v-model='pageType', name='page', value='all_page') Print All Pages
       .row.ml-3.mb-3
-        input.mt-2(type='radio', name='page', value='page', v-model='pageType')
-        label.ml-2.mt-1 Pages:
+        b-form-radio.label-center(v-model='pageType', name='page', value='page') Pages
         input.ml-2.w-25(type='number', v-model='pagesFromInput', :max='maxPage', min='1')
         label.ml-2.mt-1 to
         input.ml-2.w-25(type='number', v-model='pagesToInput', :max='maxPage', min='1')
       .row.bottom-border
   .row.ml-3.mb-3.mt-4
-    input.mt-2(type='radio', name='printZoom', value='adjust', v-model='printZoom')
-    label.ml-2.mt-1 Adjust to
+    b-form-radio.label-center(v-model='printZoom', name='printZoom', value='adjust') Adjust to
     input.ml-2.txt-input(type='text', v-model='zoomInput')
   .row.ml-3.mb-3
-    input.mt-2(type='radio', name='printZoom', value='fit', v-model='printZoom')
-    label.ml-2.mt-1 Fit to
+    b-form-radio.label-center(v-model='printZoom', name='printZoom', value='fit') Fit to
     input.ml-2.txt-input(type='text', v-model='sheetsAcrossInput')
     label.ml-2.mt-1 sheet(s) across
   .row.ml-5.mb-3
@@ -701,18 +717,16 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
   .row.ml-3.mb-3.mt-3
     h5 Paper Size
   .row.ml-3.mb-3
-    select.form-control.w-90(v-model='pageFormat')
+    select.form-control.w-90(v-model='pageFormat', @change='hideCustomPageSize')
       option(v-for='(page, index) in PageSize', :key='index', :value='page.format') {{ page.title }}
   .row.ml-3.mb-3(v-show='showCustomPaperSize')
-    input.mt-1.txt-input(type='text', v-model='customHeight')
+    input.mt-1.txt-input.w-30.ml-5(type='text', v-model='customWidth')
     label.ml-2.mt-2 in x
-    input.mt-1.txt-input(type='text', v-model='customWidth')
-    label.ml-2.mt-2 in
+    input.mt-1.txt-input.w-30.ml-2(type='text', v-model='customHeight')
+    label.ml-2.mt-2 in.
   .row.ml-3.mb-3(v-show='!showCustomPaperSize')
-    input.mt-1(type='radio', name='page_type', value='portrait', v-model='pageStyle')
-    label.ml-2 Portrait
-    input.ml-4.mt-1(type='radio', name='page_type', value='landscape', v-model='pageStyle')
-    label.ml-2 Landscape
+    b-form-radio.label-center(v-model='pageStyle', name='page_type', value='portrait') Portrait
+    b-form-radio.label-center.ml-2(v-model='pageStyle', name='page_type', value='landscape') Landscape
   .row.ml-3.mb-3
     label.ml-2.mt-2 Page Scale
     input.txt-input.ml-2(type='text', v-model='pageScaleInput')
@@ -722,5 +736,5 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     button.btn.btn-grey(type='button', @click='preview(false)')
       | Preview
     button.btn.btn-primary(type='button', @click='preview(true)')
-      | Apply
+      | Print
 </template>

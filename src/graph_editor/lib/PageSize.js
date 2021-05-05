@@ -54,5 +54,5 @@ export default [
   { key: '16-9', title: '16:9 (1600 x 900)', format: new mxRectangle(0, 0, 900, 1600) },
   { key: '16-10', title: '16:10 (1920 x 1200)', format: new mxRectangle(0, 0, 1200, 1920) },
   { key: '4-3', title: '4:3 (1600 x 1200)', format: new mxRectangle(0, 0, 1200, 1600) },
-  { key: 'custom', title: mxResources.get('custom'), format: { x: 'custom' } },
+  { key: 'custom', title: mxResources.get('custom'), format: new mxRectangle(0, 0, 0, 0) },
 ];

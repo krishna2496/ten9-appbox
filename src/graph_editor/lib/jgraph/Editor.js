@@ -1739,7 +1739,13 @@ var PageSetupDialog = function (editorUi, changePageSetupClass) {
 /**
  *
  */
-PageSetupDialog.addPageFormatPanel = function (div, namePostfix, pageFormat, pageFormatListener) {
+PageSetupDialog.addPageFormatPanel = function (
+  div,
+  namePostfix,
+  pageFormat,
+  pageFormatListener,
+  ui,
+) {
   var formatName = 'format-' + namePostfix;
 
   var portraitCheckBox = document.createElement('input');
@@ -1894,12 +1900,6 @@ PageSetupDialog.addPageFormatPanel = function (div, namePostfix, pageFormat, pag
   var currentPageFormat = pageFormat;
 
   var update = function (evt, selectChanged) {
-    // TEN9: set localstirage for page style
-    if (evt) {
-      if (evt.target.value === 'landscape' || evt.target.value === 'portrait') {
-        window.localStorage.setItem('pageStyle', evt.target.value);
-      }
-    }
     var f = pf[paperSizeSelect.value];
 
     if (f.format != null) {
@@ -1952,12 +1952,16 @@ PageSetupDialog.addPageFormatPanel = function (div, namePostfix, pageFormat, pag
 
   mxEvent.addListener(portraitSpan, 'click', function (evt) {
     portraitCheckBox.checked = true;
+    // TEN9: set page style to portrait
+    ui.setPageStyle('portrait');
     update(evt);
     mxEvent.consume(evt);
   });
 
   mxEvent.addListener(landscapeSpan, 'click', function (evt) {
     landscapeCheckBox.checked = true;
+    // TEN9: set page style to landscape
+    ui.setPageStyle('landscape');
     update(evt);
     mxEvent.consume(evt);
   });
@@ -1971,6 +1975,10 @@ PageSetupDialog.addPageFormatPanel = function (div, namePostfix, pageFormat, pag
   mxEvent.addListener(paperSizeSelect, 'change', function (evt) {
     // Handles special case where custom was chosen
     customSize = paperSizeSelect.value == 'custom';
+    // TEN9: check custom size is enable or not
+    if (customSize) {
+      ui.setPageStyle('custom');
+    }
     update(evt, true);
   });
 

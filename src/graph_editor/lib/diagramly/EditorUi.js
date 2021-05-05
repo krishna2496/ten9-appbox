@@ -14598,6 +14598,19 @@ var SelectedFile;
     return this.editor.graph.convertValueToString(layer) || 'Background';
   };
 
+  // TEN9: define page style for graph
+  EditorUi.prototype.pageStyle = 'portrait';
+
+  // TEN9: get page style function
+  EditorUi.prototype.getPageStyle = function () {
+    return this.pageStyle;
+  };
+
+  // TEN9: set page style function
+  EditorUi.prototype.setPageStyle = function (style) {
+    this.pageStyle = style;
+  };
+
   EditorUi.prototype.getBoundingBoxFromGeometry = function (cells) {
     this.editor.graph.getBoundingBoxFromGeometry(cells);
   };
