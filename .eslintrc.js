@@ -69,7 +69,7 @@ module.exports = {
       alias: {
         map: [
           ['@', './src/'],
-          ['~images', './src/graph_editor/assets/images'],
+          ['~graphEditorImages', './src/graph_editor/assets/images'],
         ],
         extensions: allExtensions,
       },
