@@ -1,6 +1,6 @@
 <!--
 * ten9, Inc
-* Copyright (c) 2015 - 2020 ten9, Inc
+* Copyright (c) 2015 - 2021 ten9, Inc
 * -----
 * NOTICE:  All information contained herein is, and remains
 * the property of ten9 Incorporated and its suppliers,
@@ -16,10 +16,23 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { codemirror } from 'vue-codemirror';
+
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/neat.css';
+import 'codemirror/mode/xml/xml.js';
+import 'codemirror/addon/fold/foldgutter.css';
+import 'codemirror/addon/fold/foldcode.js';
+import 'codemirror/addon/fold/foldgutter.js';
+import 'codemirror/addon/fold/xml-fold.js';
+
 const { mxResources, mxUtils } = require('../../lib/jgraph/mxClient');
 
 export default defineComponent({
   name: 'EditDiagramModal',
+  components: {
+    codemirror,
+  },
   props: {
     editorUi: {
       type: Object,
@@ -27,13 +40,34 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const code = ref(null);
+
     const show = ref<boolean>(false);
 
     const xml = ref<string>('');
 
+    const cmRef = ref(null);
+
+    const cmOptions = ref({
+      autofocus: true,
+      foldGutter: true,
+      gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+      htmlMode: false,
+      line: true,
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: 'application/xml',
+      tabSize: 4,
+      theme: 'neat',
+    });
+
     function openEditDiagram() {
       show.value = true;
       xml.value = mxUtils.getPrettyXml(props.editorUi.getGraphXml());
+    }
+
+    function onShown() {
+      cmRef.value.refresh();
     }
 
     function closeModal() {
@@ -63,6 +97,10 @@ export default defineComponent({
 
     return {
       closeModal,
+      cmOptions,
+      cmRef,
+      code,
+      onShown,
       setGraphData,
       show,
       xml,
@@ -79,13 +117,14 @@ b-modal(
   size='lg',
   @close='closeModal',
   @hide='closeModal',
+  @shown='onShown',
   no-fade
 )
   template(v-slot:modal-header)
     h6 Edit Diagram
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .textarea-container
-    textarea.xml(v-model='xml') {{ xml }}
+    codemirror(v-model='xml', ref='cmRef', :options='cmOptions')
   template(v-slot:modal-footer)
     button.btn.btn-grey(@click='closeModal') Cancel
     button.btn.btn-primary(@click='setGraphData(xml)') OK

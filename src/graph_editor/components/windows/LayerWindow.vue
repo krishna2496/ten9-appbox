@@ -80,7 +80,6 @@ export default defineComponent({
     const editLayerId = ref<string>('');
     const dropDownId = ref<string>(selectedLayer.value);
     const isEnableBindMove = ref<boolean>(false);
-
     // Get index of layer from it's id
     function getIndexFromId(id: string) {
       const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
@@ -194,8 +193,9 @@ export default defineComponent({
         layers.value[0]['value'] = 'Background';
       }
 
-      layers.value.length == 1 && changeSelectedLayer(layers.value[layers.value.length - 1].id);
-      selectedLayer.value && changeSelectedLayer(selectedLayer.value);
+      // layers.value.length == 1 && changeSelectedLayer(layers.value[layers.value.length - 1].id);
+      const { id: id } = graph.getDefaultParent();
+      changeSelectedLayer(id);
 
       nextTick(() => {
         layerWindow.value = document.getElementById('layer-window-id');
@@ -226,12 +226,27 @@ export default defineComponent({
       isMoveSelectionEnable('');
     }
 
+    // Set layer window's coordinates on window close for next open
+    function setLayerWindowCoordinates() {
+      const layerWindowStyle = layerWindow.value.style;
+      const layerWindowStyleTop = layerWindowStyle.top.split('px');
+      const layerWindowStyleLeft = layerWindowStyle.left.split('px');
+      const layerWindowStyleHeight = layerWindowStyle.height.split('px');
+      const layerWindowStyleWidth = layerWindowStyle.width.split('px');
+
+      [layerWindowCoordinates.value.top] = layerWindowStyleTop;
+      [layerWindowCoordinates.value.left] = layerWindowStyleLeft;
+      [layerWindowCoordinates.value.height] = layerWindowStyleHeight;
+      [layerWindowCoordinates.value.width] = layerWindowStyleWidth;
+
+      changeLayerWindowCoordinates();
+    }
     onMounted(() => {
       const { graph } = props.editorUi.editor;
 
       // Open layer window
       props.editorUi.addListener('openLayerWindow', openLayerWindow);
-
+      props.editorUi.addListener('setLayerWindowCoordinates', setLayerWindowCoordinates);
       const ele: unknown = document.getElementsByClassName('card');
       // Add drag property on layer window.
       dragElement(ele[1], 1);
@@ -260,7 +275,7 @@ export default defineComponent({
           const cell = graph.addCell(
             new mxCell(mxResources.get('untitledLayer')),
             graphModel.root,
-            0,
+            layers.value.length,
           );
           cell['children'] = [];
           graph.setDefaultParent(cell);
@@ -268,14 +283,15 @@ export default defineComponent({
           graphModel.endUpdate();
         }
       }
-      changeSelectedLayer(layers.value[0].id);
+
+      changeSelectedLayer(layers.value[layers.value.length - 1].id);
     }
 
     // Delete selected layer from layers listing
     function deleteLayer() {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
-      const i = getIndexFromId(selectedLayer.value);
+      let i = getIndexFromId(selectedLayer.value);
       const defaultParent = layers.value;
 
       if (graph.isEnabled()) {
@@ -290,6 +306,7 @@ export default defineComponent({
             graph.setDefaultParent();
           } else if (index > 0 && index <= graphModel.getChildCount(graphModel.root)) {
             graph.setDefaultParent(graphModel.getChildAt(graphModel.root, index - 1));
+            i = index - 1;
           } else {
             graph.setDefaultParent(null);
           }
@@ -310,7 +327,8 @@ export default defineComponent({
         graphModel.beginUpdate();
         try {
           newCell = graph.cloneCell(layers.value[index]);
-          newCell = graph.addCell(newCell, graphModel.root, index);
+          newCell.value = `${newCell.value} copy`;
+          newCell = graph.addCell(newCell, graphModel.root, index + 1);
           graph.setDefaultParent(newCell);
         } finally {
           changeSelectedLayer(newCell.id);
@@ -331,35 +349,23 @@ export default defineComponent({
       );
     }
 
-    // Set layer window's coordinates on window close for next open
-    function setLayerWindowCoordinates() {
-      const layerWindowStyle = layerWindow.value.style;
-      const layerWindowStyleTop = layerWindowStyle.top.split('px');
-      const layerWindowStyleLeft = layerWindowStyle.left.split('px');
-      const layerWindowStyleHeight = layerWindowStyle.height.split('px');
-      const layerWindowStyleWidth = layerWindowStyle.width.split('px');
-
-      [layerWindowCoordinates.value.top] = layerWindowStyleTop;
-      [layerWindowCoordinates.value.left] = layerWindowStyleLeft;
-      [layerWindowCoordinates.value.height] = layerWindowStyleHeight;
-      [layerWindowCoordinates.value.width] = layerWindowStyleWidth;
-
-      changeLayerWindowCoordinates();
-    }
-
     // Get graph selection to link with selected layer
     function moveSelection() {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
+
       setLayerWindowCoordinates();
-      layers.value.forEach((layer) => {
+      dropDownId.value = '';
+      for (let i = layers.value.length - 1; i >= 0; i--) {
+        const child = graphModel.getChildAt(graphModel.root, i);
         if (
           graph.getSelectionCount() == 1 &&
-          graphModel.isAncestor(layer, graph.getSelectionCell())
+          graphModel.isAncestor(child, graph.getSelectionCell())
         ) {
-          dropDownId.value = layer.id;
+          dropDownId.value = layers.value[i].id;
         }
-      });
+      }
+
       if (isShow.value === true) {
         isShow.value = !isShow.value;
       }
@@ -414,11 +420,16 @@ export default defineComponent({
     }
 
     // Drag layers
-    function dragLayer(newIndex: number) {
+    function dragLayer(draggedElement: simpleInt, newIndex: number) {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
-      const temp = layers.value[newIndex];
-      graph.addCell(temp, graphModel.root, newIndex);
+
+      graph.getModel().beginUpdate();
+      try {
+        graph.addCell(draggedElement, graphModel.root, newIndex);
+      } finally {
+        graph.getModel().endUpdate();
+      }
     }
 
     function changeMinStatus() {
@@ -491,7 +502,7 @@ export default defineComponent({
       :class='{ "show-window": show, "layer-window-maximize": isMin === false, "layer-window-minimize": isMin === true }'
     )
       template.row(#header='')
-        WindowHeader.ml-2.mb-2(
+        window-header(
           title='Layers',
           @close-window='close',
           :isMin='isMin',
@@ -499,6 +510,7 @@ export default defineComponent({
         )
       b-card-body.layer-window-card-body-main(v-if='!isMin')
         nested-layers(
+          v-if='show',
           v-model='layers',
           :selectedLayer='selectedLayer',
           @edit-layer='editLayer',
@@ -543,7 +555,7 @@ export default defineComponent({
     )
       b-row.layer-window-dropdownRow(
         :key='key',
-        v-for='(layer, key) in layers',
+        v-for='(layer, key) in layers.slice().reverse()',
         @click='!layer.style ? selectLayerForMoveSelection(layer.id) : null',
         :class='{ dropDownRowDisable: layer.style }'
       )

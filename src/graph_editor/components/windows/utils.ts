@@ -26,7 +26,7 @@ export function bringWindowToFront(index: number) {
   currentSelected.style.zIndex = '1000';
 }
 
-export function dragElement(elmnt: HTMLDivElement, index: number) {
+export function dragElement(el: HTMLDivElement, index: number) {
   let newX = 0,
     newY = 0,
     prevX = 0,
@@ -61,35 +61,17 @@ export function dragElement(elmnt: HTMLDivElement, index: number) {
       windowWidth = card.offsetWidth;
     }
 
-    if (
-      containerRect.y <= elmnt.offsetTop - newY + containerRect.y &&
-      containerRect.height >= elmnt.offsetTop - newY + containerRect.y + windowHeight
-    ) {
-      const top = elmnt.offsetTop - newY;
-      elmnt.style.top = `${top}px`;
-    }
-    let count = 0;
-    if (containerRect.x <= elmnt.offsetLeft - newX + containerRect.x) {
-      count = 1;
-      const left = elmnt.offsetLeft - newX;
-      elmnt.style.left = `${left}px`;
-    } else {
-      count = 0;
-      elmnt.style.left = '0px';
-    }
+    // Update the element top
+    let newTop = el.offsetTop - newY;
+    newTop = Math.max(0, newTop);
+    newTop = Math.min(containerRect.height - windowHeight, newTop);
+    el.style.top = `${newTop}px`;
 
-    if (
-      containerRect.width + containerRect.x >=
-      elmnt.offsetLeft - newX + containerRect.x + windowWidth
-    ) {
-      if (count === 0) {
-        const left = elmnt.offsetLeft - newX;
-        elmnt.style.left = `${left}px`;
-      }
-    } else {
-      const left = containerRect.width - windowWidth;
-      elmnt.style.left = `${left}px`;
-    }
+    // Update the element left
+    let newLeft = el.offsetLeft - newX;
+    newLeft = Math.max(0, newLeft);
+    newLeft = Math.min(containerRect.width - windowWidth, newLeft);
+    el.style.left = `${newLeft}px`;
   }
 
   function dragMouseDown(e: MouseEvent) {
@@ -106,13 +88,13 @@ export function dragElement(elmnt: HTMLDivElement, index: number) {
       document.onmousemove = elementDrag;
     }
   }
-  const headerEl = document.getElementById(elmnt.id + 'header');
+  const headerEl = document.getElementById(el.id + 'header');
 
   if (headerEl) {
     // if present, the header is where you move the DIV from:
     headerEl.onmousedown = dragMouseDown;
   } else {
     // otherwise, move the DIV from anywhere inside the DIV:
-    elmnt.onmousedown = dragMouseDown;
+    el.onmousedown = dragMouseDown;
   }
 }

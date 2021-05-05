@@ -59,11 +59,12 @@
     "paths": {
       /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
       "@/*": ["./src/*"],
+      "~images/*": ["./src/graph_editor/assets/images/*"],
       "*": [
         /* https://www.typescriptlang.org/docs/handbook/module-resolution.html */
         "./node_modules/*",
         "./src/types/*",
-      ]
+      ],
     },
     "rootDirs": [
       "."
@@ -106,7 +107,8 @@
     "./src/main.ts",
     "./src/types/shims-vue.d.ts",
     "./src/types/shims-vue-resize-directive.d.ts",
-    "./src/types/shims-vue-clamp.d.ts"
+    "./src/types/shims-vue-clamp.d.ts",
+    "./src/types/shims-vue-codemirror.d.ts",
     // "node_modules/mxgraph-type-definitions/model/mxCell.d.ts",
     // "./node_modules/mxgraph-type-definitions/index.d.ts", // src/types/shims-mxgraph-type-definitions.d.ts",
   ],

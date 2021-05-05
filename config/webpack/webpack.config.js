@@ -69,6 +69,7 @@ module.exports = {
     alias: {
       '@': path.resolve(ROOT_PATH, 'src'),
       vue$: 'vue/dist/vue.runtime.esm.js',
+      '~images': path.resolve(ROOT_PATH, 'src/graph_editor/assets/images'),
     },
     modules: ['node_modules', path.resolve(ROOT_PATH, 'node_modules')],
   },
@@ -232,6 +233,26 @@ module.exports = {
       {
         test: /(default\.xml|en\.txt)$/,
         loader: 'raw-loader',
+      },
+      // Use url-loader to convert images to data URIs. Use file-loader if the file is larger than 2K.
+      {
+        test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 2048,
+              esModule: false,
+              fallback: {
+                loader: 'file-loader',
+                options: {
+                  name: IS_PRODUCTION ? 'img/[name].[contenthash:8].[ext]' : 'img/[name].[ext]',
+                  esModule: false,
+                },
+              },
+            },
+          },
+        ],
       },
     ],
   },

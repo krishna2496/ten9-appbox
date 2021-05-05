@@ -16,6 +16,10 @@
 
 .card-header {
   display: inline-flex;
+  height: 44px;
+  cursor: move;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .card-footer {
@@ -92,11 +96,11 @@
   font-weight: 600;
 }
 
-.layer-window .card-header {
-  display: inline-flex;
-  padding: 0;
-  cursor: move;
-}
+// .layer-window .card-header {
+//   display: inline-flex;
+//   padding: 0;
+//   cursor: move;
+// }
 
 .layer-window-card {
   z-index: 1000;
