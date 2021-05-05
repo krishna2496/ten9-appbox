@@ -119,7 +119,6 @@ export default defineComponent({
     // Drag layers
     function dragLayer(elm: simpleInt) {
       // Get layer list
-      console.log(elm);
       let layerData = Array.from(document.getElementsByClassName('layer-window-name'));
       let newIndex = 0;
       layerData = layerData.reverse();

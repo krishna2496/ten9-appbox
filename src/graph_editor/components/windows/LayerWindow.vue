@@ -421,8 +421,13 @@ export default defineComponent({
     function dragLayer(draggedElement: simpleInt, newIndex: number) {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
-      graph.addCell(draggedElement, graphModel.root, newIndex);
-      graph.getModel().endUpdate();
+
+      graph.getModel().beginUpdate();
+      try {
+        graph.addCell(draggedElement, graphModel.root, newIndex);
+      } finally {
+        graph.getModel().endUpdate();
+      }
     }
 
     function changeMinStatus() {
