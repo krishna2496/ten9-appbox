@@ -150,7 +150,9 @@ draggable.layer-window-body-container(v-bind='dragOptions', tag='div')
   .layer-window-item-group(
     :key='el.id',
     v-for='(el, key) in realValue.slice().reverse()',
-    @drop='dragLayer(el)'
+    @drop='dragLayer(el)',
+    @dragenter.prevent,
+    @dragover.prevent
   )
     .layer-window-item(:class='{ active: el.id === selectedLayer }')
       .layer-window-check.mr-2
