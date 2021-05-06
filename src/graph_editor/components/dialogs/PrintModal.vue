@@ -644,7 +644,6 @@ export default defineComponent({
         } else {
           showCustomPaperSize.value = false;
           pageStyle.value = val;
-          pageFormat.value = props.editorUi.editor.graph.pageFormat;
         }
       },
     );
