@@ -421,8 +421,6 @@ export default defineComponent({
 
     // Drag layers
     function dragLayer(draggedElement: simpleInt, newIndex: number) {
-      console.log('drag', draggedElement);
-      console.log(newIndex);
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
 
