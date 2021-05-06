@@ -82,9 +82,6 @@ export default defineComponent({
     const isEnableBindMove = ref<boolean>(false);
     const isDeleteEnabled = ref<boolean>(false);
 
-    // if (document.querySelector('.fa-trash-o').parentElement.classList.contains('mxDisabled')) {
-    //   event.stopImmediatePropagation();
-    // }
     // Get index of layer from it's id
     function getIndexFromId(id: string) {
       const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
