@@ -720,7 +720,7 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
       option(v-for='(page, index) in PageSize', :key='index', :value='page.format') {{ page.title }}
   .row.ml-3.mb-3(v-show='showCustomPaperSize')
     input.mt-1.txt-input.w-30.ml-5(type='text', v-model='customWidth')
-    label.ml-2.mt-2 in x
+    label.ml-2.mt-2 in. x
     input.mt-1.txt-input.w-30.ml-2(type='text', v-model='customHeight')
     label.ml-2.mt-2 in.
   .row.ml-3.mb-3(v-show='!showCustomPaperSize')
