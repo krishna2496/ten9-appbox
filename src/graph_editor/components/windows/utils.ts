@@ -46,20 +46,12 @@ export function dragElement(el: HTMLDivElement, index: number) {
     prevX = e.clientX;
     prevY = e.clientY;
     // set the element's new position:
-    let windowHeight;
-    let windowWidth;
 
     // TODO: Need to abstract out the 'find'/'card' and indexes
     const containerRect = graphUtils.getDocumentContainerRect() as DOMRect;
-    if (index === 0) {
-      const findWindow = document.getElementsByClassName('find')[index] as HTMLElement;
-      windowHeight = findWindow.offsetHeight;
-      windowWidth = findWindow.offsetWidth;
-    } else {
-      const card = document.getElementsByClassName('card')[index] as HTMLElement;
-      windowHeight = card.offsetHeight;
-      windowWidth = card.offsetWidth;
-    }
+    const findWindow = document.getElementsByClassName('card')[index] as HTMLElement;
+    const windowHeight = findWindow.offsetHeight;
+    const windowWidth = findWindow.offsetWidth;
 
     // Update the element top
     let newTop = el.offsetTop - newY;

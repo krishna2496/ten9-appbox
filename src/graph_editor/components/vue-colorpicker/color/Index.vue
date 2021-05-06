@@ -1,6 +1,4 @@
 <script>
-import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
-const { mxEventSource } = require('../../../lib/jgraph/mxClient.js');
 import mixin from './mixin';
 import Saturation from './Saturation.vue';
 import Hue from './Hue.vue';
@@ -9,6 +7,8 @@ import Preview from './Preview.vue';
 import Sucker from './Sucker.vue';
 import Box from './Box.vue';
 import Colors from './Colors.vue';
+import WindowHeader from '../../windows/Header.vue';
+const { dragElement, bringWindowToFront } = require('../../windows/utils.ts');
 
 // interface ColorPickerObject {
 //   type?: string;
@@ -74,7 +74,7 @@ import Colors from './Colors.vue';
 //       default: {},
 //     },
 //   },
-  
+
 //   setup(props, ctx, computed ) {
 //     const color = ref<string>('#000000');
 //     const show = ref<boolean>(false);
@@ -108,7 +108,7 @@ import Colors from './Colors.vue';
 
 //     const previewWidth = computed(() => totalWidth - (props.suckerHide ? 0 : previewHeight.value));
 
-//     const rgba = computed({ 
+//     const rgba = computed({
 //       get(){
 //         return  {r: r.value, g: g.value, b: b.value,  a: a.value}
 //       },
@@ -119,7 +119,6 @@ import Colors from './Colors.vue';
 //         return  {h: h.value, s: s.value, v: v.value}
 //       },
 //       });
-
 
 //     const rgbString = computed(() => `rgb(${r.value}, ${g.value}, ${b.value})`);
 
@@ -154,8 +153,6 @@ import Colors from './Colors.vue';
 //       });
 //       },
 //     );
-     
-
 
 //     function apply() {
 //       if (colorPickerType.value === 'Background') {
@@ -300,6 +297,7 @@ import Colors from './Colors.vue';
 export default {
   components: {
     Saturation,
+    WindowHeader,
     Hue,
     Alpha,
     Preview,
@@ -311,7 +309,7 @@ export default {
   props: {
     theme: {
       type: String,
-      default: 'dark',
+      default: 'light',
     },
     suckerHide: {
       type: Boolean,
@@ -323,7 +321,7 @@ export default {
     // },
     suckerArea: {
       type: Array,
-      default: () => [950,700,900,700],
+      default: () => [950, 700, 900, 700],
     },
     colorsDefault: {
       type: Array,
@@ -368,6 +366,7 @@ export default {
       modelRgba: '',
       modelHex: '',
       suckerCanvas: null,
+      isMin: false,
       r: 0,
       g: 0,
       b: 0,
@@ -422,7 +421,10 @@ export default {
 
     // 避免初始化时，也会触发changeColor事件
     this.$watch('rgba', () => {
-      this.alphaHexString = this.rgba2hex(`rgb(${this.r}, ${this.g}, ${this.b}), ${this.a}`, this.a);
+      this.alphaHexString = this.rgba2hex(
+        `rgb(${this.r}, ${this.g}, ${this.b}), ${this.a}`,
+        this.a,
+      );
       this.$emit('changeColor', {
         rgba: this.rgba,
         hsv: this.hsv,
@@ -433,67 +435,31 @@ export default {
   mounted() {
     // eslint-disable-next-line no-undef
     this.editorUi.addListener('openColorPicker', (ui, event) => {
+      const ele = document.getElementsByClassName('card');
+
+      // Add drag property on layer window.
+      dragElement(ele[0], 0);
+
       const optios = event.getProperty('options');
-      this.alphaHexString = optios.color;
+      //debugger
+      console.log('optios.color', optios.color);
+      
       this.selectColor(optios.color, false);
       this.colorPickerType = optios.type;
       this.show = true;
+      this.alphaHexString = optios.color;
       const alpha = this.hexToRGBA(this.alphaHexString);
-      if(alpha != undefined) {
-        this.a = alpha
+      if (alpha != undefined) {
+        this.a = alpha;
       }
-      setTimeout(() => {
-        function dragElement(elmnt) {
-          let pos1 = 0,
-            pos2 = 0,
-            pos3 = 0,
-            pos4 = 0;
-          if (document.getElementById(elmnt.id + 'header')) {
-            // if present, the header is where you move the DIV from:
-            document.getElementById(elmnt.id + 'header').onmousedown = dragMouseDown;
-          } else {
-            // otherwise, move the DIV from anywhere inside the DIV:
-            elmnt.onmousedown = dragMouseDown;
-          }
 
-          function dragMouseDown(e) {
-            const handle = document.getElementsByClassName('modal-header')[0];
-            if (handle.contains(e.target)) {
-              e = e || window.event;
-              e.preventDefault();
-              // get the mouse cursor position at startup:
-              pos3 = e.clientX;
-              pos4 = e.clientY;
-              document.onmouseup = closeDragElement;
-              // call a function whenever the cursor moves:
-              document.onmousemove = elementDrag;
-            }
-          }
-
-          function elementDrag(e) {
-              e = e || window.event;
-              e.preventDefault();
-              // calculate the new cursor position:
-              pos1 = pos3 - e.clientX;
-              pos2 = pos4 - e.clientY;
-              pos3 = e.clientX;
-              pos4 = e.clientY;
-              // set the element's new position:
-              elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
-              elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
-          }
-
-          function closeDragElement() {
-            // stop moving when mouse button is released:
-            document.onmouseup = null;
-            document.onmousemove = null;
-          }
-        }
-        dragElement(document.getElementsByClassName('modal-content')[0]);
-      }, 500);
+     bringWindowToFront(0);
     });
   },
   methods: {
+    changeMinStatus() {
+      this.isMin = !this.isMin;
+    },
     openColorPicker() {
       this.show = true;
     },
@@ -501,27 +467,31 @@ export default {
       this.show = false;
     },
     apply() {
+      console.log('here');
       if (this.colorPickerType === 'Background') {
-        this.editorUi.setGraphBackgroundColor( '#'+this.alphaHexString);
+        this.editorUi.setGraphBackgroundColor('#' + this.alphaHexString);
       } else if (this.colorPickerType === 'Grid') {
-        this.editorUi.setGridColor( '#'+this.alphaHexString);
+        this.editorUi.setGridColor('#' + this.alphaHexString);
       } else if (this.colorPickerType === 'Fill') {
-        this.editorUi.setShapeColor('fillColor',  '#'+this.alphaHexString);
+        this.editorUi.setShapeColor('fillColor', '#' + this.alphaHexString);
       } else if (this.colorPickerType === 'Gradient') {
-        this.editorUi.setShapeColor('gradientColor',  '#'+this.alphaHexString);
+        this.editorUi.setShapeColor('gradientColor', '#' + this.alphaHexString);
       } else if (this.colorPickerType === 'Line') {
-        this.editorUi.setShapeColor('strokeColor',  '#'+this.alphaHexString);
+        this.editorUi.setShapeColor('strokeColor', '#' + this.alphaHexString);
       } else if (this.colorPickerType === 'Font Color') {
-        this.editorUi.setShapeColor('fontColor',  '#'+this.alphaHexString);
+        this.editorUi.setShapeColor('fontColor', '#' + this.alphaHexString);
       } else if (this.colorPickerType === 'Background Color') {
-        this.editorUi.setShapeColor('labelBackgroundColor',  '#'+this.alphaHexString);
+        this.editorUi.setShapeColor('labelBackgroundColor', '#' + this.alphaHexString);
       }
-      this.close();
+      //this.close();
     },
     selectSaturation(color) {
       const { r, g, b, h, s, v } = this.setColorValue(color);
       Object.assign(this, { r, g, b, h, s, v });
       this.setText();
+       this.$nextTick(() => {
+        this.apply();
+      });
     },
     selectHue(color) {
       const { r, g, b, h, s, v } = this.setColorValue(color);
@@ -530,11 +500,15 @@ export default {
       this.$nextTick(() => {
         this.$refs.saturation.renderColor();
         this.$refs.saturation.renderSlide();
+        this.apply();
       });
     },
     selectAlpha(a) {
       this.a = a;
       this.setText();
+      this.$nextTick(() => {
+        this.apply();
+      });
     },
     inputHex(color) {
       const { r, g, b, a, h, s, v } = this.setColorValue(color);
@@ -545,6 +519,7 @@ export default {
         this.$refs.saturation.renderColor();
         this.$refs.saturation.renderSlide();
         this.$refs.hue.renderSlide();
+        this.apply();
       });
     },
     inputRgba(color) {
@@ -556,11 +531,15 @@ export default {
         this.$refs.saturation.renderColor();
         this.$refs.saturation.renderSlide();
         this.$refs.hue.renderSlide();
+        this.apply();
       });
     },
     setText() {
       this.modelHex = this.hexString;
       this.modelRgba = this.rgbaStringShort;
+      this.$nextTick(() => {
+        
+      });
     },
     openSucker(isOpen) {
       this.$emit('openSucker', isOpen);
@@ -587,6 +566,7 @@ export default {
           this.$refs.saturation.renderColor();
           this.$refs.saturation.renderSlide();
           this.$refs.hue.renderSlide();
+          this.apply();
         });
       }
     },
@@ -595,54 +575,68 @@ export default {
 </script>
 
 <template lang="pug">
-b-modal#color-modal(
-  :visible='show',
-  no-close-on-backdrop='',
-  @close='close',
-  @hide='close',
-  no-fade='',
-  size='sm',
+b-card.mb-2.color-card(
+  tag='article',
+  style='max-width: 20rem',
+  no-body,
+  :class='isMin ? "minimize" : ""'
+  v-show='show'
 )
-  template(v-slot:modal-header)
-    .w-100.d-flex.justify-content-end.cross-icon
-  .hu-color-picker(:class='{ light: isLightTheme }', :style="{ width: totalWidth + 'px', margin:'auto' }")
-    .color-set
-      saturation(
-        ref='saturation',
-        :color='rgbString',
-        :hsv='hsv',
-        :size='hueHeight',
-        @selectSaturation='selectSaturation'
-      )
-      hue(ref='hue', :hsv='hsv', :width='hueWidth', :height='hueHeight', @selectHue='selectHue')
-      alpha(
-        ref='alpha',
-        :color='rgbString',
-        :rgba='rgba',
-        :width='hueWidth',
-        :height='hueHeight',
-        @selectAlpha='selectAlpha'
-      )
-    .color-show(:style='{ height: previewHeight + "px" }')
-      preview(:color='rgbaString', :width='previewWidth', :height='previewHeight')
-      sucker(
-        v-if='!suckerHide',
-        :sucker-canvas='suckerCanvas',
-        :sucker-area='suckerArea',
-        @openSucker='openSucker',
-        @selectSucker='selectSucker'
-      )
-    box(name='HEX', :color='modelHex', @inputColor='inputHex')
-    box(name='RGBA', :color='modelRgba', @inputColor='inputRgba')
-    colors(
-      :color='rgbaString',
-      :colors-default='colorsDefault',
-      :colors-history-key='colorsHistoryKey',
-      @selectColor='selectColor'
+  template.row(#header='')
+    window-header.color-picker(
+      title='Colors',
+      @close-window='close',
+      :isMin='isMin',
+      @change-min-status='changeMinStatus'
     )
-  template(v-slot:modal-footer)
-    button.btn.btn-grey(@click='close') Cancel
-    button.btn.btn-primary(@click='apply') Apply
+  .card-body.py-0.mt-4.mb-4
+    .hu-color-picker(
+      :class='{ light: isLightTheme }',
+      :style='{ width: totalWidth + "px", margin: "auto" }'
+    )
+      .color-set
+        saturation(
+          ref='saturation',
+          :color='rgbString',
+          :hsv='hsv',
+          :size='hueHeight',
+          @selectSaturation='selectSaturation'
+        )
+        hue(
+          ref='hue',
+          :hsv='hsv',
+          :width='hueWidth',
+          :height='hueHeight',
+          @selectHue='selectHue'
+        )
+        alpha(
+          ref='alpha',
+          :color='rgbString',
+          :rgba='rgba',
+          :width='hueWidth',
+          :height='hueHeight',
+          @selectAlpha='selectAlpha'
+        )
+      .color-show(:style='{ height: previewHeight + "px" }')
+        preview(:color='rgbaString', :width='previewWidth', :height='previewHeight')
+        sucker(
+          v-if='!suckerHide',
+          :sucker-canvas='suckerCanvas',
+          :sucker-area='suckerArea',
+          @openSucker='openSucker',
+          @selectSucker='selectSucker'
+        )
+      box(name='HEX', :color='modelHex', @inputColor='inputHex')
+      box(name='RGBA', :color='modelRgba', @inputColor='inputRgba')
+      colors(
+        :color='rgbaString',
+        :colors-default='colorsDefault',
+        :colors-history-key='colorsHistoryKey',
+        @selectColor='selectColor'
+      )
+  //- template(v-slot:modal-footer)
+  //-   button.btn.btn-grey(@click='close') Cancel
+  //-   button.btn.btn-primary(@click='apply') Apply
 </template>
 
 <style lang="scss" scoped>

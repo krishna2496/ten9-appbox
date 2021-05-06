@@ -84,7 +84,7 @@ export default defineComponent({
 
     function openFindWindow() {
       show.value = true;
-      bringWindowToFront(0);
+      bringWindowToFront(1);
     }
 
     function testMeta(re: RegularExpression, cell: CellProperty, search: string) {
@@ -244,7 +244,7 @@ export default defineComponent({
       props.editorUi.addListener('hideFind', close);
 
       const ele: unknown = document.getElementsByClassName('card');
-      dragElement(ele[0], 0);
+      dragElement(ele[1], 1);
     });
 
     function checkAllPages() {

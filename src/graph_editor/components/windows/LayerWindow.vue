@@ -210,7 +210,7 @@ export default defineComponent({
         layerWindow.value.style.opacity = '1';
       });
 
-      bringWindowToFront(1);
+      bringWindowToFront(2);
     }
 
     // Enable/disable move selection button on graph selection changes
@@ -248,8 +248,9 @@ export default defineComponent({
       props.editorUi.addListener('openLayerWindow', openLayerWindow);
       props.editorUi.addListener('setLayerWindowCoordinates', setLayerWindowCoordinates);
       const ele: unknown = document.getElementsByClassName('card');
+
       // Add drag property on layer window.
-      dragElement(ele[1], 1);
+      dragElement(ele[2], 2);
 
       // Enable/Disable move selection button on window open if any shape selected.
       graph.addListener('changeSelectionStage', changeSelectionStage);
