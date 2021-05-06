@@ -110,9 +110,10 @@
   min-width: 240px;
 }
 
-.layer-window-minimize {
-  min-height: 40px;
-  max-height: 40px;
+.layer-window-minimize,
+.minimize {
+  min-height: 47px;
+  max-height: 47px;
 }
 
 .layer-window-maximize {
@@ -232,10 +233,6 @@
 .dropDownRowDisable {
   color: darkgray;
   cursor: not-allowed !important;
-}
-
-.minimize {
-  height: 50px !important;
 }
 
 .justify-content-between {
