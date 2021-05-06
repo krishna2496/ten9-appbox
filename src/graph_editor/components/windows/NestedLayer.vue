@@ -14,7 +14,7 @@
 * -----
 -->
 <script lang="ts">
-import { computed, defineComponent } from '@vue/composition-api';
+import { computed, defineComponent, ref } from '@vue/composition-api';
 import draggable from 'vuedraggable';
 import VClamp from 'vue-clamp';
 
@@ -60,7 +60,7 @@ export default defineComponent({
         ghostClass: 'ghost',
       };
     });
-
+    const layerSelected = ref<simpleInt>();
     // Get layer listing
     const realValue = computed(() => {
       return props.value ? props.value : props.list;
@@ -117,18 +117,22 @@ export default defineComponent({
     }
 
     // Drag layers
-    function dragLayer(elm: simpleInt) {
+    function dragLayer() {
       // Get layer list
       let layerData = Array.from(document.getElementsByClassName('layer-window-name'));
       let newIndex = 0;
       layerData = layerData.reverse();
       layerData.forEach((element, key) => {
-        if (element.id == elm.id) {
+        if (element.id == layerSelected.value.id) {
           newIndex = key; // find new index of dragged element
         }
       });
-      context.emit('drag-layer', elm, newIndex);
+      context.emit('drag-layer', layerSelected.value, newIndex);
     }
+
+    const startDrag = (elm: simpleInt) => {
+      layerSelected.value = elm;
+    };
 
     return {
       changeSelectedLayer,
@@ -140,17 +144,18 @@ export default defineComponent({
       realValue,
       sortDown,
       sortUp,
+      startDrag,
     };
   },
 });
 </script>
 
 <template lang="pug">
-draggable.layer-window-body-container(v-bind='dragOptions', tag='div')
+draggable.layer-window-body-container(v-bind='dragOptions', tag='div', @end='dragLayer')
   .layer-window-item-group(
     :key='el.id',
     v-for='(el, key) in realValue.slice().reverse()',
-    @drop='dragLayer(el)',
+    @dragstart='startDrag(el)',
     @dragenter.prevent,
     @dragover.prevent
   )
