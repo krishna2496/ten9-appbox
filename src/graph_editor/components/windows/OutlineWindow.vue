@@ -144,7 +144,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-card.mb-2(
+b-card.mb-2.outline-window-card(
   tag='article',
   style='max-width: 20rem',
   v-resize='resizeWindow',
