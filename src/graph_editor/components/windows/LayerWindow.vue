@@ -96,13 +96,12 @@ export default defineComponent({
           isGraphSelected.value = false;
         }
 
-        if (
-          (id === selectedLayer.value && layers.value[index]['style']) ||
-          layers.value.length === 1
-        ) {
-          isDeleteEnabled.value = true;
-        } else {
-          isDeleteEnabled.value = false;
+        if (id === selectedLayer.value) {
+          if (layers.value[index]['style'] || layers.value.length === 1) {
+            isDeleteEnabled.value = true;
+          } else {
+            isDeleteEnabled.value = false;
+          }
         }
       }
 
