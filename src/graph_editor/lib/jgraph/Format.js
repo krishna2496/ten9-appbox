@@ -1165,7 +1165,13 @@ BaseFormatPanel.prototype.createColorOption = function (
       mxEvent.consume(evt);
       var color = getColorFn();
       var type = label;
+      // TEN9: remove all active button class
+      var element = document.getElementsByClassName('geColorBtn');
+      for (var i = 0; i < element.length; i++) {
+        element[i].classList.remove('active_button');
+      }
       this.editorUi.fireEvent(new mxEventObject('openColorPicker', 'options', { type, color }));
+      btn.className = btn.className + ' active_button';
     }),
   );
 
@@ -7373,7 +7379,7 @@ DiagramFormatPanel.prototype.addView = function (div) {
         // mxEvent.consume(evt);
         ui.fireEvent(new mxEventObject('openBackgroundImage'));
       });
-
+      console.log('here');
       btn.classList.add('background-panel__button', 'geColorBtn');
 
       bg.appendChild(btn);

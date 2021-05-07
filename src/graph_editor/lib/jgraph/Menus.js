@@ -1333,7 +1333,6 @@ Menus.prototype.toggleStyle = function (key, defaultValue) {
  */
 Menus.prototype.addMenuItem = function (menu, key, parent, trigger, sprite, label) {
   var action = this.editorUi.actions.get(key);
-
   if (action != null && (menu.showDisabled || action.isEnabled()) && action.visible) {
     var item = menu.addItem(
       label || action.label,

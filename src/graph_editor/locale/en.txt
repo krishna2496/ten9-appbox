@@ -90,6 +90,7 @@ classic=Classic
 clearDefaultStyle=Clear Default Style
 clearWaypoints=Clear Waypoints
 clipart=Clipart
+colors=Colors
 collapse=Collapse
 collapseExpand=Collapse/Expand
 collapsible=Collapsible

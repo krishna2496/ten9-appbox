@@ -441,8 +441,10 @@ export default {
       dragElement(ele[0], 0);
 
       const optios = event.getProperty('options');
-      //debugger
-      console.log('optios.color', optios.color);
+
+      this.selectSaturation(optios.color)
+      this.selectHue(optios.color)
+      this.inputHex(optios.color)
       
       this.selectColor(optios.color, false);
       this.colorPickerType = optios.type;
@@ -455,6 +457,22 @@ export default {
 
      bringWindowToFront(0);
     });
+
+    this.editorUi.addListener('openColorWindow',() => {
+       const ele = document.getElementsByClassName('card');
+
+      // Add drag property on color window.
+      dragElement(ele[0], 0);
+
+      this.show = true;
+
+      bringWindowToFront(0);
+    });
+
+    this.$nextTick(() => {
+        const colorWindow = document.getElementById('color-window');
+        colorWindow.style.right = '0px';
+    });
   },
   methods: {
     changeMinStatus() {
@@ -464,10 +482,14 @@ export default {
       this.show = true;
     },
     close() {
+      var element = document.getElementsByClassName('geColorBtn');
+      for (var i = 0; i < element.length; i++) {
+        element[i].classList.remove('active_button');
+     }
+      this.colorPickerType = '';
       this.show = false;
     },
     apply() {
-      console.log('here');
       if (this.colorPickerType === 'Background') {
         this.editorUi.setGraphBackgroundColor('#' + this.alphaHexString);
       } else if (this.colorPickerType === 'Grid') {
@@ -575,7 +597,7 @@ export default {
 </script>
 
 <template lang="pug">
-b-card.mb-2.color-card(
+b-card#color-window.mb-2.color-card(
   tag='article',
   style='max-width: 20rem',
   no-body,
@@ -589,7 +611,7 @@ b-card.mb-2.color-card(
       :isMin='isMin',
       @change-min-status='changeMinStatus'
     )
-  .card-body.py-0.mt-4.mb-4
+  .card-body.p-0
     .hu-color-picker(
       :class='{ light: isLightTheme }',
       :style='{ width: totalWidth + "px", margin: "auto" }'

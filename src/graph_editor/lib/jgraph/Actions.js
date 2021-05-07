@@ -1872,7 +1872,6 @@ Actions.prototype.init = function () {
   action = this.addAction(
     'layers',
     mxUtils.bind(this, function () {
-
       // TEN9: Changes for new layer window
       const layersWindow = document.querySelector('#layer-window-id');
       if (!layersWindow) {
@@ -1926,6 +1925,16 @@ Actions.prototype.init = function () {
         return true;
       }
     }),
+  );
+
+  action = this.addAction(
+    'colors',
+    mxUtils.bind(this, function () {
+      ui.fireEvent(new mxEventObject('openColorWindow'));
+    }),
+    null,
+    null,
+    Editor.ctrlKey + '+Shift+C',
   );
 
   action = this.addAction(
