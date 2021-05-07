@@ -518,7 +518,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.layer-window
+.layer-window(v-show='show')
   div
     b-button(v-if='!show', @click='show = true', variant='primary') Show Layer Window
     b-card#layer-window-id.layer-window-card(
