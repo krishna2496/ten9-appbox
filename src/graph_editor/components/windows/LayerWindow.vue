@@ -218,17 +218,6 @@ export default defineComponent({
       if (event.getProperty('selection')) {
         // Enable move selection button if any shape is selected.
         isEnableBind.value = true;
-        const { graph } = props.editorUi.editor;
-        const graphModel = graph.model;
-        for (let i = layers.value.length - 1; i >= 0; i--) {
-          const child = graphModel.getChildAt(graphModel.root, i);
-          if (
-            graph.getSelectionCount() == 1 &&
-            graphModel.isAncestor(child, graph.getSelectionCell())
-          ) {
-            changeSelectedLayer(layers.value[i].id);
-          }
-        }
       } else {
         // Disable move selection button if no shape is selected
         isEnableBind.value = false;
