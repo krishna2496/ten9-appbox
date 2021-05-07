@@ -80,6 +80,8 @@ export default defineComponent({
     const editLayerId = ref<string>('');
     const dropDownId = ref<string>(selectedLayer.value);
     const isEnableBindMove = ref<boolean>(false);
+    const isDeleteEnabled = ref<boolean>(false);
+
     // Get index of layer from it's id
     function getIndexFromId(id: string) {
       const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
@@ -92,6 +94,14 @@ export default defineComponent({
         const index = getIndexFromId(id);
         if (id === selectedLayer.value && layers.value[index]['style']) {
           isGraphSelected.value = false;
+        }
+
+        if (id === selectedLayer.value) {
+          if (layers.value[index]['style'] || layers.value.length === 1) {
+            isDeleteEnabled.value = true;
+          } else {
+            isDeleteEnabled.value = false;
+          }
         }
       }
 
@@ -289,31 +299,34 @@ export default defineComponent({
 
     // Delete selected layer from layers listing
     function deleteLayer() {
-      const { graph } = props.editorUi.editor;
-      const graphModel = graph.model;
-      let i = getIndexFromId(selectedLayer.value);
-      const defaultParent = layers.value;
+      const deleteButton = document.querySelector('.fa-trash-o').parentElement;
+      if (!deleteButton.classList.contains('mxDisabled')) {
+        const { graph } = props.editorUi.editor;
+        const graphModel = graph.model;
+        let i = getIndexFromId(selectedLayer.value);
+        const defaultParent = layers.value;
 
-      if (graph.isEnabled()) {
-        graphModel.beginUpdate();
-        try {
-          const index = graphModel.root.getIndex(defaultParent[i]);
-          graph.removeCells([defaultParent[i]], false);
+        if (graph.isEnabled()) {
+          graphModel.beginUpdate();
+          try {
+            const index = graphModel.root.getIndex(defaultParent[i]);
+            graph.removeCells([defaultParent[i]], false);
 
-          // Creates default layer if no layer exists
-          if (graphModel.getChildCount(graphModel.root) == 0) {
-            graphModel.add(graphModel.root, new mxCell('Background'));
-            graph.setDefaultParent();
-          } else if (index > 0 && index <= graphModel.getChildCount(graphModel.root)) {
-            graph.setDefaultParent(graphModel.getChildAt(graphModel.root, index - 1));
-            i = index - 1;
-          } else {
-            graph.setDefaultParent(null);
+            // Creates default layer if no layer exists
+            if (graphModel.getChildCount(graphModel.root) == 0) {
+              graphModel.add(graphModel.root, new mxCell('Background'));
+              graph.setDefaultParent();
+            } else if (index > 0 && index <= graphModel.getChildCount(graphModel.root)) {
+              graph.setDefaultParent(graphModel.getChildAt(graphModel.root, index - 1));
+              i = index - 1;
+            } else {
+              graph.setDefaultParent(null);
+            }
+          } finally {
+            graphModel.endUpdate();
           }
-        } finally {
-          graphModel.endUpdate();
+          changeSelectedLayer(layers.value[i].id);
         }
-        changeSelectedLayer(layers.value[i].id);
       }
     }
 
@@ -472,6 +485,7 @@ export default defineComponent({
       editLayerName,
       getIndexFromId,
       isEnableBind,
+      isDeleteEnabled,
       isEnableBindMove,
       isMin,
       isShow,
@@ -520,7 +534,12 @@ export default defineComponent({
           @drag-layer='dragLayer'
         )
       template(#footer='', v-if='!isMin')
-        span.mr-15.cursor-pointer(aria-hidden='true', @click='deleteLayer', title='Delete layer')
+        span.mr-15.cursor-pointer(
+          aria-hidden='true',
+          @click='deleteLayer',
+          title='Delete layer',
+          :class='{ mxDisabled: isDeleteEnabled }'
+        )
           i.fa.fa-trash-o.fa-lg.layer-window-footerBtn
         span#layer-window-moveSelectionBtn.mr-15.cursor-pointer(
           aria-hidden='true',
