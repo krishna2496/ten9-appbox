@@ -1147,8 +1147,7 @@ BaseFormatPanel.prototype.createColorOption = function (
 
         // Checks if the color value needs to be updated in the model
         if (forceUpdate || hideCheckbox || getColorFn() != value) {
-          // TEN9: add cutom modal for changing the color picker value
-          // setColorFn(value);
+          setColorFn(value);
         }
       }
 
