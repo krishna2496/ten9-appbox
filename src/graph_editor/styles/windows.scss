@@ -110,9 +110,10 @@
   min-width: 240px;
 }
 
-.layer-window-minimize {
-  min-height: 40px;
-  max-height: 40px;
+.layer-window-minimize,
+.minimize {
+  min-height: 44px;
+  max-height: 44px;
 }
 
 .layer-window-maximize {
@@ -161,7 +162,6 @@
   width: 240px !important;
   height: fit-content;
   margin: 0;
-  position: relative !important;
 }
 
 .layer-window-card-body,
@@ -232,10 +232,6 @@
 .dropDownRowDisable {
   color: darkgray;
   cursor: not-allowed !important;
-}
-
-.minimize {
-  height: 50px !important;
 }
 
 .justify-content-between {

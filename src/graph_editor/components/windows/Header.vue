@@ -49,7 +49,7 @@ export default defineComponent({
 
 <template lang="pug">
 .d-flex.align-items-center.w-100.display-content-space-between
-  h6.mb-1.pl-0 {{ title }}
+  h6.pl-0 {{ title }}
   span.d-flex
     span.cursor-pointer(
       aria-hidden='true',
