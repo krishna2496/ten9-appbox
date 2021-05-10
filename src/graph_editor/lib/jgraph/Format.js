@@ -1089,7 +1089,9 @@ BaseFormatPanel.prototype.createColorOption = function (
   listener,
   callbackFn,
   hideCheckbox,
+  type,
 ) {
+  //debugger
   var div = document.createElement('div');
   div.classList.add('color-option-field');
 
@@ -1164,13 +1166,35 @@ BaseFormatPanel.prototype.createColorOption = function (
       // });
       mxEvent.consume(evt);
       var color = getColorFn();
-      var type = label;
+      //const type = label;
       // TEN9: remove all active button class
       var element = document.getElementsByClassName('geColorBtn');
       for (var i = 0; i < element.length; i++) {
         element[i].classList.remove('active_button');
       }
-      this.editorUi.fireEvent(new mxEventObject('openColorPicker', 'options', { type, color }));
+      const myUi = this.editorUi;
+      console.log('type', type);
+      function applyFn(alphaHexString) {
+        if (type === 'Background') {
+          myUi.setGraphBackgroundColor(alphaHexString);
+        } else if (type === 'Grid') {
+          myUi.setGridColor(alphaHexString);
+        } else if (type === 'Fill') {
+          myUi.setShapeColor('fillColor', alphaHexString);
+        } else if (type === 'Gradient') {
+          myUi.setShapeColor('gradientColor', alphaHexString);
+        } else if (type === 'Line') {
+          myUi.setShapeColor('strokeColor', alphaHexString);
+        } else if (type === 'Font Color') {
+          myUi.setShapeColor('fontColor', alphaHexString);
+        } else if (type === 'Background Color') {
+          myUi.setShapeColor('labelBackgroundColor', alphaHexString);
+        }
+      }
+
+      this.editorUi.fireEvent(
+        new mxEventObject('openColorPicker', 'options', { type, color, applyFn }),
+      );
       btn.className = btn.className + ' active_button';
     }),
   );
@@ -1222,6 +1246,7 @@ BaseFormatPanel.prototype.createCellColorOption = function (
   defaultColor,
   callbackFn,
   setStyleFn,
+  type,
 ) {
   var ui = this.editorUi;
   var editor = ui.editor;
@@ -1282,6 +1307,8 @@ BaseFormatPanel.prototype.createCellColorOption = function (
       },
     },
     callbackFn,
+    null,
+    type,
   );
 };
 
@@ -3403,6 +3430,8 @@ TextFormatPanel.prototype.addFont = function (container) {
         },
         null,
         true,
+        // TEN9: add extra parameter for color type
+        'Background Color',
       )
     : this.createCellColorOption(
         mxResources.get('backgroundColor'),
@@ -3414,6 +3443,8 @@ TextFormatPanel.prototype.addFont = function (container) {
             elt.style.backgroundColor = null;
           });
         },
+        // TEN9: add extra parameter for color type
+        'Background Color',
       );
   bgPanel.style.fontWeight = 'bold';
 
@@ -3509,6 +3540,8 @@ TextFormatPanel.prototype.addFont = function (container) {
         },
         null,
         true,
+        // TEN9: add extra parameter for color type
+        'Font Color',
       )
     : this.createCellColorOption(
         mxResources.get('fontColor'),
@@ -3537,6 +3570,8 @@ TextFormatPanel.prototype.addFont = function (container) {
             elt.style.color = null;
           });
         },
+        // TEN9: add extra parameter for color type
+        'Font Color',
       );
   panel.style.fontWeight = 'bold';
 
@@ -4710,6 +4745,8 @@ StyleFormatPanel.prototype.addFill = function (container) {
     function (color) {
       graph.updateCellStyles(mxConstants.STYLE_GRADIENTCOLOR, color, graph.getSelectionCells());
     },
+    // TEN9: add extra parameter for color type
+    'Gradient',
   );
 
   gradientPanel.classList.add('gradient-panel');
@@ -4730,6 +4767,8 @@ StyleFormatPanel.prototype.addFill = function (container) {
     mxUtils.bind(this, function (color) {
       graph.updateCellStyles(fillKey, color, graph.getSelectionCells());
     }),
+    // TEN9: add extra parameter for color type
+    'Fill',
   );
 
   var tmpColor = mxUtils.getValue(ss.style, fillKey, null);
@@ -4939,6 +4978,8 @@ StyleFormatPanel.prototype.addStroke = function (container) {
     mxUtils.bind(this, function (color) {
       graph.updateCellStyles(strokeKey, color, graph.getSelectionCells());
     }),
+    // TEN9: add extra parameter for color type
+    'Line',
   );
 
   lineColor.appendChild(styleSelect);
@@ -7368,6 +7409,9 @@ DiagramFormatPanel.prototype.addView = function (div) {
           ui.removeListener(this.listener);
         },
       },
+      null,
+      null,
+      'Background',
     );
 
     bg.classList.add('background-panel');
@@ -7379,7 +7423,7 @@ DiagramFormatPanel.prototype.addView = function (div) {
         // mxEvent.consume(evt);
         ui.fireEvent(new mxEventObject('openBackgroundImage'));
       });
-      console.log('here');
+
       btn.classList.add('background-panel__button', 'geColorBtn');
 
       bg.appendChild(btn);
@@ -7588,6 +7632,10 @@ DiagramFormatPanel.prototype.addGridOption = function (container) {
           ui.removeListener(this.listener);
         },
       },
+      null,
+      null,
+      // TEN9: add extra parameter for color type
+      'Grid',
     );
 
     panel.classList.add('grid-panel');

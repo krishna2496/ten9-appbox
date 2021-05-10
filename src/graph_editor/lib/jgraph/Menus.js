@@ -1306,7 +1306,12 @@ Menus.prototype.pickColor = function (key, cmd, defaultValue) {
   } else {
     var type = 'Line';
   }
-  this.editorUi.fireEvent(new mxEventObject('openColorPicker', 'options', { type, color }));
+  function applyFn(alphaHexString) {
+    this.editorUi.setShapeColor(key, alphaHexString);
+  }
+  this.editorUi.fireEvent(
+    new mxEventObject('openColorPicker', 'options', { type, color, applyFn }),
+  );
 };
 
 /**

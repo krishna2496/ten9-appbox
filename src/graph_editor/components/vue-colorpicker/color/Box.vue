@@ -46,7 +46,7 @@ export default {
     justify-content: center;
     align-items: center;
     color: #999;
-    background: #252930;
+    background: #ccc;
   }
 
   .value {
@@ -55,8 +55,8 @@ export default {
     min-width: 100px; // 可以让flex起作用
     padding: 0 12px;
     border: 0;
-    color: #fff;
-    background: #2e333a;
+    color: #000;
+    background: #f1f1f1;
     box-sizing: border-box;
   }
 }

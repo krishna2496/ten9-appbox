@@ -81,6 +81,7 @@ export default {
 
   .item {
     position: relative;
+    border: 1px solid #000;
     width: 16px;
     height: 16px;
     margin: 10px 0 0 10px !important;

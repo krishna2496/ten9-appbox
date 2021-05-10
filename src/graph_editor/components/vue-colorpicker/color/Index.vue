@@ -357,6 +357,7 @@ export default {
   data() {
     return {
       alphaHexString: '',
+      applyFn: null,
       color: '#000000',
       colorPickerType: '',
       show: false,
@@ -440,16 +441,18 @@ export default {
       // Add drag property on layer window.
       dragElement(ele[0], 0);
 
-      const optios = event.getProperty('options');
+      const options = event.getProperty('options');
 
-      this.selectSaturation(optios.color)
-      this.selectHue(optios.color)
-      this.inputHex(optios.color)
+      this.applyFn = options.applyFn;
+
+      this.selectSaturation(options.color)
+      this.selectHue(options.color)
+      this.inputHex(options.color)
       
-      this.selectColor(optios.color, false);
-      this.colorPickerType = optios.type;
+      this.selectColor(options.color, false);
+      this.colorPickerType = options.type;
       this.show = true;
-      this.alphaHexString = optios.color;
+      this.alphaHexString = options.color;
       const alpha = this.hexToRGBA(this.alphaHexString);
       if (alpha != undefined) {
         this.a = alpha;
@@ -488,24 +491,12 @@ export default {
      }
       this.colorPickerType = '';
       this.show = false;
+      this.applyFn = null;
     },
     apply() {
-      if (this.colorPickerType === 'Background') {
-        this.editorUi.setGraphBackgroundColor('#' + this.alphaHexString);
-      } else if (this.colorPickerType === 'Grid') {
-        this.editorUi.setGridColor('#' + this.alphaHexString);
-      } else if (this.colorPickerType === 'Fill') {
-        this.editorUi.setShapeColor('fillColor', '#' + this.alphaHexString);
-      } else if (this.colorPickerType === 'Gradient') {
-        this.editorUi.setShapeColor('gradientColor', '#' + this.alphaHexString);
-      } else if (this.colorPickerType === 'Line') {
-        this.editorUi.setShapeColor('strokeColor', '#' + this.alphaHexString);
-      } else if (this.colorPickerType === 'Font Color') {
-        this.editorUi.setShapeColor('fontColor', '#' + this.alphaHexString);
-      } else if (this.colorPickerType === 'Background Color') {
-        this.editorUi.setShapeColor('labelBackgroundColor', '#' + this.alphaHexString);
+      if (this.applyFn) {
+        this.applyFn(`#${this.alphaHexString}`);
       }
-      //this.close();
     },
     selectSaturation(color) {
       const { r, g, b, h, s, v } = this.setColorValue(color);
