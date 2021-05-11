@@ -387,7 +387,6 @@ export default defineComponent({
     function moveSelection() {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
-      alert('in1');
       setLayerWindowCoordinates();
       dropDownId.value = '';
       for (let i = layers.value.length - 1; i >= 0; i--) {
