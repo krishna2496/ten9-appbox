@@ -321,7 +321,7 @@ export default defineComponent({
           graphModel.endUpdate();
         }
       }
-
+      changeCellSelection(layers.value[layers.value.length - 1].id);
       changeSelectedLayer(layers.value[layers.value.length - 1].id);
     }
 
@@ -353,6 +353,7 @@ export default defineComponent({
           } finally {
             graphModel.endUpdate();
           }
+          changeCellSelection(layers.value[i].id);
           changeSelectedLayer(layers.value[i].id);
         }
       }
@@ -372,6 +373,7 @@ export default defineComponent({
           newCell = graph.addCell(newCell, graphModel.root, index + 1);
           graph.setDefaultParent(newCell);
         } finally {
+          changeCellSelection(newCell.id);
           changeSelectedLayer(newCell.id);
           graphModel.endUpdate();
         }
