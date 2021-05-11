@@ -247,12 +247,22 @@ export default defineComponent({
         const graphModel = graph.model;
         if (layers && layers.value) {
           for (let i = layers.value.length - 1; i >= 0; i--) {
-            const child = graphModel.getChildAt(graphModel.root, i);
-            if (
-              graph.getSelectionCount() == 1 &&
-              graphModel.isAncestor(child, graph.getSelectionCell())
+            const layerCell = graphModel.getChildAt(graphModel.root, i);
+            const selectedCells = graph.getSelectionCells();
+            if (selectedCells.length === 0) {
+              break;
+            }
+            let allCellsInSameLayer = true;
+            for (
+              let cellIndex = 0;
+              allCellsInSameLayer && cellIndex < selectedCells.length;
+              cellIndex++
             ) {
+              allCellsInSameLayer = graphModel.isAncestor(layerCell, selectedCells[cellIndex]);
+            }
+            if (allCellsInSameLayer) {
               changeSelectedLayer(layers.value[i].id);
+              break;
             }
           }
         }
