@@ -29,6 +29,7 @@ interface simpleInt {
   style: string;
   value: string;
   visible: boolean;
+  children: simpleInt;
 }
 type LayerProperty = simpleInt[];
 interface boxCoordinate {
@@ -191,6 +192,20 @@ export default defineComponent({
       isMoveSelectionEnable(id);
     }
 
+    function changeCellSelection(id: string) {
+      const { graph } = props.editorUi.editor;
+      const index = getIndexFromId(id);
+      const defaultParent = layers.value;
+      graph.setSelectionCells(null);
+      if (!defaultParent[index]['style']) {
+        graph.setSelectionCells(defaultParent[index].children);
+      } else {
+        for (let i = layers.value.length - 1; i >= 0; i--) {
+          graph.removeSelectionCells(layers.value[i].children);
+        }
+      }
+    }
+
     // Open layer window
     function openLayerWindow() {
       const { graph } = props.editorUi.editor;
@@ -306,7 +321,7 @@ export default defineComponent({
           graphModel.endUpdate();
         }
       }
-
+      changeCellSelection(layers.value[layers.value.length - 1].id);
       changeSelectedLayer(layers.value[layers.value.length - 1].id);
     }
 
@@ -338,6 +353,7 @@ export default defineComponent({
           } finally {
             graphModel.endUpdate();
           }
+          changeCellSelection(layers.value[i].id);
           changeSelectedLayer(layers.value[i].id);
         }
       }
@@ -357,6 +373,7 @@ export default defineComponent({
           newCell = graph.addCell(newCell, graphModel.root, index + 1);
           graph.setDefaultParent(newCell);
         } finally {
+          changeCellSelection(newCell.id);
           changeSelectedLayer(newCell.id);
           graphModel.endUpdate();
         }
@@ -379,7 +396,6 @@ export default defineComponent({
     function moveSelection() {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
-
       setLayerWindowCoordinates();
       dropDownId.value = '';
       for (let i = layers.value.length - 1; i >= 0; i--) {
@@ -430,6 +446,9 @@ export default defineComponent({
           }
           graph.removeSelectionCells(graph.getModel().getDescendants(defaultParent[index]));
         }
+      }
+      if (id == selectedLayer.value) {
+        changeCellSelection(id);
       }
       isMoveSelectionEnable(id);
     }
@@ -482,6 +501,7 @@ export default defineComponent({
     return {
       addLayer,
       breakWord,
+      changeCellSelection,
       changeSelectionStage,
       changeLayerWindowCoordinates,
       changeMinStatus,
@@ -542,6 +562,7 @@ export default defineComponent({
           :selectedLayer='selectedLayer',
           @edit-layer='editLayer',
           @change-selected-layer='changeSelectedLayer',
+          @change-cell-selection='changeCellSelection',
           @lock-layer='lockLayer',
           @check-layer='checkLayer',
           @drag-layer='dragLayer'
