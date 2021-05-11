@@ -3,5 +3,6 @@ node_modules/
 **/*.min.js
 src/graph_editor/lib/deflate/
 src/graph_editor/lib/jscolor/
+src/graph_editor/lib/rough/
 src/graph_editor/lib/spin/
 src/graph_editor/components/vue-colorpicker
