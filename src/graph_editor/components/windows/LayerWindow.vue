@@ -29,6 +29,7 @@ interface simpleInt {
   style: string;
   value: string;
   visible: boolean;
+  children: simpleInt;
 }
 type LayerProperty = simpleInt[];
 interface boxCoordinate {
@@ -189,6 +190,13 @@ export default defineComponent({
         graph.view.setCurrentRoot(null);
       }
       isMoveSelectionEnable(id);
+    }
+
+    function changeCellSelection(id: string) {
+      const { graph } = props.editorUi.editor;
+      const index = getIndexFromId(id);
+      const defaultParent = layers.value;
+      graph.setSelectionCells(defaultParent[index].children);
     }
 
     // Open layer window
@@ -379,7 +387,7 @@ export default defineComponent({
     function moveSelection() {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
-
+      alert('in1');
       setLayerWindowCoordinates();
       dropDownId.value = '';
       for (let i = layers.value.length - 1; i >= 0; i--) {
@@ -482,6 +490,7 @@ export default defineComponent({
     return {
       addLayer,
       breakWord,
+      changeCellSelection,
       changeSelectionStage,
       changeLayerWindowCoordinates,
       changeMinStatus,
@@ -542,6 +551,7 @@ export default defineComponent({
           :selectedLayer='selectedLayer',
           @edit-layer='editLayer',
           @change-selected-layer='changeSelectedLayer',
+          @change-cell-selection='changeCellSelection',
           @lock-layer='lockLayer',
           @check-layer='checkLayer',
           @drag-layer='dragLayer'
