@@ -2276,8 +2276,12 @@ input {
 
 // TEN9: add active color picker button style
 .active_button {
-  background-color: red !important;
+  background-color: #3877f9 !important;
   background-image: none !important;
+}
+
+.active_button:focus {
+  box-shadow: 0 0 0 3px #ed68a2;
 }
 
 @media print {

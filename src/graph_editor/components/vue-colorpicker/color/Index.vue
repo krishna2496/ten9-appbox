@@ -357,6 +357,7 @@ export default {
   data() {
     return {
       alphaHexString: '',
+      previousAlphaHexString:'',
       applyFn: null,
       color: '#000000',
       colorPickerType: '',
@@ -368,6 +369,7 @@ export default {
       modelHex: '',
       suckerCanvas: null,
       isMin: false,
+      recentColors:[],
       r: 0,
       g: 0,
       b: 0,
@@ -436,46 +438,66 @@ export default {
   mounted() {
     // eslint-disable-next-line no-undef
     this.editorUi.addListener('openColorPicker', (ui, event) => {
-      const ele = document.getElementsByClassName('card');
-
+      const ele = this.$refs.colorWindow;
       // Add drag property on layer window.
-      dragElement(ele[0], 0);
+      dragElement(ele, 0);
 
       const options = event.getProperty('options');
 
-      this.applyFn = options.applyFn;
+      if (this.colorPickerType != options.type) {
+        this.applyFn = options.applyFn;
 
-      this.selectSaturation(options.color)
-      this.selectHue(options.color)
-      this.inputHex(options.color)
-      
-      this.selectColor(options.color, false);
-      this.colorPickerType = options.type;
-      this.show = true;
-      this.alphaHexString = options.color;
-      const alpha = this.hexToRGBA(this.alphaHexString);
-      if (alpha != undefined) {
-        this.a = alpha;
+        this.selectSaturation(options.color)
+        this.selectHue(options.color)
+        this.inputHex(options.color)
+        
+        this.selectColor(options.color, false);
+        this.colorPickerType = options.type;
+        this.show = true;
+        this.alphaHexString = options.color;
+        this.previousAlphaHexString = options.color;
+        const alpha = this.hexToRGBA(this.alphaHexString);
+        if (alpha != undefined) {
+          this.a = alpha;
+        }
+      } else {
+        this.colorPickerType = '';
+        this.buttonInactive();
       }
 
      bringWindowToFront(0);
+     this.editorUi.colorPicker = true;
     });
 
     this.editorUi.addListener('openColorWindow',() => {
-       const ele = document.getElementsByClassName('card');
+       const ele = this.$refs.colorWindow;
 
       // Add drag property on color window.
-      dragElement(ele[0], 0);
+      dragElement(ele, 0);
 
       this.show = true;
 
       bringWindowToFront(0);
+      this.editorUi.colorPicker = true;
+    });
+
+    this.editorUi.addListener('closeColorWindow', () => {
+      this.close();
+    });
+
+    this.editorUi.addListener('inactiveColorButton', () => {
+      this.colorPickerType = '';
+      this.applyFn = null;
     });
 
     this.$nextTick(() => {
-        const colorWindow = document.getElementById('color-window');
-        colorWindow.style.right = '0px';
+        const colorWindow = this.$refs.colorWindow;
+        const container = document.getElementById('container');
+        const formatPanelWidth = document.getElementsByClassName('geFormatContainer')[0].style.width;
+        colorWindow.style.left = `${container.offsetWidth -  2 * (parseInt(formatPanelWidth))}px`;
     });
+
+    this.recentColors = this.colorsDefault;
   },
   methods: {
     changeMinStatus() {
@@ -484,18 +506,26 @@ export default {
     openColorPicker() {
       this.show = true;
     },
-    close() {
+    buttonInactive() {
       var element = document.getElementsByClassName('geColorBtn');
       for (var i = 0; i < element.length; i++) {
         element[i].classList.remove('active_button');
      }
+    },
+    close() {
+      this.buttonInactive();
       this.colorPickerType = '';
       this.show = false;
       this.applyFn = null;
+      this.editorUi.colorPicker = false;
     },
     apply() {
-      if (this.applyFn) {
+      if (this.applyFn && this.alphaHexString != this.previousAlphaHexString && this.alphaHexString != '') {
+        this.editorUi.colorPickerEvent = true;
         this.applyFn(`#${this.alphaHexString}`);
+        this.previousAlphaHexString = this.alphaHexString;
+        this.recentColors.splice(-1,1);
+        this.recentColors.unshift(`#${this.alphaHexString}`);
       }
     },
     selectSaturation(color) {
@@ -550,9 +580,6 @@ export default {
     setText() {
       this.modelHex = this.hexString;
       this.modelRgba = this.rgbaStringShort;
-      this.$nextTick(() => {
-        
-      });
     },
     openSucker(isOpen) {
       this.$emit('openSucker', isOpen);
@@ -588,12 +615,13 @@ export default {
 </script>
 
 <template lang="pug">
-b-card#color-window.mb-2.color-card(
+b-card.mb-2.color-card(
   tag='article',
   style='max-width: 20rem',
   no-body,
   :class='isMin ? "minimize" : ""'
-  v-show='show'
+  v-show='show',
+  ref='colorWindow'
 )
   template.row(#header='')
     window-header.color-picker(
@@ -643,7 +671,7 @@ b-card#color-window.mb-2.color-card(
       box(name='RGBA', :color='modelRgba', @inputColor='inputRgba')
       colors(
         :color='rgbaString',
-        :colors-default='colorsDefault',
+        :colors-default='recentColors',
         :colors-history-key='colorsHistoryKey',
         @selectColor='selectColor'
       )

@@ -418,7 +418,13 @@ Format.prototype.clear = function () {
  * Adds the label menu items to the given menu and parent.
  */
 Format.prototype.refresh = function () {
-  // Performance tweak: No refresh needed if not visible
+  if (this.editorUi.colorPickerEvent) {
+    this.editorUi.colorPickerEvent = false;
+    return;
+  } else {
+    this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
+  }
+
   if (this.container.style.width == '0px') {
     return;
   }
@@ -1160,6 +1166,7 @@ BaseFormatPanel.prototype.createColorOption = function (
   btn = mxUtils.button(
     '',
     mxUtils.bind(this, function (evt) {
+      this.editorUi.colorPickerEvent = true;
       // TEN9: add custom modal for color picker
       // this.editorUi.pickColor(value, function (color) {
       //   apply(color, null, true);
@@ -1173,7 +1180,7 @@ BaseFormatPanel.prototype.createColorOption = function (
         element[i].classList.remove('active_button');
       }
       const myUi = this.editorUi;
-      console.log('type', type);
+
       function applyFn(alphaHexString) {
         if (type === 'Background') {
           myUi.setGraphBackgroundColor(alphaHexString);

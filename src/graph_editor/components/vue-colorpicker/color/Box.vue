@@ -46,7 +46,7 @@ export default {
     justify-content: center;
     align-items: center;
     color: #999;
-    background: #ccc;
+    background: #e3e5e6;
   }
 
   .value {
@@ -56,7 +56,7 @@ export default {
     padding: 0 12px;
     border: 0;
     color: #000;
-    background: #f1f1f1;
+    background: #e9ebee;
     box-sizing: border-box;
   }
 }

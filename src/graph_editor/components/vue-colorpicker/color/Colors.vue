@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="colors">
-      <li v-for="item in colorsDefault" :key="item" class="item" @click="selectColor(item)">
+      <li v-for="(item,index) in colorsDefault" :key="index" class="item" @click="selectColor(item)">
         <div :style="{ background: `url(${imgAlphaBase64})` }" class="alpha" />
         <div :style="{ background: item }" class="color" />
       </li>
