@@ -196,7 +196,14 @@ export default defineComponent({
       const { graph } = props.editorUi.editor;
       const index = getIndexFromId(id);
       const defaultParent = layers.value;
-      graph.setSelectionCells(defaultParent[index].children);
+      graph.setSelectionCells(null);
+      if (!defaultParent[index]['style']) {
+        graph.setSelectionCells(defaultParent[index].children);
+      } else {
+        for (let i = layers.value.length - 1; i >= 0; i--) {
+          graph.removeSelectionCells(layers.value[i].children);
+        }
+      }
     }
 
     // Open layer window
@@ -437,6 +444,9 @@ export default defineComponent({
           }
           graph.removeSelectionCells(graph.getModel().getDescendants(defaultParent[index]));
         }
+      }
+      if (id == selectedLayer.value) {
+        changeCellSelection(id);
       }
       isMoveSelectionEnable(id);
     }
