@@ -6737,7 +6737,6 @@ DiagramStylePanel.prototype.addView = function (div) {
   );
 
   // Rounded
-  // TEN9: change rounded checkbox position
   right.appendChild(
     this.createOption(
       mxResources.get('rounded'),
@@ -6915,15 +6914,6 @@ DiagramStylePanel.prototype.addView = function (div) {
   btn.style.textOverflow = 'ellipsis';
   btn.style.maxWidth = '90px';
   right.appendChild(btn);
-
-  // // TEN9: change in reset button position
-  // left = left.cloneNode(false);
-  // right = right.cloneNode(false);
-  // row = row.cloneNode(false);
-  // row.appendChild(left);
-  // row.appendChild(right);
-  // tbody.appendChild(row);
-  // left.appendChild(btn);
 
   var createPreview = mxUtils.bind(
     this,
