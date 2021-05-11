@@ -41,6 +41,8 @@ const {
   mxUtils,
 } = require('../jgraph/mxClient.js');
 
+const { rough } = require('../rough/rough.js');
+
 const { Dialog, PageSetupDialog, PrintDialog } = require('../jgraph/Editor.js');
 const { Sidebar } = require('../jgraph/Sidebar.js');
 const { ChangePageSetup, ChangeGridColor } = require('../jgraph/EditorUi.js');
