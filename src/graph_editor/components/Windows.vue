@@ -18,6 +18,7 @@
 import FindWindow from './windows/FindWindow.vue';
 import LayersWindow from './windows/LayerWindow.vue';
 import OutlineWindow from './windows/OutlineWindow.vue';
+import ColorPickerWindow from '../components/vue-colorpicker/color/Index.vue';
 import { defineComponent } from '@vue/composition-api';
 
 import '../styles/windows.scss';
@@ -25,6 +26,7 @@ import '../styles/windows.scss';
 export default defineComponent({
   name: 'Windows',
   components: {
+    ColorPickerWindow,
     FindWindow,
     LayersWindow,
     OutlineWindow,
@@ -44,6 +46,7 @@ export default defineComponent({
 
 <template lang="pug">
 .windows-container(v-if='editorUi')
+  color-picker-window(:editorUi='editorUi')
   find-window(:editorUi='editorUi')
   layers-window(:editorUi='editorUi', :isEnableBind='isEnableBind')
   outline-window(:editorUi='editorUi')
