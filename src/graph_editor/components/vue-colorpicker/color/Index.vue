@@ -532,7 +532,7 @@ export default {
       const { r, g, b, h, s, v } = this.setColorValue(color);
       Object.assign(this, { r, g, b, h, s, v });
       this.setText();
-       this.$nextTick(() => {
+      this.$nextTick(() => {
         this.apply();
       });
     },
