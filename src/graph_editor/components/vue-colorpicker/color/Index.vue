@@ -9,6 +9,7 @@ import Box from './Box.vue';
 import Colors from './Colors.vue';
 import WindowHeader from '../../windows/Header.vue';
 const { dragElement, bringWindowToFront } = require('../../windows/utils.ts');
+const graphUtils = require('../../../lib/jgraph/graph_utils.js');
 
 // interface ColorPickerObject {
 //   type?: string;
@@ -499,10 +500,13 @@ export default {
 
     this.$nextTick(() => {
         const colorWindow = this.$refs.colorWindow;
-        const container = document.getElementById('container');
-        const formatPanelWidth = document.getElementsByClassName('geFormatContainer')[0].style.width;
-        const scrollbarWidth = container.offsetLeft;
-        colorWindow.style.left = `${container.offsetWidth -  2 * (parseInt(formatPanelWidth) + scrollbarWidth)}px`;
+        const containerRect = graphUtils.getDocumentContainerRect();
+        const formatPanelWidth = parseInt(this.editorUi.formatContainer.style.width);
+        const rightPadding = 25;
+        const topPadding = 10;
+        const colorWindowWidth = 240;
+        colorWindow.style.left = `${containerRect.width -  formatPanelWidth - colorWindowWidth - rightPadding}px`;
+        colorWindow.style.top = `${this.editorUi.menubarHeight + this.editorUi.toolbarHeight + topPadding}px`;
     });
 
     this.recentColors = this.colorsDefault;
@@ -518,7 +522,7 @@ export default {
       var element = document.getElementsByClassName('geColorBtn');
       for (var i = 0; i < element.length; i++) {
         element[i].classList.remove('active_button');
-     }
+      }
     },
     close() {
       this.buttonInactive();
