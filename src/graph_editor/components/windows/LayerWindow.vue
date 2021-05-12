@@ -228,9 +228,23 @@ export default defineComponent({
           // Change default window coordinates to last open
           changeLayerWindowCoordinates();
         } else {
-          // Set default window coordinates to default
-          layerWindow.value.style.top = '120px';
-          layerWindow.value.style.left = '690px';
+          const containerRect = graphUtils.getDocumentContainerRect();
+          const topPadding = 10;
+          const rightPadding = 40;
+          const layerWindowWidth = 240;
+          const formatWidth = 240;
+
+          layerWindow.value.style.top = `${
+            +props.editorUi.menubarHeight + +props.editorUi.toolbarHeight + topPadding
+          }px`;
+
+          layerWindow.value.style.left = `${
+            +containerRect.left +
+            +containerRect.width -
+            layerWindowWidth -
+            rightPadding -
+            formatWidth
+          }px`;
         }
         layerWindow.value.style.opacity = '1';
       });
