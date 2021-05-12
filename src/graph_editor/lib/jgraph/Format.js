@@ -420,8 +420,17 @@ Format.prototype.clear = function () {
 Format.prototype.refresh = function () {
   if (this.editorUi.colorPickerEvent) {
     this.editorUi.colorPickerEvent = false;
-    return;
+    if (this.editorUi.getSelectedCell().length == 0) {
+      this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
+    } else if (this.editorUi.colorPicker) {
+      return;
+    }
   } else {
+    var element = document.getElementsByClassName('geColorBtn');
+    for (var i = 0; i < element.length; i++) {
+      element[i].classList.remove('active_button');
+    }
+    this.editorUi.selectedColorPicker = '';
     this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
   }
 
@@ -1199,10 +1208,15 @@ BaseFormatPanel.prototype.createColorOption = function (
         }
       }
 
-      this.editorUi.fireEvent(
-        new mxEventObject('openColorPicker', 'options', { type, color, applyFn }),
-      );
-      btn.className = btn.className + ' active_button';
+      this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
+      if (this.editorUi.selectedColorPicker != type) {
+        this.editorUi.fireEvent(
+          new mxEventObject('openColorPicker', 'options', { type, color, applyFn }),
+        );
+        btn.className = btn.className + ' active_button';
+      } else {
+        this.editorUi.selectedColorPicker = '';
+      }
     }),
   );
 

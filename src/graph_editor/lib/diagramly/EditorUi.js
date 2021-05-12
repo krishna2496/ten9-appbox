@@ -14523,6 +14523,9 @@ var SelectedFile;
   // TEN9: show fire event is color picker event or not
   EditorUi.prototype.colorPickerEvent = false;
 
+  // TEN9: shows current selected color picker
+  EditorUi.prototype.selectedColorPicker = '';
+
   // TEN9: set shape color
   EditorUi.prototype.setShapeColor = function (colorKey, color) {
     this.editor.graph.setCellStyles(colorKey, color, this.editor.graph.getSelectionCells());

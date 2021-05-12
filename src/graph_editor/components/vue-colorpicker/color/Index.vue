@@ -467,6 +467,7 @@ export default {
 
      bringWindowToFront(0);
      this.editorUi.colorPicker = true;
+     this.editorUi.selectedColorPicker =  this.colorPickerType;
     });
 
     this.editorUi.addListener('openColorWindow',() => {
@@ -486,15 +487,22 @@ export default {
     });
 
     this.editorUi.addListener('inactiveColorButton', () => {
+      this.buttonInactive();
       this.colorPickerType = '';
       this.applyFn = null;
+      if(this.alphaHexString != this.previousAlphaHexString) {
+        this.recentColors.splice(-1,1);
+        this.recentColors.unshift(`#${this.alphaHexString}`);
+      }
+      this.previousAlphaHexString = this.alphaHexString;
     });
 
     this.$nextTick(() => {
         const colorWindow = this.$refs.colorWindow;
         const container = document.getElementById('container');
         const formatPanelWidth = document.getElementsByClassName('geFormatContainer')[0].style.width;
-        colorWindow.style.left = `${container.offsetWidth -  2 * (parseInt(formatPanelWidth))}px`;
+        const scrollbarWidth = container.offsetLeft;
+        colorWindow.style.left = `${container.offsetWidth -  2 * (parseInt(formatPanelWidth) + scrollbarWidth)}px`;
     });
 
     this.recentColors = this.colorsDefault;
@@ -523,9 +531,6 @@ export default {
       if (this.applyFn && this.alphaHexString != this.previousAlphaHexString && this.alphaHexString != '') {
         this.editorUi.colorPickerEvent = true;
         this.applyFn(`#${this.alphaHexString}`);
-        this.previousAlphaHexString = this.alphaHexString;
-        this.recentColors.splice(-1,1);
-        this.recentColors.unshift(`#${this.alphaHexString}`);
       }
     },
     selectSaturation(color) {
