@@ -314,7 +314,7 @@ export default {
     },
     suckerHide: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     // suckerCanvas: {
     //   type: HTMLCanvasElement, // HTMLCanvasElement
@@ -354,6 +354,11 @@ export default {
       // eslint-disable-next-line vue/require-valid-default-prop
       default: {},
     },
+    recentColors: {
+      require: false,
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -370,7 +375,7 @@ export default {
       modelHex: '',
       suckerCanvas: null,
       isMin: false,
-      recentColors:[],
+      recentColorsArray:[],
       r: 0,
       g: 0,
       b: 0,
@@ -456,7 +461,10 @@ export default {
         this.colorPickerType = options.type;
         this.show = true;
         this.alphaHexString = options.color;
-        this.previousAlphaHexString = options.color;
+        this.$nextTick(()=> {
+          this.previousAlphaHexString = this.alphaHexString;
+        });
+        
         const alpha = this.hexToRGBA(this.alphaHexString);
         if (alpha != undefined) {
           this.a = alpha;
@@ -491,9 +499,13 @@ export default {
       this.buttonInactive();
       this.colorPickerType = '';
       this.applyFn = null;
-      if(this.alphaHexString != this.previousAlphaHexString) {
-        this.recentColors.splice(-1,1);
-        this.recentColors.unshift(`#${this.alphaHexString}`);
+
+      if(this.alphaHexString != this.previousAlphaHexString && this.recentColorsArray[0] != `#${this.alphaHexString}`) {
+        if(this.recentColorsArray.length == 8) {
+          this.recentColorsArray.splice(-1,1);
+        }
+        this.recentColorsArray.unshift(`#${this.alphaHexString}`);
+        this.$emit('saveRecentColors', this.recentColorsArray.toString())
       }
       this.previousAlphaHexString = this.alphaHexString;
     });
@@ -508,8 +520,14 @@ export default {
         colorWindow.style.left = `${containerRect.width -  formatPanelWidth - colorWindowWidth - rightPadding}px`;
         colorWindow.style.top = `${this.editorUi.menubarHeight + this.editorUi.toolbarHeight + topPadding}px`;
     });
+    
+    if(this.recentColors != '') {
+      this.recentColorsArray = this.recentColors.split(",");
+    } else {
+      this.recentColorsArray = [];
+    }
+    
 
-    this.recentColors = this.colorsDefault;
   },
   methods: {
     changeMinStatus() {
@@ -680,7 +698,14 @@ b-card.mb-2.color-card(
       box(name='RGBA', :color='modelRgba', @inputColor='inputRgba')
       colors(
         :color='rgbaString',
-        :colors-default='recentColors',
+        :colors-default='colorsDefault',
+        :colors-history-key='colorsHistoryKey',
+        @selectColor='selectColor'
+      )
+      hr.m-10
+      colors(
+        :color='rgbaString',
+        :colors-default='recentColorsArray',
         :colors-history-key='colorsHistoryKey',
         @selectColor='selectColor'
       )
@@ -739,5 +764,10 @@ b-card.mb-2.color-card(
 .cross-icon {
   height: 5px;
   margin-top: -7px;
+}
+
+.m-10 {
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 </style>

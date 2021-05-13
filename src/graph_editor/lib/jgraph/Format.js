@@ -480,6 +480,8 @@ Format.prototype.refresh = function () {
 
   var addClickHandler = mxUtils.bind(this, function (elt, panel, index) {
     var clickHandler = mxUtils.bind(this, function (evt) {
+      // TEN9: fire event when click on format panel tab so we can inactive the button
+      this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
       if (currentLabel != elt) {
         if (containsLabel) {
           this.labelIndex = index;

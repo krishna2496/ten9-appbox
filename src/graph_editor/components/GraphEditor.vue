@@ -114,6 +114,11 @@ export default defineComponent({
       required: false,
       default: null,
     },
+    recentColors: {
+      require: false,
+      type: String,
+      default: '',
+    },
   },
 
   setup(props, ctx) {
@@ -702,6 +707,10 @@ export default defineComponent({
       insertImage(url);
     }
 
+    function saveRecentColors(colors: string) {
+      ctx.emit('save-recent-colors', colors);
+    }
+
     watch(
       () => props.enabled,
       (val) => {
@@ -736,6 +745,7 @@ export default defineComponent({
       refreshCurrentPageLinks,
       refreshUi,
       removePageFromCurrentPageWindow,
+      saveRecentColors,
       setGraphEnabled,
       showingDialog,
       updateCellImage,
@@ -749,5 +759,9 @@ export default defineComponent({
 .div
   .geEditor(ref='containerRef')
   modals(:editorUi='editorUiRef', :shape-libraries='shapeLibraries', @insert-image='imageInsert')
-  window(:editorUi='editorUiRef')
+  window(
+    :editorUi='editorUiRef',
+    :recentColors='recentColors',
+    @save-recent-colors='saveRecentColors'
+  )
 </template>

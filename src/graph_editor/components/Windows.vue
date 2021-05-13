@@ -40,13 +40,30 @@ export default defineComponent({
     isEnableBind: {
       type: Boolean,
     },
+    recentColors: {
+      require: false,
+      type: String,
+      default: '',
+    },
+  },
+  setup(_props, ctx) {
+    function saveRecentColors(colors: string) {
+      ctx.emit('save-recent-colors', colors);
+    }
+    return {
+      saveRecentColors,
+    };
   },
 });
 </script>
 
 <template lang="pug">
 .windows-container(v-if='editorUi')
-  color-picker-window(:editorUi='editorUi')
+  color-picker-window(
+    :editorUi='editorUi',
+    :recentColors='recentColors',
+    @saveRecentColors='saveRecentColors'
+  )
   find-window(:editorUi='editorUi')
   layers-window(:editorUi='editorUi', :isEnableBind='isEnableBind')
   outline-window(:editorUi='editorUi')

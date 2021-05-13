@@ -65,6 +65,8 @@ export default defineComponent({
 
     const theme = ref('');
 
+    const recentColors = ref('');
+
     function getShapeLibrariesFromStorage() {
       return window.localStorage.getItem('shapeLibraries');
     }
@@ -83,6 +85,14 @@ export default defineComponent({
 
     function saveScratchpadDataToStorage(xml: string) {
       window.localStorage.setItem('scratchpadData', xml);
+    }
+
+    function getRecentColorFromStorage() {
+      return window.localStorage.getItem('recentColors');
+    }
+
+    function saveRecentColorsToStorage(colors: string) {
+      window.localStorage.setItem('recentColors', colors);
     }
 
     function updateAppHeight() {
@@ -247,6 +257,12 @@ export default defineComponent({
         onThemeChanged(theme.value);
       }
 
+      recentColors.value = getRecentColorFromStorage();
+      if (!recentColors.value) {
+        recentColors.value = '';
+        saveRecentColorsToStorage(recentColors.value);
+      }
+
       const drag: HTMLElement = document.querySelector('.geEditor');
 
       drag.addEventListener('dragenter', (e: DragEvent) => {
@@ -385,6 +401,7 @@ export default defineComponent({
       editor,
       insertDummyImage,
       getDateString,
+      getRecentColorFromStorage,
       loadFileData,
       logs,
       onGraphChanged,
@@ -393,8 +410,10 @@ export default defineComponent({
       onShapeLibrariesChanged,
       onThemeChanged,
       previewMode,
+      recentColors,
       refreshLink,
       saveFile,
+      saveRecentColorsToStorage,
       scratchpadData,
       shapeLibraries,
       theme,
@@ -466,10 +485,12 @@ export default defineComponent({
           :scratchpadData='scratchpadData',
           :theme='theme',
           :refreshLinkHandler='refreshLink',
+          :recentColors='recentColors',
           @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged',
           @scratchpad-data-changed='onScratchpadDataChanged',
-          @theme-changed='onThemeChanged'
+          @theme-changed='onThemeChanged',
+          @save-recent-colors='saveRecentColorsToStorage'
         )
 </template>
 

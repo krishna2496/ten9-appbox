@@ -1,5 +1,5 @@
 <template>
-  <canvas style="max-width: 100%;"/>
+  <canvas style="max-width: 88%;"/>
 </template>
 
 <script>

@@ -88,7 +88,7 @@ export default {
         document.removeEventListener('mouseup', this.mousemoveHandler);
         if (this.suckerPreview) {
           //document.body.removeChild(this.suckerPreview);
-          document.getElementById('color-modal').removeChild(this.suckerPreview);
+          document.getElementsByClassName('color-card')[0].removeChild(this.suckerPreview);
           this.suckerPreview = null;
         }
       }
@@ -109,7 +109,7 @@ export default {
       a = parseFloat((a / 255).toFixed(2));
       const style = this.suckerPreview.style;
       Object.assign(style, {
-        position: 'absolute',
+        //position: 'absolute',
         left: clientX + 20 + 'px',
         top: clientY - 36 + 'px',
         width: '24px',
@@ -133,12 +133,13 @@ export default {
       }
     },
     suckColor(dom) {
+      console.log(dom);
       if (dom && dom.tagName !== 'CANVAS') {
         return;
       }
 
       this.suckerPreview = document.createElement('div');
-      document.getElementById('color-modal').appendChild(this.suckerPreview);
+      document.getElementsByClassName('color-card')[0].appendChild(this.suckerPreview);
       //document.body.appendChild(this.suckerPreview);
 
       document.addEventListener('mousemove', this.mousemoveHandler);
