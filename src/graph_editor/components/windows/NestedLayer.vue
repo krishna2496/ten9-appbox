@@ -134,7 +134,13 @@ export default defineComponent({
       layerSelected.value = elm;
     };
 
+    // Change selected layer
+    function changeCellSelection(id: number) {
+      context.emit('change-cell-selection', id);
+    }
+
     return {
+      changeCellSelection,
       changeSelectedLayer,
       checkLayer,
       dragLayer,
@@ -165,7 +171,7 @@ draggable.layer-window-body-container(v-bind='dragOptions', tag='div', @end='dra
           i.fa.fa-eye.ml-2(v-if='el["visible"] == undefined || el.visible')
           i.fa.fa-eye-slash.ml-2(v-else)
       .layer-window-name(
-        @click='changeSelectedLayer(el.id)',
+        @click='changeSelectedLayer(el.id), changeCellSelection(el.id)',
         @dblclick='editLayer(el.id)',
         :id='el.id',
         :class='el.value',

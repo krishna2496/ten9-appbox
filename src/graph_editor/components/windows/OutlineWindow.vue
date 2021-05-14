@@ -146,12 +146,12 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-card.mb-2(
+b-card.mb-2.outline-window-card(
   tag='article',
   style='max-width: 20rem',
   v-resize='resizeWindow',
   v-show='show',
-  :class='isMin ? "minimize" : "outline"'
+  :class='isMin ? "minimize window-card" : "outline window-card"'
 )
   template.row(#header='')
     window-header(

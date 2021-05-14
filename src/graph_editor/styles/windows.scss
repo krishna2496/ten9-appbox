@@ -43,6 +43,10 @@
   min-height: 260px;
 }
 
+.outline-window-card {
+  min-width: 240px;
+}
+
 .txt-input-window {
   border: 1px solid #ddd;
   padding: 5px 10px;
@@ -146,6 +150,7 @@
 
 .layer-window-dropdownRow {
   padding: 5px;
+  margin: 0;
 }
 
 .layer-window-dropdownRow:hover {
@@ -258,4 +263,8 @@
 .color-card {
   width: 240px;
   height: auto;
+}
+
+.window-card {
+  resize: both;
 }
