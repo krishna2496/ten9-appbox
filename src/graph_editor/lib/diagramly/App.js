@@ -295,7 +295,8 @@ App.MODE_EMBED = 'embed';
  * Sets the delay for autosave in milliseconds. Default is 2000.
  */
 App.DROPBOX_APPKEY = 'libwls2fa9szdji';
-
+// TEN9
+//	App.DROPBOX_APPKEY = window.DRAWIO_DROPBOX_ID;
 /**
  * Sets URL to load the Dropbox SDK from
  */
@@ -313,7 +314,9 @@ App.DROPINS_URL = 'https://www.dropbox.com/static/api/2/dropins.js';
 App.ONEDRIVE_URL = mxClient.IS_IE11
   ? 'https://js.live.net/v7.2/OneDrive.js'
   : window.DRAWIO_BASE_URL + '/js/onedrive/OneDrive.js';
-
+// TEN9
+//	App.ONEDRIVE_URL = mxClient.IS_IE11? 'https://js.live.net/v7.2/OneDrive.js' : window.DRAWIO_BASE_URL + '/js/onedrive/OneDrive.js';
+//App.ONEDRIVE_INLINE_PICKER_URL = window.DRAWIO_BASE_URL + '/js/onedrive/mxODPicker.js';
 /**
  * Trello URL
  */
@@ -410,6 +413,23 @@ App.publicPlugin = [
   //	'rnd', 'page', 'gd',
   'tags',
 ];
+
+// TEN9
+/**
+ * Loads all given scripts and invokes onload after
+ * all scripts have finished loading.
+ */
+App.loadScripts = function (scripts, onload) {
+  var n = scripts.length;
+
+  for (var i = 0; i < n; i++) {
+    mxscript(scripts[i], function () {
+      if (--n == 0 && onload != null) {
+        onload();
+      }
+    });
+  }
+};
 /**
  * Function: authorize
  *
@@ -517,7 +537,7 @@ App.getStoredMode = function () {
             ) {
               mxscript(App.DROPBOX_URL, function () {
                 // Must load this after the dropbox SDK since they use the same namespace
-                mxscript(App.DROPINS_URL, null, 'dropboxjs', App.DROPBOX_APPKEY);
+                mxscript(App.DROPINS_URL, null, 'dropboxjs', App.DROPBOX_APPKEY, true);
               });
             } else if (urlParams['chrome'] == '0') {
               window.DropboxClient = null;
@@ -541,7 +561,13 @@ App.getStoredMode = function () {
               App.mode == App.MODE_ONEDRIVE ||
               (window.location.hash != null && window.location.hash.substring(0, 2) == '#W')
             ) {
-              mxscript(App.ONEDRIVE_URL);
+              if (urlParams['inlinePicker'] == '1' || mxClient.IS_ANDROID || mxClient.IS_IOS) {
+                mxscript(App.ONEDRIVE_INLINE_PICKER_URL, function () {
+                  window.OneDrive = {}; //Needed to allow code that check its existance to work BUT it's not used
+                });
+              } else {
+                mxscript(App.ONEDRIVE_URL);
+              }
             } else if (urlParams['chrome'] == '0') {
               window.OneDriveClient = null;
             }
@@ -554,8 +580,9 @@ App.getStoredMode = function () {
         // Loads Trello for all browsers but < IE10 if not disabled or if enabled and in embed mode
         if (typeof window.TrelloClient === 'function') {
           if (
-            urlParams['tr'] != '0' &&
+            urlParams['tr'] == '1' &&
             isSvgBrowser &&
+            !mxClient.IS_IE11 &&
             (document.documentMode == null || document.documentMode >= 10)
           ) {
             // Immediately loads client
@@ -575,15 +602,27 @@ App.getStoredMode = function () {
           }
         }
       }
-
-      // Loads JSON for older browsers
-      if (typeof JSON == 'undefined') {
-        mxscript('js/json/json2.min.js');
-      }
     }
   }
 })();
 
+// TEN9:
+/**
+ * Clears the PWA cache.
+ */
+App.clearServiceWorker = function (success) {
+  navigator.serviceWorker.getRegistrations().then(function (registrations) {
+    if (registrations != null && registrations.length > 0) {
+      for (var i = 0; i < registrations.length; i++) {
+        registrations[i].unregister();
+      }
+
+      if (success != null) {
+        success();
+      }
+    }
+  });
+};
 /**
  * Program flow starts here.
  *
@@ -1632,9 +1671,9 @@ App.prototype.init = function () {
       }),
     );
 
-    if (mxClient.IS_QUIRKS) {
-      this.icon.style.marginTop = '12px';
-    }
+    // if (mxClient.IS_QUIRKS) {
+    //   this.icon.style.marginTop = '12px';
+    // }
 
     this.menubar.container.insertBefore(this.icon, this.menubar.container.firstChild);
   }
@@ -1802,49 +1841,192 @@ App.prototype.showNameChangeBanner = function () {
 /**
  * Shows a footer to download the desktop version once per session.
  */
+App.prototype.showNameConfBanner = function () {
+  this.showBanner(
+    'ConfFooter',
+    'Try draw.io for Confluence',
+    mxUtils.bind(this, function () {
+      this.openLink(
+        'https://marketplace.atlassian.com/apps/1210933/draw-io-diagrams-for-confluence',
+      );
+    }),
+    true,
+  );
+};
+
+/**
+ * Shows a footer to download the desktop version once per session.
+ */
 App.prototype.showDownloadDesktopBanner = function () {
-  var link = 'https://get.diagrams.net/';
+  this.showBanner(
+    'DesktopFooter',
+    mxResources.get('downloadDesktop'),
+    mxUtils.bind(this, function () {
+      this.openLink('https://get.diagrams.net/');
+    }),
+  );
+};
 
+/**
+ * Shows a footer to download the desktop version once per session.
+ */
+App.prototype.showRatingBanner = function () {
   if (
-    this.showBanner(
-      'DesktopFooter',
-      mxResources.get('downloadDesktop'),
-      mxUtils.bind(this, function () {
-        this.openLink(link);
-      }),
-    )
+    !this.bannerShowing &&
+    !this['hideBanner' + 'ratingFooter'] &&
+    (!isLocalStorage ||
+      mxSettings.settings == null ||
+      mxSettings.settings['close' + 'ratingFooter'] == null)
   ) {
-    // Downloads installer for macOS and Windows
-    mxUtils.get(
-      'https://api.github.com/repos/jgraph/drawio-desktop/releases/latest',
-      mxUtils.bind(this, function (req) {
-        try {
-          var rel = JSON.parse(req.getText());
+    var banner = document.createElement('div');
+    banner.style.cssText =
+      'position:absolute;bottom:10px;left:50%;max-width:90%;padding:18px 34px 12px 20px;' +
+      'font-size:16px;font-weight:bold;white-space:nowrap;cursor:pointer;z-index:' +
+      mxPopupMenu.prototype.zIndex +
+      ';';
+    mxUtils.setPrefixedStyle(banner.style, 'box-shadow', '1px 1px 2px 0px #ddd');
+    mxUtils.setPrefixedStyle(banner.style, 'transform', 'translate(-50%,120%)');
+    mxUtils.setPrefixedStyle(banner.style, 'transition', 'all 1s ease');
+    banner.className = 'geBtn gePrimaryBtn';
 
-          if (rel != null) {
-            if (rel.tag_name != null && rel.name != null && rel.html_url != null) {
-              if (mxClient.IS_MAC) {
-                link =
-                  'https://github.com/jgraph/drawio-desktop/releases/download/' +
-                  rel.tag_name +
-                  '/draw.io-' +
-                  rel.name +
-                  '.dmg';
-              } else if (mxClient.IS_WIN) {
-                link =
-                  'https://github.com/jgraph/drawio-desktop/releases/download/' +
-                  rel.tag_name +
-                  '/draw.io-' +
-                  rel.name +
-                  '-windows-installer.exe';
-              }
-            }
-          }
-        } catch (e) {
-          // ignore
+    var img = document.createElement('img');
+    img.setAttribute('src', Dialog.prototype.closeImage);
+    img.setAttribute('title', mxResources.get('close'));
+    img.setAttribute('border', '0');
+    img.style.cssText =
+      'position:absolute;right:10px;top:12px;filter:invert(1);padding:6px;margin:-6px;cursor:default;';
+    banner.appendChild(img);
+
+    var star =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZ' +
+      'XdvcmtzIENTM5jWRgMAAAQRdEVYdFhNTDpjb20uYWRvYmUueG1wADw/eHBhY2tldCBiZWdpbj0iICAgIiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8i' +
+      'IHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDQuMS1jMDM0IDQ2LjI3Mjk3NiwgU2F0IEphbiAyNyAyMDA3IDIyOjExOjQxICAgICAgICAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDI' +
+      'vMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp4YXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iPgogICAgICAgICA8eGFwOkNyZW' +
+      'F0b3JUb29sPkFkb2JlIEZpcmV3b3JrcyBDUzM8L3hhcDpDcmVhdG9yVG9vbD4KICAgICAgICAgPHhhcDpDcmVhdGVEYXRlPjIwMDgtMDItMTdUMDI6MzY6NDVaPC94YXA6Q3JlYXRlRGF0ZT4KICAgICAgICAgPHhhcDpNb2RpZ' +
+      'nlEYXRlPjIwMDktMDMtMTdUMTQ6MTI6MDJaPC94YXA6TW9kaWZ5RGF0ZT4KICAgICAgPC9yZGY6RGVzY3JpcHRpb24+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOmRjPSJo' +
+      'dHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyI+CiAgICAgICAgIDxkYzpmb3JtYXQ+aW1hZ2UvcG5nPC9kYzpmb3JtYXQ+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo' +
+      'gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgIC' +
+      'AgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgI' +
+      'CAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIIImu8AAAAAVdEVYdENyZWF0aW9uIFRpbWUAMi8xNy8wOCCcqlgAAAHuSURBVDiNlZJBi1JRGIbfk+fc0ZuMXorJe4XujWoMdREaA23HICj6AQeLINr0C4I27ab2' +
+      '7VqOI9+q/sH8gMDceG1RkIwgClEXFMbRc5zTZgZURmG+5fu9PN/7Hg6wZohoh4h21nn4uqXW+q0xZgzg+SrPlTXX73uet+26bp6ICpcGaK1fua57M5vN3tZav7gUgIiSqVTqcRAEm0EQbCaTyQoRXb3Iy4hoG8CT6XSaY4xtMMa' +
+      'SQohMPp8v+r7vAEC3243CMGwqpfoApsaYE8uyfgM45ABOjDEvXdfNlMvlzFINAIDneY7neZVzvdlsDgaDQYtzfsjOIjtKqU+e5+0Wi0V3VV8ACMOw3+/3v3HOX0sp/7K53te11h/S6fRuoVAIhBAL76OUOm2320dRFH0VQuxJKf' +
+      '8BAFu+UKvVvpRKpWe2bYt5fTweq0ajQUKIN1LK43N94SMR0Y1YLLYlhBBKqQUw51wkEol7WmuzoC8FuJtIJLaUUoii6Ljb7f4yxpz6vp9zHMe2bfvacDi8BeDHKkBuNps5rVbr52QyaVuW9ZExttHpdN73ej0/Ho+nADxYCdBaV' +
+      '0aj0RGAz5ZlHUgpx2erR/V6/d1wOHwK4CGA/QsBnPN9AN+llH+WkqFare4R0QGAO/M6M8Ysey81/wGqa8MlVvHPNAAAAABJRU5ErkJggg==';
+
+    mxUtils.write(banner, 'Please rate us');
+    document.body.appendChild(banner);
+
+    var star1 = document.createElement('img');
+    star1.setAttribute('border', '0');
+    star1.setAttribute('align', 'absmiddle');
+    star1.setAttribute('title', '1 star');
+    star1.setAttribute('style', 'margin-top:-6px;cursor:pointer;margin-left:8px;');
+    star1.setAttribute('src', star);
+    banner.appendChild(star1);
+
+    var star2 = document.createElement('img');
+    star2.setAttribute('border', '0');
+    star2.setAttribute('align', 'absmiddle');
+    star2.setAttribute('title', '2 star');
+    star2.setAttribute('style', 'margin-top:-6px;margin-left:3px;cursor:pointer;');
+    star2.setAttribute('src', star);
+    banner.appendChild(star2);
+
+    var star3 = document.createElement('img');
+    star3.setAttribute('border', '0');
+    star3.setAttribute('align', 'absmiddle');
+    star3.setAttribute('title', '3 star');
+    star3.setAttribute('style', 'margin-top:-6px;margin-left:3px;cursor:pointer;');
+    star3.setAttribute('src', star);
+    banner.appendChild(star3);
+
+    var star4 = document.createElement('img');
+    star4.setAttribute('border', '0');
+    star4.setAttribute('align', 'absmiddle');
+    star4.setAttribute('title', '4 star');
+    star4.setAttribute('style', 'margin-top:-6px;margin-left:3px;cursor:pointer;');
+    star4.setAttribute('src', star);
+    banner.appendChild(star4);
+
+    this.bannerShowing = true;
+
+    var onclose = mxUtils.bind(this, function () {
+      if (banner.parentNode != null) {
+        banner.parentNode.removeChild(banner);
+        this.bannerShowing = false;
+
+        this['hideBanner' + 'ratingFooter'] = true;
+
+        if (isLocalStorage && mxSettings.settings != null) {
+          mxSettings.settings['close' + 'ratingFooter'] = Date.now();
+          mxSettings.save();
         }
+      }
+    });
+
+    mxEvent.addListener(
+      img,
+      'click',
+      mxUtils.bind(this, function (e) {
+        mxEvent.consume(e);
+        onclose();
       }),
     );
+    mxEvent.addListener(
+      star1,
+      'click',
+      mxUtils.bind(this, function (e) {
+        mxEvent.consume(e);
+        onclose();
+      }),
+    );
+    mxEvent.addListener(
+      star2,
+      'click',
+      mxUtils.bind(this, function (e) {
+        mxEvent.consume(e);
+        onclose();
+      }),
+    );
+    mxEvent.addListener(
+      star3,
+      'click',
+      mxUtils.bind(this, function (e) {
+        mxEvent.consume(e);
+        onclose();
+      }),
+    );
+    mxEvent.addListener(
+      star4,
+      'click',
+      mxUtils.bind(this, function (e) {
+        mxEvent.consume(e);
+        window.open(
+          'https://marketplace.atlassian.com/apps/1210933/draw-io-diagrams-for-confluence?hosting=datacenter&tab=reviews',
+        );
+        onclose();
+      }),
+    );
+
+    var hide = mxUtils.bind(this, function () {
+      mxUtils.setPrefixedStyle(banner.style, 'transform', 'translate(-50%,120%)');
+
+      window.setTimeout(
+        mxUtils.bind(this, function () {
+          onclose();
+        }),
+        1000,
+      );
+    });
+
+    window.setTimeout(
+      mxUtils.bind(this, function () {
+        mxUtils.setPrefixedStyle(banner.style, 'transform', 'translate(-50%,0%)');
+      }),
+      500,
+    );
+
+    window.setTimeout(hide, 60000);
   }
 };
 
@@ -2234,6 +2416,10 @@ App.prototype.getThumbnail = function (width, fn) {
     if (graph != null && graph != this.editor.graph && graph.container.parentNode != null) {
       graph.container.parentNode.removeChild(graph.container);
     }
+  }
+
+  if (!result) {
+    window.clearTimeout(timeoutThread);
   }
 
   return result;
@@ -2786,8 +2972,25 @@ App.prototype.start = function () {
       );
     }
 
-    // Redirects old url URL parameter to new #U format
+    // Descriptor for CSV import
     if (
+      (window.location.hash == null || window.location.hash.length <= 1) &&
+      urlParams['desc'] != null
+    ) {
+      try {
+        this.loadDescriptor(
+          JSON.parse(Graph.decompress(urlParams['desc'])),
+          null,
+          mxUtils.bind(this, function (e) {
+            this.handleError(e, mxResources.get('errorLoadingFile'));
+          }),
+        );
+      } catch (e) {
+        this.handleError(e, mxResources.get('errorLoadingFile'));
+      }
+    }
+    // Redirects old url URL parameter to new #U format
+    else if (
       (window.location.hash == null || window.location.hash.length <= 1) &&
       urlParams['url'] != null
     ) {
@@ -3092,7 +3295,16 @@ App.prototype.start = function () {
           }
 
           this.setMode(App.MODE_GOOGLE);
-          this.actions.get('new').funct();
+
+          if (urlParams['splash'] == '0') {
+            this.createFile(
+              urlParams['title'] != null
+                ? decodeURIComponent(urlParams['title'])
+                : this.defaultFilename,
+            );
+          } else {
+            this.actions.get('new').funct();
+          }
         } else {
           // Removes open URL parameter. Hash is also updated in Init to load client.
           if (urlParams['open'] != null && window.history && window.history.replaceState) {
@@ -3503,18 +3715,22 @@ App.prototype.createFileSystemOptions = function (name) {
       description:
         mxResources.get(this.editor.diagramFileTypes[i].description) +
         (mxClient.IS_MAC ? ' (.' + this.editor.diagramFileTypes[i].extension + ')' : ''),
-      extensions: [this.editor.diagramFileTypes[i].extension],
+      accept: {},
     };
 
     if (this.editor.diagramFileTypes[i].extension == temp) {
       ext.splice(0, 0, obj);
     } else {
-      ext.push(obj);
+      if (this.editor.diagramFileTypes[i].extension == temp) {
+        ext.splice(0, 0, obj);
+      } else {
+        ext.push(obj);
+      }
     }
   }
 
   // TODO: Specify default filename
-  return { type: 'save-file', accepts: ext, fileName: name };
+  return { type: ext, accepts: ext, fileName: name };
 };
 
 /**
@@ -3571,11 +3787,15 @@ App.prototype.pickFile = function (mode) {
 
       if (peer != null) {
         peer.pickFile();
-      } else if (mode == App.MODE_DEVICE && 'chooseFileSystemEntries' in window) {
-        window.chooseFileSystemEntries().then(
-          mxUtils.bind(this, function (fileHandle) {
-            if (this.spinner.spin(document.body, mxResources.get('loading'))) {
-              this.loadFileSystemEntry(fileHandle);
+      } else if (mode == App.MODE_DEVICE && EditorUi.nativeFileSupport) {
+        window.showOpenFilePicker().then(
+          mxUtils.bind(this, function (fileHandles) {
+            if (
+              fileHandles != null &&
+              fileHandles.length > 0 &&
+              this.spinner.spin(document.body, mxResources.get('loading'))
+            ) {
+              this.loadFileSystemEntry(fileHandles[0]);
             }
           }),
           mxUtils.bind(this, function (e) {
@@ -4061,10 +4281,15 @@ App.prototype.saveFile = function (forceDialog, success) {
       }
     });
 
-    if (!forceDialog && file.getTitle() != null && this.mode != null) {
+    if (
+      !forceDialog &&
+      file.getTitle() != null &&
+      file.invalidFileHandle == null &&
+      this.mode != null
+    ) {
       this.save(file.getTitle(), done);
     } else if (file != null && file.constructor == LocalFile && file.fileHandle != null) {
-      this.chooseFileSystemEntries(
+      this.showSaveFilePicker(
         mxUtils.bind(this, function (fileHandle, desc) {
           file.fileHandle = fileHandle;
           file.title = desc.name;
@@ -4103,12 +4328,7 @@ App.prototype.saveFile = function (forceDialog, success) {
                   input.value = name.split('.').slice(0, -1).join('.');
                   input.focus();
 
-                  if (
-                    mxClient.IS_GC ||
-                    mxClient.IS_FF ||
-                    document.documentMode >= 5 ||
-                    mxClient.IS_QUIRKS
-                  ) {
+                  if (mxClient.IS_GC || mxClient.IS_FF || document.documentMode >= 5) {
                     input.select();
                   } else {
                     document.execCommand('selectAll', false, null);
@@ -4121,8 +4341,8 @@ App.prototype.saveFile = function (forceDialog, success) {
               this.hideDialog();
 
               if (prev == null && mode == App.MODE_DEVICE) {
-                if (file != null && 'chooseFileSystemEntries' in window) {
-                  this.chooseFileSystemEntries(
+                if (file != null && EditorUi.nativeFileSupport) {
+                  this.showSaveFilePicker(
                     mxUtils.bind(this, function (fileHandle, desc) {
                       file.fileHandle = fileHandle;
                       file.mode = App.MODE_DEVICE;
@@ -4449,10 +4669,10 @@ App.prototype.createFile = function (
           }),
           error,
         );
-      } else if (!tempFile && mode == App.MODE_DEVICE && 'chooseFileSystemEntries' in window) {
+      } else if (!tempFile && mode == App.MODE_DEVICE && EditorUi.nativeFileSupport) {
         complete();
 
-        this.chooseFileSystemEntries(
+        this.showSaveFilePicker(
           mxUtils.bind(this, function (fileHandle, desc) {
             var file = new LocalFile(this, data, desc.name, null, fileHandle, desc);
 
@@ -4703,17 +4923,13 @@ App.prototype.loadFile = function (id, sameWindow, file, success, force) {
       } else if (id.charAt(0) == 'S') {
         this.spinner.stop();
 
-        try {
-          this.loadDescriptor(
-            JSON.parse(Graph.decompress(id.substring(1))),
-            success,
-            mxUtils.bind(this, function (e) {
-              this.handleError(e, mxResources.get('errorLoadingFile'));
-            }),
-          );
-        } catch (e) {
-          this.handleError(e, mxResources.get('errorLoadingFile'));
-        }
+        this.alert(
+          '[Deprecation] #S is no longer supported, go to https://app.diagrams.net/?desc=' +
+            id.substring(1).substring(0, 10),
+          mxUtils.bind(this, function () {
+            window.location.href = 'https://app.diagrams.net/?desc=' + id.substring(1);
+          }),
+        );
       } else if (id.charAt(0) == 'R') {
         // Raw file encoded into URL
         this.spinner.stop();
@@ -4868,7 +5084,11 @@ App.prototype.loadFile = function (id, sameWindow, file, success, force) {
                 return id;
               };
 
-              if (!this.fileLoaded(tempFile, true) && !doFallback()) {
+              if (this.fileLoaded(tempFile, true)) {
+                if (success != null) {
+                  success();
+                }
+              } else if (!doFallback()) {
                 this.handleError(
                   { message: mxResources.get('fileNotFound') },
                   mxResources.get('errorLoadingFile'),
@@ -5348,7 +5568,7 @@ App.prototype.updateButtonContainer = function () {
     var file = this.getCurrentFile();
 
     // Comments
-    if (this.commentsSupported()) {
+    if (this.commentsSupported() && urlParams['sketch'] != '1') {
       if (this.commentButton == null) {
         this.commentButton = document.createElement('a');
         this.commentButton.setAttribute('title', mxResources.get('comments'));
@@ -5395,55 +5615,277 @@ App.prototype.updateButtonContainer = function () {
       this.getServiceName() == 'draw.io' &&
       !mxClient.IS_CHROMEAPP &&
       !EditorUi.isElectronApp &&
-      !this.isOfflineApp() &&
-      file != null
+      !this.isOfflineApp()
     ) {
-      if (this.shareButton == null) {
-        this.shareButton = document.createElement('div');
-        this.shareButton.className = 'geBtn gePrimaryBtn';
-        this.shareButton.style.display = 'inline-block';
-        this.shareButton.style.backgroundColor = '#F2931E';
-        this.shareButton.style.borderColor = '#F08705';
-        this.shareButton.style.backgroundImage = 'none';
-        this.shareButton.style.padding = '2px 10px 0 10px';
-        this.shareButton.style.marginTop = '-10px';
-        this.shareButton.style.height = '28px';
-        this.shareButton.style.lineHeight = '28px';
-        this.shareButton.style.minWidth = '0px';
-        this.shareButton.style.cssFloat = 'right';
-        this.shareButton.setAttribute('title', mxResources.get('share'));
+      if (file != null) {
+        if (this.shareButton == null) {
+          this.shareButton = document.createElement('div');
+          this.shareButton.className = 'geBtn gePrimaryBtn';
+          this.shareButton.style.display = 'inline-block';
+          this.shareButton.style.backgroundColor = '#F2931E';
+          this.shareButton.style.borderColor = '#F08705';
+          this.shareButton.style.backgroundImage = 'none';
+          this.shareButton.style.padding = '2px 10px 0 10px';
+          this.shareButton.style.marginTop = '-10px';
+          this.shareButton.style.height = '28px';
+          this.shareButton.style.lineHeight = '28px';
+          this.shareButton.style.minWidth = '0px';
+          this.shareButton.style.cssFloat = 'right';
+          this.shareButton.setAttribute('title', mxResources.get('share'));
 
-        var icon = document.createElement('img');
-        icon.setAttribute('src', this.shareImage);
-        icon.setAttribute('align', 'absmiddle');
-        icon.style.marginRight = '4px';
-        icon.style.marginTop = '-3px';
-        this.shareButton.appendChild(icon);
+          var icon = document.createElement('img');
+          icon.setAttribute('src', this.shareImage);
+          icon.setAttribute('align', 'absmiddle');
+          icon.style.marginRight = '4px';
+          icon.style.marginTop = '-3px';
+          this.shareButton.appendChild(icon);
 
-        if (uiTheme != 'dark' && uiTheme != 'atlas') {
-          this.shareButton.style.color = 'black';
-          icon.style.filter = 'invert(100%)';
+          if (uiTheme != 'dark' && uiTheme != 'atlas') {
+            this.shareButton.style.color = 'black';
+            icon.style.filter = 'invert(100%)';
+          }
+
+          mxUtils.write(this.shareButton, mxResources.get('share'));
+
+          mxEvent.addListener(
+            this.shareButton,
+            'click',
+            mxUtils.bind(this, function () {
+              this.actions.get('share').funct();
+            }),
+          );
+
+          this.buttonContainer.appendChild(this.shareButton);
         }
-
-        mxUtils.write(this.shareButton, mxResources.get('share'));
-
-        mxEvent.addListener(
-          this.shareButton,
-          'click',
-          mxUtils.bind(this, function () {
-            this.actions.get('share').funct();
-          }),
-        );
-
-        this.buttonContainer.appendChild(this.shareButton);
+      } else if (this.shareButton != null) {
+        this.shareButton.parentNode.removeChild(this.shareButton);
+        this.shareButton = null;
       }
-    } else if (this.shareButton != null) {
-      this.shareButton.parentNode.removeChild(this.shareButton);
-      this.shareButton = null;
+
+      //Fetch notifications
+      this.fetchAndShowNotification(
+        this.mode == 'device' || this.mode == 'google' ? this.mode : null,
+      );
     }
   }
 };
 
+App.prototype.fetchAndShowNotification = function (target) {
+  if (this.fetchingNotif) {
+    return;
+  }
+
+  target = target || 'online';
+  var cachedNotifKey = '.notifCache';
+  var cachedNotif = null;
+
+  var processNotif = mxUtils.bind(this, function (notifs) {
+    notifs = notifs.filter(function (notif) {
+      return !notif.targets || notif.targets.indexOf(target) > -1;
+    });
+
+    var lsReadFlag = target + 'NotifReadTS';
+    var lastRead = parseInt(localStorage.getItem(lsReadFlag));
+
+    for (var i = 0; i < notifs.length; i++) {
+      notifs[i].isNew = !lastRead || notifs[i].timestamp > lastRead;
+    }
+
+    this.showNotification(notifs, lsReadFlag);
+  });
+
+  try {
+    cachedNotif = JSON.parse(localStorage.getItem(cachedNotifKey));
+  } catch (e) {} //Ignore
+
+  if (cachedNotif == null || cachedNotif.ts + 24 * 60 * 60 * 1000 < Date.now()) {
+    //Cache for one day
+    this.fetchingNotif = true;
+    //Fetch all notifications and store them, then filter client-side
+    mxUtils.get(
+      NOTIFICATIONS_URL,
+      mxUtils.bind(this, function (req) {
+        if (req.getStatus() >= 200 && req.getStatus() <= 299) {
+          var notifs = JSON.parse(req.getText());
+
+          //Process and sort
+          notifs.sort(function (a, b) {
+            return b.timestamp - a.timestamp;
+          });
+
+          localStorage.setItem(cachedNotifKey, JSON.stringify({ ts: Date.now(), notifs: notifs }));
+          this.fetchingNotif = false;
+          processNotif(notifs);
+        }
+      }),
+    );
+  } else {
+    processNotif(cachedNotif.notifs);
+  }
+};
+
+App.prototype.showNotification = function (notifs, lsReadFlag) {
+  function shouldAnimate(newNotif) {
+    var countEl = document.querySelector('.geNotification-count');
+
+    if (countEl == null) {
+      EditorUi.logError(
+        'Error: element (.geNotification-count) is null in showNotification in shouldAnimate',
+        null,
+        5769,
+      );
+      return;
+    }
+
+    countEl.innerHTML = newNotif;
+    countEl.style.display = newNotif == 0 ? 'none' : '';
+    var notifBell = document.querySelector('.geNotification-bell');
+    notifBell.style.animation = newNotif == 0 ? 'none' : '';
+    notifBell.className = 'geNotification-bell' + (newNotif == 0 ? ' geNotification-bellOff' : '');
+    document.querySelector('.geBell-rad').style.animation = newNotif == 0 ? 'none' : '';
+  }
+
+  var markAllAsRead = mxUtils.bind(this, function () {
+    this.notificationWin.style.display = 'none';
+    var unread = this.notificationWin.querySelectorAll('.circle.active');
+
+    for (var i = 0; i < unread.length; i++) {
+      unread[i].className = 'circle';
+    }
+
+    if (notifs[0]) {
+      localStorage.setItem(lsReadFlag, notifs[0].timestamp);
+    }
+  });
+
+  if (this.notificationBtn == null) {
+    this.notificationBtn = document.createElement('div');
+    this.notificationBtn.className = 'geNotification-box';
+
+    if (uiTheme == 'min') {
+      this.notificationBtn.style.width = '30px';
+      this.notificationBtn.style.top = '4px';
+    }
+
+    var notifCount = document.createElement('span');
+    notifCount.className = 'geNotification-count';
+    this.notificationBtn.appendChild(notifCount);
+
+    var notifBell = document.createElement('div');
+    notifBell.className = 'geNotification-bell';
+    notifBell.style.opacity = uiTheme == 'min' ? '0.5' : '';
+    var bellPart = document.createElement('span');
+    bellPart.className = 'geBell-top';
+    notifBell.appendChild(bellPart);
+    var bellPart = document.createElement('span');
+    bellPart.className = 'geBell-middle';
+    notifBell.appendChild(bellPart);
+    var bellPart = document.createElement('span');
+    bellPart.className = 'geBell-bottom';
+    notifBell.appendChild(bellPart);
+    var bellPart = document.createElement('span');
+    bellPart.className = 'geBell-rad';
+    notifBell.appendChild(bellPart);
+    this.notificationBtn.appendChild(notifBell);
+
+    //Add as first child such that it is the left-most one
+    this.buttonContainer.insertBefore(this.notificationBtn, this.buttonContainer.firstChild);
+
+    this.notificationWin = document.createElement('div');
+    this.notificationWin.className = 'geNotifPanel';
+    this.notificationWin.style.display = 'none';
+    document.body.appendChild(this.notificationWin);
+
+    var winHeader = document.createElement('div');
+    winHeader.className = 'header';
+    var winTitle = document.createElement('span');
+    winTitle.className = 'title';
+    winTitle.textContent = mxResources.get('notifications');
+    winHeader.appendChild(winTitle);
+    var winClose = document.createElement('span');
+    winClose.className = 'closeBtn';
+    winClose.textContent = 'x';
+    winHeader.appendChild(winClose);
+    this.notificationWin.appendChild(winHeader);
+
+    var winBody = document.createElement('div');
+    winBody.className = 'notifications clearfix';
+    var notifList = document.createElement('div');
+    notifList.setAttribute('id', 'geNotifList');
+    notifList.style.position = 'relative';
+    winBody.appendChild(notifList);
+    this.notificationWin.appendChild(winBody);
+
+    mxEvent.addListener(
+      this.notificationBtn,
+      'click',
+      mxUtils.bind(this, function () {
+        if (this.notificationWin.style.display == 'none') {
+          this.notificationWin.style.display = '';
+          document.querySelector('.notifications').scrollTop = 0;
+          var r = this.notificationBtn.getBoundingClientRect();
+          this.notificationWin.style.top = r.top + this.notificationBtn.clientHeight + 'px';
+          this.notificationWin.style.left = r.right - this.notificationWin.clientWidth + 'px';
+          shouldAnimate(0); //Stop animation once notifications are open
+        } else {
+          markAllAsRead();
+        }
+      }),
+    );
+
+    mxEvent.addListener(winClose, 'click', markAllAsRead);
+  }
+
+  var newNotif = 0;
+  var notifListEl = document.getElementById('geNotifList');
+
+  if (notifListEl == null) {
+    EditorUi.logError('Error: element (geNotifList) is null in showNotification', null, 5859);
+  } else if (notifs.length == 0) {
+    notifListEl.innerHTML =
+      '<div class="line"></div><div class="notification">' +
+      mxUtils.htmlEntities(mxResources.get('none')) +
+      '</div>';
+  } else {
+    notifListEl.innerHTML = '<div class="line"></div>';
+
+    for (var i = 0; i < notifs.length; i++) {
+      (function (editorUi, notif) {
+        if (notif.isNew) {
+          newNotif++;
+        }
+
+        var notifEl = document.createElement('div');
+        notifEl.className = 'notification';
+        var ts = new Date(notif.timestamp);
+        var str = editorUi.timeSince(ts);
+
+        if (str == null) {
+          str = mxResources.get('lessThanAMinute');
+        }
+
+        notifEl.innerHTML =
+          '<div class="circle' +
+          (notif.isNew ? ' active' : '') +
+          '"></div><span class="time">' +
+          mxUtils.htmlEntities(mxResources.get('timeAgo', [str], '{1} ago')) +
+          '</span>' +
+          '<p>' +
+          mxUtils.htmlEntities(notif.content) +
+          '</p>';
+        if (notif.link) {
+          mxEvent.addListener(notifEl, 'click', function () {
+            window.open(notif.link, 'notifWin');
+          });
+        }
+
+        notifListEl.appendChild(notifEl);
+      })(this, notifs[i]);
+    }
+  }
+
+  shouldAnimate(newNotif);
+};
 /**
  * Translates this point by the given vector.
  *
@@ -6651,30 +7093,32 @@ App.prototype.updateUserElement = function () {
               addUser(
                 this.oneDrive.getUser(),
                 IMAGE_PATH + '/onedrive-logo.svg',
-                mxUtils.bind(this, function () {
-                  var file = this.getCurrentFile();
+                this.oneDrive.noLogout
+                  ? null
+                  : mxUtils.bind(this, function () {
+                      var file = this.getCurrentFile();
 
-                  if (file != null && file.constructor == OneDriveFile) {
-                    var doLogout = mxUtils.bind(this, function () {
-                      this.oneDrive.logout();
-                      window.location.hash = '';
-                    });
+                      if (file != null && file.constructor == OneDriveFile) {
+                        var doLogout = mxUtils.bind(this, function () {
+                          this.oneDrive.logout();
+                          window.location.hash = '';
+                        });
 
-                    if (!file.isModified()) {
-                      doLogout();
-                    } else {
-                      this.confirm(
-                        mxResources.get('allChangesLost'),
-                        null,
-                        doLogout,
-                        mxResources.get('cancel'),
-                        mxResources.get('discardChanges'),
-                      );
-                    }
-                  } else {
-                    this.oneDrive.logout();
-                  }
-                }),
+                        if (!file.isModified()) {
+                          doLogout();
+                        } else {
+                          this.confirm(
+                            mxResources.get('allChangesLost'),
+                            null,
+                            doLogout,
+                            mxResources.get('cancel'),
+                            mxResources.get('discardChanges'),
+                          );
+                        }
+                      } else {
+                        this.oneDrive.logout();
+                      }
+                    }),
                 mxResources.get('oneDrive'),
               );
             }
@@ -6788,25 +7232,49 @@ App.prototype.updateUserElement = function () {
             var div = document.createElement('div');
             div.style.textAlign = 'center';
             div.style.padding = '12px';
-            div.style.background = 'whiteSmoke';
+            div.style.background = Editor.isDarkMode() ? '' : 'whiteSmoke';
             div.style.borderTop = '1px solid #e0e0e0';
             div.style.whiteSpace = 'nowrap';
 
-            var btn = mxUtils.button(
-              mxResources.get('close'),
-              mxUtils.bind(this, function () {
-                if (
-                  !mxEvent.isConsumed(evt) &&
-                  this.userPanel != null &&
-                  this.userPanel.parentNode != null
-                ) {
-                  this.userPanel.parentNode.removeChild(this.userPanel);
-                }
-              }),
-            );
-            btn.className = 'geBtn';
-            div.appendChild(btn);
-            this.userPanel.appendChild(div);
+            if (urlParams['sketch'] == '1') {
+              var btn = mxUtils.button(
+                mxResources.get('share'),
+                mxUtils.bind(this, function () {
+                  this.actions.get('share').funct();
+                }),
+              );
+              btn.className = 'geBtn';
+              div.appendChild(btn);
+              this.userPanel.appendChild(div);
+
+              if (this.commentsSupported()) {
+                btn = mxUtils.button(
+                  mxResources.get('comments'),
+                  mxUtils.bind(this, function () {
+                    this.actions.get('comments').funct();
+                  }),
+                );
+                btn.className = 'geBtn';
+                div.appendChild(btn);
+                this.userPanel.appendChild(div);
+              }
+            } else {
+              var btn = mxUtils.button(
+                mxResources.get('close'),
+                mxUtils.bind(this, function () {
+                  if (
+                    !mxEvent.isConsumed(evt) &&
+                    this.userPanel != null &&
+                    this.userPanel.parentNode != null
+                  ) {
+                    this.userPanel.parentNode.removeChild(this.userPanel);
+                  }
+                }),
+              );
+              btn.className = 'geBtn';
+              div.appendChild(btn);
+              this.userPanel.appendChild(div);
+            }
 
             document.body.appendChild(this.userPanel);
           }

@@ -1872,7 +1872,6 @@ Actions.prototype.init = function () {
   action = this.addAction(
     'layers',
     mxUtils.bind(this, function () {
-
       // TEN9: Changes for new layer window
       const layersWindow = document.querySelector('#layer-window-id');
       if (!layersWindow) {

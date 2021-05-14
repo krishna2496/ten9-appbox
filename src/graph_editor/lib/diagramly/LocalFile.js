@@ -156,7 +156,7 @@ LocalFile.prototype.saveFile = function (title, revision, success, error, useCur
 
   var binary = this.ui.useCanvasForExport && /(\.png)$/i.test(this.getTitle());
   this.setShadowModified(false);
-  var data = this.getData();
+  var savedData = this.getData();
 
   var done = mxUtils.bind(this, function () {
     this.setModified(this.getShadowModified());
@@ -196,9 +196,10 @@ LocalFile.prototype.saveFile = function (title, revision, success, error, useCur
                         mxUtils.bind(this, function () {
                           this.fileHandle.getFile().then(
                             mxUtils.bind(this, function (desc) {
+                              var lastDesc = this.desc;
                               this.savingFile = false;
                               this.desc = desc;
-                              done();
+                              this.fileSaved(savedData, lastDesc, done, errorWrapper);
                             }),
                             errorWrapper,
                           );
@@ -264,12 +265,12 @@ LocalFile.prototype.saveFile = function (title, revision, success, error, useCur
         doSave(imageData);
       }),
       error,
-      this.ui.getCurrentFile() != this ? data : null,
+      this.ui.getCurrentFile() != this ? savedData : null,
       p.scale,
       p.border,
     );
   } else {
-    doSave(data);
+    doSave(savedData);
   }
 };
 

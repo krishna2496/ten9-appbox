@@ -683,7 +683,7 @@ DrawioFile.prototype.ignorePatches = function (patches) {
 /**
  * Applies the given patches to the file.
  */
-DrawioFile.prototype.patch = function (patches, resolver) {
+DrawioFile.prototype.patch = function (patches, resolver, undoable) {
   // Saves state of undo history
   var undoMgr = this.ui.editor.undoManager;
   var history = undoMgr.history.slice();
@@ -695,7 +695,7 @@ DrawioFile.prototype.patch = function (patches, resolver) {
 
   // Ignores change events
   var prev = this.changeListenerEnabled;
-  this.changeListenerEnabled = false;
+  this.changeListenerEnabled = undoable;
 
   // Folding and math change require special handling
   var fold = graph.foldingEnabled;
@@ -732,7 +732,7 @@ DrawioFile.prototype.patch = function (patches, resolver) {
     }
 
     // Checks if current page was removed
-    if (mxUtils.indexOf(this.ui.pages, this.ui.getCurrentPage()) < 0) {
+    if (mxUtils.indexOf(this.ui.pages, this.ui.currentPage) < 0) {
       this.ui.selectPage(this.ui.pages[0], true);
     }
   } finally {
@@ -745,11 +745,13 @@ DrawioFile.prototype.patch = function (patches, resolver) {
     this.changeListenerEnabled = prev;
 
     // Restores history state
-    undoMgr.history = history;
-    undoMgr.indexOfNextAdd = nextAdd;
-    undoMgr.fireEvent(new mxEventObject(mxEvent.CLEAR));
+    if (!undoable) {
+      undoMgr.history = history;
+      undoMgr.indexOfNextAdd = nextAdd;
+      undoMgr.fireEvent(new mxEventObject(mxEvent.CLEAR));
+    }
 
-    if (this.ui.getCurrentPage() == null || this.ui.getCurrentPage().needsUpdate) {
+    if (this.ui.currentPage == null || this.ui.currentPage.needsUpdate) {
       // Updates the graph and background
       if (math != graph.mathEnabled) {
         this.ui.editor.updateGraphComponents();
