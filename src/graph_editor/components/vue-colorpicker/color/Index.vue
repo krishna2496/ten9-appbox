@@ -7,6 +7,7 @@ import Preview from './Preview.vue';
 import Sucker from './Sucker.vue';
 import Box from './Box.vue';
 import Colors from './Colors.vue';
+
 // TEN9: imports
 import WindowHeader from '../../windows/Header.vue';
 const { dragElement, bringWindowToFront } = require('../../windows/utils.ts');
@@ -15,6 +16,7 @@ const graphUtils = require('../../../lib/jgraph/graph_utils.js');
 export default {
   components: {
     Saturation,
+    // TEN9: Add Window header
     WindowHeader,
     Hue,
     Alpha,
@@ -27,6 +29,7 @@ export default {
   props: {
     theme: {
       type: String,
+      // TEN9: Changed from dark to light
       default: 'light',
     },
     suckerHide: {
@@ -80,7 +83,8 @@ export default {
   },
   data() {
     return {
-      hueWidth: 15,
+      // TEN9: Changed hueWidth from 15 to 18
+      hueWidth: 18,
       hueHeight: 152,
       previewHeight: 30,
       modelRgba: '',
@@ -107,6 +111,7 @@ export default {
       return this.theme === 'light';
     },
     totalWidth() {
+      // TEN9: Added even more spacing (from 8 to 27) to account for ten9 UX reqs
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       return this.hueHeight + (this.hueWidth + 27) * 2;
     },
@@ -146,6 +151,8 @@ export default {
 
     // 避免初始化时，也会触发changeColor事件
     this.$watch('rgba', () => {
+
+      // TEN9: Update new var too
       this.alphaHexString = this.rgba2hex(
         `rgb(${this.r}, ${this.g}, ${this.b}), ${this.a}`,
         this.a,
@@ -157,7 +164,7 @@ export default {
       });
     });
   },
-  // TEN9: add mounted property 
+  // TEN9: add mounted property
   mounted() {
     // eslint-disable-next-line no-undef
     this.editorUi.addListener('openColorPicker', (ui, event) => {
@@ -173,7 +180,7 @@ export default {
         this.selectSaturation(options.color)
         this.selectHue(options.color)
         this.inputHex(options.color)
-        
+
         this.selectColor(options.color, false);
         this.colorPickerType = options.type;
         this.show = true;
@@ -181,8 +188,8 @@ export default {
         this.$nextTick(()=> {
           this.previousAlphaHexString = this.alphaHexString;
         });
-        
-        const alpha = this.hexToRGBA(this.alphaHexString);
+
+        const alpha = this.hex2rgba(this.alphaHexString);
         if (alpha != undefined) {
           this.a = alpha;
         }
@@ -191,13 +198,13 @@ export default {
         this.buttonInactive();
       }
 
-     bringWindowToFront(0);
-     this.editorUi.colorPicker = true;
-     this.editorUi.selectedColorPicker =  this.colorPickerType;
+      bringWindowToFront(0);
+      this.editorUi.colorPicker = true;
+      this.editorUi.selectedColorPicker =  this.colorPickerType;
     });
 
     this.editorUi.addListener('openColorWindow',() => {
-       const ele = this.$refs.colorWindow;
+      const ele = this.$refs.colorWindow;
 
       // Add drag property on color window.
       dragElement(ele, 0);
@@ -231,7 +238,7 @@ export default {
           }
           this.recentColorsArray.unshift(`#${this.alphaHexString}`);
         }
-        
+
         this.$emit('saveRecentColors', this.recentColorsArray.toString())
       }
       this.previousAlphaHexString = this.alphaHexString;
@@ -247,20 +254,19 @@ export default {
         colorWindow.style.left = `${containerRect.width -  formatPanelWidth - colorWindowWidth - rightPadding}px`;
         colorWindow.style.top = `${this.editorUi.menubarHeight + this.editorUi.toolbarHeight + topPadding}px`;
     });
-    
+
     if(this.recentColors != '') {
       this.recentColorsArray = this.recentColors.split(",");
     } else {
       this.recentColorsArray = [];
     }
-    
-
   },
   methods: {
     selectSaturation(color) {
       const { r, g, b, h, s, v } = this.setColorValue(color);
       Object.assign(this, { r, g, b, h, s, v });
       this.setText();
+      // TEN9: Added apply in nextTick
       this.$nextTick(() => {
         this.apply();
       });
@@ -272,12 +278,14 @@ export default {
       this.$nextTick(() => {
         this.$refs.saturation.renderColor();
         this.$refs.saturation.renderSlide();
+        // TEN9: Added apply
         this.apply();
       });
     },
     selectAlpha(a) {
       this.a = a;
       this.setText();
+      // TEN9: Added apply in nextTick
       this.$nextTick(() => {
         this.apply();
       });
@@ -371,6 +379,7 @@ export default {
 };
 </script>
 
+<!-- // TEN9: Converted template to pug and relocated to below script -->
 <template lang="pug">
 b-card.mb-2.color-card(
   tag='article',
@@ -441,6 +450,7 @@ b-card.mb-2.color-card(
       )
 </template>
 
+<!-- // TEN9: Added scoped styling -->
 <style lang="scss" scoped>
 .hu-color-picker {
   padding: 10px;
@@ -480,6 +490,8 @@ b-card.mb-2.color-card(
 
   .color-set {
     display: flex;
+    // TEN9: Spacing between
+    justify-content: space-between;
   }
 
   .color-show {
@@ -493,7 +505,7 @@ b-card.mb-2.color-card(
   margin-top: -7px;
 }
 
-// TEN9: add paddinf to the recent colors section
+// TEN9: add padding to the recent colors section
 .m-10 {
   margin-top: 10px;
   margin-bottom: 0;

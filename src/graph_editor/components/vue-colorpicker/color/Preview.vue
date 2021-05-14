@@ -1,5 +1,6 @@
 <template>
-  <canvas style="max-width: 88%;"/>
+  <!-- // TEN9: Setting to 100 explicitly for best UX -->
+  <canvas style="max-width: 100%;"/>
 </template>
 
 <script>

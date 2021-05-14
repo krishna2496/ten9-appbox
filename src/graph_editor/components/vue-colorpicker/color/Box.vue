@@ -46,6 +46,8 @@ export default {
     justify-content: center;
     align-items: center;
     color: #999;
+    // TEN9: Updated color for our UX reqs
+    // background: #252930;
     background: #e3e5e6;
   }
 
@@ -55,6 +57,9 @@ export default {
     min-width: 100px; // 可以让flex起作用
     padding: 0 12px;
     border: 0;
+    // TEN9: Updated color for our UX reqs
+    // color: #fff;
+    // background: #2e333a;
     color: #000;
     background: #e9ebee;
     box-sizing: border-box;
