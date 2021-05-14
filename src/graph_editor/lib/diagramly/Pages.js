@@ -432,6 +432,7 @@ EditorUi.prototype.initPages = function () {
 
       let isLayerWindowShow = document.querySelector('#layer-window-id');
       if (isLayerWindowShow && isLayerWindowShow.classList.contains('show-window')) {
+        this.fireEvent(new mxEventObject('setLayerWindowCoordinates'));
         this.fireEvent(new mxEventObject('openLayerWindow'));
       }
       // Updates layers window

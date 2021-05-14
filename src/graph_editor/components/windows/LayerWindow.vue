@@ -29,6 +29,7 @@ interface simpleInt {
   style: string;
   value: string;
   visible: boolean;
+  children: simpleInt;
 }
 type LayerProperty = simpleInt[];
 interface boxCoordinate {
@@ -80,6 +81,8 @@ export default defineComponent({
     const editLayerId = ref<string>('');
     const dropDownId = ref<string>(selectedLayer.value);
     const isEnableBindMove = ref<boolean>(false);
+    const isDeleteEnabled = ref<boolean>(false);
+
     // Get index of layer from it's id
     function getIndexFromId(id: string) {
       const index = layers.value.findIndex((layer) => layer['id'].toString() === id);
@@ -92,6 +95,14 @@ export default defineComponent({
         const index = getIndexFromId(id);
         if (id === selectedLayer.value && layers.value[index]['style']) {
           isGraphSelected.value = false;
+        }
+
+        if (id === selectedLayer.value) {
+          if (layers.value[index]['style'] || layers.value.length === 1) {
+            isDeleteEnabled.value = true;
+          } else {
+            isDeleteEnabled.value = false;
+          }
         }
       }
 
@@ -181,6 +192,20 @@ export default defineComponent({
       isMoveSelectionEnable(id);
     }
 
+    function changeCellSelection(id: string) {
+      const { graph } = props.editorUi.editor;
+      const index = getIndexFromId(id);
+      const defaultParent = layers.value;
+      graph.setSelectionCells(null);
+      if (!defaultParent[index]['style']) {
+        graph.setSelectionCells(defaultParent[index].children);
+      } else {
+        for (let i = layers.value.length - 1; i >= 0; i--) {
+          graph.removeSelectionCells(layers.value[i].children);
+        }
+      }
+    }
+
     // Open layer window
     function openLayerWindow() {
       const { graph } = props.editorUi.editor;
@@ -203,9 +228,23 @@ export default defineComponent({
           // Change default window coordinates to last open
           changeLayerWindowCoordinates();
         } else {
-          // Set default window coordinates to default
-          layerWindow.value.style.top = '120px';
-          layerWindow.value.style.left = '690px';
+          const containerRect = graphUtils.getDocumentContainerRect();
+          const topPadding = 10;
+          const rightPadding = 40;
+          const layerWindowWidth = 240;
+          const formatWidth = 240;
+
+          layerWindow.value.style.top = `${
+            +props.editorUi.menubarHeight + +props.editorUi.toolbarHeight + topPadding
+          }px`;
+
+          layerWindow.value.style.left = `${
+            +containerRect.left +
+            +containerRect.width -
+            layerWindowWidth -
+            rightPadding -
+            formatWidth
+          }px`;
         }
         layerWindow.value.style.opacity = '1';
       });
@@ -218,6 +257,29 @@ export default defineComponent({
       if (event.getProperty('selection')) {
         // Enable move selection button if any shape is selected.
         isEnableBind.value = true;
+        const { graph } = props.editorUi.editor;
+        const graphModel = graph.model;
+        if (layers && layers.value) {
+          for (let i = layers.value.length - 1; i >= 0; i--) {
+            const layerCell = graphModel.getChildAt(graphModel.root, i);
+            const selectedCells = graph.getSelectionCells();
+            if (selectedCells.length === 0) {
+              break;
+            }
+            let allCellsInSameLayer = true;
+            for (
+              let cellIndex = 0;
+              allCellsInSameLayer && cellIndex < selectedCells.length;
+              cellIndex++
+            ) {
+              allCellsInSameLayer = graphModel.isAncestor(layerCell, selectedCells[cellIndex]);
+            }
+            if (allCellsInSameLayer) {
+              changeSelectedLayer(layers.value[i].id);
+              break;
+            }
+          }
+        }
       } else {
         // Disable move selection button if no shape is selected
         isEnableBind.value = false;
@@ -283,37 +345,41 @@ export default defineComponent({
           graphModel.endUpdate();
         }
       }
-
+      changeCellSelection(layers.value[layers.value.length - 1].id);
       changeSelectedLayer(layers.value[layers.value.length - 1].id);
     }
 
     // Delete selected layer from layers listing
     function deleteLayer() {
-      const { graph } = props.editorUi.editor;
-      const graphModel = graph.model;
-      let i = getIndexFromId(selectedLayer.value);
-      const defaultParent = layers.value;
+      const deleteButton = document.querySelector('.fa-trash-o').parentElement;
+      if (!deleteButton.classList.contains('mxDisabled')) {
+        const { graph } = props.editorUi.editor;
+        const graphModel = graph.model;
+        let i = getIndexFromId(selectedLayer.value);
+        const defaultParent = layers.value;
 
-      if (graph.isEnabled()) {
-        graphModel.beginUpdate();
-        try {
-          const index = graphModel.root.getIndex(defaultParent[i]);
-          graph.removeCells([defaultParent[i]], false);
+        if (graph.isEnabled()) {
+          graphModel.beginUpdate();
+          try {
+            const index = graphModel.root.getIndex(defaultParent[i]);
+            graph.removeCells([defaultParent[i]], false);
 
-          // Creates default layer if no layer exists
-          if (graphModel.getChildCount(graphModel.root) == 0) {
-            graphModel.add(graphModel.root, new mxCell('Background'));
-            graph.setDefaultParent();
-          } else if (index > 0 && index <= graphModel.getChildCount(graphModel.root)) {
-            graph.setDefaultParent(graphModel.getChildAt(graphModel.root, index - 1));
-            i = index - 1;
-          } else {
-            graph.setDefaultParent(null);
+            // Creates default layer if no layer exists
+            if (graphModel.getChildCount(graphModel.root) == 0) {
+              graphModel.add(graphModel.root, new mxCell('Background'));
+              graph.setDefaultParent();
+            } else if (index > 0 && index <= graphModel.getChildCount(graphModel.root)) {
+              graph.setDefaultParent(graphModel.getChildAt(graphModel.root, index - 1));
+              i = index - 1;
+            } else {
+              graph.setDefaultParent(null);
+            }
+          } finally {
+            graphModel.endUpdate();
           }
-        } finally {
-          graphModel.endUpdate();
+          changeCellSelection(layers.value[i].id);
+          changeSelectedLayer(layers.value[i].id);
         }
-        changeSelectedLayer(layers.value[i].id);
       }
     }
 
@@ -331,6 +397,7 @@ export default defineComponent({
           newCell = graph.addCell(newCell, graphModel.root, index + 1);
           graph.setDefaultParent(newCell);
         } finally {
+          changeCellSelection(newCell.id);
           changeSelectedLayer(newCell.id);
           graphModel.endUpdate();
         }
@@ -353,7 +420,6 @@ export default defineComponent({
     function moveSelection() {
       const { graph } = props.editorUi.editor;
       const graphModel = graph.model;
-
       setLayerWindowCoordinates();
       dropDownId.value = '';
       for (let i = layers.value.length - 1; i >= 0; i--) {
@@ -404,6 +470,9 @@ export default defineComponent({
           }
           graph.removeSelectionCells(graph.getModel().getDescendants(defaultParent[index]));
         }
+      }
+      if (id == selectedLayer.value) {
+        changeCellSelection(id);
       }
       isMoveSelectionEnable(id);
     }
@@ -456,6 +525,7 @@ export default defineComponent({
     return {
       addLayer,
       breakWord,
+      changeCellSelection,
       changeSelectionStage,
       changeLayerWindowCoordinates,
       changeMinStatus,
@@ -472,6 +542,7 @@ export default defineComponent({
       editLayerName,
       getIndexFromId,
       isEnableBind,
+      isDeleteEnabled,
       isEnableBindMove,
       isMin,
       isShow,
@@ -491,7 +562,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.layer-window
+.layer-window(v-show='show')
   div
     b-button(v-if='!show', @click='show = true', variant='primary') Show Layer Window
     b-card#layer-window-id.layer-window-card(
@@ -515,12 +586,18 @@ export default defineComponent({
           :selectedLayer='selectedLayer',
           @edit-layer='editLayer',
           @change-selected-layer='changeSelectedLayer',
+          @change-cell-selection='changeCellSelection',
           @lock-layer='lockLayer',
           @check-layer='checkLayer',
           @drag-layer='dragLayer'
         )
       template(#footer='', v-if='!isMin')
-        span.mr-15.cursor-pointer(aria-hidden='true', @click='deleteLayer', title='Delete layer')
+        span.mr-15.cursor-pointer(
+          aria-hidden='true',
+          @click='deleteLayer',
+          title='Delete layer',
+          :class='{ mxDisabled: isDeleteEnabled }'
+        )
           i.fa.fa-trash-o.fa-lg.layer-window-footerBtn
         span#layer-window-moveSelectionBtn.mr-15.cursor-pointer(
           aria-hidden='true',
