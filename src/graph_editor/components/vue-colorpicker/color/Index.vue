@@ -7,293 +7,10 @@ import Preview from './Preview.vue';
 import Sucker from './Sucker.vue';
 import Box from './Box.vue';
 import Colors from './Colors.vue';
+// TEN9: imports
 import WindowHeader from '../../windows/Header.vue';
 const { dragElement, bringWindowToFront } = require('../../windows/utils.ts');
 const graphUtils = require('../../../lib/jgraph/graph_utils.js');
-
-// interface ColorPickerObject {
-//   type?: string;
-//   color?: string;
-// }
-
-// interface ColorPickerEvent {
-//   getProperty?(propName: string): ColorPickerObject;
-// }
-
-// export default defineComponent({
-//   name: 'ColorPickerModal',
-//   components: {
-//     saturation: Saturation,
-//     hue: Hue,
-//     alpha: Alpha,
-//     preview: Preview,
-//     sucker: Sucker,
-//     box: Box,
-//     colors: Colors,
-//   },
-//   props: {
-//     theme: {
-//       type: String,
-//       default: 'dark',
-//     },
-//     suckerHide: {
-//       type: Boolean,
-//       default: true,
-//     },
-//     suckerCanvas: {
-//       type: null, // HTMLCanvasElement
-//       default: null,
-//     },
-//     colorsDefault: {
-//       type: Array,
-//       default: [
-//         '#000000',
-//         '#FFFFFF',
-//         '#FF1900',
-//         '#F47365',
-//         '#FFB243',
-//         '#FFE623',
-//         '#6EFF2A',
-//         '#1BC7B1',
-//         '#00BEFF',
-//         '#2E81FF',
-//         '#5D61FF',
-//         '#FF89CF',
-//         '#FC3CAD',
-//         '#BF3DCE',
-//         '#8E00A7',
-//         'rgba(0,0,0,0)',
-//       ],
-//     },
-//     colorsHistoryKey: {
-//       type: String,
-//       default: 'vue-colorpicker-history',
-//     },
-//     editorUi: {
-//       type: Object,
-//       // eslint-disable-next-line vue/require-valid-default-prop
-//       default: {},
-//     },
-//   },
-
-//   setup(props, ctx, computed ) {
-//     const color = ref<string>('#000000');
-//     const show = ref<boolean>(false);
-//     const hueWidth = ref(15);
-//     const hueHeight = ref(152);
-//     const previewHeight = ref(30);
-//     const modelRgba = ref('');
-//     const modelHex = ref('');
-//     const r = ref(0);
-//     const g = ref(0);
-//     const b = ref(0);
-//     const a = ref(1);
-//     const h = ref(0);
-//     const s = ref(0);
-//     const v = ref(0);
-//     const colorPickerType = ref('');
-//     const suckerArea = ref([]);
-
-//     function openColorPicker(_sender: typeof mxEventSource, event: ColorPickerEvent) {
-//       show.value = true;
-//       const options = event.getProperty('options');
-//       colorPickerType.value = options.type;
-//       console.log(options.color);
-//       color.value = options.color;
-//     }
-
-//     const isLightTheme = computed(() =>  props.theme === 'light');
-
-//     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-//     const totalWidth = computed(() => hueHeight.value + (hueWidth.value + 8) * 2);
-
-//     const previewWidth = computed(() => totalWidth - (props.suckerHide ? 0 : previewHeight.value));
-
-//     const rgba = computed({
-//       get(){
-//         return  {r: r.value, g: g.value, b: b.value,  a: a.value}
-//       },
-//       });
-
-//     const hsv = computed({
-//       get(){
-//         return  {h: h.value, s: s.value, v: v.value}
-//       },
-//       });
-
-//     const rgbString = computed(() => `rgb(${r.value}, ${g.value}, ${b.value})`);
-
-//     const rgbaStringShort = computed(() => `${r.value}, ${g.value}, ${b.value}, ${a.value}`);
-
-//     const rgbaString = computed(() => `rgba(${rgbaStringShort})`);
-
-//     const hexString = computed(() => rgb2hex(rgba, true));
-
-//     function close() {
-//       show.value = false;
-//     }
-
-//     onMounted(() => {
-//       props.editorUi.addListener('openColorPicker', openColorPicker);
-//     });
-
-//     onUnmounted(() => {
-//       props.editorUi.removeListener(openColorPicker);
-//     });
-
-//     Object.assign(ctx, setColorValue(color.value));
-//     setText();
-
-//     watch(
-//       () => rgba,
-//       () => {
-//         ctx.emit('changeColor', {
-//         rgba: rgba,
-//         hsv: hsv,
-//         hex: modelHex,
-//       });
-//       },
-//     );
-
-//     function apply() {
-//       if (colorPickerType.value === 'Background') {
-//         props.editorUi.setGraphBackgroundColor(hexString.value);
-//       } else if (colorPickerType.value === 'Grid') {
-//         props.editorUi.setGridColor(hexString.value);
-//       } else if (colorPickerType.value === 'Fill') {
-//         props.editorUi.setShapeColor('fillColor', hexString.value);
-//       } else if (colorPickerType.value === 'Gradient') {
-//         props.editorUi.setShapeColor('gradientColor', hexString.value);
-//       } else if (colorPickerType.value === 'Line') {
-//         props.editorUi.setShapeColor('strokeColor', hexString.value);
-//       } else if (colorPickerType.value === 'Font Color') {
-//         props.editorUi.setShapeColor('fontColor', hexString.value);
-//       } else if (colorPickerType.value === 'Background Color') {
-//         props.editorUi.setShapeColor('labelBackgroundColor', hexString.value);
-//       }
-//       close();
-//     }
-
-//     function selectSaturation(color: string) {
-//       const { r, g, b, h, s, v } = setColorValue(color);
-//       Object.assign(ctx, { r, g, b, h, s, v });
-//       setText();
-//     }
-
-//     function selectHue(color: string) {
-//       const { r, g, b, h, s, v } = setColorValue(color);
-//       Object.assign(ctx, { r, g, b, h, s, v });
-//       setText();
-//       nextTick(() => {
-//         ctx.refs.saturation.renderColor();
-//         ctx.refs.saturation.renderSlide();
-//       });
-//     }
-
-//     function selectAlpha(b: number) {
-//       a.value = b;
-//       setText();
-//     }
-
-//     function inputHex(color: string) {
-//       const { r, g, b, a, h, s, v } =setColorValue(color);
-//       Object.assign(ctx, { r, g, b, a, h, s, v });
-//       modelHex.value = color;
-//       modelRgba.value = rgbaStringShort.value;
-//       nextTick(() => {
-//         ctx.refs.saturation.renderColor();
-//         ctx.refs.saturation.renderSlide();
-//         ctx.refs.hue.renderSlide();
-//       });
-//     }
-
-//     function inputRgba(color: string) {
-//       const { r, g, b, a, h, s, v } = setColorValue(color);
-//       Object.assign(ctx, { r, g, b, a, h, s, v });
-//       modelHex.value = hexString.value;
-//       modelRgba.value = color;
-//       nextTick(() => {
-//         ctx.refs.saturation.renderColor();
-//         ctx.refs.saturation.renderSlide();
-//         ctx.refs.hue.renderSlide();
-//       });
-//     }
-
-//     function setText() {
-//       modelHex.value = hexString.value;
-//       modelRgba.value = rgbaStringShort.value;
-//     }
-
-//     function openSucker(isOpen: any) {
-//       ctx.emit('openSucker', isOpen);
-//     }
-
-//     function selectSucker(color: string) {
-//       const { r, g, b, a, h, s, v } = setColorValue(color);
-//       Object.assign(ctx, { r, g, b, a, h, s, v });
-//       setText();
-//       nextTick(() => {
-//         ctx.refs.saturation.renderColor();
-//         ctx.refs.saturation.renderSlide();
-//         ctx.refs.hue.renderSlide();
-//       });
-//     }
-
-//     function selectColor(colors: string, isNextTick = true) {
-//       // eslint-disable-next-line vue/no-mutating-props
-//       color.value = colors;
-//       const { r, g, b, a, h, s, v } = setColorValue(color);
-//       Object.assign(ctx, { r, g, b, a, h, s, v });
-//      setText();
-//       if (isNextTick) {
-//        ctx.selectAlphanextTick(() => {
-//          ctx.refs.saturation.renderColor();
-//          ctx.refs.saturation.renderSlide();
-//          ctx.refs.hue.renderSlide();
-//         });
-//       }
-//     }
-
-//     return {
-//       apply,
-//       color,
-//       colorPickerType,
-//       show,
-//       hexString,
-//       hueWidth,
-//       hueHeight,
-//       hsv,
-//       inputHex,
-//       inputRgba,
-//       isLightTheme,
-//       openColorPicker,
-//       openSucker,
-//       previewHeight,
-//       previewWidth,
-//       modelRgba,
-//       modelHex,
-//       r,
-//       rgba,
-//       rgbString,
-//       rgbaString,
-//       rgbaStringShort,
-//       g,
-//       b,
-//       a,
-//       h,
-//       s,
-//       selectAlpha,
-//       selectColor,
-//       selectHue,
-//       selectSaturation,
-//       selectSucker,
-//       setText,
-//       suckerArea,
-//       totalWidth,
-//       v,
-//     };
-//   },
-// });
 
 export default {
   components: {
@@ -314,12 +31,12 @@ export default {
     },
     suckerHide: {
       type: Boolean,
-      default: false,
+      default: true,
     },
-    // suckerCanvas: {
-    //   type: HTMLCanvasElement, // HTMLCanvasElement
-    //   default: null,
-    // },
+    suckerCanvas: {
+      type: HTMLCanvasElement, // HTMLCanvasElement
+      default: null,
+    },
     suckerArea: {
       type: Array,
       default: () => [950, 700, 900, 700],
@@ -349,11 +66,12 @@ export default {
       type: String,
       default: 'vue-colorpicker-history',
     },
+    // TEN9: add editorUi as prop to use it's functionality
     editorUi: {
       type: Object,
-      // eslint-disable-next-line vue/require-valid-default-prop
       default: {},
     },
+    // TEN9: to get recent colors from app
     recentColors: {
       require: false,
       type: String,
@@ -362,20 +80,11 @@ export default {
   },
   data() {
     return {
-      alphaHexString: '',
-      previousAlphaHexString:'',
-      applyFn: null,
-      color: '#000000',
-      colorPickerType: '',
-      show: false,
       hueWidth: 15,
       hueHeight: 152,
       previewHeight: 30,
       modelRgba: '',
       modelHex: '',
-      suckerCanvas: null,
-      isMin: false,
-      recentColorsArray:[],
       r: 0,
       g: 0,
       b: 0,
@@ -383,6 +92,14 @@ export default {
       h: 0,
       s: 0,
       v: 0,
+      // TEN9: new datas
+      alphaHexString: '',
+      previousAlphaHexString:'',
+      applyFn: null,
+      colorPickerType: '',
+      show: false,
+      isMin: false,
+      recentColorsArray:[],
     };
   },
   computed: {
@@ -425,7 +142,6 @@ export default {
     },
   },
   created() {
-    Object.assign(this, this.setColorValue(this.color));
     this.setText();
 
     // 避免初始化时，也会触发changeColor事件
@@ -441,6 +157,7 @@ export default {
       });
     });
   },
+  // TEN9: add mounted property 
   mounted() {
     // eslint-disable-next-line no-undef
     this.editorUi.addListener('openColorPicker', (ui, event) => {
@@ -501,10 +218,20 @@ export default {
       this.applyFn = null;
 
       if(this.alphaHexString != this.previousAlphaHexString && this.recentColorsArray[0] != `#${this.alphaHexString}`) {
-        if(this.recentColorsArray.length == 8) {
-          this.recentColorsArray.splice(-1,1);
+        Array.prototype.move = function(from,to){
+          this.splice(to,0,this.splice(from,1)[0]);
+          return this;
+        };
+        if(this.recentColorsArray.indexOf(`#${this.alphaHexString}`) != -1) {
+          this.recentColorsArray.move(this.recentColorsArray.indexOf(`#${this.alphaHexString}`),0)
         }
-        this.recentColorsArray.unshift(`#${this.alphaHexString}`);
+        else {
+          if(this.recentColorsArray.length == 8) {
+          this.recentColorsArray.splice(-1,1);
+          }
+          this.recentColorsArray.unshift(`#${this.alphaHexString}`);
+        }
+        
         this.$emit('saveRecentColors', this.recentColorsArray.toString())
       }
       this.previousAlphaHexString = this.alphaHexString;
@@ -530,31 +257,6 @@ export default {
 
   },
   methods: {
-    changeMinStatus() {
-      this.isMin = !this.isMin;
-    },
-    openColorPicker() {
-      this.show = true;
-    },
-    buttonInactive() {
-      var element = document.getElementsByClassName('geColorBtn');
-      for (var i = 0; i < element.length; i++) {
-        element[i].classList.remove('active_button');
-      }
-    },
-    close() {
-      this.buttonInactive();
-      this.colorPickerType = '';
-      this.show = false;
-      this.applyFn = null;
-      this.editorUi.colorPicker = false;
-    },
-    apply() {
-      if (this.applyFn && this.alphaHexString != this.previousAlphaHexString && this.alphaHexString != '') {
-        this.editorUi.colorPickerEvent = true;
-        this.applyFn(`#${this.alphaHexString}`);
-      }
-    },
     selectSaturation(color) {
       const { r, g, b, h, s, v } = this.setColorValue(color);
       Object.assign(this, { r, g, b, h, s, v });
@@ -623,8 +325,6 @@ export default {
       });
     },
     selectColor(color, isNextTick = true) {
-      // eslint-disable-next-line vue/no-mutating-props
-      this.color = color;
       const { r, g, b, a, h, s, v } = this.setColorValue(color);
       Object.assign(this, { r, g, b, a, h, s, v });
       this.setText();
@@ -635,6 +335,36 @@ export default {
           this.$refs.hue.renderSlide();
           this.apply();
         });
+      }
+    },
+    // TEN9: add function to change the window minimize functionality
+    changeMinStatus() {
+      this.isMin = !this.isMin;
+    },
+    // TEN9: add function to open the color picker
+    openColorPicker() {
+      this.show = true;
+    },
+    // TEN9: add function to inactive the button
+    buttonInactive() {
+      var element = document.getElementsByClassName('geColorBtn');
+      for (var i = 0; i < element.length; i++) {
+        element[i].classList.remove('active_button');
+      }
+    },
+    // TEN9: add function to close the window
+    close() {
+      this.buttonInactive();
+      this.colorPickerType = '';
+      this.show = false;
+      this.applyFn = null;
+      this.editorUi.colorPicker = false;
+    },
+    // TEN9: add function to apply the color when we select form the color picker
+    apply() {
+      if (this.applyFn && this.alphaHexString != this.previousAlphaHexString && this.alphaHexString != '') {
+        this.editorUi.colorPickerEvent = true;
+        this.applyFn(`#${this.alphaHexString}`);
       }
     },
   },
@@ -709,9 +439,6 @@ b-card.mb-2.color-card(
         :colors-history-key='colorsHistoryKey',
         @selectColor='selectColor'
       )
-  //- template(v-slot:modal-footer)
-  //-   button.btn.btn-grey(@click='close') Cancel
-  //-   button.btn.btn-primary(@click='apply') Apply
 </template>
 
 <style lang="scss" scoped>
@@ -760,12 +487,13 @@ b-card.mb-2.color-card(
     display: flex;
   }
 }
-
+// TEN9: add close button css
 .cross-icon {
   height: 5px;
   margin-top: -7px;
 }
 
+// TEN9: add paddinf to the recent colors section
 .m-10 {
   margin-top: 10px;
   margin-bottom: 0;
