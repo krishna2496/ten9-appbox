@@ -82,9 +82,12 @@ export default {
 
   .item {
     position: relative;
+    // TEN9: Adding border for better look
     border: 1px solid #000;
     width: 16px;
     height: 16px;
+    // TEN9: Forcing with !important to ensure change
+    // margin: 10px 0 0 10px;
     margin: 10px 0 0 10px !important;
     border-radius: 3px;
     box-sizing: border-box;
