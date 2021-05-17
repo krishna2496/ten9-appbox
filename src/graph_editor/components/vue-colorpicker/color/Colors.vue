@@ -1,6 +1,7 @@
 <template>
   <div>
     <ul class="colors">
+      <!-- // TEN9: Added key as index as best practice -->
       <li v-for="(item,index) in colorsDefault" :key="index" class="item" @click="selectColor(item)">
         <div :style="{ background: `url(${imgAlphaBase64})` }" class="alpha" />
         <div :style="{ background: item }" class="color" />
