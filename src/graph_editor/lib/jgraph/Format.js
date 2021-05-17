@@ -420,7 +420,10 @@ Format.prototype.clear = function () {
 Format.prototype.refresh = function () {
   if (this.editorUi.colorPickerEvent) {
     this.editorUi.colorPickerEvent = false;
-    if (this.editorUi.getSelectedCell().length == 0) {
+    if (
+      this.editorUi.getSelectedCell().length == 0 &&
+      this.editorUi.selectedColorPicker != 'Background'
+    ) {
       this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
     } else if (this.editorUi.colorPicker) {
       return;
@@ -1108,7 +1111,6 @@ BaseFormatPanel.prototype.createColorOption = function (
   hideCheckbox,
   type,
 ) {
-  //debugger
   var div = document.createElement('div');
   div.classList.add('color-option-field');
 
@@ -1173,7 +1175,7 @@ BaseFormatPanel.prototype.createColorOption = function (
       applying = false;
     }
   };
-
+  const myUi = this.editorUi;
   btn = mxUtils.button(
     '',
     mxUtils.bind(this, function (evt) {
@@ -1207,6 +1209,8 @@ BaseFormatPanel.prototype.createColorOption = function (
           myUi.setShapeColor('fontColor', alphaHexString);
         } else if (type === 'Background Color') {
           myUi.setShapeColor('labelBackgroundColor', alphaHexString);
+        } else if (type === 'Border Color') {
+          myUi.setShapeColor('labelBorderColor', alphaHexString);
         }
       }
 
@@ -1235,6 +1239,10 @@ BaseFormatPanel.prototype.createColorOption = function (
         cb.checked = !cb.checked;
       }
 
+      // TEN9: fire button inactive button
+      if (!cb.checked) {
+        myUi.fireEvent(new mxEventObject('inactiveColorButton'));
+      }
       // Overrides default value with current value to make it easier
       // to restore previous value if the checkbox is clicked twice
       if (
@@ -3475,6 +3483,9 @@ TextFormatPanel.prototype.addFont = function (container) {
     mxResources.get('borderColor'),
     mxConstants.STYLE_LABEL_BORDERCOLOR,
     '#000000',
+    null,
+    null,
+    'Border Color',
   );
   borderPanel.style.fontWeight = 'bold';
 

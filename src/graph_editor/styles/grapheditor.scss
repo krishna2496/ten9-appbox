@@ -2280,10 +2280,6 @@ input {
   background-image: none !important;
 }
 
-.active_button:focus {
-  box-shadow: 0 0 0 3px #ed68a2;
-}
-
 @media print {
   div.geNoPrint {
     display: none !important;
