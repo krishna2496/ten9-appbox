@@ -447,13 +447,6 @@ b-card.mb-2.color-card(
         :colors-history='recentColorsArray'
         @selectColor='selectColor'
       )
-      //- hr.m-10
-      //- colors(
-      //-   :color='rgbaString',
-      //-   :colors-default='recentColorsArray',
-      //-   :colors-history-key='colorsHistoryKey',
-      //-   @selectColor='selectColor'
-      //- )
 </template>
 
 <!-- // TEN9: Added scoped styling -->
