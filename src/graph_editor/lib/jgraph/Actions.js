@@ -1928,6 +1928,25 @@ Actions.prototype.init = function () {
   );
 
   action = this.addAction(
+    'colors',
+    mxUtils.bind(this, function () {
+      if (!ui.colorPicker) {
+        ui.fireEvent(new mxEventObject('openColorWindow'));
+      } else {
+        ui.fireEvent(new mxEventObject('closeColorWindow'));
+      }
+    }),
+    null,
+    null,
+    Editor.ctrlKey + '+Shift+C',
+  );
+  action.isEnabled = isGraphEnabled;
+  action.setToggleAction(true);
+  action.setSelectedCallback(function () {
+    return ui.colorPicker;
+  });
+
+  action = this.addAction(
     'formatPanel',
     mxUtils.bind(this, function (val) {
       ui.toggleFormatPanel(val);

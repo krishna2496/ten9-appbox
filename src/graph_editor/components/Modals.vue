@@ -28,7 +28,6 @@ import PageRenameModal from './dialogs/PageRenameModal.vue';
 import PageScaleModal from './dialogs/PageScaleModal.vue';
 import PrintModal from './dialogs/PrintModal.vue';
 import ScratchpadModal from './dialogs/ScratchpadModal.vue';
-import ColorPickerModal from '../components/vue-colorpicker/color/Index.vue';
 import { defineComponent } from '@vue/composition-api';
 
 import '../styles/modals.scss';
@@ -37,7 +36,6 @@ export default defineComponent({
   name: 'Modals',
   components: {
     BackgroundImageModal,
-    ColorPickerModal,
     CustomZoomModal,
     EditDataModal,
     EditDiagramModal,
@@ -77,7 +75,6 @@ export default defineComponent({
 <template lang="pug">
 .modals-container(v-if='editorUi')
   background-image-modal(:editorUi='editorUi')
-  color-picker-modal(:editorUi='editorUi')
   custom-zoom-modal(:editorUi='editorUi')
   edit-data-modal(:editorUi='editorUi')
   edit-diagram-modal(:editorUi='editorUi')

@@ -1,3 +1,19 @@
+<!--
+* ten9, Inc
+* Copyright (c) 2015 - 2021 ten9, Inc
+* -----
+* NOTICE:  All information contained herein is, and remains
+* the property of ten9 Incorporated and its suppliers,
+* if any.  The intellectual and technical concepts contained
+* herein are proprietary to ten9 Incorporated
+* and its suppliers and may be covered by U.S. and Foreign Patents,
+* patents in process, and are protected by trade secret or copyright law.
+* Dissemination of this information or reproduction of this material
+* is strictly forbidden unless prior written permission is obtained
+* from ten9 Incorporated.
+* -----
+-->
+
 <template>
   <div>
     <svg
@@ -39,7 +55,7 @@
 </template>
 
 <script>
-//import imgSucker from '../img/sucker.png';
+import imgSucker from '../img/sucker.png';
 export default {
   props: {
     suckerCanvas: {
@@ -62,7 +78,7 @@ export default {
     suckerCanvas(newVal) {
       this.isSucking = false;
       this.suckColor(newVal);
-      newVal.style.cursor = "url('../img/sucker.png') 0 32, default";
+      newVal.style.cursor = `url(${imgSucker}) 0 32, default`;
     },
   },
   methods: {
@@ -87,8 +103,7 @@ export default {
         document.removeEventListener('mousemove', this.mousemoveHandler);
         document.removeEventListener('mouseup', this.mousemoveHandler);
         if (this.suckerPreview) {
-          //document.body.removeChild(this.suckerPreview);
-          document.getElementById('color-modal').removeChild(this.suckerPreview);
+          document.body.removeChild(this.suckerPreview);
           this.suckerPreview = null;
         }
       }
@@ -128,8 +143,7 @@ export default {
       ) {
         style.display = '';
       } else {
-        // style.display = 'none';
-        style.display = '';
+        style.display = 'none';
       }
     },
     suckColor(dom) {
@@ -138,8 +152,7 @@ export default {
       }
 
       this.suckerPreview = document.createElement('div');
-      document.getElementById('color-modal').appendChild(this.suckerPreview);
-      //document.body.appendChild(this.suckerPreview);
+      document.body.appendChild(this.suckerPreview);
 
       document.addEventListener('mousemove', this.mousemoveHandler);
       document.addEventListener('mouseup', this.mousemoveHandler);

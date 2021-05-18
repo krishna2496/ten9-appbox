@@ -46,6 +46,8 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const index = 3;
+
     const show = ref<boolean>(false);
 
     const outline = ref(null);
@@ -82,7 +84,7 @@ export default defineComponent({
         return g;
       };
       outline.value.init(div);
-      bringWindowToFront(2);
+      bringWindowToFront(index);
       nextTick(() => {
         // we need to update the outline when DOM is initialize with outline
         outline.value.update();
@@ -124,7 +126,7 @@ export default defineComponent({
       props.editorUi.addListener('hideOutline', close);
 
       const ele: unknown = document.getElementsByClassName('card');
-      dragElement(ele[2], 2);
+      dragElement(ele[index], index);
     });
 
     onUnmounted(() => {

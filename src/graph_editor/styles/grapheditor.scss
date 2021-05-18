@@ -2274,6 +2274,12 @@ input {
   border-radius: 0.1px !important;
 }
 
+// TEN9: add active color picker button style
+.active_button {
+  background-color: #3877f9 !important;
+  background-image: none !important;
+}
+
 @media print {
   div.geNoPrint {
     display: none !important;

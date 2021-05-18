@@ -418,7 +418,25 @@ Format.prototype.clear = function () {
  * Adds the label menu items to the given menu and parent.
  */
 Format.prototype.refresh = function () {
-  // Performance tweak: No refresh needed if not visible
+  if (this.editorUi.colorPickerEvent) {
+    this.editorUi.colorPickerEvent = false;
+    if (
+      this.editorUi.getSelectedCell().length == 0 &&
+      this.editorUi.selectedColorPicker != 'Background'
+    ) {
+      this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
+    } else if (this.editorUi.colorPicker) {
+      return;
+    }
+  } else {
+    var element = document.getElementsByClassName('geColorBtn');
+    for (var i = 0; i < element.length; i++) {
+      element[i].classList.remove('active_button');
+    }
+    this.editorUi.selectedColorPicker = '';
+    this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
+  }
+
   if (this.container.style.width == '0px') {
     return;
   }
@@ -465,6 +483,8 @@ Format.prototype.refresh = function () {
 
   var addClickHandler = mxUtils.bind(this, function (elt, panel, index) {
     var clickHandler = mxUtils.bind(this, function (evt) {
+      // TEN9: fire event when click on format panel tab so we can inactive the button
+      this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
       if (currentLabel != elt) {
         if (containsLabel) {
           this.labelIndex = index;
@@ -1089,6 +1109,7 @@ BaseFormatPanel.prototype.createColorOption = function (
   listener,
   callbackFn,
   hideCheckbox,
+  type,
 ) {
   var div = document.createElement('div');
   div.classList.add('color-option-field');
@@ -1154,18 +1175,54 @@ BaseFormatPanel.prototype.createColorOption = function (
       applying = false;
     }
   };
-
+  const myUi = this.editorUi;
   btn = mxUtils.button(
     '',
     mxUtils.bind(this, function (evt) {
+      this.editorUi.colorPickerEvent = true;
       // TEN9: add custom modal for color picker
       // this.editorUi.pickColor(value, function (color) {
       //   apply(color, null, true);
       // });
       mxEvent.consume(evt);
       var color = getColorFn();
-      var type = label;
-      this.editorUi.fireEvent(new mxEventObject('openColorPicker', 'options', { type, color }));
+      //const type = label;
+      // TEN9: remove all active button class
+      var element = document.getElementsByClassName('geColorBtn');
+      for (var i = 0; i < element.length; i++) {
+        element[i].classList.remove('active_button');
+      }
+      const myUi = this.editorUi;
+
+      function applyFn(alphaHexString) {
+        if (type === 'Background') {
+          myUi.setGraphBackgroundColor(alphaHexString);
+        } else if (type === 'Grid') {
+          myUi.setGridColor(alphaHexString);
+        } else if (type === 'Fill') {
+          myUi.setShapeColor('fillColor', alphaHexString);
+        } else if (type === 'Gradient') {
+          myUi.setShapeColor('gradientColor', alphaHexString);
+        } else if (type === 'Line') {
+          myUi.setShapeColor('strokeColor', alphaHexString);
+        } else if (type === 'Font Color') {
+          myUi.setShapeColor('fontColor', alphaHexString);
+        } else if (type === 'Background Color') {
+          myUi.setShapeColor('labelBackgroundColor', alphaHexString);
+        } else if (type === 'Border Color') {
+          myUi.setShapeColor('labelBorderColor', alphaHexString);
+        }
+      }
+
+      this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
+      if (this.editorUi.selectedColorPicker != type) {
+        this.editorUi.fireEvent(
+          new mxEventObject('openColorPicker', 'options', { type, color, applyFn }),
+        );
+        btn.className = btn.className + ' active_button';
+      } else {
+        this.editorUi.selectedColorPicker = '';
+      }
     }),
   );
 
@@ -1182,6 +1239,11 @@ BaseFormatPanel.prototype.createColorOption = function (
         cb.checked = !cb.checked;
       }
 
+      // TEN9: fire button inactive button
+      if (!cb.checked) {
+        myUi.fireEvent(new mxEventObject('inactiveColorButton'));
+        myUi.selectedColorPicker = '';
+      }
       // Overrides default value with current value to make it easier
       // to restore previous value if the checkbox is clicked twice
       if (
@@ -1216,6 +1278,7 @@ BaseFormatPanel.prototype.createCellColorOption = function (
   defaultColor,
   callbackFn,
   setStyleFn,
+  type,
 ) {
   var ui = this.editorUi;
   var editor = ui.editor;
@@ -1276,6 +1339,8 @@ BaseFormatPanel.prototype.createCellColorOption = function (
       },
     },
     callbackFn,
+    null,
+    type,
   );
 };
 
@@ -3397,6 +3462,8 @@ TextFormatPanel.prototype.addFont = function (container) {
         },
         null,
         true,
+        // TEN9: add extra parameter for color type
+        'Background Color',
       )
     : this.createCellColorOption(
         mxResources.get('backgroundColor'),
@@ -3408,6 +3475,8 @@ TextFormatPanel.prototype.addFont = function (container) {
             elt.style.backgroundColor = null;
           });
         },
+        // TEN9: add extra parameter for color type
+        'Background Color',
       );
   bgPanel.style.fontWeight = 'bold';
 
@@ -3415,6 +3484,9 @@ TextFormatPanel.prototype.addFont = function (container) {
     mxResources.get('borderColor'),
     mxConstants.STYLE_LABEL_BORDERCOLOR,
     '#000000',
+    null,
+    null,
+    'Border Color',
   );
   borderPanel.style.fontWeight = 'bold';
 
@@ -3503,6 +3575,8 @@ TextFormatPanel.prototype.addFont = function (container) {
         },
         null,
         true,
+        // TEN9: add extra parameter for color type
+        'Font Color',
       )
     : this.createCellColorOption(
         mxResources.get('fontColor'),
@@ -3531,6 +3605,8 @@ TextFormatPanel.prototype.addFont = function (container) {
             elt.style.color = null;
           });
         },
+        // TEN9: add extra parameter for color type
+        'Font Color',
       );
   panel.style.fontWeight = 'bold';
 
@@ -4704,6 +4780,8 @@ StyleFormatPanel.prototype.addFill = function (container) {
     function (color) {
       graph.updateCellStyles(mxConstants.STYLE_GRADIENTCOLOR, color, graph.getSelectionCells());
     },
+    // TEN9: add extra parameter for color type
+    'Gradient',
   );
 
   gradientPanel.classList.add('gradient-panel');
@@ -4724,6 +4802,8 @@ StyleFormatPanel.prototype.addFill = function (container) {
     mxUtils.bind(this, function (color) {
       graph.updateCellStyles(fillKey, color, graph.getSelectionCells());
     }),
+    // TEN9: add extra parameter for color type
+    'Fill',
   );
 
   var tmpColor = mxUtils.getValue(ss.style, fillKey, null);
@@ -4933,6 +5013,8 @@ StyleFormatPanel.prototype.addStroke = function (container) {
     mxUtils.bind(this, function (color) {
       graph.updateCellStyles(strokeKey, color, graph.getSelectionCells());
     }),
+    // TEN9: add extra parameter for color type
+    'Line',
   );
 
   lineColor.appendChild(styleSelect);
@@ -7351,6 +7433,9 @@ DiagramFormatPanel.prototype.addView = function (div) {
           ui.removeListener(this.listener);
         },
       },
+      null,
+      null,
+      'Background',
     );
 
     bg.classList.add('background-panel');
@@ -7571,6 +7656,10 @@ DiagramFormatPanel.prototype.addGridOption = function (container) {
           ui.removeListener(this.listener);
         },
       },
+      null,
+      null,
+      // TEN9: add extra parameter for color type
+      'Grid',
     );
 
     panel.classList.add('grid-panel');
