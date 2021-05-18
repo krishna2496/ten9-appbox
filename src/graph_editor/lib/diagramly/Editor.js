@@ -3879,9 +3879,6 @@ const uiTheme = null;
       // 	this.clear();
       // }
     };
-    // 	/**
-    // 	 * Hook for subclassers.
-    // 	 */
 
     /**
      * Hook for subclassers.
@@ -6799,10 +6796,10 @@ const uiTheme = null;
   ];
   mxStencilRegistry.libraries['atlassian'] = [
     STENCIL_PATH + '/atlassian.xml',
-    //SHAPES_PATH + '/mxAtlassian.js',
+    SHAPES_PATH + '/mxAtlassian.js',
   ];
   mxStencilRegistry.libraries['bpmn'] = [
-    //SHAPES_PATH + '/bpmn/mxBpmnShape2.js',
+    SHAPES_PATH + '/mxBasic.js',
     STENCIL_PATH + '/bpmn.xml',
     SHAPES_PATH + '/bpmn/mxBpmnShape2.js',
   ];
@@ -7742,7 +7739,7 @@ const uiTheme = null;
   }
 })();
 
-//Extends codec for ChangePageSetup
+// Extends codec for ChangePageSetup
 (function () {
   var codec = new mxObjectCodec(new ChangePageSetup(), [
     'ui',
@@ -7780,7 +7777,7 @@ const uiTheme = null;
   mxCodecRegistry.register(codec);
 })();
 
-// //Extends codec for ChangeGridColor
+// Extends codec for ChangeGridColor
 (function () {
   var codec = new mxObjectCodec(new ChangeGridColor(), ['ui']);
 

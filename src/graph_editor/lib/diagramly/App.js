@@ -157,6 +157,11 @@ App = function (editorUi, editor, container, lightbox) {
 
   // Global helper method to deal with popup blockers
   window.openWindow = mxUtils.bind(this, function (url, pre, fallback) {
+    if (urlParams['openInSameWin'] == '1') {
+      fallback();
+      return;
+    }
+
     var wnd = null;
 
     try {
@@ -294,7 +299,7 @@ App.MODE_EMBED = 'embed';
 /**
  * Sets the delay for autosave in milliseconds. Default is 2000.
  */
-App.DROPBOX_APPKEY = 'libwls2fa9szdji';
+App.DROPBOX_APPKEY = window.DRAWIO_DROPBOX_ID;
 // TEN9
 //	App.DROPBOX_APPKEY = window.DRAWIO_DROPBOX_ID;
 /**
@@ -343,6 +348,13 @@ App.PUSHER_CLUSTER = 'eu';
 App.PUSHER_URL = 'https://js.pusher.com/4.3/pusher.min.js';
 
 /**
+ * Socket.io library
+ */
+App.SOCKET_IO_URL = window.DRAWIO_BASE_URL + '/js/socket.io/socket.io.min.js';
+App.SIMPLE_PEER_URL = window.DRAWIO_BASE_URL + '/js/socket.io/simplepeer9.10.0.min.js';
+App.SOCKET_IO_SRV = 'http://localhost:3030';
+
+/**
  * Google APIs to load. The realtime API is needed to notify collaborators of conversion
  * of the realtime files, but after Dec 11 it's read-only and hence no longer needed.
  */
@@ -357,39 +369,39 @@ App.startTime = new Date();
 
 /**
  * Defines plugin IDs for loading via p URL parameter. Update the table at
- * https://desk.draw.io/solution/articles/16000042546
+ * https://www.diagrams.net/doc/faq/supported-url-parameters
  */
 App.pluginRegistry = {
-  '4xAKTrabTpTzahoLthkwPNUn': '/plugins/explore.js',
-  ex: '/plugins/explore.js',
-  p1: '/plugins/p1.js',
-  ac: '/plugins/connect.js',
-  acj: '/plugins/connectJira.js',
-  ac148: '/plugins/cConf-1-4-8.js',
-  ac148cmnt: '/plugins/cConf-comments.js',
-  voice: '/plugins/voice.js',
-  tips: '/plugins/tooltips.js',
-  svgdata: '/plugins/svgdata.js',
+  '4xAKTrabTpTzahoLthkwPNUn': 'plugins/explore.js',
+  ex: 'plugins/explore.js',
+  p1: 'plugins/p1.js',
+  ac: 'plugins/connect.js',
+  acj: 'plugins/connectJira.js',
+  ac148: 'plugins/cConf-1-4-8.js',
+  ac148cmnt: 'plugins/cConf-comments.js',
+  voice: 'plugins/voice.js',
+  tips: 'plugins/tooltips.js',
+  svgdata: 'plugins/svgdata.js',
   electron: 'plugins/electron.js',
-  number: '/plugins/number.js',
-  sql: '/plugins/sql.js',
-  props: '/plugins/props.js',
-  text: '/plugins/text.js',
-  anim: '/plugins/animation.js',
-  update: '/plugins/update.js',
-  trees: '/plugins/trees/trees.js',
-  import: '/plugins/import.js',
-  replay: '/plugins/replay.js',
-  anon: '/plugins/anonymize.js',
-  tr: '/plugins/trello.js',
-  f5: '/plugins/rackF5.js',
-  tickets: '/plugins/tickets.js',
-  flow: '/plugins/flow.js',
-  webcola: '/plugins/webcola/webcola.js',
-  rnd: '/plugins/random.js',
-  page: '/plugins/page.js',
-  gd: '/plugins/googledrive.js',
-  tags: '/plugins/tags.js',
+  number: 'plugins/number.js',
+  sql: 'plugins/sql.js',
+  props: 'plugins/props.js',
+  text: 'plugins/text.js',
+  anim: 'plugins/animation.js',
+  update: 'plugins/update.js',
+  trees: 'plugins/trees/trees.js',
+  import: 'plugins/import.js',
+  replay: 'plugins/replay.js',
+  anon: 'plugins/anonymize.js',
+  tr: 'plugins/trello.js',
+  f5: 'plugins/rackF5.js',
+  tickets: 'plugins/tickets.js',
+  flow: 'plugins/flow.js',
+  webcola: 'plugins/webcola/webcola.js',
+  rnd: 'plugins/random.js',
+  page: 'plugins/page.js',
+  gd: 'plugins/googledrive.js',
+  tags: 'plugins/tags.js',
 };
 
 App.publicPlugin = [
@@ -431,9 +443,25 @@ App.loadScripts = function (scripts, onload) {
   }
 };
 /**
- * Function: authorize
+ * Loads all given scripts and invokes onload after
+ * all scripts have finished loading.
+ */
+App.loadScripts = function (scripts, onload) {
+  var n = scripts.length;
+
+  for (var i = 0; i < n; i++) {
+    mxscript(scripts[i], function () {
+      if (--n == 0 && onload != null) {
+        onload();
+      }
+    });
+  }
+};
+
+/**
+ * Function: getStoredMode
  *
- * Authorizes the client, gets the userId and calls <open>.
+ * Returns the current mode.
  */
 App.getStoredMode = function () {
   var mode = null;
@@ -643,6 +671,19 @@ App.main = function (createUi) {
     );
   };
 
+  // Blocks stand-alone mode for certain subdomains
+  if (
+    window.top == window.self &&
+    (/ac\.draw\.io$/.test(window.location.hostname) ||
+      /ac-ent\.draw\.io$/.test(window.location.hostname) ||
+      /aj\.draw\.io$/.test(window.location.hostname))
+  ) {
+    document.body.innerHTML =
+      '<div style="margin-top:10%;text-align:center;">Stand-alone mode not allowed for this domain.</div>';
+
+    return;
+  }
+
   // Removes info text in embed mode
   if (urlParams['embed'] == '1' || urlParams['lightbox'] == '1') {
     var geInfo = document.getElementById('geInfo');
@@ -663,14 +704,19 @@ App.main = function (createUi) {
 
   if (window.mxscript != null) {
     // Checks for script content changes to avoid CSP errors in production
-    if (urlParams['dev'] == '1' && CryptoJS != null) {
+    if (
+      urlParams['dev'] == '1' &&
+      CryptoJS != null &&
+      App.mode != App.MODE_DROPBOX &&
+      App.mode != App.MODE_TRELLO
+    ) {
       var scripts = document.getElementsByTagName('script');
 
       // Checks bootstrap script
       if (scripts != null && scripts.length > 0) {
         var content = mxUtils.getTextContent(scripts[0]);
 
-        if (CryptoJS.MD5(content).toString() != '6954d575e382bca7fc2090bf81ad77cf') {
+        if (CryptoJS.MD5(content).toString() != 'b02227617087e21bd49f2faa15164112') {
           console.log(
             'Change bootstrap script MD5 in the previous line:',
             CryptoJS.MD5(content).toString(),
@@ -695,39 +741,23 @@ App.main = function (createUi) {
       }
     }
 
-    // Runs as progressive web app if service workers are supported
     try {
+      // Removes PWA cache on www.draw.io to force use of new domain via redirect
       if (
-        'serviceWorker' in navigator &&
-        (/.*\.diagrams\.net$/.test(window.location.hostname) ||
-          /.*\.draw\.io$/.test(window.location.hostname) ||
-          urlParams['offline'] == '1')
-      ) {
-        // Removes PWA cache on www.draw.io to force use of new domain via redirect
-        if (
-          urlParams['offline'] == '0' ||
+        Editor.enableServiceWorker &&
+        (urlParams['offline'] == '0' ||
           /www\.draw\.io$/.test(window.location.hostname) ||
-          (urlParams['offline'] != '1' && urlParams['dev'] == '1')
-        ) {
-          navigator.serviceWorker.getRegistrations().then(function (registrations) {
-            for (var i = 0; i < registrations.length; i++) {
-              registrations[i].unregister();
-            }
-          });
-        } else {
-          mxscript('js/shapes.min.js', function () {
-            mxscript('js/stencils.min.js', function () {
-              mxscript('js/extensions.min.js');
-            });
-          });
+          (urlParams['offline'] != '1' && urlParams['dev'] == '1'))
+      ) {
+        App.clearServiceWorker(function () {
+          if (urlParams['offline'] == '0') {
+            alert('Cache cleared');
+          }
+        });
+      } else if (Editor.enableServiceWorker) {
+        // Runs as progressive web app if service workers are supported
 
-          mxStencilRegistry.allowEval = false;
-
-          // Use the window load event to keep the page load performant
-          window.addEventListener('load', function () {
-            navigator.serviceWorker.register('/service-worker.js');
-          });
-        }
+        navigator.serviceWorker.register('/service-worker.js');
       }
     } catch (e) {
       if (window.console != null) {
@@ -749,6 +779,11 @@ App.main = function (createUi) {
     ) {
       // TODO: Check if async loading is fast enough
       mxscript(App.PUSHER_URL);
+
+      if (urlParams['rtCursors'] == '1') {
+        mxscript(App.SOCKET_IO_URL);
+        mxscript(App.SIMPLE_PEER_URL);
+      }
     }
 
     // Loads plugins
@@ -896,11 +931,32 @@ App.main = function (createUi) {
             if (value != null && checkPlugins(value.plugins)) {
               EditorUi.debug('Setting configuration', JSON.stringify(value));
 
+              if (value.merge != null) {
+                var temp = localStorage.getItem(Editor.configurationKey);
+
+                if (temp != null) {
+                  try {
+                    var config = JSON.parse(temp);
+
+                    for (var key in value.merge) {
+                      config[key] = value.merge[key];
+                    }
+
+                    value = config;
+                  } catch (e) {
+                    window.location.hash = '';
+                    alert(e);
+                  }
+                } else {
+                  value = value.merge;
+                }
+              }
+
               if (
                 confirm(mxResources.get('configLinkWarn')) &&
                 confirm(mxResources.get('configLinkConfirm'))
               ) {
-                localStorage.setItem('.configuration', JSON.stringify(value));
+                localStorage.setItem(Editor.configurationKey, JSON.stringify(value));
                 window.location.hash = '';
                 window.location.reload();
               }
@@ -969,7 +1025,14 @@ App.main = function (createUi) {
               navigator.userAgent.indexOf('MSIE') < 0 ||
               document.documentMode >= 10)
           ) {
-            mxscript(App.ONEDRIVE_URL, window.DrawOneDriveClientCallback);
+            if (urlParams['inlinePicker'] == '1' || mxClient.IS_ANDROID || mxClient.IS_IOS) {
+              mxscript(App.ONEDRIVE_INLINE_PICKER_URL, function () {
+                window.OneDrive = {}; //Needed to allow code that check its existance to work BUT it's not used
+                window.DrawOneDriveClientCallback();
+              });
+            } else {
+              mxscript(App.ONEDRIVE_URL, window.DrawOneDriveClientCallback);
+            }
           }
           // Disables client
           else if (typeof window.OneDrive === 'undefined') {
@@ -979,10 +1042,10 @@ App.main = function (createUi) {
           // Loads Trello for all browsers but < IE10 if not disabled or if enabled and in embed mode
           if (
             typeof window.TrelloClient === 'function' &&
+            !mxClient.IS_IE11 &&
             typeof window.Trello === 'undefined' &&
             window.DrawTrelloClientCallback != null &&
-            ((urlParams['embed'] != '1' && urlParams['tr'] != '0') ||
-              (urlParams['embed'] == '1' && urlParams['tr'] == '1')) &&
+            urlParams['tr'] == '1' &&
             (navigator.userAgent == null ||
               navigator.userAgent.indexOf('MSIE') < 0 ||
               document.documentMode >= 10)
@@ -1016,6 +1079,17 @@ App.main = function (createUi) {
             EditorUi.debug('Export:', EXPORT_URL);
           }
         }
+
+        if (urlParams['dev'] == '1' || EditorUi.isElectronApp) {
+          //TODO check if we can remove these scripts loading from index.html
+          realMain();
+        } else {
+          mxStencilRegistry.allowEval = false;
+          App.loadScripts(
+            ['js/shapes-14-6-5.min.js', 'js/stencils.min.js', 'js/extensions.min.js'],
+            realMain,
+          );
+        }
       },
       function (xhr) {
         var st = document.getElementById('geStatus');
@@ -1040,6 +1114,9 @@ App.main = function (createUi) {
     // Optional override for autosaveDelay and defaultEdgeLength
     try {
       if (mxSettings.settings != null) {
+        document.body.style.backgroundColor =
+          uiTheme == 'dark' || mxSettings.settings.darkMode ? '#2a2a2a' : '#ffffff';
+
         if (mxSettings.settings.autosaveDelay != null) {
           var val = parseInt(mxSettings.settings.autosaveDelay);
 
@@ -1065,6 +1142,17 @@ App.main = function (createUi) {
     } catch (e) {
       if (window.console != null) {
         console.error(e);
+      }
+    }
+
+    // Prefetches default fonts with URLs
+    if (Menus.prototype.defaultFonts != null) {
+      for (var i = 0; i < Menus.prototype.defaultFonts.length; i++) {
+        var value = Menus.prototype.defaultFonts[i];
+
+        if (typeof value !== 'string' && value.fontFamily != null && value.fontUrl != null) {
+          Graph.addFont(value.fontFamily, value.fontUrl);
+        }
       }
     }
 
@@ -1121,7 +1209,7 @@ App.main = function (createUi) {
 
       // Loads configuration from local storage
       if (isLocalStorage && localStorage != null && urlParams['embed'] != '1') {
-        var configData = localStorage.getItem('.configuration');
+        var configData = localStorage.getItem(Editor.configurationKey);
 
         if (configData != null) {
           try {
@@ -1580,6 +1668,9 @@ App.prototype.init = function () {
 
           if (mode == App.MODE_DEVICE || mode == App.MODE_BROWSER) {
             this.showDownloadDesktopBanner();
+          } else if (urlParams['embed'] != '1' && this.getServiceName() == 'draw.io') {
+            // just app.diagrams.net users
+            // this.showNameConfBanner();
           }
         }),
       );
@@ -1670,10 +1761,6 @@ App.prototype.init = function () {
         this.appIconClicked(evt);
       }),
     );
-
-    // if (mxClient.IS_QUIRKS) {
-    //   this.icon.style.marginTop = '12px';
-    // }
 
     this.menubar.container.insertBefore(this.icon, this.menubar.container.firstChild);
   }
@@ -2007,6 +2094,31 @@ App.prototype.showRatingBanner = function () {
         onclose();
       }),
     );
+
+    var hide = mxUtils.bind(this, function () {
+      mxUtils.setPrefixedStyle(banner.style, 'transform', 'translate(-50%,120%)');
+
+      window.setTimeout(
+        mxUtils.bind(this, function () {
+          onclose();
+        }),
+        1000,
+      );
+    });
+
+    window.setTimeout(
+      mxUtils.bind(this, function () {
+        mxUtils.setPrefixedStyle(banner.style, 'transform', 'translate(-50%,0%)');
+      }),
+      500,
+    );
+
+    window.setTimeout(hide, 60000);
+    mxEvent.consume(e);
+    window.open(
+      'https://marketplace.atlassian.com/apps/1210933/draw-io-diagrams-for-confluence?hosting=datacenter&tab=reviews',
+    );
+    onclose();
 
     var hide = mxUtils.bind(this, function () {
       mxUtils.setPrefixedStyle(banner.style, 'transform', 'translate(-50%,120%)');
@@ -2441,10 +2553,6 @@ App.prototype.createBackground = function () {
   bg.style.right = '0px';
 
   mxUtils.setOpacity(bg, 100);
-
-  if (mxClient.IS_QUIRKS) {
-    new mxDivResizer(bg);
-  }
 
   return bg;
 };
@@ -2884,24 +2992,27 @@ App.prototype.start = function () {
     var ui = this;
 
     window.onerror = function (message, url, linenumber, colno, err) {
-      EditorUi.logError(
-        'Uncaught: ' + (message != null ? message : ''),
-        url,
-        linenumber,
-        colno,
-        err,
-        null,
-        true,
-      );
-      ui.handleError(
-        { message: message },
-        mxResources.get('unknownError'),
-        null,
-        null,
-        null,
-        null,
-        true,
-      );
+      // Ignores Grammarly error [1344]
+      if (message != 'ResizeObserver loop limit exceeded') {
+        EditorUi.logError(
+          'Uncaught: ' + (message != null ? message : ''),
+          url,
+          linenumber,
+          colno,
+          err,
+          null,
+          true,
+        );
+        ui.handleError(
+          { message: message },
+          mxResources.get('unknownError'),
+          null,
+          null,
+          null,
+          null,
+          true,
+        );
+      }
     };
 
     // Listens to changes of the hash if not in embed or client mode
@@ -2942,7 +3053,6 @@ App.prototype.start = function () {
         // ignore
       }
 
-      // KNOWN: Does not work in quirks mode
       mxEvent.addListener(
         window,
         'hashchange',
@@ -3513,6 +3623,11 @@ App.prototype.checkDrafts = function () {
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.showSplash = function (force) {
+  //Splash dialog shouldn't be shownn when running without a file menu
+  if (urlParams['noFileMenu'] == '1') {
+    return;
+  }
+
   var serviceCount = this.getServiceCount(true);
 
   var showSecondDialog = mxUtils.bind(this, function () {
@@ -3543,17 +3658,6 @@ App.prototype.showSplash = function (force) {
       }),
       true,
     );
-
-    if (
-      !mxClient.IS_CHROMEAPP &&
-      !EditorUi.isElectronApp &&
-      !this.isOfflineApp() &&
-      !mxClient.IS_ANDROID &&
-      !mxClient.IS_IOS &&
-      this.mode == App.MODE_DEVICE
-    ) {
-      this.showDownloadDesktopBanner();
-    }
   });
 
   if (this.editor.isChromelessView()) {
@@ -3658,41 +3762,45 @@ App.prototype.loadFileSystemEntry = function (fileHandle, success, error) {
           this.handleError(e);
         });
 
-  fileHandle.getFile().then(
-    mxUtils.bind(this, function (file) {
-      var reader = new FileReader();
+  try {
+    fileHandle.getFile().then(
+      mxUtils.bind(this, function (file) {
+        var reader = new FileReader();
 
-      reader.onload = mxUtils.bind(this, function (e) {
-        try {
-          if (success != null) {
-            var data = e.target.result;
+        reader.onload = mxUtils.bind(this, function (e) {
+          try {
+            if (success != null) {
+              var data = e.target.result;
 
-            if (file.type.substring(0, 6) == 'image/') {
-              data = this.extractGraphModelFromPng(data);
+              if (file.type == 'image/png') {
+                data = this.extractGraphModelFromPng(data);
+              }
+
+              success(new LocalFile(this, data, file.name, null, fileHandle, file));
+            } else {
+              this.openFileHandle(e.target.result, file.name, file, false, fileHandle);
             }
-
-            success(new LocalFile(this, data, file.name, null, fileHandle, file));
-          } else {
-            this.openFileHandle(e.target.result, file.name, file, false, fileHandle);
+          } catch (e) {
+            error(e);
           }
-        } catch (e) {
-          error(e);
+        });
+
+        reader.onerror = error;
+
+        if (
+          (file.type.substring(0, 5) === 'image' || file.type === 'application/pdf') &&
+          file.type.substring(0, 9) !== 'image/svg'
+        ) {
+          reader.readAsDataURL(file);
+        } else {
+          reader.readAsText(file);
         }
-      });
-
-      reader.onerror = error;
-
-      if (
-        (file.type.substring(0, 5) === 'image' || file.type === 'application/pdf') &&
-        file.type.substring(0, 9) !== 'image/svg'
-      ) {
-        reader.readAsDataURL(file);
-      } else {
-        reader.readAsText(file);
-      }
-    }),
-    error,
-  );
+      }),
+      error,
+    );
+  } catch (e) {
+    error(e);
+  }
 };
 
 /**
@@ -3717,6 +3825,9 @@ App.prototype.createFileSystemOptions = function (name) {
         (mxClient.IS_MAC ? ' (.' + this.editor.diagramFileTypes[i].extension + ')' : ''),
       accept: {},
     };
+    obj.accept[this.editor.diagramFileTypes[i].mimeType] = [
+      '.' + this.editor.diagramFileTypes[i].extension,
+    ];
 
     if (this.editor.diagramFileTypes[i].extension == temp) {
       ext.splice(0, 0, obj);
@@ -3730,13 +3841,13 @@ App.prototype.createFileSystemOptions = function (name) {
   }
 
   // TODO: Specify default filename
-  return { type: ext, accepts: ext, fileName: name };
+  return { types: ext, fileName: name };
 };
 
 /**
  * Loads the given file handle as a local file.
  */
-App.prototype.chooseFileSystemEntries = function (success, error, opts) {
+App.prototype.showSaveFilePicker = function (success, error, opts) {
   error =
     error != null
       ? error
@@ -3748,15 +3859,16 @@ App.prototype.chooseFileSystemEntries = function (success, error, opts) {
 
   opts = opts != null ? opts : this.createFileSystemOptions();
 
-  // LATER: Specify default name via options
-  window.chooseFileSystemEntries(opts).then(
+  window.showSaveFilePicker(opts).then(
     mxUtils.bind(this, function (fileHandle) {
-      fileHandle.getFile().then(
-        mxUtils.bind(this, function (desc) {
-          success(fileHandle, desc);
-        }),
-        error,
-      );
+      if (fileHandle != null) {
+        fileHandle.getFile().then(
+          mxUtils.bind(this, function (desc) {
+            success(fileHandle, desc);
+          }),
+          error,
+        );
+      }
     }),
     error,
   );
@@ -4291,6 +4403,7 @@ App.prototype.saveFile = function (forceDialog, success) {
     } else if (file != null && file.constructor == LocalFile && file.fileHandle != null) {
       this.showSaveFilePicker(
         mxUtils.bind(this, function (fileHandle, desc) {
+          file.invalidFileHandle = null;
           file.fileHandle = fileHandle;
           file.title = desc.name;
           file.desc = desc;
@@ -4861,6 +4974,10 @@ App.prototype.fileCreated = function (file, libs, replace, done, clibs) {
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.loadFile = function (id, sameWindow, file, success, force) {
+  if (urlParams['openInSameWin'] == '1') {
+    sameWindow = true;
+  }
+
   this.hideDialog();
 
   var fn2 = mxUtils.bind(this, function () {
@@ -5413,39 +5530,47 @@ App.prototype.getLibraryStorageHint = function (file) {
 // 						{
 // 							var url = decodeURIComponent(id.substring(1));
 
-// 							if (!this.isOffline())
-// 							{
-// 								this.loadTemplate(url, mxUtils.bind(this, function(text)
-// 								{
-// 									if (text != null && text.length > 0)
-// 									{
-// 										// LATER: Convert mxfile to mxlibrary using code from libraryLoaded
-// 										onload(new UrlLibrary(this, text, url));
-// 									}
-// 									else
-// 									{
-// 										onerror();
-// 									}
-// 								}), function()
-// 								{
-// 									onerror();
-// 								}, null, true);
-// 							}
-// 						}
-// 						else if (service == 'R')
-// 						{
-// 							var libDesc = decodeURIComponent(id.substring(1));
+try {
+  libDesc = JSON.parse(libDesc);
+  var libObj = {
+    id: libDesc[0],
+    title: libDesc[1],
+    downloadUrl: libDesc[2],
+  };
+  // 									}
+  // 									else
+  // 									{
+  // 										onerror();
+  // 									}
+  // 								}), function()
+  // 								{
+  // 									onerror();
+  // 								}, null, true);
+  // 							}
+  // 						}
+  // 						else if (service == 'R')
+  // 						{
+  // 							var libDesc = decodeURIComponent(id.substring(1));
 
-// 							if (!this.isOffline())
-// 							{
-// 								try
-// 								{
-// 									libDesc = JSON.parse(libDesc);
-// 									var libObj = {
-// 										id: libDesc[0],
-// 				               			title: libDesc[1],
-// 				               			downloadUrl: libDesc[2]
-// 									}
+  this.remoteInvoke(
+    'getFileContent',
+    [libObj.downloadUrl],
+    null,
+    mxUtils.bind(this, function (libContent) {
+      try {
+        onload(new RemoteLibrary(this, libContent, libObj));
+      } catch (e) {
+        onerror();
+      }
+    }),
+    function () {
+      onerror();
+    },
+  );
+} catch (e) {
+  // TEN9: comment onerror() as it doesn't exists.
+  //onerror();
+}
 
 // 									this.remoteInvoke('getFileContent', [libObj.downloadUrl], null, mxUtils.bind(this, function(libContent)
 // 									{
@@ -6165,9 +6290,17 @@ App.prototype.descriptorChanged = function () {
 
   this.updateUi();
 
-  if (this.format != null && this.editor.graph.isSelectionEmpty()) {
+  // Refresh if editable state has changed
+  if (
+    this.format != null &&
+    (file == null || this.fileEditable != file.isEditable()) &&
+    this.editor.graph.isSelectionEmpty()
+  ) {
     this.format.refresh();
+    this.fileEditable = file != null ? file.isEditable() : null;
   }
+
+  this.fireEvent(new mxEventObject('fileDescriptorChanged', 'file', file));
 };
 
 /**
@@ -6203,7 +6336,7 @@ App.prototype.showAuthDialog = function (peer, showRememberOption, fn, closeFn) 
     true,
     mxUtils.bind(this, function (cancel) {
       if (closeFn != null) {
-        closeFn();
+        closeFn(cancel);
       }
 
       if (cancel && this.getCurrentFile() == null && this.dialog == null) {

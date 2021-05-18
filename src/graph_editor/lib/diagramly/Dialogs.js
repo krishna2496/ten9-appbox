@@ -10153,7 +10153,7 @@ AspectDialog.prototype.createViewer = function (container, pageNode, layerId) {
   graph.maxFitScale = null;
   graph.centerZoom = true;
 
-  var node = Editor.parseDiagramNode(pageNode); //Handles compressed and non-compressed page node
+  var node = pageNode.nodeName == 'mxGraphModel' ? pageNode : Editor.parseDiagramNode(pageNode); //Handles compressed and non-compressed page node
 
   if (node != null) {
     var bg = node.getAttribute('background');
@@ -10186,7 +10186,7 @@ AspectDialog.prototype.createViewer = function (container, pageNode, layerId) {
   return graph;
 };
 
-AspectDialog.prototype.createPageItem = function (pageId, pageName, pageNode, pageRoot) {
+AspectDialog.prototype.createPageItem = function (pageId, pageName, pageNode) {
   var $listItem = document.createElement('div');
   $listItem.className = 'geAspectDlgListItem';
   $listItem.setAttribute('data-page-id', pageId);
