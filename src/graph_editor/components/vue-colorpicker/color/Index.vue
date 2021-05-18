@@ -220,6 +220,7 @@ export default {
     });
 
     this.editorUi.addListener('inactiveColorButton', () => {
+      //debugger
       this.buttonInactive();
       this.colorPickerType = '';
       this.applyFn = null;
@@ -372,7 +373,11 @@ export default {
     apply() {
       if (this.applyFn && this.alphaHexString != this.previousAlphaHexString && this.alphaHexString != '') {
         this.editorUi.colorPickerEvent = true;
-        this.applyFn(`#${this.alphaHexString}`);
+        if(this.alphaHexString.charAt(0) == '#') {
+          this.applyFn(this.alphaHexString);
+        } else {
+          this.applyFn(`#${this.alphaHexString}`);
+        }
       }
     },
   },
@@ -439,15 +444,16 @@ b-card.mb-2.color-card(
         :color='rgbaString',
         :colors-default='colorsDefault',
         :colors-history-key='colorsHistoryKey',
+        :colors-history='recentColorsArray'
         @selectColor='selectColor'
       )
-      hr.m-10
-      colors(
-        :color='rgbaString',
-        :colors-default='recentColorsArray',
-        :colors-history-key='colorsHistoryKey',
-        @selectColor='selectColor'
-      )
+      //- hr.m-10
+      //- colors(
+      //-   :color='rgbaString',
+      //-   :colors-default='recentColorsArray',
+      //-   :colors-history-key='colorsHistoryKey',
+      //-   @selectColor='selectColor'
+      //- )
 </template>
 
 <!-- // TEN9: Added scoped styling -->

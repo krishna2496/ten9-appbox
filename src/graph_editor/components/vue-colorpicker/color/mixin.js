@@ -106,7 +106,7 @@ export default {
 
       a = Math.round(a * 100) / 100;
       var alpha = Math.round(a * 255);
-      var hexAlpha = (alpha + 0x10000).toString(16).substr(-2).toUpperCase();
+      var hexAlpha = (alpha + 0x10000).toString(16).substr(-2).toLowerCase();
       hex = hex + hexAlpha;
 
       return hex;

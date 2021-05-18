@@ -1242,6 +1242,7 @@ BaseFormatPanel.prototype.createColorOption = function (
       // TEN9: fire button inactive button
       if (!cb.checked) {
         myUi.fireEvent(new mxEventObject('inactiveColorButton'));
+        myUi.selectedColorPicker = '';
       }
       // Overrides default value with current value to make it easier
       // to restore previous value if the checkbox is clicked twice

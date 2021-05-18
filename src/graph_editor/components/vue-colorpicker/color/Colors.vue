@@ -33,11 +33,15 @@ export default {
       type: String,
       default: '',
     },
+    colorsHistory : {
+      type: Array,
+      default: () => [],
+    }
   },
   data() {
     return {
       imgAlphaBase64: '',
-      colorsHistory: JSON.parse(localStorage.getItem(this.colorsHistoryKey)) || [],
+      //colorsHistory: JSON.parse(localStorage.getItem(this.colorsHistoryKey)) || [],
     };
   },
   created() {
