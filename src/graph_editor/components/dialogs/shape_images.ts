@@ -66,6 +66,7 @@ const sidebarPidImage = require('@graphEditorImages/sidebar-pid.png');
 const sidebarThreatModelingImage = require('@graphEditorImages/sidebar-threatmodeling.png');
 const sidebarWebIconsImage = require('@graphEditorImages/sidebar-webIcons.png');
 const sidebarSignsImage = require('@graphEditorImages/sidebar-signs.png');
+const sidebarUML25Image = require('@graphEditorImages/sidebar-uml25.png');
 
 /* eslint-disable camelcase */
 
@@ -122,6 +123,7 @@ const images = {
   threatModeling: sidebarThreatModelingImage,
   webicons: sidebarWebIconsImage,
   signs: sidebarSignsImage,
+  uml25: sidebarUML25Image,
 };
 
 export function getImage(id: string) {

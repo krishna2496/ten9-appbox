@@ -720,9 +720,9 @@ var mxJSColor = {
 				case 0: var padImg = 'hs.png'; break;
 				case 1: var padImg = 'hv.png'; break;
 			}
-			p.padM.style.backgroundImage = "url('"+mxJSColor.getDir()+"cross.gif')";
+			p.padM.style.backgroundImage = "url(data:image/gif;base64,R0lGODlhDwAPAKEBAAAAAP///////////yH5BAEKAAIALAAAAAAPAA8AAAIklB8Qx53b4otSUWcvyiz4/4AeQJbmKY4p1HHapBlwPL/uVRsFADs=)";
 			p.padM.style.backgroundRepeat = "no-repeat";
-			p.sldM.style.backgroundImage = "url('"+mxJSColor.getDir()+"arrow.gif')";
+			p.sldM.style.backgroundImage = "url(data:image/gif;base64,R0lGODlhBwALAKECAAAAAP///6g8eKg8eCH5BAEKAAIALAAAAAAHAAsAAAITTIQYcLnsgGxvijrxqdQq6DRJAQA7)";
 			p.sldM.style.backgroundRepeat = "no-repeat";
 			p.pad.style.backgroundImage = "url('"+mxJSColor.getDir()+padImg+"')";
 			p.pad.style.backgroundRepeat = "no-repeat";

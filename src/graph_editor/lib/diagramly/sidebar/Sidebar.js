@@ -85,6 +85,7 @@ require('./Sidebar-Signs.js');
 require('./Sidebar-Sitemap.js');
 require('./Sidebar-Sysml.js');
 require('./Sidebar-ThreatModeling.js');
+require('./Sidebar-UML25.js');
 require('./Sidebar-Veeam.js');
 require('./Sidebar-Veeam2.js');
 require('./Sidebar-VVD.js');
@@ -459,6 +460,7 @@ const urlParams = {};
     'Quantum Technologies',
     'Robotics',
     'Satellite',
+    'Serverless',
     'Security Identity Compliance',
     'Storage',
   ];
@@ -535,7 +537,7 @@ const urlParams = {};
   ];
 
   /**
-   * Description of custom libraries, see https://desk.draw.io/a/solutions/articles/16000058316
+   * Description of custom libraries, see https://www.diagrams.net/doc/faq/configure-diagram-editor
    */
   Sidebar.prototype.customEntries = null;
 
@@ -543,7 +545,7 @@ const urlParams = {};
    * Array of strings for the built-in libraries to be enabled in the more shapes dialog. Null means all,
    * empty array means none, possible keys are listed for the libs parameter at
    *
-   * https://desk.draw.io/support/solutions/articles/16000042546
+   * https://www.diagrams.net/doc/faq/supported-url-parameters
    */
   Sidebar.prototype.enabledLibraries = null;
 
@@ -558,6 +560,7 @@ const urlParams = {};
   Sidebar.prototype.configuration = [
     { id: 'general', libs: ['general', 'misc', 'advanced'] },
     { id: 'uml' },
+    { id: 'uml25' },
     { id: 'search' },
     { id: 'er' },
     {
@@ -646,7 +649,11 @@ const urlParams = {};
       ],
     },
     { id: 'active_directory' },
-    { id: 'bpmn', prefix: 'bpmn', libs: ['' /*prefix is library*/, 'Gateways', 'Events'] },
+    {
+      id: 'bpmn2',
+      prefix: 'bpmn2',
+      libs: ['General', 'Tasks', 'Choreographies', 'Events', 'Gateways'],
+    },
     {
       id: 'clipart',
       prefix: null,
@@ -1078,6 +1085,11 @@ const urlParams = {};
             image: IMAGE_PATH + '/sidebar-mockups.png',
           },
           { title: 'Sitemap', id: 'sitemap', image: IMAGE_PATH + '/sidebar-sitemap.png' },
+          {
+            title: mxResources.get('uml') + ' 2.5',
+            id: 'uml25',
+            image: IMAGE_PATH + '/sidebar-uml25.png',
+          },
           { title: mxResources.get('uml'), id: 'uml', image: IMAGE_PATH + '/sidebar-uml.png' },
         ],
       },
@@ -2063,6 +2075,7 @@ const urlParams = {};
     this.addKubernetesPalette();
     this.addMockupPalette();
     this.addSitemapPalette();
+    this.addUml25Palette();
     this.addUmlPalette(false);
     this.addAlliedTelesisPalette();
     this.addAWS3Palette();
@@ -2088,6 +2101,7 @@ const urlParams = {};
     this.addVVDPalette();
     this.addArchimate3Palette();
     this.addArchiMatePalette();
+    //this.addBpmn2Palette();
     this.addBpmnPalette(dir, false);
     this.addSysMLPalette(sysml, dir);
     this.addLeanMappingPalette();
@@ -2315,6 +2329,12 @@ const urlParams = {};
 
           graph.addCell(target);
           graph.getModel().setTerminal(graph.getSelectionCell(), target, false);
+
+          if (evt == null || !mxEvent.isShiftDown(evt)) {
+            graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [target]));
+          }
+        } catch (e) {
+          this.editorUi.handleError(e);
         } finally {
           graph.getModel().endUpdate();
         }

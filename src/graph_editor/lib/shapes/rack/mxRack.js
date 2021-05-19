@@ -44,7 +44,7 @@ function mxRackContainer(bounds, fill, stroke, strokewidth) {
  */
 mxUtils.extend(mxRackContainer, mxShape);
 
-mxRackContainer.unitSize = 20;
+mxRackContainer.prototype.unitSize = 20;
 
 mxRackContainer.prototype.cst = {
   SHAPE_RACK_CONTAINER: 'mxgraph.rackGeneral.container',
@@ -71,6 +71,7 @@ mxRackContainer.prototype.customProperties = [
       graph.setCellStyles('marginLeft', newValue == 'off' ? 9 : 33, graph.getSelectionCells());
     },
   },
+  { name: 'rackUnitSize', dispName: 'Unit size', type: 'int' },
 ];
 
 /**
@@ -139,11 +140,16 @@ mxRackContainer.prototype.sideText = function (c, w, h, fontSize) {
     mxRackContainer.prototype.cst.NUMBER_DISPLAY,
     mxRackContainer.prototype.cst.DIR_ASC,
   );
+  var unitSize = parseFloat(
+    mxUtils.getValue(this.style, 'rackUnitSize', mxRackContainer.prototype.unitSize),
+  );
+  this.unitSize = unitSize;
+
   c.setFontSize(fontSize);
   c.setFontColor(fontColor);
 
   // Calculate number of units
-  var units = Math.floor((Math.abs(h) - 42) / mxRackContainer.unitSize);
+  var units = Math.floor((Math.abs(h) - 42) / unitSize);
 
   for (var i = 0; i < units; i++) {
     var displayNumber =
@@ -152,7 +158,7 @@ mxRackContainer.prototype.sideText = function (c, w, h, fontSize) {
         : (units - i).toString();
     c.text(
       -fontSize,
-      21 + mxRackContainer.unitSize * 0.5 + i * mxRackContainer.unitSize,
+      21 + unitSize * 0.5 + i * unitSize,
       0,
       0,
       displayNumber,
@@ -169,8 +175,8 @@ mxRackContainer.prototype.sideText = function (c, w, h, fontSize) {
   c.begin();
 
   for (var i = 0; i < units + 1; i++) {
-    c.moveTo(-2 * fontSize, 21 + i * mxRackContainer.unitSize);
-    c.lineTo(0, 21 + i * mxRackContainer.unitSize);
+    c.moveTo(-2 * fontSize, 21 + i * unitSize);
+    c.lineTo(0, 21 + i * unitSize);
   }
 
   c.stroke();

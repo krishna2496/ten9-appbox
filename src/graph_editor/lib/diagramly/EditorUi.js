@@ -54,7 +54,7 @@ const { Sidebar } = require('../jgraph/Sidebar.js');
 
 // TEN9: TODO: Consolidate all constants
 // const urlParams = {dev: '1', sync: 'manual'};
-const urlParams = { 'ext-fonts': '1' };
+const urlParams = { 'ext-fonts': '1', rough: '0' };
 const isLocalStorage = false;
 const STYLE_PATH = 'styles';
 
@@ -89,6 +89,7 @@ var SelectedFile;
    */
   EditorUi.enableLogging =
     urlParams['stealth'] != '1' &&
+    urlParams['lockdown'] != '1' &&
     (/.*\.draw\.io$/.test(window.location.hostname) ||
       /.*\.diagrams\.net$/.test(window.location.hostname)) &&
     window.location.hostname != 'support.draw.io';
@@ -153,6 +154,15 @@ var SelectedFile;
 
   // TEN9: Disable drafts for our app
   /**
+   * Shortcut for capability check.
+   */
+  EditorUi.nativeFileSupport =
+    !mxClient.IS_OP &&
+    !EditorUi.isElectronApp &&
+    'showSaveFilePicker' in window &&
+    'showOpenFilePicker' in window;
+
+  /**
    * Specifies if drafts should be saved in IndexedDB.
    */
   //EditorUi.enableDrafts = !mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
@@ -162,7 +172,7 @@ var SelectedFile;
   /**
    * Link for scratchpad help.
    */
-  EditorUi.scratchpadHelpLink = 'https://desk.draw.io/support/solutions/articles/16000042367';
+  EditorUi.scratchpadHelpLink = 'https://www.diagrams.net/doc/faq/scratchpad';
 
   /**
    * Default Mermaid config without using foreign objects in flowcharts.
@@ -636,7 +646,9 @@ var SelectedFile;
    */
   EditorUi.prototype.isOffline = function (ignoreStealth) {
     return (
-      this.isOfflineApp() || !navigator.onLine || (!ignoreStealth && urlParams['stealth'] == '1')
+      this.isOfflineApp() ||
+      !navigator.onLine ||
+      (!ignoreStealth && (urlParams['stealth'] == '1' || urlParams['lockdown'] == '1'))
     );
   };
 
@@ -648,6 +660,7 @@ var SelectedFile;
    */
 
   EditorUi.prototype.createSpinner = function (x, y, size) {
+    var autoPosition = x == null || y == null;
     size = size != null ? size : 24;
 
     var spinner = new Spinner({
@@ -693,6 +706,15 @@ var SelectedFile;
         this.active = true;
 
         if (label != null) {
+          if (autoPosition) {
+            y =
+              Math.max(
+                document.body.clientHeight || 0,
+                document.documentElement.clientHeight || 0,
+              ) / 2;
+            x = document.body.clientWidth / 2 - 2;
+          }
+
           var status = document.createElement('div');
           status.style.position = 'absolute';
           status.style.whiteSpace = 'nowrap';
@@ -724,12 +746,6 @@ var SelectedFile;
           status.innerHTML = label;
           container.appendChild(status);
           spinner.status = status;
-
-          // Centers the label in older IE versions
-          if (mxClient.IS_VML && (document.documentMode == null || document.documentMode <= 8)) {
-            status.style.left = Math.round(Math.max(0, x - status.offsetWidth / 2)) + 'px';
-            status.style.top = Math.round(Math.max(0, y + 70 - status.offsetHeight / 2)) + 'px';
-          }
         }
 
         // Pause returns a function to resume the spinner
@@ -2265,6 +2281,7 @@ var SelectedFile;
     });
 
     if (desc.url != null && desc.url.length > 0) {
+      // Cannot use proxy here as it will block unknown text content
       // LATER: Remove cache-control header
       this.editor.loadUrl(
         desc.url,
@@ -2522,6 +2539,7 @@ var SelectedFile;
   EditorUi.prototype.fileLoaded = function (file, noDialogs) {
     var oldFile = this.getCurrentFile();
     this.fileLoadedError = null;
+    this.fileEditable = null;
     this.setCurrentFile(null);
     var result = false;
     this.hideDialog();
@@ -3608,11 +3626,7 @@ var SelectedFile;
     buttons.style.right = '0px';
     buttons.style.top = '0px';
     buttons.style.padding = '8px';
-
-    // Workaround for CSS error in IE8 (standards and quirks)
-    if (!mxClient.IS_QUIRKS && document.documentMode != 8) {
-      buttons.style.backgroundColor = 'inherit';
-    }
+    buttons.style.backgroundColor = 'inherit';
 
     title.style.position = 'relative';
 
@@ -3634,7 +3648,7 @@ var SelectedFile;
         btn,
         'click',
         mxUtils.bind(this, function (evt) {
-          // Workaround for close after any button click in IE8/quirks
+          // Workaround for close after any button click in IE8
           if (!mxEvent.isConsumed(evt)) {
             var fn = mxUtils.bind(this, function () {
               this.closeLibrary(file);
@@ -4155,72 +4169,71 @@ var SelectedFile;
       mxClient.link('stylesheet', STYLE_PATH + '/dark.css');
 
       Dialog.backdropColor = '#2a2a2a';
+      Format.inactiveTabBackgroundColor = 'black';
       Graph.prototype.defaultThemeName = 'darkTheme';
       Graph.prototype.defaultPageBackgroundColor = '#2a2a2a';
       Graph.prototype.defaultPageBorderColor = '#505759';
-      Format.prototype.inactiveTabBackgroundColor = 'black';
       BaseFormatPanel.prototype.buttonBackgroundColor = '#2a2a2a';
-      Sidebar.prototype.dragPreviewBorder = '1px dashed #cccccc';
       mxGraphHandler.prototype.previewColor = '#cccccc';
       StyleFormatPanel.prototype.defaultStrokeColor = '#cccccc';
       mxConstants.DROP_TARGET_COLOR = '#00ff00';
-
-      Editor.sketchFontFamily = 'Architects Daughter';
-      Editor.sketchFontSource =
-        'https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DArchitects%2BDaughter';
-      // Implements the sketch-min UI
-      if (urlParams['sketch'] == '1') {
-        Graph.prototype.defaultVertexStyle = { pointerEvents: '0', hachureGap: '4' };
-        Graph.prototype.defaultEdgeStyle = {
-          edgeStyle: 'none',
-          rounded: '0',
-          curved: '1',
-          jettySize: 'auto',
-          orthogonalLoop: '1',
-          endArrow: 'open',
-          startSize: '14',
-          endSize: '14',
-          sourcePerimeterSpacing: '8',
-          targetPerimeterSpacing: '8',
-        };
-      }
-
-      if (urlParams['rough'] != '0') {
-        Graph.prototype.defaultVertexStyle['fontFamily'] = Editor.sketchFontFamily;
-        Graph.prototype.defaultVertexStyle['fontSource'] = Editor.sketchFontSource;
-        Graph.prototype.defaultVertexStyle['fontSize'] = '20';
-        Graph.prototype.defaultVertexStyle['sketch'] = '1';
-        Graph.prototype.defaultEdgeStyle['fontFamily'] = Editor.sketchFontFamily;
-        Graph.prototype.defaultEdgeStyle['fontSource'] = Editor.sketchFontSource;
-        Graph.prototype.defaultEdgeStyle['fontSize'] = '20';
-        Graph.prototype.defaultEdgeStyle['sketch'] = '1';
-        Menus.prototype.defaultFonts = [
-          {
-            fontFamily: Editor.sketchFontFamily,
-            fontUrl: decodeURIComponent(Editor.sketchFontSource),
-          },
-          { fontFamily: 'Rock Salt', fontUrl: 'https://fonts.googleapis.com/css?family=Rock+Salt' },
-          {
-            fontFamily: 'Permanent Marker',
-            fontUrl: 'https://fonts.googleapis.com/css?family=Permanent+Marker',
-          },
-        ].concat(Menus.prototype.defaultFonts);
-      }
-
-      Editor.configurationKey = '.sketch-configuration';
-      Editor.settingsKey = '.sketch-config';
-      Graph.prototype.defaultGridEnabled = false;
-      Graph.prototype.defaultPageVisible = false;
-      Graph.prototype.defaultEdgeLength = 120;
-      Editor.fitWindowBorders = new mxRectangle(60, 30, 30, 30);
-
-      if (mxClient.IS_SVG) {
-        Editor.helpImage =
-          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAP1BMVEUAAAD///////////////////////////////////////////////////////////////////////////////9Du/pqAAAAFXRSTlMAT30qCJRBboyDZyCgRzUUdF46MJlgXETgAAAAeklEQVQY022O2w4DIQhEQUURda/9/28tUO2+7CQS5sgQ4F1RapX78YUwRqQjTU8ILqQfKerTKTvACJ4nLX3krt+8aS82oI8aQC4KavRgtvEW/mDvsICgA03PSGRr79MqX1YPNIxzjyqtw8ZnnRo4t5a5undtJYRywau+ds4Cyza3E6YAAAAASUVORK5CYII=';
-        Editor.checkmarkImage =
-          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAMAAACeyVWkAAAARVBMVEUAAACZmZkICAgEBASNjY2Dg4MYGBiTk5N5eXl1dXVmZmZQUFBCQkI3NzceHh4MDAykpKSJiYl+fn5sbGxaWlo/Pz8SEhK96uPlAAAAAXRSTlMAQObYZgAAAE5JREFUGNPFzTcSgDAQQ1HJGUfy/Y9K7V1qeOUfzQifCQZai1XHaz11LFysbDbzgDSSWMZiETz3+b8yNUc/MMsktxuC8XQBSncdLwz+8gCCggGXzBcozAAAAABJRU5ErkJggg==';
-      }
     }
+
+    Editor.sketchFontFamily = 'Architects Daughter';
+    Editor.sketchFontSource =
+      'https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DArchitects%2BDaughter';
+    // Implements the sketch-min UI
+    if (urlParams['sketch'] == '1') {
+      Graph.prototype.defaultVertexStyle = { pointerEvents: '0', hachureGap: '4' };
+      Graph.prototype.defaultEdgeStyle = {
+        edgeStyle: 'none',
+        rounded: '0',
+        curved: '1',
+        jettySize: 'auto',
+        orthogonalLoop: '1',
+        endArrow: 'open',
+        startSize: '14',
+        endSize: '14',
+        sourcePerimeterSpacing: '8',
+        targetPerimeterSpacing: '8',
+      };
+    }
+
+    if (urlParams['rough'] != '0') {
+      Graph.prototype.defaultVertexStyle['fontFamily'] = Editor.sketchFontFamily;
+      Graph.prototype.defaultVertexStyle['fontSource'] = Editor.sketchFontSource;
+      Graph.prototype.defaultVertexStyle['fontSize'] = '20';
+      Graph.prototype.defaultVertexStyle['sketch'] = '1';
+      Graph.prototype.defaultEdgeStyle['fontFamily'] = Editor.sketchFontFamily;
+      Graph.prototype.defaultEdgeStyle['fontSource'] = Editor.sketchFontSource;
+      Graph.prototype.defaultEdgeStyle['fontSize'] = '20';
+      Graph.prototype.defaultEdgeStyle['sketch'] = '1';
+      Menus.prototype.defaultFonts = [
+        {
+          fontFamily: Editor.sketchFontFamily,
+          fontUrl: decodeURIComponent(Editor.sketchFontSource),
+        },
+        { fontFamily: 'Rock Salt', fontUrl: 'https://fonts.googleapis.com/css?family=Rock+Salt' },
+        {
+          fontFamily: 'Permanent Marker',
+          fontUrl: 'https://fonts.googleapis.com/css?family=Permanent+Marker',
+        },
+      ].concat(Menus.prototype.defaultFonts);
+    }
+
+    Editor.configurationKey = '.sketch-configuration';
+    Editor.settingsKey = '.sketch-config';
+    Graph.prototype.defaultGridEnabled = false;
+    Graph.prototype.defaultPageVisible = false;
+    Graph.prototype.defaultEdgeLength = 120;
+    Editor.fitWindowBorders = new mxRectangle(60, 30, 30, 30);
+
+    Editor.configurationKey = '.sketch-configuration';
+    Editor.settingsKey = '.sketch-config';
+    Graph.prototype.defaultGridEnabled = false;
+    Graph.prototype.defaultPageVisible = false;
+    Graph.prototype.defaultEdgeLength = 120;
+    Editor.fitWindowBorders = new mxRectangle(60, 30, 30, 30);
   };
 
   EditorUi.initTheme();
@@ -4425,7 +4438,8 @@ var SelectedFile;
                   );
           }
 
-          var id = fileHash != null ? fileHash : window.location.hash;
+          var id =
+            notFoundMessage != null ? null : fileHash != null ? fileHash : window.location.hash;
 
           // #U handles case where we tried to fallback to Google File and
           // hash property still shows the public URL we tried to load
@@ -4567,6 +4581,8 @@ var SelectedFile;
             msg = mxUtils.htmlEntities(mxResources.get('timeout'));
           } else if (e.code == App.ERROR_BUSY) {
             msg = mxUtils.htmlEntities(mxResources.get('busy'));
+          } else if (typeof e === 'string' && e.length > 0) {
+            msg = mxUtils.htmlEntities(e);
           }
         }
       }
@@ -5861,7 +5877,7 @@ var SelectedFile;
     params = params != null ? params : [];
 
     if (lightbox) {
-      if (urlParams['dev'] == '1') {
+      if (EditorUi.lightboxHost != 'https://viewer.diagrams.net' || urlParams['dev'] == '1') {
         params.push('lightbox=1');
       }
 
@@ -5913,11 +5929,17 @@ var SelectedFile;
     url,
     ignoreFile,
     params,
+    useOpenParameter,
   ) {
-    params =
-      params != null
-        ? params
-        : this.createUrlParameters(linkTarget, linkColor, allPages, lightbox, editLink, layers);
+    params = this.createUrlParameters(
+      linkTarget,
+      linkColor,
+      allPages,
+      lightbox,
+      editLink,
+      layers,
+      params,
+    );
     var file = this.getCurrentFile();
     var addTitle = true;
     var data = '';
@@ -5949,6 +5971,11 @@ var SelectedFile;
       file.getTitle() != this.defaultFilename
     ) {
       params.push('title=' + encodeURIComponent(file.getTitle()));
+    }
+
+    if (useOpenParameter && data.length > 1) {
+      params.push('open=' + data.substring(1));
+      data = '';
     }
 
     return (
@@ -7289,9 +7316,14 @@ var SelectedFile;
     ignoreSelection,
     redirect,
     embedImages,
+    background,
+    scale,
+    border,
+    shadow,
+    keepTheme,
   ) {
     embedImages = embedImages != null ? embedImages : true;
-    var bg = graph.background;
+    var bg = background != null ? background : graph.background;
 
     if (bg == mxConstants.NONE) {
       bg = null;
@@ -7299,9 +7331,22 @@ var SelectedFile;
 
     // Sets or disables alternate text for foreignObjects. Disabling is needed
     // because PhantomJS seems to ignore switch statements and paint all text.
-    var svgRoot = graph.getSvg(bg, null, null, null, null, ignoreSelection);
+    var svgRoot = graph.getSvg(
+      bg,
+      scale,
+      border,
+      null,
+      null,
+      ignoreSelection,
+      null,
+      null,
+      null,
+      graph.shadowVisible || shadow,
+      null,
+      keepTheme,
+    );
 
-    if (graph.shadowVisible) {
+    if (graph.shadowVisible || shadow) {
       graph.addSvgShadow(svgRoot);
     }
 
@@ -9639,7 +9684,7 @@ var SelectedFile;
     // Sets help link for placeholders
     if (!this.isOffline() && typeof window.EditDataDialog !== 'undefined') {
       EditDataDialog.placeholderHelpLink =
-        'https://desk.draw.io/support/solutions/articles/16000051979';
+        'https://www.diagrams.net/doc/faq/predefined-placeholders';
     }
 
     if (
@@ -9702,6 +9747,24 @@ var SelectedFile;
     if (mxClient.IS_SVG) {
       // TEN9: to apply shadow from the format panel
       this.editor.graph.addSvgShadow(graph.view.canvas.ownerSVGElement, null, true);
+    }
+
+    if (this.menus != null) {
+      var menusAddPopupMenuEditItems = Menus.prototype.addPopupMenuEditItems;
+
+      // Inserts copyAsImage into popup menu
+      this.menus.addPopupMenuEditItems = function (menu, cell, evt) {
+        if (ui.editor.graph.isSelectionEmpty()) {
+          menusAddPopupMenuEditItems.apply(this, arguments);
+        } else {
+          ui.menus.addMenuItems(
+            menu,
+            ['delete', '-', 'cut', 'copy', 'copyAsImage', '-', 'duplicate'],
+            null,
+            evt,
+          );
+        }
+      };
     }
 
     // Overrides print dialog size
@@ -9809,7 +9872,7 @@ var SelectedFile;
     // Installs additional keyboard shortcuts for editor
     if (!this.editor.chromeless || this.editor.editable) {
       // Defines additional hotkeys
-      this.keyHandler.bindAction(70, true, 'find'); // Ctrl+F
+      this.keyHandler.bindAction(70, true, 'findReplace'); // Ctrl+F
       this.keyHandler.bindAction(67, true, 'copyStyle', true); // Ctrl+Shift+C
       this.keyHandler.bindAction(86, true, 'pasteStyle', true); // Ctrl+Shift+V
       // TEN9: We don't want Edit Geometry dialog for our app
@@ -10092,25 +10155,30 @@ var SelectedFile;
             var y = pt.y / scale - tr.y;
 
             if (evt.dataTransfer.files.length > 0) {
-              if (mxEvent.isAltDown(evt)) {
-                x = null;
-                y = null;
-              }
+              if (mxEvent.isShiftDown(evt)) {
+                this.openFiles(evt.dataTransfer.files, true);
+              } else {
+                if (mxEvent.isAltDown(evt)) {
+                  x = null;
+                  y = null;
+                }
 
-              this.importFiles(
-                evt.dataTransfer.files,
-                x,
-                y,
-                this.maxImageSize,
-                null,
-                null,
-                null,
-                null,
-                mxEvent.isControlDown(evt),
-                null,
-                null,
-                mxEvent.isShiftDown(evt),
-              );
+                this.importFiles(
+                  evt.dataTransfer.files,
+                  x,
+                  y,
+                  this.maxImageSize,
+                  null,
+                  null,
+                  null,
+                  null,
+                  mxEvent.isControlDown(evt),
+                  null,
+                  null,
+                  mxEvent.isShiftDown(evt),
+                  evt,
+                );
+              }
             } else {
               if (mxEvent.isAltDown(evt)) {
                 x = 0;
@@ -10168,7 +10236,16 @@ var SelectedFile;
 
                 var doInsert = mxUtils.bind(this, function () {
                   graph.setSelectionCells(
-                    this.insertTextAt(html, x, y, true, asImage, null, resizeImages),
+                    this.insertTextAt(
+                      html,
+                      x,
+                      y,
+                      true,
+                      asImage,
+                      null,
+                      resizeImages,
+                      mxEvent.isControlDown(evt),
+                    ),
                   );
                 });
 
@@ -10229,6 +10306,7 @@ var SelectedFile;
       );
     }
 
+    graph.enableFlowAnimation = true;
     this.initPages();
 
     // Embedded mode
@@ -10386,7 +10464,6 @@ var SelectedFile;
               graph.container.appendChild(textInput);
               restoreFocus = true;
 
-              // Workaround for selected document content in quirks mode
               textInput.focus();
               document.execCommand('selectAll', false, null);
             }
@@ -11360,6 +11437,8 @@ var SelectedFile;
           var xml = Editor.extractGraphModelFromPdf(data);
 
           if (xml != null) {
+            fileHandle = null;
+            temp = true;
             data = xml;
           }
         }
@@ -11434,7 +11513,8 @@ var SelectedFile;
       if (
         true ||
         currentFile == null ||
-        (!currentFile.isModified() && (mxClient.IS_CHROMEAPP || EditorUi.isElectronApp))
+        (!currentFile.isModified() &&
+          (mxClient.IS_CHROMEAPP || EditorUi.isElectronApp || fileHandle != null))
       ) {
         fn();
       }
@@ -11577,6 +11657,10 @@ var SelectedFile;
 
         if (this.menus.findWindow != null) {
           this.menus.findWindow.window.setVisible(false);
+        }
+
+        if (this.menus.findReplaceWindow != null) {
+          this.menus.findReplaceWindow.window.setVisible(false);
         }
       }
     }
@@ -13717,6 +13801,11 @@ var SelectedFile;
       // this.actions.get('close').setEnabled(file != null);
       // this.menus.get('publish').setEnabled(file != null && !file.isRestricted());
 
+      // var findReplace = this.actions.get('findReplace');
+      // findReplace.setEnabled(this.diagramContainer.style.visibility != 'hidden');
+      // findReplace.label =
+      //   mxResources.get('find') + (graph.isEnabled() ? '/' + mxResources.get('replace') : '') + '...';
+
       var state = graph.view.getState(graph.getSelectionCell());
       this.actions
         .get('editShape')
@@ -13745,7 +13834,7 @@ var SelectedFile;
     ExportDialog.showXmlOption = false;
     ExportDialog.showGifOption = false;
 
-    ExportDialog.exportFile = function (editorUi, name, format, bg, s, b, dpi) {
+    ExportDialog.exportFile = function (editorUi, name, format, bg, s, b, dpi, grid) {
       var graph = editorUi.editor.graph;
 
       if (format == 'xml') {
@@ -13778,14 +13867,22 @@ var SelectedFile;
                 true,
                 false,
                 null,
-                null,
+                grid,
                 dpi,
               );
             } else {
-              editorUi.exportImage(s, false, true, false, false, b, true, false, 'jpeg');
+              editorUi.exportImage(s, false, true, false, false, b, true, false, 'jpeg', grid);
             }
           } else {
             var extras = { globalVars: graph.getExportVariables() };
+
+            if (grid) {
+              extras.grid = {
+                size: graph.gridSize,
+                steps: graph.view.gridSteps,
+                color: graph.view.gridColor,
+              };
+            }
 
             editorUi.saveRequest(name, format, function (newTitle, base64) {
               return new mxXmlRequest(
@@ -13979,7 +14076,7 @@ var SelectedFile;
       }),
       null,
       null,
-      'https://desk.draw.io/support/solutions/articles/16000092763',
+      'https://www.diagrams.net/doc/faq/custom-libraries-confluence-cloud',
     );
     this.showDialog(dlg.container, 340, 375, true, true, null, null, null, null, true);
   };

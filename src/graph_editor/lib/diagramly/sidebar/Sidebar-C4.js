@@ -114,32 +114,6 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
         bg.setValue(mxUtils.createXmlDocument().createElement('object'));
         bg.setAttribute('placeholders', '1');
         bg.setAttribute('c4Name', 'name');
-        bg.setAttribute('c4Type', 'Component');
-        bg.setAttribute('c4Technology', 'technology');
-        bg.setAttribute('c4Description', 'Description');
-        bg.setAttribute(
-          'label',
-          '<b>%c4Name%</b><div>[%c4Type%: %c4Technology%]</div><br><div>%c4Description%</div>',
-        );
-
-        return sb.createVertexTemplateFromCells(
-          [bg],
-          bg.geometry.width,
-          bg.geometry.height,
-          'Component',
-        );
-      }),
-      this.addEntry(dt + 'container', function () {
-        var bg = new mxCell(
-          '',
-          new mxGeometry(0, 0, w * 1.6, h * 1.1),
-          'rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#85BBF0;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#78A8D8;metaEdit=1;metaData={"c4Type":{"editable":false}};' +
-            pts,
-        );
-        bg.vertex = true;
-        bg.setValue(mxUtils.createXmlDocument().createElement('object'));
-        bg.setAttribute('placeholders', '1');
-        bg.setAttribute('c4Name', 'name');
         bg.setAttribute('c4Type', 'Container');
         bg.setAttribute('c4Technology', 'technology');
         bg.setAttribute('c4Description', 'Description');
@@ -153,6 +127,32 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
           bg.geometry.width,
           bg.geometry.height,
           'Container',
+        );
+      }),
+      this.addEntry(dt + 'component', function () {
+        var bg = new mxCell(
+          '',
+          new mxGeometry(0, 0, w * 1.6, h * 1.1),
+          'rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#85BBF0;fontColor=#ffffff;align=center;arcSize=10;strokeColor=#78A8D8;metaEdit=1;metaData={"c4Type":{"editable":false}};' +
+            pts,
+        );
+        bg.vertex = true;
+        bg.setValue(mxUtils.createXmlDocument().createElement('object'));
+        bg.setAttribute('placeholders', '1');
+        bg.setAttribute('c4Name', 'name');
+        bg.setAttribute('c4Type', 'Component');
+        bg.setAttribute('c4Technology', 'technology');
+        bg.setAttribute('c4Description', 'Description');
+        bg.setAttribute(
+          'label',
+          '<b>%c4Name%</b><div>[%c4Type%: %c4Technology%]</div><br><div>%c4Description%</div>',
+        );
+
+        return sb.createVertexTemplateFromCells(
+          [bg],
+          bg.geometry.width,
+          bg.geometry.height,
+          'Component',
         );
       }),
       this.addEntry(dt + 'execution environment', function () {

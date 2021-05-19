@@ -76,7 +76,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     flow4.insertEdge(edge, false);
     flow.insert(edge);
 
-    return fns.concat([
+    fns = fns.concat([
       this.addDataEntry(
         'container swimlane pool horizontal',
         480,
@@ -147,5 +147,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     ]);
 
     this.setCurrentSearchEntryLibrary();
+
+    return fns;
   };
 })();

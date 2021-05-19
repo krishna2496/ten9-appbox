@@ -24,7 +24,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var dt = 'ibm ';
     var sb = this;
     var s =
-      'aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=#ffffff;fontSize=12;spacingTop=3;image;image=/images/lib/ibm/';
+      'aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;fontColor=#4277BB;labelBackgroundColor=#ffffff;fontSize=12;spacingTop=3;image;image=img/lib/ibm/';
 
     // Adds IBM shapes
     this.setCurrentSearchEntryLibrary('ibm', 'ibmAnalytics');
