@@ -16,6 +16,7 @@
 
 <script lang="ts">
 import GraphEditor from './graph_editor/components/GraphEditor.vue';
+import SpreadsheetEditor from './spreadsheet_editor/SpreadsheetEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 import { mxCell } from './graph_editor/lib/jgraph/mxClient';
 
@@ -45,11 +46,18 @@ const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows2;clipart;flowchart';
 const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
 const DEFAULT_THEME = 'kennedy';
 
+enum EditorList {
+  None = 'NONE',
+  Graph = 'GRAPH',
+  Spreadsheet = 'SPREADSHEET',
+}
+
 export default defineComponent({
   name: 'App',
   components: {
     GraphEditor,
     OpenFile,
+    SpreadsheetEditor,
   },
 
   setup() {
@@ -66,6 +74,8 @@ export default defineComponent({
     const theme = ref('');
 
     const recentColors = ref('');
+
+    const editorType = ref(EditorList.None);
 
     function getShapeLibrariesFromStorage() {
       return window.localStorage.getItem('shapeLibraries');
@@ -234,7 +244,7 @@ export default defineComponent({
       });
     }
 
-    onMounted(() => {
+    function onGraphMounted() {
       updateAppHeight();
       window.addEventListener('resize', onResize);
       document.addEventListener('keydown', onKeydown);
@@ -348,7 +358,28 @@ export default defineComponent({
       };
 
       editor.value.pagesToFit.add(editor.value.editorUiRef.getCurrentPage().getId());
+    }
+
+    function getEditorType() {
+      return editorType.value;
+    }
+
+    onMounted(() => {
+      if (getEditorType() === EditorList.Graph) {
+        onGraphMounted();
+      }
     });
+
+    function setEditorType(et: EditorList) {
+      editorType.value = et;
+    }
+    function newFile(et: EditorList) {
+      if (getEditorType() === et) {
+        // TODO: Reset editor
+      } else {
+        setEditorType(et);
+      }
+    }
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
@@ -387,6 +418,21 @@ export default defineComponent({
     }
 
     watch(
+      () => editorType.value,
+      (val: EditorList) => {
+        if (val === EditorList.Graph) {
+          nextTick(() => {
+            onGraphMounted();
+          });
+        } else {
+          updateAppHeight();
+          window.addEventListener('resize', onResize);
+          document.addEventListener('keydown', onKeydown);
+        }
+      },
+    );
+
+    watch(
       () => theme.value,
       (val: string) => {
         if (val == 'min') {
@@ -399,12 +445,17 @@ export default defineComponent({
     return {
       addLog,
       editor,
+      editorType,
+      EditorList,
       insertDummyImage,
       getDateString,
+      getEditorType,
       getRecentColorFromStorage,
       loadFileData,
       logs,
+      newFile,
       onGraphChanged,
+      onGraphMounted,
       onPreviewModeChanged,
       onScratchpadDataChanged,
       onShapeLibrariesChanged,
@@ -415,6 +466,7 @@ export default defineComponent({
       saveFile,
       saveRecentColorsToStorage,
       scratchpadData,
+      setEditorType,
       shapeLibraries,
       theme,
     };
@@ -459,10 +511,18 @@ export default defineComponent({
                 | {{ getDateString(log.lastModified) }}
     #page.col-md-10
       .row-btn(v-if='theme != "min"')
-        button(@click='saveFile')
+        button.ml-1(@click='newFile(EditorList.Graph)')
+          | New Diagram
+        button.ml-2(@click='newFile(EditorList.Spreadsheet)')
+          | New Spreadsheet
+        button.ml-3(@click='saveFile', :disabled='getEditorType() === EditorList.None')
           | Save File
-        open-file(@file-loaded='loadFileData')
-        input#preview.mt-1.ml-4(
+        open-file.ml-4(
+          @file-loaded='loadFileData',
+          :editorType='editorType',
+          :editorList='EditorList'
+        )
+        input#preview.mt-1.ml-5(
           type='checkbox',
           name='preview',
           value='preview',
@@ -470,7 +530,7 @@ export default defineComponent({
         )
         label.ml-1(for='preview') Preview Mode
       .row-btn(v-else)
-        input#preview.mt-1.ml-4(
+        input#preview.mt-1.ml-5(
           type='checkbox',
           name='preview',
           value='preview',
@@ -479,6 +539,7 @@ export default defineComponent({
         label.ml-1(for='preview') Preview Mode
       #container.ge-container
         graph-editor(
+          v-if='getEditorType() === EditorList.Graph',
           ref='editor',
           :enabled='!previewMode',
           :shapeLibraries='shapeLibraries',
@@ -492,6 +553,9 @@ export default defineComponent({
           @theme-changed='onThemeChanged',
           @save-recent-colors='saveRecentColorsToStorage'
         )
+        spreadsheet-editor(v-else-if='getEditorType() === EditorList.Spreadsheet')
+        .col-md-12(v-else)
+          h1 Pick a mode
 </template>
 
 <style lang="scss">
