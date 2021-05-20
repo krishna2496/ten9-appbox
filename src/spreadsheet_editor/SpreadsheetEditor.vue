@@ -33,7 +33,6 @@ export default defineComponent({
           container: 'luckysheet',
           title: 'Spreadsheet',
           lang: 'en',
-          plugins: ['chart'],
           data: [
             {
               name: 'Sheet1',

@@ -16,6 +16,27 @@
 
 <script lang="ts">
 import { defineComponent, nextTick, ref } from '@vue/composition-api';
+import LuckyExcel from 'luckyexcel';
+
+interface simpleInt {
+  name: string;
+  color: string;
+  index: number;
+}
+
+interface typeOfSheetsJsonCreator {
+  creator: number;
+}
+
+interface typeOfSheetsJson {
+  name: typeOfSheetsJsonCreator;
+}
+
+type typeOfSheets = simpleInt[];
+interface jsonSheet {
+  sheets: typeOfSheets;
+  info: typeOfSheetsJson;
+}
 
 export default defineComponent({
   name: 'OpenFile',
@@ -48,25 +69,48 @@ export default defineComponent({
 
     // Read luckysheet native files and load it in container
     function readLuckySheetNativeFiles(files: File) {
-      const reader = new FileReader();
-      reader.onload = (() => {
-        return (e: any) => {
-          try {
-            const json = JSON.parse(e.target.result);
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+          const jsonFile = reader.result as string;
+          const fileView = JSON.parse(jsonFile);
 
-            // @ts-ignore
-            // eslint-disable-next-line no-undef
-            luckysheet.create({
-              container: 'luckysheet', //luckysheet is the container id
-              showinfobar: false,
-              data: json,
-            });
-          } catch (ex) {
-            alert('Something went wrong');
-          }
-        };
-      })();
-      reader.readAsText(files);
+          // @ts-ignore
+          // eslint-disable-next-line no-undef
+          luckysheet.create({
+            container: 'luckysheet', //luckysheet is the container id
+            showinfobar: false,
+            data: fileView,
+          });
+
+          resolve(fileView);
+        });
+        reader.readAsText(files);
+      });
+    }
+
+    function readExcelFile(files: File) {
+      LuckyExcel.transformExcelToLucky(files, (exportJson: jsonSheet) => {
+        if (exportJson.sheets == null || exportJson.sheets.length == 0) {
+          alert(
+            'Failed to read the content of the excel file, currently does not support xls files!',
+          );
+          return;
+        }
+        // @ts-ignore
+        // eslint-disable-next-line no-undef
+        luckysheet.destroy();
+
+        // @ts-ignore
+        // eslint-disable-next-line no-undef
+        luckysheet.create({
+          container: 'luckysheet', //luckysheet is the container id
+          showinfobar: false,
+          data: exportJson.sheets,
+          title: exportJson.info.name,
+          userInfo: exportJson.info.name.creator,
+        });
+      });
     }
 
     function loadFile() {
@@ -85,12 +129,15 @@ export default defineComponent({
             return;
           }
 
+          // Read native files is (.sheet)
           if (suffix == 'sheet') {
             readLuckySheetNativeFiles(fileValue);
             return;
           }
-          // readExcelFile(files[0]);
+          // Read excel file if selection is (.xlsx)
+          readExcelFile(fileValue);
         } else if (_props.editorType == _props.editorList.Graph) {
+          // Read .draw, drawio,xml file
           const [selectedFile] = file.value.files;
           const reader = new FileReader();
           reader.onload = (e) => {
@@ -114,7 +161,7 @@ export default defineComponent({
 
 <template lang="pug">
 .btn-left
-  button(@click='chooseFile')
+  button(@click='chooseFile', :disabled='_props.editorType == _props.editorList.None')
     | Open File
   input(
     ref='file',

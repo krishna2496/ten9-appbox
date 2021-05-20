@@ -105,6 +105,10 @@ export default defineComponent({
       window.localStorage.setItem('recentColors', colors);
     }
 
+    function getEditorType() {
+      return editorType.value;
+    }
+
     function updateAppHeight() {
       const container = document.getElementById('container');
       const rect = container.getBoundingClientRect();
@@ -112,7 +116,17 @@ export default defineComponent({
       const bottomMargin = 5;
       const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
       container.style.height = `${newHeight}px`;
-      editor.value.editorUiRef.refresh();
+
+      if (getEditorType() === EditorList.Spreadsheet) {
+        const test = document.querySelector<HTMLElement>('.luckysheet');
+        if (test) {
+          // @ts-ignore
+          // eslint-disable-next-line no-undef
+          luckysheet.resize();
+        }
+      } else if (getEditorType() === EditorList.Graph) {
+        editor.value.editorUiRef.refresh();
+      }
     }
 
     const debounceTime = 100;
@@ -207,8 +221,23 @@ export default defineComponent({
       // if (editor.value.graph.isEditing()) {
       //   editor.valule.graph.stopEditing();
       // }
-      const xmlData = editor.value.getXmlData();
-      saveXmlFile(xmlData);
+      if (EditorList.Graph == editorType.value) {
+        const xmlData = editor.value.getXmlData();
+        saveXmlFile(xmlData);
+      } else {
+        // @ts-ignore
+        // eslint-disable-next-line no-undef
+        const allSheetData = luckysheet.getluckysheetfile();
+        const exportName = 'luckysheet';
+        const dataStr =
+          'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(allSheetData));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute('href', dataStr);
+        downloadAnchorNode.setAttribute('download', exportName + '.sheet');
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+      }
     }
 
     function onKeydown(event: KeyboardEvent) {
@@ -360,10 +389,6 @@ export default defineComponent({
       editor.value.pagesToFit.add(editor.value.editorUiRef.getCurrentPage().getId());
     }
 
-    function getEditorType() {
-      return editorType.value;
-    }
-
     onMounted(() => {
       if (getEditorType() === EditorList.Graph) {
         onGraphMounted();
@@ -427,7 +452,7 @@ export default defineComponent({
         } else {
           updateAppHeight();
           window.addEventListener('resize', onResize);
-          document.addEventListener('keydown', onKeydown);
+          // document.addEventListener('keydown', onKeydown);
         }
       },
     );
