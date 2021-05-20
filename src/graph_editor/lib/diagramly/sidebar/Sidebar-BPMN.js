@@ -26,21 +26,20 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var gn = 'mxgraph.bpmn2';
     var r = 400;
     var sb = this;
-    console.log('123');
     this.setCurrentSearchEntryLibrary('bpmn', 'bpmn2General');
-    this.addBPMN2GeneralPalette(gn, r, sb);
+    this.addBPMN2GeneralPalette(dir, expand, 50, 50);
     this.setCurrentSearchEntryLibrary('bpmn', 'bpmn2Tasks');
-    this.addBPMN2TasksPalette(gn, r, sb);
+    this.addBPMN2TasksPalette(dir, expand, 50, 50);
     this.setCurrentSearchEntryLibrary('bpmn', 'bpmn2Choreographies');
-    this.addBPMN2ChoreographiesPalette(gn, r, sb);
+    this.addBPMN2ChoreographiesPalette(dir, expand, 50, 50);
     this.setCurrentSearchEntryLibrary('bpmn', 'bpmn2Events');
-    this.addBPMN2EventsPalette(gn, r, sb);
+    this.addBPMN2EventsPalette(dir, expand, 50, 50);
     this.setCurrentSearchEntryLibrary('bpmn', 'bpmn2Gateways');
-    this.addBPMN2GatewaysPalette(gn, r, sb);
+    this.addBPMN2GatewaysPalette(dir, expand, 50, 50);
     this.setCurrentSearchEntryLibrary();
   };
 
-  Sidebar.prototype.addBPMN2GeneralPalette = function (gn, r, sb) {
+  Sidebar.prototype.addBPMN2GeneralPalette = function (dir, expand, w, h) {
     var dt = 'bpmn business process model notation ';
     var w = 50;
     var h = 50;
@@ -55,7 +54,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var s5 =
       'edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endFill=0;startFill=0;endSize=6;startSize=6;dashed=1;dashPattern=1 4;endArrow=';
 
-    var fns = [
+    this.addPaletteFunctions('bpmnGeneral', 'BPMN General', false, [
       this.createVertexTemplateEntry(s1, 40, 60, '', 'Data Object', null, null, dt + 'data object'),
       this.createVertexTemplateEntry(
         s1 + 'bpmnTransferType=none;isCollection=1;',
@@ -461,21 +460,10 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
           );
         }),
       ),
-    ];
-
-    this.addPalette(
-      'bpmn2General',
-      'BPMN 2.0  General',
-      false,
-      mxUtils.bind(this, function (content) {
-        for (var i = 0; i < fns.length; i++) {
-          content.appendChild(fns[i](content));
-        }
-      }),
-    );
+    ]);
   };
 
-  Sidebar.prototype.addBPMN2TasksPalette = function (gn, r, sb) {
+  Sidebar.prototype.addBPMN2TasksPalette = function (dir, expand, w, h) {
     var dt = 'bpmn business process model notation task ';
     var pts =
       'points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];';
@@ -487,8 +475,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var s4 = pts + 'shape=mxgraph.bpmn.task;rectStyle=rounded;size=10;bpmnShapeType=call;';
     var w = 50;
     var h = 50;
-
-    var fns = [
+    this.addPaletteFunctions('bpmnTasks', 'BPMN Tasks', false, [
       this.createVertexTemplateEntry(
         s1 + '',
         120,
@@ -945,24 +932,13 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
         null,
         dt + 'call activity expanded',
       ),
-    ];
-
-    this.addPalette(
-      'bpmn2Tasks',
-      'BPMN 2.0  Tasks',
-      false,
-      mxUtils.bind(this, function (content) {
-        for (var i = 0; i < fns.length; i++) {
-          content.appendChild(fns[i](content));
-        }
-      }),
-    );
+    ]);
   };
 
-  Sidebar.prototype.addBPMN2ChoreographiesPalette = function (gn, r, sb) {
+  Sidebar.prototype.addBPMN2ChoreographiesPalette = function (dir, expand, w, h) {
     var dt = 'bpmn business process model notation choreography ';
 
-    var fns = [
+    this.addPaletteFunctions('bpmnChoreographies', 'BPMN Choreographies', false, [
       this.addEntry(dt + 'choreography task', function () {
         var bg = new mxCell(
           '',
@@ -2053,18 +2029,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
           );
         },
       ),
-    ];
-
-    this.addPalette(
-      'bpmn2Choreographies',
-      'BPMN 2.0  Choreographies',
-      false,
-      mxUtils.bind(this, function (content) {
-        for (var i = 0; i < fns.length; i++) {
-          content.appendChild(fns[i](content));
-        }
-      }),
-    );
+    ]);
   };
 
   Sidebar.prototype.addBPMN2EventsPalette = function (gn, r, sb) {
@@ -2074,7 +2039,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var w = 50;
     var h = 50;
 
-    var fns = [
+    this.addPaletteFunctions('bpmnEvents', 'BPMN Events', false, [
       this.createVertexTemplateEntry(
         s + 'standard;symbol=general;',
         w,
@@ -2645,28 +2610,17 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
         null,
         dt + 'terminate',
       ),
-    ];
-
-    this.addPalette(
-      'bpmn2Events',
-      'BPMN 2.0  Events',
-      false,
-      mxUtils.bind(this, function (content) {
-        for (var i = 0; i < fns.length; i++) {
-          content.appendChild(fns[i](content));
-        }
-      }),
-    );
+    ]);
   };
 
-  Sidebar.prototype.addBPMN2GatewaysPalette = function (gn, r, sb) {
+  Sidebar.prototype.addBPMN2GatewaysPalette = function (dir, expand, w, h) {
     var dt = 'bpmn business process model notation gateway ';
     var s2 =
       'points=[[0.25,0.25,0],[0.5,0,0],[0.75,0.25,0],[1,0.5,0],[0.75,0.75,0],[0.5,1,0],[0.25,0.75,0],[0,0.5,0]];shape=mxgraph.bpmn.gateway2;html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;align=center;perimeter=rhombusPerimeter;outlineConnect=0;outline=';
     var w = 50;
     var h = 50;
 
-    var fns = [
+    this.addPaletteFunctions('bpmnGateways', 'BPMN Gateways', false, [
       this.createVertexTemplateEntry(
         s2 + 'none;symbol=none;',
         w,
@@ -3358,17 +3312,6 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
         null,
         dt + 'terminate',
       ),
-    ];
-
-    this.addPalette(
-      'bpmn2Gateways',
-      'BPMN 2.0  Gateways',
-      false,
-      mxUtils.bind(this, function (content) {
-        for (var i = 0; i < fns.length; i++) {
-          content.appendChild(fns[i](content));
-        }
-      }),
-    );
+    ]);
   };
 })();

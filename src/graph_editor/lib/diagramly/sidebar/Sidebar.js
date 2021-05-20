@@ -650,8 +650,8 @@ const urlParams = {};
     },
     { id: 'active_directory' },
     {
-      id: 'bpmn2',
-      prefix: 'bpmn2',
+      id: 'bpmn',
+      prefix: 'bpmn',
       libs: ['General', 'Tasks', 'Choreographies', 'Events', 'Gateways'],
     },
     {
@@ -2101,7 +2101,6 @@ const urlParams = {};
     this.addVVDPalette();
     this.addArchimate3Palette();
     this.addArchiMatePalette();
-    //this.addBpmn2Palette();
     this.addBpmnPalette(dir, false);
     this.addSysMLPalette(sysml, dir);
     this.addLeanMappingPalette();
