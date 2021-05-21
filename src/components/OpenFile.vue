@@ -15,28 +15,8 @@
 -->
 
 <script lang="ts">
+import { EventBus } from '../eventbus';
 import { defineComponent, nextTick, ref } from '@vue/composition-api';
-import LuckyExcel from 'luckyexcel';
-
-interface simpleInt {
-  name: string;
-  color: string;
-  index: number;
-}
-
-interface typeOfSheetsJsonCreator {
-  creator: number;
-}
-
-interface typeOfSheetsJson {
-  name: typeOfSheetsJsonCreator;
-}
-
-type typeOfSheets = simpleInt[];
-interface jsonSheet {
-  sheets: typeOfSheets;
-  info: typeOfSheetsJson;
-}
 
 export default defineComponent({
   name: 'OpenFile',
@@ -57,6 +37,7 @@ export default defineComponent({
     const file = ref(null);
     const fileAcceptType = ref('');
     function chooseFile() {
+      fileAcceptType.value = '.xlsx,.sheet,.draw, .drawio, .xml';
       if (_props.editorType == _props.editorList.Spreadsheet) {
         fileAcceptType.value = '.xlsx,.sheet';
       } else if (_props.editorType == _props.editorList.Graph) {
@@ -66,51 +47,33 @@ export default defineComponent({
         file.value.click();
       });
     }
+    function loadSpreadSheetFile(fileValue: File) {
+      const { name } = fileValue;
+      const suffixArr = name.split('.'),
+        suffix = suffixArr[suffixArr.length - 1];
 
-    // Read luckysheet native files and load it in container
-    function readLuckySheetNativeFiles(files: File) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => {
-          const jsonFile = reader.result as string;
-          const fileView = JSON.parse(jsonFile);
+      if (suffix != 'xlsx' && suffix != 'sheet') {
+        alert('Currently only supports the import of xlsx and Luckysheet (.sheet) native files');
+        return;
+      }
 
-          // @ts-ignore
-          // eslint-disable-next-line no-undef
-          luckysheet.create({
-            container: 'luckysheet', //luckysheet is the container id
-            showinfobar: false,
-            data: fileView,
-          });
-
-          resolve(fileView);
-        });
-        reader.readAsText(files);
-      });
+      // Read native files is (.sheet)
+      if (suffix == 'sheet') {
+        // Read luckysheet native files and load it in container
+        EventBus.$emit('read-spreadsheet-native-file', fileValue);
+        return;
+      }
+      // Read excel file if selection is (.xlsx)
+      EventBus.$emit('read-excel', fileValue);
     }
 
-    function readExcelFile(files: File) {
-      LuckyExcel.transformExcelToLucky(files, (exportJson: jsonSheet) => {
-        if (exportJson.sheets == null || exportJson.sheets.length == 0) {
-          alert(
-            'Failed to read the content of the excel file, currently does not support xls files!',
-          );
-          return;
-        }
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        luckysheet.destroy();
-
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        luckysheet.create({
-          container: 'luckysheet', //luckysheet is the container id
-          showinfobar: false,
-          data: exportJson.sheets,
-          title: exportJson.info.name,
-          userInfo: exportJson.info.name.creator,
-        });
-      });
+    function loadDrawIoFile(selectedFile: File) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fileData = e.target.result;
+        ctx.emit('file-loaded', fileData);
+      };
+      reader.readAsText(selectedFile);
     }
 
     function loadFile() {
@@ -118,33 +81,29 @@ export default defineComponent({
         if (_props.editorType == _props.editorList.Spreadsheet) {
           const { files } = file.value;
           const [fileValue] = files;
-          const { name } = fileValue;
-          const suffixArr = name.split('.'),
-            suffix = suffixArr[suffixArr.length - 1];
-
-          if (suffix != 'xlsx' && suffix != 'sheet') {
-            alert(
-              'Currently only supports the import of xlsx and Luckysheet (.sheet) native files',
-            );
-            return;
-          }
-
-          // Read native files is (.sheet)
-          if (suffix == 'sheet') {
-            readLuckySheetNativeFiles(fileValue);
-            return;
-          }
-          // Read excel file if selection is (.xlsx)
-          readExcelFile(fileValue);
+          loadSpreadSheetFile(fileValue);
         } else if (_props.editorType == _props.editorList.Graph) {
           // Read .draw, drawio,xml file
           const [selectedFile] = file.value.files;
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const fileData = e.target.result;
-            ctx.emit('file-loaded', fileData);
-          };
-          reader.readAsText(selectedFile);
+          loadDrawIoFile(selectedFile);
+        } else {
+          const { files } = file.value;
+          const [fileValue] = files;
+          const { name } = fileValue;
+          const suffixArr = name.split('.'),
+            suffix = suffixArr[suffixArr.length - 1];
+          if (suffix == 'xlsx' || suffix == 'sheet') {
+            ctx.emit('set-editor-type', _props.editorList.Spreadsheet);
+            nextTick(() => {
+              loadSpreadSheetFile(fileValue);
+            });
+          } else {
+            ctx.emit('set-editor-type', _props.editorList.Graph);
+            nextTick(() => {
+              const [selectedFile] = file.value.files;
+              loadDrawIoFile(selectedFile);
+            });
+          }
         }
       }
     }
@@ -153,7 +112,9 @@ export default defineComponent({
       chooseFile,
       file,
       fileAcceptType,
+      loadDrawIoFile,
       loadFile,
+      loadSpreadSheetFile,
     };
   },
 });
@@ -161,7 +122,7 @@ export default defineComponent({
 
 <template lang="pug">
 .btn-left
-  button(@click='chooseFile', :disabled='_props.editorType == _props.editorList.None')
+  button(@click='chooseFile')
     | Open File
   input(
     ref='file',

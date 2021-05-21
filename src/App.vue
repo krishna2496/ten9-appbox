@@ -16,10 +16,10 @@
 
 <script lang="ts">
 import GraphEditor from './graph_editor/components/GraphEditor.vue';
-import SpreadsheetEditor from './spreadsheet_editor/SpreadsheetEditor.vue';
+// import SpreadsheetEditor from './spreadsheet_editor/components/SpreadsheetEditor.vue';
+import SpreadsheetEditor from './spreadsheet_editor/components/SpreadsheetEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 import { mxCell } from './graph_editor/lib/jgraph/mxClient';
-
 import {
   defineComponent,
   nextTick,
@@ -118,8 +118,8 @@ export default defineComponent({
       container.style.height = `${newHeight}px`;
 
       if (getEditorType() === EditorList.Spreadsheet) {
-        const test = document.querySelector<HTMLElement>('.luckysheet');
-        if (test) {
+        const isLuckySheetLoaded = document.querySelector<HTMLElement>('.luckysheet');
+        if (isLuckySheetLoaded) {
           // @ts-ignore
           // eslint-disable-next-line no-undef
           luckysheet.resize();
@@ -345,6 +345,7 @@ export default defineComponent({
                   lastModified: file.lastModified,
                 };
                 getImageData(file).then((imageData: string) => {
+                  alert('in');
                   fileInfo.imageData = imageData;
                   onFileDropped(fileInfo);
                 });
@@ -452,7 +453,6 @@ export default defineComponent({
         } else {
           updateAppHeight();
           window.addEventListener('resize', onResize);
-          // document.addEventListener('keydown', onKeydown);
         }
       },
     );
@@ -544,6 +544,7 @@ export default defineComponent({
           | Save File
         open-file.ml-4(
           @file-loaded='loadFileData',
+          @set-editor-type='setEditorType',
           :editorType='editorType',
           :editorList='EditorList'
         )
