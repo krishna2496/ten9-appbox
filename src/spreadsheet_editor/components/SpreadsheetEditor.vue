@@ -169,12 +169,12 @@ div
 </template>
 <style scoped>
 #spreadsheet-editor {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   position: absolute;
   width: 100%;
-  left: 0px;
-  top: 0px;
-  bottom: 0px;
+  left: 0;
+  top: 0;
+  bottom: 0;
 }
 </style>
