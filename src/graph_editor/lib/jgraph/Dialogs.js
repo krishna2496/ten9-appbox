@@ -1068,6 +1068,25 @@ var ExportDialog = function (editorUi) {
 
   td = document.createElement('td');
   td.style.fontSize = '10pt';
+  mxUtils.write(td, mxResources.get('grid') + ':');
+
+  row.appendChild(td);
+
+  var gridCheckbox = document.createElement('input');
+  gridCheckbox.setAttribute('type', 'checkbox');
+  gridCheckbox.checked = false;
+
+  td = document.createElement('td');
+  td.appendChild(gridCheckbox);
+
+  row.appendChild(td);
+
+  tbody.appendChild(row);
+
+  row = document.createElement('tr');
+
+  td = document.createElement('td');
+  td.style.fontSize = '10pt';
   mxUtils.write(td, mxResources.get('borderWidth') + ':');
 
   row.appendChild(td);
@@ -1115,6 +1134,16 @@ var ExportDialog = function (editorUi) {
       transparentCheckbox.removeAttribute('disabled');
     } else {
       transparentCheckbox.setAttribute('disabled', 'disabled');
+    }
+
+    if (
+      imageFormatSelect.value === 'png' ||
+      imageFormatSelect.value === 'jpg' ||
+      imageFormatSelect.value === 'pdf'
+    ) {
+      gridCheckbox.removeAttribute('disabled');
+    } else {
+      gridCheckbox.setAttribute('disabled', 'disabled');
     }
 
     if (imageFormatSelect.value === 'png') {
