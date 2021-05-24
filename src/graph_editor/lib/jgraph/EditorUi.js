@@ -1086,10 +1086,28 @@ EditorUi.prototype.enabled = true;
 // TEN9: Add theme value
 EditorUi.prototype.theme = '';
 
+// TEN9: Add close Layers Window API
+EditorUi.prototype.closeLayersWindow = function () {
+  const layersWindow = document.querySelector('#layer-window-id');
+  if (!layersWindow) {
+    return;
+  }
+  const isLayerWindowShow = layersWindow.classList.contains('show-window');
+  if (isLayerWindowShow) {
+    layersWindow.classList.remove('show-window');
+    layersWindow.style.display = 'none';
+    this.fireEvent(new mxEventObject('setLayerWindowCoordinates'));
+  }
+};
+
+// TEN9: Add API to close Open Windows
 EditorUi.prototype.closeOpenWindows = function () {
   if (this.actions.layersWindow?.window.isVisible()) {
     this.actions.layersWindow.window.setVisible(false);
   }
+
+  // TEN9: New style layers window
+  this.closeLayersWindow();
 
   if (this.actions.outlineWindow?.window.isVisible()) {
     this.actions.outlineWindow.window.setVisible(false);
@@ -1098,6 +1116,8 @@ EditorUi.prototype.closeOpenWindows = function () {
   if (this.menus.findWindow?.window.isVisible()) {
     this.menus.findWindow.window.setVisible(false);
   }
+
+  this.fireEvent(new mxEventObject('closeColorWindow'));
 };
 
 // TEN9: Add enable/disable function
@@ -1127,6 +1147,10 @@ EditorUi.prototype.setEnabled = function (enabled) {
 
   const redo = this.actions.get('redo');
   redo.setEnabled(enabled);
+
+  if (enabled) {
+    this.showLayersDialog();
+  }
 
   // TEN9: Add class to denote preview or edit modes.
   var tools = document.getElementsByClassName('geMenuItem');

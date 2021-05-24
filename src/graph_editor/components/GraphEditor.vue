@@ -707,8 +707,8 @@ export default defineComponent({
       insertImage(url);
     }
 
-    function saveRecentColors(colors: string) {
-      ctx.emit('save-recent-colors', colors);
+    function onRecentColorsChanged(colors: string) {
+      ctx.emit('recent-colors-changed', colors);
     }
 
     watch(
@@ -739,13 +739,13 @@ export default defineComponent({
       imageInsert,
       loadXmlData,
       loadImage,
+      onRecentColorsChanged,
       pagesToFit,
       paste,
       pasteShapes,
       refreshCurrentPageLinks,
       refreshUi,
       removePageFromCurrentPageWindow,
-      saveRecentColors,
       setGraphEnabled,
       showingDialog,
       updateCellImage,
@@ -762,6 +762,6 @@ export default defineComponent({
   window(
     :editorUi='editorUiRef',
     :recentColors='recentColors',
-    @save-recent-colors='saveRecentColors'
+    @recent-colors-changed='onRecentColorsChanged'
   )
 </template>
