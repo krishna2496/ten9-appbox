@@ -31,40 +31,21 @@ export default defineComponent({
       type: Object,
       default: null,
     },
+    supportedExtension: {
+      required: false,
+      type: String,
+      default: null,
+    },
   },
 
   setup(_props, ctx) {
     const file = ref(null);
     const fileAcceptType = ref('');
     function chooseFile() {
-      fileAcceptType.value = '.xlsx,.sheet,.draw, .drawio, .xml';
-      if (_props.editorType == _props.editorList.Spreadsheet) {
-        fileAcceptType.value = '.xlsx,.sheet';
-      } else if (_props.editorType == _props.editorList.Graph) {
-        fileAcceptType.value = '.draw, .drawio, .xml';
-      }
+      fileAcceptType.value = _props.supportedExtension;
       nextTick(() => {
         file.value.click();
       });
-    }
-    function loadSpreadSheetFile(fileValue: File) {
-      const { name } = fileValue;
-      const suffixArr = name.split('.'),
-        suffix = suffixArr[suffixArr.length - 1];
-
-      if (suffix != 'xlsx' && suffix != 'sheet') {
-        alert('Currently only supports the import of xlsx and Luckysheet (.sheet) native files');
-        return;
-      }
-
-      // Read native files is (.sheet)
-      if (suffix == 'sheet') {
-        // Read luckysheet native files and load it in container
-        EventBus.$emit('read-spreadsheet-native-file', fileValue);
-        return;
-      }
-      // Read excel file if selection is (.xlsx)
-      EventBus.$emit('read-excel', fileValue);
     }
 
     function loadDrawIoFile(selectedFile: File) {
@@ -78,29 +59,26 @@ export default defineComponent({
 
     function loadFile() {
       if (file.value.files.length > 0) {
+        const { files } = file.value;
+        const [fileValue] = files;
+        const [selectedFile] = file.value.files;
         if (_props.editorType == _props.editorList.Spreadsheet) {
-          const { files } = file.value;
-          const [fileValue] = files;
-          loadSpreadSheetFile(fileValue);
+          EventBus.$emit('load-spread-sheet-file', fileValue);
         } else if (_props.editorType == _props.editorList.Graph) {
           // Read .draw, drawio,xml file
-          const [selectedFile] = file.value.files;
           loadDrawIoFile(selectedFile);
         } else {
-          const { files } = file.value;
-          const [fileValue] = files;
           const { name } = fileValue;
           const suffixArr = name.split('.'),
             suffix = suffixArr[suffixArr.length - 1];
           if (suffix == 'xlsx' || suffix == 'sheet') {
             ctx.emit('set-editor-type', _props.editorList.Spreadsheet);
             nextTick(() => {
-              loadSpreadSheetFile(fileValue);
+              EventBus.$emit('load-spread-sheet-file', fileValue);
             });
           } else {
             ctx.emit('set-editor-type', _props.editorList.Graph);
             nextTick(() => {
-              const [selectedFile] = file.value.files;
               loadDrawIoFile(selectedFile);
             });
           }
@@ -114,7 +92,6 @@ export default defineComponent({
       fileAcceptType,
       loadDrawIoFile,
       loadFile,
-      loadSpreadSheetFile,
     };
   },
 });

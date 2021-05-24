@@ -86,55 +86,7 @@ export default defineComponent({
       });
     });
 
-    function readExcel(files: File) {
-      LuckyExcel.transformExcelToLucky(files, (exportJson: jsonSheet) => {
-        if (exportJson.sheets == null || exportJson.sheets.length == 0) {
-          alert(
-            'Failed to read the content of the excel file, currently does not support xls files!',
-          );
-          return;
-        }
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        luckysheet.destroy();
-
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        luckysheet.create({
-          container: 'spreadsheet-editor', //luckysheet is the container id
-          showinfobar: false,
-          data: exportJson.sheets,
-          title: exportJson.info.name,
-          userInfo: exportJson.info.name.creator,
-        });
-      });
-    }
-
-    EventBus.$on('read-excel', (files: File) => {
-      LuckyExcel.transformExcelToLucky(files, (exportJson: jsonSheet) => {
-        if (exportJson.sheets == null || exportJson.sheets.length == 0) {
-          alert(
-            'Failed to read the content of the excel file, currently does not support xls files!',
-          );
-          return;
-        }
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        luckysheet.destroy();
-
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        luckysheet.create({
-          container: 'spreadsheet-editor', //luckysheet is the container id
-          showinfobar: false,
-          data: exportJson.sheets,
-          title: exportJson.info.name,
-          userInfo: exportJson.info.name.creator,
-        });
-      });
-    });
-
-    EventBus.$on('read-spreadsheet-native-file', (files: File) => {
+    const readSpreadsheetNativeFile = (files: File) => {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.addEventListener('load', () => {
@@ -153,11 +105,77 @@ export default defineComponent({
         });
         reader.readAsText(files);
       });
+    };
+
+    const readExcel = (files: File) => {
+      LuckyExcel.transformExcelToLucky(files, (exportJson: jsonSheet) => {
+        if (exportJson.sheets == null || exportJson.sheets.length == 0) {
+          alert(
+            'Failed to read the content of the excel file, currently does not support xls files!',
+          );
+          return;
+        }
+        // @ts-ignore
+        // eslint-disable-next-line no-undef
+        luckysheet.destroy();
+
+        // @ts-ignore
+        // eslint-disable-next-line no-undef
+        luckysheet.create({
+          container: 'spreadsheet-editor', //spreadsheet-editor is the container id
+          showinfobar: false,
+          data: exportJson.sheets,
+          title: exportJson.info.name,
+          userInfo: exportJson.info.name.creator,
+        });
+      });
+    };
+
+    EventBus.$on('load-spread-sheet-file', (fileValue: File) => {
+      const { name } = fileValue;
+      const suffixArr = name.split('.'),
+        suffix = suffixArr[suffixArr.length - 1];
+
+      if (suffix != 'xlsx' && suffix != 'sheet') {
+        alert('Currently only supports the import of xlsx and Luckysheet (.sheet) native files');
+        return;
+      }
+
+      // Read native files is (.sheet)
+      if (suffix == 'sheet') {
+        readSpreadsheetNativeFile(fileValue);
+        return;
+      }
+      // Read excel file if selection is (.xlsx)
+      readExcel(fileValue);
     });
+
+    const supportedExtension = () => {
+      return '.xlsx,.sheet';
+    };
+
+    const saveFile = () => {
+      // @ts-ignore
+      // eslint-disable-next-line no-undef
+      const allSheetData = luckysheet.getluckysheetfile();
+      const exportName = 'spredsheet';
+      const dataStr =
+        'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(allSheetData));
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute('href', dataStr);
+      downloadAnchorNode.setAttribute('download', exportName + '.sheet');
+      document.body.appendChild(downloadAnchorNode); // required for firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    };
 
     return {
       selected,
       isMaskShow,
+      readExcel,
+      readSpreadsheetNativeFile,
+      saveFile,
+      supportedExtension,
     };
   },
 });

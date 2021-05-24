@@ -711,6 +711,10 @@ export default defineComponent({
       ctx.emit('save-recent-colors', colors);
     }
 
+    const supportedExtension = () => {
+      return '.draw, .drawio, .xml';
+    };
+
     watch(
       () => props.enabled,
       (val) => {
@@ -748,6 +752,7 @@ export default defineComponent({
       saveRecentColors,
       setGraphEnabled,
       showingDialog,
+      supportedExtension,
       updateCellImage,
       updateCellLink,
     };

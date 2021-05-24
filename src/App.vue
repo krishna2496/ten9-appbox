@@ -16,7 +16,6 @@
 
 <script lang="ts">
 import GraphEditor from './graph_editor/components/GraphEditor.vue';
-// import SpreadsheetEditor from './spreadsheet_editor/components/SpreadsheetEditor.vue';
 import SpreadsheetEditor from './spreadsheet_editor/components/SpreadsheetEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 import { mxCell } from './graph_editor/lib/jgraph/mxClient';
@@ -77,6 +76,10 @@ export default defineComponent({
 
     const editorType = ref(EditorList.None);
 
+    const spreadsheet = ref(null);
+
+    const supportedExtension = ref('.xlsx,.sheet,.draw, .drawio, .xml');
+
     function getShapeLibrariesFromStorage() {
       return window.localStorage.getItem('shapeLibraries');
     }
@@ -117,16 +120,18 @@ export default defineComponent({
       const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
       container.style.height = `${newHeight}px`;
 
-      if (getEditorType() === EditorList.Spreadsheet) {
-        const isLuckySheetLoaded = document.querySelector<HTMLElement>('.luckysheet');
-        if (isLuckySheetLoaded) {
-          // @ts-ignore
-          // eslint-disable-next-line no-undef
-          luckysheet.resize();
+      nextTick(() => {
+        if (getEditorType() === EditorList.Spreadsheet) {
+          const isLuckySheetLoaded = document.querySelector<HTMLElement>('.luckysheet');
+          if (isLuckySheetLoaded) {
+            // @ts-ignore
+            // eslint-disable-next-line no-undef
+            luckysheet.resize();
+          }
+        } else if (getEditorType() === EditorList.Graph) {
+          editor.value.editorUiRef.refresh();
         }
-      } else if (getEditorType() === EditorList.Graph) {
-        editor.value.editorUiRef.refresh();
-      }
+      });
     }
 
     const debounceTime = 100;
@@ -225,18 +230,7 @@ export default defineComponent({
         const xmlData = editor.value.getXmlData();
         saveXmlFile(xmlData);
       } else {
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        const allSheetData = luckysheet.getluckysheetfile();
-        const exportName = 'luckysheet';
-        const dataStr =
-          'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(allSheetData));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute('href', dataStr);
-        downloadAnchorNode.setAttribute('download', exportName + '.sheet');
-        document.body.appendChild(downloadAnchorNode); // required for firefox
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
+        spreadsheet.value.saveFile();
       }
     }
 
@@ -398,6 +392,18 @@ export default defineComponent({
 
     function setEditorType(et: EditorList) {
       editorType.value = et;
+      nextTick(() => {
+        switch (getEditorType()) {
+          case EditorList.Graph:
+            onGraphMounted();
+            supportedExtension.value = editor.value.supportedExtension();
+            break;
+
+          case EditorList.Spreadsheet:
+            supportedExtension.value = spreadsheet.value.supportedExtension();
+            break;
+        }
+      });
     }
     function newFile(et: EditorList) {
       if (getEditorType() === et) {
@@ -493,6 +499,8 @@ export default defineComponent({
       scratchpadData,
       setEditorType,
       shapeLibraries,
+      spreadsheet,
+      supportedExtension,
       theme,
     };
   },
@@ -546,7 +554,8 @@ export default defineComponent({
           @file-loaded='loadFileData',
           @set-editor-type='setEditorType',
           :editorType='editorType',
-          :editorList='EditorList'
+          :editorList='EditorList',
+          :supportedExtension='supportedExtension'
         )
         input#preview.mt-1.ml-5(
           type='checkbox',
@@ -579,8 +588,10 @@ export default defineComponent({
           @theme-changed='onThemeChanged',
           @save-recent-colors='saveRecentColorsToStorage'
         )
-        spreadsheet-editor(v-else-if='getEditorType() === EditorList.Spreadsheet')
-        .col-md-12(v-else)
+        spreadsheet-editor(v-show='getEditorType() === EditorList.Spreadsheet', ref='spreadsheet')
+        .col-md-12(
+          v-if='getEditorType() !== EditorList.Graph && getEditorType() !== EditorList.Spreadsheet'
+        )
           h1 Pick a mode
 </template>
 
