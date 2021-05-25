@@ -46,6 +46,7 @@ const Base64 = require('../deflate/base64');
 
 // TEN9: TODO: Centralize all globals
 const urlParams = {};
+var uiTheme = null;
 
 function createEditor(themes) {
   return new Editor(false, themes);
@@ -322,10 +323,51 @@ Editor.ctrlKey = mxClient.IS_MAC ? 'Cmd' : 'Ctrl';
 Editor.hintOffset = 20;
 
 /**
+ * Specifies the image URL to be used for the transparent background.
+ */
+Editor.fitWindowBorders = null;
+
+/**
  * Specifies if the diagram should be saved automatically if possible. Default
  * is true.
  */
 Editor.popupsAllowed = true;
+
+/**
+ * Specifies if the html and whiteSpace styles should be removed on inserted cells.
+ */
+Editor.simpleLabels = false;
+
+/**
+ * Specifies if the native clipboard is enabled. Blocked in iframes for possible sandbox attribute.
+ * LATER: Check if actually blocked.
+ */
+Editor.enableNativeCipboard =
+  window == window.top && !mxClient.IS_FF && navigator.clipboard != null;
+
+/**
+ * Dynamic change of dark mode for minimal and sketch theme.
+ */
+Editor.darkMode = false;
+
+/**
+ * Dynamic change of dark mode.
+ */
+Editor.isDarkMode = function (value) {
+  return Editor.darkMode || uiTheme == 'dark';
+};
+
+/**
+ * Images below are for lightbox and embedding toolbars.
+ */
+Editor.helpImage =
+  Editor.isDarkMode() && mxClient.IS_SVG ? Editor.darkHelpImage : Editor.lightHelpImage;
+
+/**
+ * Images below are for lightbox and embedding toolbars.
+ */
+Editor.checkmarkImage =
+  Editor.isDarkMode() && mxClient.IS_SVG ? Editor.darkCheckmarkImage : Editor.lightCheckmarkImage;
 
 /**
  * Editor inherits from mxEventSource
@@ -508,8 +550,13 @@ Editor.prototype.resetGraph = function () {
  * Sets the XML node for the current diagram.
  */
 Editor.prototype.readGraphState = function (node) {
-  this.graph.gridEnabled =
-    node.getAttribute('grid') != '0' && (!this.isChromelessView() || urlParams['grid'] == '1');
+  var grid = node.getAttribute('grid');
+
+  if (grid == null || grid == '') {
+    grid = this.graph.defaultGridEnabled ? '1' : '0';
+  }
+
+  this.graph.gridEnabled = grid != '0' && (!this.isChromelessView() || urlParams['grid'] == '1');
   this.graph.gridSize = parseFloat(node.getAttribute('gridSize')) || mxGraph.prototype.gridSize;
   this.graph.graphHandler.guidesEnabled = node.getAttribute('guides') != '0';
   this.graph.setTooltips(node.getAttribute('tooltips') != '0');
@@ -929,9 +976,7 @@ function Dialog(
   var top = Math.max(1, Math.round((dh - h - editorUi.footerHeight) / 3));
 
   // Keeps window size inside available space
-  if (!mxClient.IS_QUIRKS) {
-    elt.style.maxHeight = '100%';
-  }
+  elt.style.maxHeight = '100%';
 
   w = document.body != null ? Math.min(w, document.body.scrollWidth - 64) : w;
   h = Math.min(h, dh - 64);
@@ -950,10 +995,6 @@ function Dialog(
     this.bg.style.zIndex = this.zIndex - 2;
 
     mxUtils.setOpacity(this.bg, this.bgOpacity);
-
-    if (mxClient.IS_QUIRKS) {
-      new mxDivResizer(this.bg);
-    }
   }
 
   var origin = mxUtils.getDocumentScrollOrigin(document);
