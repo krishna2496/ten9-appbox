@@ -87,20 +87,15 @@ module.exports = {
       {
         // TODO: harden up when we land on set rules
         test: /jquery-mousewheel/,
-        // loader: 'imports?define=>false&this=>window',
         use: [
           {
             loader: 'imports-loader',
             options: {
-              // imports: {
-              //   moduleName: "jquery",
-              //   name: "$",
-              // },
               additionalCode: 'var define = false; /* Disable AMD for misbehaving libraries */',
             },
           },
         ],
-      },     
+      },
       {
         test: /\.vue$/,
         exclude: /node_modules/,

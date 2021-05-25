@@ -10,3 +10,4 @@ src/graph_editor/lib/shapes/
 src/graph_editor/lib/spin/
 src/graph_editor/components/vue-colorpicker
 src/spreadsheet_editor/lib/luckysheet
+public/spreadsheet
