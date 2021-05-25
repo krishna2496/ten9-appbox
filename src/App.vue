@@ -590,7 +590,7 @@ export default defineComponent({
           @theme-changed='onThemeChanged',
           @save-recent-colors='saveRecentColorsToStorage'
         )
-        spreadsheet-editor(v-show='getEditorType() === EditorList.Spreadsheet', ref='spreadsheet')
+        spreadsheet-editor(v-if='getEditorType() === EditorList.Spreadsheet', ref='spreadsheet')
         .col-md-12(
           v-if='getEditorType() !== EditorList.Graph && getEditorType() !== EditorList.Spreadsheet'
         )

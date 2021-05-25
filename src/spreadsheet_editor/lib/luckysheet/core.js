@@ -37,6 +37,7 @@ import * as api from './global/api';
 
 import flatpickr from 'flatpickr'
 import Mandarin from 'flatpickr/dist/l10n/zh.js'
+
 import { initListener } from './controllers/listener';
 
 let luckysheet = {};

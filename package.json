@@ -28,6 +28,7 @@
     "luckyexcel": "^1.0.1",
     "numeral": "^2.0.6",
     "pako": "^2.0.3",
+    "spectrum-colorpicker": "^1.8.1",
     "uuid": "^8.3.2",
     "vue": "^2.6.12",
     "vue-clamp": "^0.3.2",

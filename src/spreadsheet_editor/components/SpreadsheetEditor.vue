@@ -51,7 +51,7 @@ export default defineComponent({
         // @ts-ignore
         // eslint-disable-next-line no-undef
         luckysheet.create({
-          container: 'spreadsheet-editor',
+          container: 'luckysheet',
           title: 'Spreadsheet',
           lang: 'en',
           data: [
@@ -61,24 +61,6 @@ export default defineComponent({
               index: 1,
               status: 0,
               order: 1,
-              celldata: [],
-              config: {},
-            },
-            {
-              name: 'Sheet2',
-              color: '',
-              index: 1,
-              status: 0,
-              order: 1,
-              celldata: [],
-              config: {},
-            },
-            {
-              name: 'Sheet3',
-              color: '',
-              index: 2,
-              status: 0,
-              order: 2,
               celldata: [],
               config: {},
             },
@@ -97,7 +79,7 @@ export default defineComponent({
           // @ts-ignore
           // eslint-disable-next-line no-undef
           luckysheet.create({
-            container: 'spreadsheet-editor', //spreadsheet-editor is the container id
+            container: 'luckysheet', //luckysheet is the container id
             showinfobar: false,
             data: fileView,
           });
@@ -123,7 +105,7 @@ export default defineComponent({
         // @ts-ignore
         // eslint-disable-next-line no-undef
         luckysheet.create({
-          container: 'spreadsheet-editor', //spreadsheet-editor is the container id
+          container: 'luckysheet', //luckysheet is the container id
           showinfobar: false,
           data: exportJson.sheets,
           title: exportJson.info.name,
@@ -184,10 +166,10 @@ export default defineComponent({
 
 <template lang="pug">
 div
-  #spreadsheet-editor
+  #luckysheet
 </template>
 <style scoped>
-#spreadsheet-editor {
+#luckysheet {
   margin: 0;
   padding: 0;
   position: absolute;
