@@ -67,6 +67,9 @@ import locale from '../locale/locale';
 import Store from '../store';
 import { createLuckyChart, hideAllNeedRangeShow } from '../expendPlugins/chart/plugin'
 
+// TEN9: Add jquery-mousewheel import here for webpack to pickup and handle
+require('jquery-mousewheel')($);
+
 //, columeflowset, rowflowset
 export default function luckysheetHandler() {
 

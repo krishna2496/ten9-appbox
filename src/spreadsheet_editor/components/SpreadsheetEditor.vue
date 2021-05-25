@@ -16,9 +16,9 @@
 
 <script lang="ts">
 import { EventBus } from '../../eventbus';
+import luckysheet from '../lib/luckysheet';
 import { defineComponent, ref, onMounted, nextTick } from '@vue/composition-api';
 import LuckyExcel from 'luckyexcel';
-import luckysheet from '../lib/index';
 
 interface simpleInt {
   name: string;

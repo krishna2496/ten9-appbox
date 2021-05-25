@@ -85,6 +85,23 @@ module.exports = {
     strictExportPresence: true,
     rules: [
       {
+        // TODO: harden up when we land on set rules
+        test: /jquery-mousewheel/,
+        // loader: 'imports?define=>false&this=>window',
+        use: [
+          {
+            loader: 'imports-loader',
+            options: {
+              // imports: {
+              //   moduleName: "jquery",
+              //   name: "$",
+              // },
+              additionalCode: 'var define = false; /* Disable AMD for misbehaving libraries */',
+            },
+          },
+        ],
+      },     
+      {
         test: /\.vue$/,
         exclude: /node_modules/,
         loader: 'vue-loader',
@@ -107,12 +124,12 @@ module.exports = {
         loader: 'babel-loader',
         // include: [path.resolve(ROOT_PATH, 'src')],
       },
-      {
-        test: /\.js$/,
-        exclude: /src/,
-        loader: 'babel-loader',
-        // include: [path.resolve(ROOT_PATH, 'src')],
-      },
+      // {
+      //   test: /\.js$/,
+      //   exclude: /src/,
+      //   loader: 'babel-loader',
+      //   // include: [path.resolve(ROOT_PATH, 'src')],
+      // },
 
       // Load CSS files: css-loader, then minify, then apply vue style loader.
       {
@@ -319,6 +336,11 @@ module.exports = {
     }),
 
     new CaseSensitivePathsPlugin(),
+
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+    }),
 
     new ESLintPlugin({
       extensions: ['js', 'ts', 'vue'],

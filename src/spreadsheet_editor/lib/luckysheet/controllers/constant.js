@@ -3,6 +3,10 @@ import Store from '../store';
 import luckysheetConfigsetting from './luckysheetConfigsetting';
 import { getObjType } from '../utils/util';
 import { createToolbarHtml } from './toolbar';
+
+// TEN9: Adding missing import
+import { v4 as UUIDv4 } from 'uuid';
+
 //dom variable
 const gridHTML = function(){ 
     const _locale = locale();
@@ -894,7 +898,9 @@ const luckysheetlodingHTML = function (target, coverConfig) {
         }
     }
     const imageHtml = luckysheetloadingImage(config);
-    const id = "luckysheet-loading-" + uuid.v4();
+    // TEN9: Update for missing import
+    // const id = "luckysheet-loading-" + uuid.v4();
+    const id = "luckysheet-loading-" + UUIDv4();  
     const loadingHtml = `
         <div class="luckysheet-loading-content"> 
             <div class="${config.imageClass} luckysheet-loading-image">

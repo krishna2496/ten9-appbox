@@ -17,6 +17,8 @@
 <script lang="ts">
 import GraphEditor from './graph_editor/components/GraphEditor.vue';
 import SpreadsheetEditor from './spreadsheet_editor/components/SpreadsheetEditor.vue';
+// TODO: Don't import luckysheet directly here
+import luckysheet from './spreadsheet_editor/lib/luckysheet';
 import OpenFile from './components/OpenFile.vue';
 import { mxCell } from './graph_editor/lib/jgraph/mxClient';
 import {

@@ -20,3 +20,4 @@
 .gitlab
 dist
 public
+src/spreadsheet_editor/lib/luckysheet
