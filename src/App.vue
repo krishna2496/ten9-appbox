@@ -17,8 +17,6 @@
 <script lang="ts">
 import GraphEditor from './graph_editor/components/GraphEditor.vue';
 import SpreadsheetEditor from './spreadsheet_editor/components/SpreadsheetEditor.vue';
-// TODO: Don't import luckysheet directly here
-import luckysheet from './spreadsheet_editor/lib/luckysheet';
 import OpenFile from './components/OpenFile.vue';
 import { mxCell } from './graph_editor/lib/jgraph/mxClient';
 import {
@@ -126,9 +124,7 @@ export default defineComponent({
         if (getEditorType() === EditorList.Spreadsheet) {
           const isLuckySheetLoaded = document.querySelector<HTMLElement>('.luckysheet');
           if (isLuckySheetLoaded) {
-            // @ts-ignore
-            // eslint-disable-next-line no-undef
-            luckysheet.resize();
+            spreadsheet.value.resizeEditor();
           }
         } else if (getEditorType() === EditorList.Graph) {
           editor.value.editorUiRef.refresh();

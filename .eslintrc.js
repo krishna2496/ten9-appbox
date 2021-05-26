@@ -129,7 +129,13 @@ module.exports = {
     '@typescript-eslint/await-thenable': 'error',
     '@typescript-eslint/explicit-member-accessibility': ['error', { accessibility: 'no-public' }],
     'no-unused-vars': 'off', // note you must disable the base rule as it can report incorrect errors
-    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        ignoreRestSiblings: true,
+        argsIgnorePattern: '^_',
+      },
+    ],
     curly: ['error', 'multi-line'],
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
     'no-shadow': 'off', // note you must disable the base rule as it can report incorrect errors
@@ -152,7 +158,7 @@ module.exports = {
     'prefer-arrow-callback': 'error',
     quotes: ['error', 'single', { avoidEscape: true }],
     semi: ['error', 'always'],
-    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/ban-ts-comment': 'error',
     '@typescript-eslint/no-empty-interface': [
       'error',
       {
@@ -177,7 +183,7 @@ module.exports = {
 
     // Base Rules (Enabling Correct ESLint Parsing)
     // -------------------------
-    'vue/comment-directive': 'off', // plugin:vue/recommended
+    'vue/comment-directive': 'error', // plugin:vue/recommended
     'vue/jsx-uses-vars': 'error', // plugin:vue/recommended
 
     // Priority A: Essential (Error Prevention)

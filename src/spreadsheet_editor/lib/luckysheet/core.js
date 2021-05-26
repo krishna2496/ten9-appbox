@@ -246,6 +246,9 @@ luckysheet.selectHightlightShow = selectHightlightShow;
 // Reset parameters after destroying the table
 luckysheet.destroy = method.destroy;
 
+// TEN9: Update for resize editor
+luckysheet.resize = luckysheetsizeauto;
+
 export {
     luckysheet
 }

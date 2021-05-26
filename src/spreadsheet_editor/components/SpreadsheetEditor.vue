@@ -48,8 +48,6 @@ export default defineComponent({
 
     onMounted(() => {
       nextTick(() => {
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
         luckysheet.create({
           container: 'luckysheet',
           title: 'Spreadsheet',
@@ -76,8 +74,6 @@ export default defineComponent({
           const jsonFile = reader.result as string;
           const fileView = JSON.parse(jsonFile);
 
-          // @ts-ignore
-          // eslint-disable-next-line no-undef
           luckysheet.create({
             container: 'luckysheet', //luckysheet is the container id
             showinfobar: false,
@@ -98,12 +94,8 @@ export default defineComponent({
           );
           return;
         }
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
         luckysheet.destroy();
 
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
         luckysheet.create({
           container: 'luckysheet', //luckysheet is the container id
           showinfobar: false,
@@ -138,8 +130,6 @@ export default defineComponent({
     };
 
     const saveFile = () => {
-      // @ts-ignore
-      // eslint-disable-next-line no-undef
       const allSheetData = luckysheet.getluckysheetfile();
       const exportName = 'spredsheet';
       const dataStr =
@@ -152,11 +142,16 @@ export default defineComponent({
       downloadAnchorNode.remove();
     };
 
+    const resizeEditor = () => {
+      luckysheet.resize();
+    };
+
     return {
       selected,
       isMaskShow,
       readExcel,
       readSpreadsheetNativeFile,
+      resizeEditor,
       saveFile,
       supportedExtension,
     };
