@@ -54,7 +54,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var s5 =
       'edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endFill=0;startFill=0;endSize=6;startSize=6;dashed=1;dashPattern=1 4;endArrow=';
 
-    this.addPaletteFunctions('bpmnGeneral', 'BPMN General', false, [
+    this.addPaletteFunctions('bpmnGeneral', 'BPMN 2.0 General', false, [
       this.createVertexTemplateEntry(s1, 40, 60, '', 'Data Object', null, null, dt + 'data object'),
       this.createVertexTemplateEntry(
         s1 + 'bpmnTransferType=none;isCollection=1;',
@@ -475,7 +475,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var s4 = pts + 'shape=mxgraph.bpmn.task;rectStyle=rounded;size=10;bpmnShapeType=call;';
     var w = 50;
     var h = 50;
-    this.addPaletteFunctions('bpmnTasks', 'BPMN Tasks', false, [
+    this.addPaletteFunctions('bpmnTasks', 'BPMN 2.0 Tasks', false, [
       this.createVertexTemplateEntry(
         s1 + '',
         120,
@@ -938,7 +938,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
   Sidebar.prototype.addBPMN2ChoreographiesPalette = function (dir, expand, w, h) {
     var dt = 'bpmn business process model notation choreography ';
 
-    this.addPaletteFunctions('bpmnChoreographies', 'BPMN Choreographies', false, [
+    this.addPaletteFunctions('bpmnChoreographies', 'BPMN 2.0 Choreographies', false, [
       this.addEntry(dt + 'choreography task', function () {
         var bg = new mxCell(
           '',
@@ -2039,7 +2039,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var w = 50;
     var h = 50;
 
-    this.addPaletteFunctions('bpmnEvents', 'BPMN Events', false, [
+    this.addPaletteFunctions('bpmnEvents', 'BPMN 2.0 Events', false, [
       this.createVertexTemplateEntry(
         s + 'standard;symbol=general;',
         w,
@@ -2620,7 +2620,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var w = 50;
     var h = 50;
 
-    this.addPaletteFunctions('bpmnGateways', 'BPMN Gateways', false, [
+    this.addPaletteFunctions('bpmnGateways', 'BPMN 2.0 Gateways', false, [
       this.createVertexTemplateEntry(
         s2 + 'none;symbol=none;',
         w,

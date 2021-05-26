@@ -24,7 +24,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var gn = 'mxgraph.mscae';
     var r = 100;
     var sb = this;
-    var s = 'aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=img/lib/mscae/';
+    var s = 'aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=images/lib/mscae/';
 
     this.setCurrentSearchEntryLibrary('mscae', 'mscaeCompanies');
     this.addMSCAECompaniesPalette(gn, r, sb, s);

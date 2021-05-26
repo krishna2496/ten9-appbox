@@ -20,10 +20,12 @@ const {
   mxConnectionConstraint,
   mxHexagon,
   mxShape,
+  mxStencilRegistry,
   mxSwimlane,
   mxUtils,
 } = require('../../jgraph/mxClient.js');
 
+const { mxShapeBasicRect2 } = require('../../jgraph/Shapes.js');
 /**
  * $Id: mxBpmnShape2.js,v 1.6 2013/12/20 09:54:28 mate Exp $
  * Copyright (c) 2006-2010, JGraph Ltd
@@ -1550,7 +1552,8 @@ mxShapeBpmn2Task.prototype.paintVertexShape = function (c, x, y, w, h) {
     overrideStyles.strokeWidth = 4;
   }
 
-  superShape.prototype.strictDrawShape.call(this, c, 0, 0, w, h, overrideStyles);
+  // TEN9 import mxShapeBasicRect2 to access it's strictDrawShape method
+  mxShapeBasicRect2.prototype.strictDrawShape.call(this, c, 0, 0, w, h, overrideStyles);
 
   c.setStrokeWidth(strokeWidth);
   c.setDashed(dashed);
