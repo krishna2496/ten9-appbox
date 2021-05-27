@@ -487,6 +487,8 @@ Format.prototype.immediateRefresh = function () {
 
   var addClickHandler = mxUtils.bind(this, function (elt, panel, index) {
     var clickHandler = mxUtils.bind(this, function (evt) {
+      // TEN9: fire event when click on format panel tab so we can inactive the button
+      this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
       if (currentLabel != elt) {
         if (containsLabel) {
           this.labelIndex = index;
@@ -1111,7 +1113,8 @@ BaseFormatPanel.prototype.createColorOption = function (
   var cb = document.createElement('input');
   cb.classList.add('color-option__checkbox');
   cb.setAttribute('type', 'checkbox');
-  cb.style.margin = '0px 6px 0px 0px';
+  // Ten
+  //cb.style.margin = '0px 6px 0px 0px';
 
   if (!hideCheckbox) {
     div.appendChild(cb);
@@ -1196,7 +1199,11 @@ BaseFormatPanel.prototype.createColorOption = function (
       if (source != cb) {
         cb.checked = !cb.checked;
       }
-
+      // TEN9: fire button inactive button
+      if (!cb.checked) {
+        myUi.fireEvent(new mxEventObject('inactiveColorButton'));
+        myUi.selectedColorPicker = '';
+      }
       // Overrides default value with current value to make it easier
       // to restore previous value if the checkbox is clicked twice
       if (
@@ -1325,13 +1332,7 @@ BaseFormatPanel.prototype.addArrow = function (elt, height) {
     mxUtils.setOpacity(symbol, 60);
   }
 
-  mxUtils.setOpacity(elt, 100);
-  elt.style.border = '1px solid #a0a0a0';
-  elt.style.backgroundColor = this.buttonBackgroundColor;
-  elt.style.backgroundImage = 'none';
-  elt.style.width = 'auto';
-  elt.className += ' geColorBtn';
-  mxUtils.setPrefixedStyle(elt.style, 'borderRadius', '3px');
+  elt.classList.add('ge-dropdown-menu');
 
   elt.appendChild(arrow);
 
@@ -1356,17 +1357,14 @@ BaseFormatPanel.prototype.addUnitInput = function (
   div.classList.add('unit-input-container');
 
   var input = document.createElement('input');
-  input.style.position = 'absolute';
-  input.style.textAlign = 'right';
-  input.style.marginTop = '-2px';
-  input.style.right = right + 12 + 'px';
-  input.style.width = width + 'px';
-  container.appendChild(input);
+  input.classList.add('relative-unit-input');
+  input.style.width = `${width}px`;
+  div.appendChild(input);
 
   var stepper = this.createStepper(input, update, step, null, disableFocus, null, isFloat);
-  stepper.style.marginTop = marginTop - 2 + 'px';
-  stepper.style.right = right + 'px';
-  container.appendChild(stepper);
+  stepper.classList.add('relative-stepper');
+  div.appendChild(stepper);
+  container.appendChild(div);
 
   return input;
 };
@@ -1379,8 +1377,7 @@ BaseFormatPanel.prototype.createRelativeOption = function (label, key, width, ha
 
   var graph = this.editorUi.editor.graph;
   var div = this.createPanel();
-  div.style.paddingTop = '10px';
-  div.style.paddingBottom = '10px';
+  div.classList.add('relative-option-container');
   mxUtils.write(div, label);
 
   var update = mxUtils.bind(this, function (evt) {
@@ -1503,16 +1500,7 @@ BaseFormatPanel.prototype.addKeyHandler = function (input, listener) {
  */
 BaseFormatPanel.prototype.styleButtons = function (elts) {
   for (var i = 0; i < elts.length; i++) {
-    mxUtils.setPrefixedStyle(elts[i].style, 'borderRadius', '3px');
-    mxUtils.setOpacity(elts[i], 100);
-    elts[i].style.border = '1px solid #a0a0a0';
-    elts[i].style.padding = '4px';
-    elts[i].style.paddingTop = '3px';
-    elts[i].style.paddingRight = '1px';
-    elts[i].style.margin = '1px';
-    elts[i].style.width = '24px';
-    elts[i].style.height = '20px';
-    elts[i].className += ' geColorBtn';
+    elts[i].classList.add('format-button');
   }
 };
 
@@ -2112,19 +2100,14 @@ ArrangePanel.prototype.addAngle = function (div) {
 
   var angleLabel = document.createElement('div');
   angleLabel.className = 'angle__label fw-bold';
-  var span = document.createElement('div');
-  span.style.position = 'absolute';
-  span.style.width = '70px';
-  span.style.marginTop = '0px';
-  span.style.fontWeight = 'bold';
 
   var input = null;
   var update = null;
   var btn = null;
 
   if (ss.rotatable && !ss.table && !ss.row && !ss.cell) {
-    mxUtils.write(span, mxResources.get('angle'));
-    div.appendChild(span);
+    mxUtils.write(angleLabel, mxResources.get('angle'));
+    div.appendChild(angleLabel);
 
     input = this.addUnitInput(div, '°', 20, 44, function () {
       update.apply(this, arguments);
@@ -2133,9 +2116,6 @@ ArrangePanel.prototype.addAngle = function (div) {
     input.parentElement.classList.add('input__container', 'angle__unit-input');
 
     mxUtils.br(div);
-    div.style.paddingTop = '10px';
-  } else {
-    div.style.paddingTop = '8px';
   }
 
   if (!ss.containsLabel) {
@@ -2251,16 +2231,8 @@ ArrangePanel.prototype.addGeometry = function (container) {
   var rect = this.format.getSelectionState();
 
   var div = this.createPanel();
-  div.style.paddingBottom = '8px';
   div.classList.add('size-panel');
 
-  var span = document.createElement('div');
-  span.style.position = 'absolute';
-  span.style.width = '50px';
-  span.style.marginTop = '0px';
-  span.style.fontWeight = 'bold';
-  mxUtils.write(span, mxResources.get('size'));
-  div.appendChild(span);
   var positionLabel = document.createElement('div');
   mxUtils.write(positionLabel, mxResources.get('size'));
   positionLabel.className = 'size__label fw-bold';
@@ -2302,12 +2274,6 @@ ArrangePanel.prototype.addGeometry = function (container) {
     'title',
     mxResources.get('autosize') + ' (' + this.editorUi.actions.get('autosize') + ')',
   );
-  autosizeBtn.style.position = 'relative';
-  autosizeBtn.style.cursor = 'pointer';
-  autosizeBtn.style.marginTop = '-3px';
-  autosizeBtn.style.border = '0px';
-  autosizeBtn.style.left = '42px';
-  mxUtils.setOpacity(autosizeBtn, 50);
 
   mxEvent.addListener(autosizeBtn, 'mouseenter', function () {
     mxUtils.setOpacity(autosizeBtn, 100);
@@ -2333,11 +2299,8 @@ ArrangePanel.prototype.addGeometry = function (container) {
   this.addLabel(div, mxResources.get('height'), 20);
   mxUtils.br(div);
 
-  var wrapper = document.createElement('div');
-  wrapper.style.paddingTop = '8px';
-  wrapper.style.paddingRight = '20px';
-  wrapper.style.whiteSpace = 'nowrap';
-  wrapper.style.textAlign = 'right';
+  var constrainWrapper = document.createElement('div');
+  constrainWrapper.className = 'constrain__wrapper';
   var opt = this.createCellOption(
     mxResources.get('constrainProportions'),
     mxConstants.STYLE_ASPECT,
@@ -2345,11 +2308,11 @@ ArrangePanel.prototype.addGeometry = function (container) {
     'fixed',
     'null',
   );
-  opt.style.width = '100%';
-  wrapper.appendChild(opt);
+  opt.removeAttribute('style');
+  constrainWrapper.appendChild(opt);
 
   if (!rect.cell && !rect.row) {
-    div.appendChild(wrapper);
+    div.appendChild(constrainWrapper);
   } else {
     autosizeBtn.style.visibility = 'hidden';
   }
@@ -2402,13 +2365,10 @@ ArrangePanel.prototype.addGeometry = function (container) {
   var div2 = this.createPanel();
   div2.style.paddingBottom = '30px';
 
-  var span = document.createElement('div');
-  span.style.position = 'absolute';
-  span.style.width = '70px';
-  span.style.marginTop = '0px';
-  span.style.fontWeight = 'bold';
-  mxUtils.write(span, mxResources.get('position'));
-  div2.appendChild(span);
+  var positionLabel = document.createElement('div');
+  positionLabel.className = 'position-label fw-bold';
+  mxUtils.write(positionLabel, mxResources.get('position'));
+  div2.appendChild(positionLabel);
 
   var left = this.addUnitInput(
     div2,
@@ -2725,10 +2685,7 @@ ArrangePanel.prototype.addEdgeGeometry = function (container) {
   divs.style.paddingBottom = '30px';
 
   var span = document.createElement('div');
-  span.style.position = 'absolute';
-  span.style.width = '70px';
-  span.style.marginTop = '0px';
-  span.style.fontWeight = 'bold';
+  span.classList.add('unit-input__label');
   mxUtils.write(span, 'Start');
   divs.appendChild(span);
 
@@ -2752,10 +2709,7 @@ ArrangePanel.prototype.addEdgeGeometry = function (container) {
   divt.style.paddingBottom = '30px';
 
   var span = document.createElement('div');
-  span.style.position = 'absolute';
-  span.style.width = '70px';
-  span.style.marginTop = '0px';
-  span.style.fontWeight = 'bold';
+  span.classList.add('unit-input__label');
   mxUtils.write(span, 'End');
   divt.appendChild(span);
 
@@ -2897,26 +2851,18 @@ TextFormatPanel.prototype.addFont = function (container) {
       null,
       true,
     );
-    cssMenu.style.color = 'rgb(112, 112, 112)';
-    cssMenu.style.whiteSpace = 'nowrap';
-    cssMenu.style.overflow = 'hidden';
-    cssMenu.style.margin = '0px';
+    cssMenu.classList.add('css-menu');
     this.addArrow(cssMenu);
-    cssMenu.style.width = '192px';
-    cssMenu.style.height = '15px';
+    cssMenu.removeAttribute('style');
 
     var arrow = cssMenu.getElementsByTagName('div')[0];
-    arrow.style.cssFloat = 'right';
-    container.appendChild(cssPanel);
+    fontContainer.appendChild(cssPanel);
   }
 
-  container.appendChild(stylePanel);
+  fontContainer.appendChild(stylePanel);
 
   var colorPanel = this.createPanel();
-  colorPanel.style.marginTop = '8px';
-  colorPanel.style.borderTop = '1px solid #c0c0c0';
-  colorPanel.style.paddingTop = '6px';
-  colorPanel.style.paddingBottom = '6px';
+  colorPanel.classList.add('color-panel');
 
   var fontMenu = this.editorUi.toolbar.addMenu(
     'Helvetica',
@@ -2927,17 +2873,13 @@ TextFormatPanel.prototype.addFont = function (container) {
     null,
     true,
   );
-  fontMenu.style.color = 'rgb(112, 112, 112)';
-  fontMenu.style.whiteSpace = 'nowrap';
-  fontMenu.style.overflow = 'hidden';
-  fontMenu.style.margin = '0px';
+  fontMenu.classList.add('font-menu');
 
   this.addArrow(fontMenu);
-  fontMenu.style.width = '192px';
-  fontMenu.style.height = '15px';
 
   var stylePanel2 = stylePanel.cloneNode(false);
-  stylePanel2.style.marginLeft = '-3px';
+  stylePanel2.classList.add('style-panel-2');
+  // stylePanel2.style.marginLeft = '-3px';
   var fontStyleItems = this.editorUi.toolbar.addItems(
     ['bold', 'italic', 'underline'],
     stylePanel2,
@@ -2958,14 +2900,13 @@ TextFormatPanel.prototype.addFont = function (container) {
 
   var verticalItem = this.editorUi.toolbar.addItems(['vertical'], stylePanel2, true)[0];
 
-  container.appendChild(stylePanel2);
+  fontContainer.appendChild(stylePanel2);
 
   this.styleButtons(fontStyleItems);
   this.styleButtons([verticalItem]);
 
   var stylePanel3 = stylePanel.cloneNode(false);
-  stylePanel3.style.marginLeft = '-3px';
-  stylePanel3.style.paddingBottom = '0px';
+  stylePanel3.classList.add('style-panel-3');
 
   // Helper function to return a wrapper function does not pass any arguments
   var callFn = function (fn) {
@@ -3079,7 +3020,7 @@ TextFormatPanel.prototype.addFont = function (container) {
 
   this.styleButtons([top, middle, bottom]);
 
-  container.appendChild(stylePanel3);
+  fontContainer.appendChild(stylePanel3);
 
   // Hack for updating UI state below based on current text selection
   // currentTable is the current selected DOM table updated below
@@ -3101,7 +3042,7 @@ TextFormatPanel.prototype.addFont = function (container) {
       },
       stylePanel3,
     );
-    full.style.marginRight = '9px';
+    full.style.marginRight = '21px';
     full.style.opacity = 1;
 
     this.styleButtons([
@@ -3125,7 +3066,7 @@ TextFormatPanel.prototype.addFont = function (container) {
     ]);
     // sub.style.marginLeft = '9px';
 
-    var tmp = stylePanel3.cloneNode(false);
+    var tmp = stylePanel.cloneNode(false);
     tmp.style.paddingTop = '4px';
     tmp.classList.add('lists-toolbar');
     var btns = [
@@ -3179,7 +3120,7 @@ TextFormatPanel.prototype.addFont = function (container) {
       ),
     ];
     this.styleButtons(btns);
-    btns[btns.length - 2].style.marginLeft = '9px';
+    btns[btns.length - 2].style.marginLeft = '20px';
 
     container.appendChild(tmp);
   } else {
@@ -3191,10 +3132,7 @@ TextFormatPanel.prototype.addFont = function (container) {
 
   // Label position
   var stylePanel4 = stylePanel.cloneNode(false);
-  stylePanel4.style.marginLeft = '0px';
-  stylePanel4.style.paddingTop = '8px';
-  stylePanel4.style.paddingBottom = '4px';
-  stylePanel4.style.fontWeight = 'normal';
+  stylePanel4.classList.add('position-panel');
 
   mxUtils.write(stylePanel4, mxResources.get('position'));
 
@@ -3504,10 +3442,8 @@ TextFormatPanel.prototype.addFont = function (container) {
   );
   stepper.classList.add('font-size-stepper');
   stepper.style.display = input.style.display;
-  stepper.style.marginTop = '4px';
-  stepper.style.right = '20px';
 
-  stylePanel2.appendChild(stepper);
+  fontSizeContainer.appendChild(stepper);
 
   var arrow = fontMenu.getElementsByTagName('div')[0];
   arrow.style.cssFloat = 'right';
@@ -3725,17 +3661,11 @@ TextFormatPanel.prototype.addFont = function (container) {
   extraPanel.appendChild(htmlOpt);
 
   var spacingPanel = this.createPanel();
-  spacingPanel.style.paddingTop = '10px';
-  spacingPanel.style.paddingBottom = '28px';
-  spacingPanel.style.fontWeight = 'normal';
-
-  var span = document.createElement('div');
-  span.style.position = 'absolute';
-  span.style.width = '70px';
-  span.style.marginTop = '0px';
-  span.style.fontWeight = 'bold';
-  mxUtils.write(span, mxResources.get('spacing'));
-  spacingPanel.appendChild(span);
+  spacingPanel.classList.add('spacing-panel');
+  var spacingDiv = document.createElement('div');
+  mxUtils.write(spacingDiv, mxResources.get('spacing'));
+  spacingDiv.classList.add('panel-label');
+  spacingPanel.appendChild(spacingDiv);
 
   var topUpdate, globalUpdate, leftUpdate, bottomUpdate, rightUpdate;
   var topSpacing = this.addUnitInput(spacingPanel, 'pt', 91, 44, function () {
@@ -4593,10 +4523,11 @@ StyleFormatPanel.prototype.init = function () {
     var opacityPanel = this.createRelativeOption(
       mxResources.get('opacity'),
       mxConstants.STYLE_OPACITY,
-      41,
+      44,
     );
-    opacityPanel.style.paddingTop = '8px';
-    opacityPanel.style.paddingBottom = '8px';
+    opacityPanel.classList.add('opacity-panel');
+    // opacityPanel.style.paddingTop = '8px';
+    // opacityPanel.style.paddingBottom = '8px';
     this.container.appendChild(opacityPanel);
     this.container.appendChild(this.addEffects(this.createPanel()));
   }
@@ -4798,16 +4729,11 @@ StyleFormatPanel.prototype.addFill = function (container) {
   var ui = this.editorUi;
   var graph = ui.editor.graph;
   var ss = this.format.getSelectionState();
-  container.style.paddingTop = '6px';
-  container.style.paddingBottom = '6px';
+  container.classList.add('fill-panel');
 
   // Adds gradient direction option
   var gradientSelect = document.createElement('select');
   gradientSelect.className = 'gradient__select';
-  gradientSelect.style.position = 'absolute';
-  gradientSelect.style.marginTop = '-2px';
-  gradientSelect.style.right = '72px';
-  gradientSelect.style.width = '70px';
 
   var fillStyleSelect = gradientSelect.cloneNode(false);
 
@@ -4993,14 +4919,10 @@ StyleFormatPanel.prototype.addStroke = function (container) {
   var graph = ui.editor.graph;
   var ss = this.format.getSelectionState();
 
-  container.style.paddingTop = '4px';
-  container.style.paddingBottom = '4px';
-  container.style.whiteSpace = 'normal';
   container.classList.add('stroke-panel');
 
   var colorPanel = document.createElement('div');
   colorPanel.classList.add('line-color__panel');
-  colorPanel.style.fontWeight = 'bold';
 
   if (!ss.stroke) {
     colorPanel.style.display = 'none';
@@ -5009,10 +4931,6 @@ StyleFormatPanel.prototype.addStroke = function (container) {
   // Adds gradient direction option
   var styleSelect = document.createElement('select');
   styleSelect.className = 'style__select';
-  styleSelect.style.position = 'absolute';
-  styleSelect.style.marginTop = '-2px';
-  styleSelect.style.right = '72px';
-  styleSelect.style.width = '80px';
 
   var styles = ['sharp', 'rounded', 'curved'];
 
@@ -5297,7 +5215,9 @@ StyleFormatPanel.prototype.addStroke = function (container) {
   input.classList.add('line-width__input');
   input.setAttribute('title', mxResources.get('linewidth'));
 
-  stylePanel.appendChild(input);
+  lineWidthInputContainer.appendChild(input);
+  stylePanel.classList.add('edge-style__panel');
+  stylePanel.appendChild(lineWidthInputContainer);
 
   const altLineWidthInputContainer = lineWidthInputContainer.cloneNode(false);
   var altInput = input.cloneNode(true);
@@ -6245,9 +6165,7 @@ StyleFormatPanel.prototype.addStroke = function (container) {
   container.appendChild(stylePanel);
 
   var arrowPanel = stylePanel.cloneNode(false);
-  arrowPanel.style.paddingBottom = '6px';
-  arrowPanel.style.paddingTop = '4px';
-  arrowPanel.style.fontWeight = 'normal';
+  arrowPanel.classList.add('arrow-panel');
 
   const lineAttributesContainer = document.createElement('div');
   lineAttributesContainer.className = 'line-attributes__container';
@@ -6294,29 +6212,13 @@ StyleFormatPanel.prototype.addStroke = function (container) {
 
   var perimeterPanel = colorPanel.cloneNode(false);
   perimeterPanel.classList.add('perimeter-panel');
-  perimeterPanel.style.fontWeight = 'normal';
-  perimeterPanel.style.position = 'relative';
-  perimeterPanel.style.paddingLeft = '16px';
-  perimeterPanel.style.marginBottom = '2px';
-  perimeterPanel.style.marginTop = '6px';
-  perimeterPanel.style.borderWidth = '0px';
-  perimeterPanel.style.paddingBottom = '18px';
 
   var lineAttributesLabel = document.createElement('div');
   mxUtils.write(lineAttributesLabel, mxResources.get('perimeter'));
   perimeterPanel.appendChild(lineAttributesLabel);
-  var span = document.createElement('div');
-  span.style.position = 'absolute';
-  span.style.marginLeft = '3px';
-  span.style.marginBottom = '12px';
-  span.style.marginTop = '1px';
-  span.style.fontWeight = 'normal';
-  span.style.width = '120px';
-  mxUtils.write(span, mxResources.get('perimeter'));
-  perimeterPanel.appendChild(span);
 
   var perimeterUpdate;
-  var perimeterSpacing = this.addUnitInput(perimeterPanel, 'pt', 20, 41, function () {
+  var perimeterSpacing = this.addUnitInput(perimeterPanel, 'pt', 20, 44, function () {
     perimeterUpdate.apply(this, arguments);
   });
 
@@ -6593,7 +6495,6 @@ StyleFormatPanel.prototype.addLineJumps = function (container) {
 
     var styleSelect = document.createElement('select');
     styleSelect.style.position = 'absolute';
-    styleSelect.style.marginTop = '-2px';
     styleSelect.style.right = '76px';
     styleSelect.style.width = '62px';
 
@@ -7628,9 +7529,6 @@ DiagramFormatPanel.prototype.addGridOption = function (container) {
 
   var input = document.createElement('input');
   input.classList.add('relative-unit-input');
-  input.style.position = 'absolute';
-  input.style.textAlign = 'right';
-  input.style.width = '38px';
   input.value = this.inUnit(graph.getGridSize()) + ' ' + this.getUnit();
 
   gridSizeInputContainer.appendChild(input);
@@ -7742,8 +7640,8 @@ DiagramFormatPanel.prototype.addGridOption = function (container) {
     stepper.style.marginTop = '2px';
     stepper.style.right = '20px';
 
-    container.appendChild(input);
-    container.appendChild(stepper);
+    panel.classList.add('grid-panel');
+    panel.appendChild(gridSizeInputContainer);
 
     container.appendChild(
       this.createOption(
