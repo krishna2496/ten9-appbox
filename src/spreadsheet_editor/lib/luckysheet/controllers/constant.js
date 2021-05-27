@@ -7,6 +7,9 @@ import { createToolbarHtml } from './toolbar';
 // TEN9: Adding missing import
 import { v4 as UUIDv4 } from 'uuid';
 
+// TEN9: Import the GIF for webpack
+import loadingGif from '../css/loading.gif';
+
 //dom variable
 const gridHTML = function(){ 
     const _locale = locale();
@@ -837,7 +840,9 @@ function customLoadingConfig() {
     const info = _locale.info;
     const config = {
         enable: true,
-        image: 'image://css/loading.gif',
+        // TEN9: Use imported loading GIF instead
+        // image: 'image://css/loading.gif',
+        image: `image:/${loadingGif}`,
         text: info.loading,
         viewBox: "32 32 64 64", // 只有为path时，才会使用
         imageClass: '',
