@@ -85,7 +85,6 @@ module.exports = {
     strictExportPresence: true,
     rules: [
       {
-        // TODO: harden up when we land on set rules
         test: /jquery-mousewheel/,
         use: [
           {
