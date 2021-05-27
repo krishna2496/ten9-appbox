@@ -1,7 +1,24 @@
+<!--
+* ten9, Inc
+* Copyright (c) 2015 - 2021 ten9, Inc
+* -----
+* NOTICE:  All information contained herein is, and remains
+* the property of ten9 Incorporated and its suppliers,
+* if any.  The intellectual and technical concepts contained
+* herein are proprietary to ten9 Incorporated
+* and its suppliers and may be covered by U.S. and Foreign Patents,
+* patents in process, and are protected by trade secret or copyright law.
+* Dissemination of this information or reproduction of this material
+* is strictly forbidden unless prior written permission is obtained
+* from ten9 Incorporated.
+* -----
+-->
+
 <template>
   <div>
     <ul class="colors">
-      <li v-for="item in colorsDefault" :key="item" class="item" @click="selectColor(item)">
+      <!-- // TEN9: Added key as index as best practice -->
+      <li v-for="(item,index) in colorsDefault" :key="index" class="item" @click="selectColor(item)">
         <div :style="{ background: `url(${imgAlphaBase64})` }" class="alpha" />
         <div :style="{ background: item }" class="color" />
       </li>
@@ -32,11 +49,15 @@ export default {
       type: String,
       default: '',
     },
+    colorsHistory : {
+      type: Array,
+      default: () => [],
+    }
   },
   data() {
     return {
       imgAlphaBase64: '',
-      colorsHistory: JSON.parse(localStorage.getItem(this.colorsHistoryKey)) || [],
+      //colorsHistory: JSON.parse(localStorage.getItem(this.colorsHistoryKey)) || [],
     };
   },
   created() {
@@ -81,8 +102,12 @@ export default {
 
   .item {
     position: relative;
+    // TEN9: Adding border for better look
+    border: 1px solid #000;
     width: 16px;
     height: 16px;
+    // TEN9: Forcing with !important to ensure change
+    // margin: 10px 0 0 10px;
     margin: 10px 0 0 10px !important;
     border-radius: 3px;
     box-sizing: border-box;

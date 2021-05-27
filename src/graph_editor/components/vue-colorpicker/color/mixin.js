@@ -1,3 +1,19 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2021 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
 export default {
   methods: {
     setColorValue(color) {
@@ -92,154 +108,43 @@ export default {
       let v = parseFloat(max.toFixed(2));
       return { h, s, v };
     },
+    // TEN9: Added rgba2hex
     rgba2hex(orig, alpha) {
       var a, isPercent,
         rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
         //alpha = (rgb && rgb[4] || "").trim(),
-        hex = rgb ? 
+        hex = rgb ?
         (rgb[1] | 1 << 8).toString(16).slice(1) +
         (rgb[2] | 1 << 8).toString(16).slice(1) +
         (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
-          //if (alpha !== "") {
-            a = alpha;
-          // } else {
-          //   a = 1;
-          // }
 
-          a = Math.round(a * 100) / 100;
-            var alpha = Math.round(a * 255);
-            var hexAlpha = (alpha + 0x10000).toString(16).substr(-2).toUpperCase();
-            hex = hex + hexAlpha;
+      a = alpha;
+
+      a = Math.round(a * 100) / 100;
+      var alpha = Math.round(a * 255);
+      var hexAlpha = (alpha + 0x10000).toString(16).substr(-2).toLowerCase();
+      hex = hex + hexAlpha;
 
       return hex;
     },
-    hexToRGBA(hex) {
+    // TEN9: Added hex2rgba
+    hex2rgba(hex) {
       // remove invalid characters
-      if(hex != null) {
+      if (hex != null) {
         hex = hex.replace(/[^0-9a-fA-F]/g, '');
-  
-        if (hex.length < 5) { 
-            // 3, 4 characters double-up
-            hex = hex.split('').map(s => s + s).join('');
+
+        if (hex.length < 5) {
+          // 3, 4 characters double-up
+          hex = hex.split('').map(s => s + s).join('');
         }
-    
+
         // parse pairs of two
         let rgba = hex.match(/.{1,2}/g).map(s => parseInt(s, 16));
-    
+
         // alpha code between 0 & 1 / default 1
-        rgba[3] = rgba.length > 3 ? parseFloat(rgba[3] / 255).toFixed(2): 1;
+        rgba[3] = rgba.length > 3 ? parseFloat(rgba[3] / 255).toFixed(2) : 1;
         return rgba[3];
-        //return 'rgba(' + rgba.join(', ') + ')';
       }
-  }
+    }
   },
 };
-
-// function setColorValue(color) {
-//   let rgba = { r: 0, g: 0, b: 0, a: 1 };
-//   if (/#/.test(color)) {
-//     rgba = this.hex2rgb(color);
-//   } else if (/rgb/.test(color)) {
-//     rgba = this.rgb2rgba(color);
-//   } else if (typeof color === 'string') {
-//     rgba = this.rgb2rgba(`rgba(${color})`);
-//   } else if (Object.prototype.toString.call(color) === '[object Object]') {
-//     rgba = color;
-//   }
-//   const { r, g, b, a } = rgba;
-//   const { h, s, v } = this.rgb2hsv(rgba);
-//   return { r, g, b, a: a === undefined ? 1 : a, h, s, v };
-// }
-
-// function createAlphaSquare(size) {
-//   const canvas = document.createElement('canvas');
-//   const ctx = canvas.getContext('2d');
-//   const doubleSize = size * 2;
-//   canvas.width = doubleSize;
-//   canvas.height = doubleSize;
-
-//   ctx.fillStyle = '#ffffff';
-//   ctx.fillRect(0, 0, doubleSize, doubleSize);
-//   ctx.fillStyle = '#ccd5db';
-//   ctx.fillRect(0, 0, size, size);
-//   ctx.fillRect(size, size, size, size);
-
-//   return canvas;
-// }
-
-// function createLinearGradient(direction, ctx, width, height, color1, color2) {
-//   // l 横向 p 纵向
-//   const isL = direction === 'l';
-//   const gradient = ctx.createLinearGradient(0, 0, isL ? width : 0, isL ? 0 : height);
-//   gradient.addColorStop(0.01, color1);
-//   gradient.addColorStop(0.99, color2);
-//   ctx.fillStyle = gradient;
-//   ctx.fillRect(0, 0, width, height);
-// }
-
-// function rgb2hex({ r, g, b }, toUpper) {
-//   const change = (val) => ('0' + Number(val).toString(16)).slice(-2);
-//   const color = `#${change(r)}${change(g)}${change(b)}`;
-//   return toUpper ? color.toUpperCase() : color;
-// }
-
-// function hex2rgb(hex) {
-//   hex = hex.slice(1);
-//   const change = (val) => parseInt(val, 16) || 0; // 避免NaN的情况
-//   return {
-//     r: change(hex.slice(0, 2)),
-//     g: change(hex.slice(2, 4)),
-//     b: change(hex.slice(4, 6)),
-//   };
-// }
-
-// function rgb2rgba(rgba) {
-//   if (typeof rgba === 'string') {
-//     rgba = (/rgba?\((.*?)\)/.exec(rgba) || ['', '0,0,0,1'])[1].split(',');
-//     return {
-//       r: Number(rgba[0]) || 0,
-//       g: Number(rgba[1]) || 0,
-//       b: Number(rgba[2]) || 0,
-//       a: Number(rgba[3] ? rgba[3] : 1), // 避免为0的情况
-//     };
-//   } else {
-//     return rgba;
-//   }
-// }
-
-// function rgb2hsv({ r, g, b }) {
-//   r = r / 255;
-//   g = g / 255;
-//   b = b / 255;
-//   const max = Math.max(r, g, b);
-//   const min = Math.min(r, g, b);
-//   const delta = max - min;
-//   let h = 0;
-//   if (max === min) {
-//     h = 0;
-//   } else if (max === r) {
-//     if (g >= b) {
-//       h = (60 * (g - b)) / delta;
-//     } else {
-//       h = (60 * (g - b)) / delta + 360;
-//     }
-//   } else if (max === g) {
-//     h = (60 * (b - r)) / delta + 120;
-//   } else if (max === b) {
-//     h = (60 * (r - g)) / delta + 240;
-//   }
-//   h = Math.floor(h);
-//   let s = parseFloat((max === 0 ? 0 : 1 - min / max).toFixed(2));
-//   let v = parseFloat(max.toFixed(2));
-//   return { h, s, v };
-// }
-// // TEN9: Added exports
-// module.exports = {
-//   setColorValue,
-//   rgb2hsv,
-//   rgb2rgba,
-//   hex2rgb,
-//   rgb2hex,
-//   createLinearGradient,
-//   createAlphaSquare,
-// };

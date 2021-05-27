@@ -61,7 +61,9 @@ textarea {
 }
 
 button {
+  background-color: #f5f5f5;
   font-size: inherit;
+  border-radius: 2px;
 }
 
 .geMenubarContainer {
@@ -2272,6 +2274,12 @@ div.mxPopupMenu {
 // TEN9: Add radius
 input {
   border-radius: 0.1px !important;
+}
+
+// TEN9: add active color picker button style
+.active_button {
+  background-color: #3877f9 !important;
+  background-image: none !important;
 }
 
 @media print {

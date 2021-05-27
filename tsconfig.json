@@ -4,8 +4,8 @@
     /* Basic Options */
     // "target": "es6",
     // "module": "commonjs",
-    "target": "ES2018",                       /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
-    "module": "ESNext",                     /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
+    "target": "ES2018" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */,
+    "module": "ESNext" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
     "lib": [
       "ESNext" /* Specify library files to be included in the compilation. */,
       "ES2020",
@@ -63,8 +63,8 @@
       "*": [
         /* https://www.typescriptlang.org/docs/handbook/module-resolution.html */
         "./node_modules/*",
-        "./src/types/*",
-      ],
+        "./src/types/*"
+      ]
     },
     "rootDirs": [
       "."
@@ -109,6 +109,7 @@
     "./src/types/shims-vue-resize-directive.d.ts",
     "./src/types/shims-vue-clamp.d.ts",
     "./src/types/shims-vue-codemirror.d.ts",
+    "./src/types/shims-luckyexcel.d.ts"
     // "node_modules/mxgraph-type-definitions/model/mxCell.d.ts",
     // "./node_modules/mxgraph-type-definitions/index.d.ts", // src/types/shims-mxgraph-type-definitions.d.ts",
   ],
@@ -125,7 +126,7 @@
     "./src/**/*.tsx",
     "./src/**/*.js"
   ],
-  "exclude": ["**/node_modules"],
+  "exclude": ["**/node_modules", "./src/spreadsheet_editor/lib/luckysheet"],
   "watchOptions": {
     // Use native file system events for files and directories
     "watchFile": "useFsEvents",

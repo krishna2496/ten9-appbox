@@ -240,7 +240,7 @@
 }
 
 .justify-content-between {
-  justify-content: center !important;
+  justify-content: center;
 }
 
 .fa-window-minimize,
@@ -258,6 +258,11 @@
 
 .moveSelectionIndex {
   z-index: 2000 !important;
+}
+
+.color-card {
+  width: 240px;
+  height: auto;
 }
 
 .window-card {

@@ -16,9 +16,9 @@
 
 <script lang="ts">
 import GraphEditor from './graph_editor/components/GraphEditor.vue';
+import SpreadsheetEditor from './spreadsheet_editor/components/SpreadsheetEditor.vue';
 import OpenFile from './components/OpenFile.vue';
 import { mxCell } from './graph_editor/lib/jgraph/mxClient';
-
 import {
   defineComponent,
   nextTick,
@@ -45,11 +45,18 @@ const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows2;clipart;flowchart';
 const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
 const DEFAULT_THEME = 'kennedy';
 
+enum EditorList {
+  None = 'NONE',
+  Graph = 'GRAPH',
+  Spreadsheet = 'SPREADSHEET',
+}
+
 export default defineComponent({
   name: 'App',
   components: {
     GraphEditor,
     OpenFile,
+    SpreadsheetEditor,
   },
 
   setup() {
@@ -64,6 +71,14 @@ export default defineComponent({
     const scratchpadData = ref('');
 
     const theme = ref('');
+
+    const recentColors = ref('');
+
+    const editorType = ref(EditorList.None);
+
+    const spreadsheet = ref(null);
+
+    const supportedExtension = ref('.xlsx,.sheet,.draw, .drawio, .xml');
 
     function getShapeLibrariesFromStorage() {
       return window.localStorage.getItem('shapeLibraries');
@@ -85,6 +100,18 @@ export default defineComponent({
       window.localStorage.setItem('scratchpadData', xml);
     }
 
+    function getRecentColorFromStorage() {
+      return window.localStorage.getItem('recentColors');
+    }
+
+    function saveRecentColorsToStorage(colors: string) {
+      window.localStorage.setItem('recentColors', colors);
+    }
+
+    function getEditorType() {
+      return editorType.value;
+    }
+
     function updateAppHeight() {
       const container = document.getElementById('container');
       const rect = container.getBoundingClientRect();
@@ -92,7 +119,17 @@ export default defineComponent({
       const bottomMargin = 5;
       const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
       container.style.height = `${newHeight}px`;
-      editor.value.editorUiRef.refresh();
+
+      nextTick(() => {
+        if (getEditorType() === EditorList.Spreadsheet) {
+          const isLuckySheetLoaded = document.querySelector<HTMLElement>('.luckysheet');
+          if (isLuckySheetLoaded) {
+            spreadsheet.value.resizeEditor();
+          }
+        } else if (getEditorType() === EditorList.Graph) {
+          editor.value.editorUiRef.refresh();
+        }
+      });
     }
 
     const debounceTime = 100;
@@ -187,8 +224,12 @@ export default defineComponent({
       // if (editor.value.graph.isEditing()) {
       //   editor.valule.graph.stopEditing();
       // }
-      const xmlData = editor.value.getXmlData();
-      saveXmlFile(xmlData);
+      if (EditorList.Graph == editorType.value) {
+        const xmlData = editor.value.getXmlData();
+        saveXmlFile(xmlData);
+      } else {
+        spreadsheet.value.saveFile();
+      }
     }
 
     function onKeydown(event: KeyboardEvent) {
@@ -209,6 +250,10 @@ export default defineComponent({
       addLog(fileLogEvent);
     }
 
+    function onRecentColorsChanged(colors: string) {
+      saveRecentColorsToStorage(colors);
+    }
+
     function onThemeChanged(themeName: string) {
       window.localStorage.setItem('theme', themeName);
     }
@@ -224,7 +269,7 @@ export default defineComponent({
       });
     }
 
-    onMounted(() => {
+    function onGraphMounted() {
       updateAppHeight();
       window.addEventListener('resize', onResize);
       document.addEventListener('keydown', onKeydown);
@@ -245,6 +290,12 @@ export default defineComponent({
       if (!theme.value) {
         theme.value = DEFAULT_THEME;
         onThemeChanged(theme.value);
+      }
+
+      recentColors.value = getRecentColorFromStorage();
+      if (!recentColors.value) {
+        recentColors.value = '';
+        saveRecentColorsToStorage(recentColors.value);
       }
 
       const drag: HTMLElement = document.querySelector('.geEditor');
@@ -290,6 +341,7 @@ export default defineComponent({
                   lastModified: file.lastModified,
                 };
                 getImageData(file).then((imageData: string) => {
+                  alert('in');
                   fileInfo.imageData = imageData;
                   onFileDropped(fileInfo);
                 });
@@ -332,7 +384,36 @@ export default defineComponent({
       };
 
       editor.value.pagesToFit.add(editor.value.editorUiRef.getCurrentPage().getId());
+    }
+
+    onMounted(() => {
+      if (getEditorType() === EditorList.Graph) {
+        onGraphMounted();
+      }
     });
+
+    function setEditorType(et: EditorList) {
+      editorType.value = et;
+      nextTick(() => {
+        switch (getEditorType()) {
+          case EditorList.Graph:
+            onGraphMounted();
+            supportedExtension.value = editor.value.supportedExtension();
+            break;
+
+          case EditorList.Spreadsheet:
+            supportedExtension.value = spreadsheet.value.supportedExtension();
+            break;
+        }
+      });
+    }
+    function newFile(et: EditorList) {
+      if (getEditorType() === et) {
+        // TODO: Reset editor
+      } else {
+        setEditorType(et);
+      }
+    }
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
@@ -371,6 +452,20 @@ export default defineComponent({
     }
 
     watch(
+      () => editorType.value,
+      (val: EditorList) => {
+        if (val === EditorList.Graph) {
+          nextTick(() => {
+            onGraphMounted();
+          });
+        } else {
+          updateAppHeight();
+          window.addEventListener('resize', onResize);
+        }
+      },
+    );
+
+    watch(
       () => theme.value,
       (val: string) => {
         if (val == 'min') {
@@ -383,20 +478,31 @@ export default defineComponent({
     return {
       addLog,
       editor,
+      editorType,
+      EditorList,
       insertDummyImage,
       getDateString,
+      getEditorType,
+      getRecentColorFromStorage,
       loadFileData,
       logs,
+      newFile,
       onGraphChanged,
+      onGraphMounted,
       onPreviewModeChanged,
+      onRecentColorsChanged,
       onScratchpadDataChanged,
       onShapeLibrariesChanged,
       onThemeChanged,
       previewMode,
+      recentColors,
       refreshLink,
       saveFile,
       scratchpadData,
+      setEditorType,
       shapeLibraries,
+      spreadsheet,
+      supportedExtension,
       theme,
     };
   },
@@ -440,10 +546,20 @@ export default defineComponent({
                 | {{ getDateString(log.lastModified) }}
     #page.col-md-10
       .row-btn(v-if='theme != "min"')
-        button(@click='saveFile')
+        button.ml-1(@click='newFile(EditorList.Graph)')
+          | New Diagram
+        button.ml-2(@click='newFile(EditorList.Spreadsheet)')
+          | New Spreadsheet
+        button.ml-3(@click='saveFile', :disabled='getEditorType() === EditorList.None')
           | Save File
-        open-file(@file-loaded='loadFileData')
-        input#preview.mt-1.ml-4(
+        open-file.ml-4(
+          @file-loaded='loadFileData',
+          @set-editor-type='setEditorType',
+          :editorType='editorType',
+          :editorList='EditorList',
+          :supportedExtension='supportedExtension'
+        )
+        input#preview.mt-1.ml-5(
           type='checkbox',
           name='preview',
           value='preview',
@@ -451,7 +567,7 @@ export default defineComponent({
         )
         label.ml-1(for='preview') Preview Mode
       .row-btn(v-else)
-        input#preview.mt-1.ml-4(
+        input#preview.mt-1.ml-5(
           type='checkbox',
           name='preview',
           value='preview',
@@ -460,17 +576,25 @@ export default defineComponent({
         label.ml-1(for='preview') Preview Mode
       #container.ge-container
         graph-editor(
+          v-if='getEditorType() === EditorList.Graph',
           ref='editor',
           :enabled='!previewMode',
           :shapeLibraries='shapeLibraries',
           :scratchpadData='scratchpadData',
           :theme='theme',
           :refreshLinkHandler='refreshLink',
-          @shape-libraries-changed='onShapeLibrariesChanged',
+          :recentColors='recentColors',
           @graph-changed='onGraphChanged',
+          @recent-colors-changed='onRecentColorsChanged',
           @scratchpad-data-changed='onScratchpadDataChanged',
+          @shape-libraries-changed='onShapeLibrariesChanged',
           @theme-changed='onThemeChanged'
         )
+        spreadsheet-editor(v-if='getEditorType() === EditorList.Spreadsheet', ref='spreadsheet')
+        .col-md-12(
+          v-if='getEditorType() !== EditorList.Graph && getEditorType() !== EditorList.Spreadsheet'
+        )
+          h1 Pick a mode
 </template>
 
 <style lang="scss">

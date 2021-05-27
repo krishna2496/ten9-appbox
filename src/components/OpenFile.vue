@@ -15,33 +15,82 @@
 -->
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { EventBus } from '../eventbus';
+import { defineComponent, nextTick, ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'OpenFile',
+  props: {
+    editorType: {
+      required: false,
+      type: String,
+      default: null,
+    },
+    editorList: {
+      required: false,
+      type: Object,
+      default: null,
+    },
+    supportedExtension: {
+      required: false,
+      type: String,
+      default: null,
+    },
+  },
 
   setup(_props, ctx) {
     const file = ref(null);
-
+    const fileAcceptType = ref('');
     function chooseFile() {
-      file.value.click();
+      fileAcceptType.value = _props.supportedExtension;
+      nextTick(() => {
+        file.value.click();
+      });
+    }
+
+    function loadDrawIoFile(selectedFile: File) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fileData = e.target.result;
+        ctx.emit('file-loaded', fileData);
+      };
+      reader.readAsText(selectedFile);
     }
 
     function loadFile() {
       if (file.value.files.length > 0) {
+        const { files } = file.value;
+        const [fileValue] = files;
         const [selectedFile] = file.value.files;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const fileData = e.target.result;
-          ctx.emit('file-loaded', fileData);
-        };
-        reader.readAsText(selectedFile);
+        if (_props.editorType == _props.editorList.Spreadsheet) {
+          EventBus.$emit('load-spread-sheet-file', fileValue);
+        } else if (_props.editorType == _props.editorList.Graph) {
+          // Read .draw, drawio,xml file
+          loadDrawIoFile(selectedFile);
+        } else {
+          const { name } = fileValue;
+          const suffixArr = name.split('.'),
+            suffix = suffixArr[suffixArr.length - 1];
+          if (suffix == 'xlsx' || suffix == 'sheet') {
+            ctx.emit('set-editor-type', _props.editorList.Spreadsheet);
+            nextTick(() => {
+              EventBus.$emit('load-spread-sheet-file', fileValue);
+            });
+          } else {
+            ctx.emit('set-editor-type', _props.editorList.Graph);
+            nextTick(() => {
+              loadDrawIoFile(selectedFile);
+            });
+          }
+        }
       }
     }
 
     return {
       chooseFile,
       file,
+      fileAcceptType,
+      loadDrawIoFile,
       loadFile,
     };
   },
@@ -57,7 +106,7 @@ export default defineComponent({
     type='file',
     value='Open File',
     style='display: none',
-    accept='.draw, .drawio, .xml',
+    :accept='fileAcceptType',
     @change='loadFile'
   )
 </template>

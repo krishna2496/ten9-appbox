@@ -114,6 +114,11 @@ export default defineComponent({
       required: false,
       default: null,
     },
+    recentColors: {
+      require: false,
+      type: String,
+      default: '',
+    },
   },
 
   setup(props, ctx) {
@@ -702,6 +707,14 @@ export default defineComponent({
       insertImage(url);
     }
 
+    function onRecentColorsChanged(colors: string) {
+      ctx.emit('recent-colors-changed', colors);
+    }
+
+    const supportedExtension = () => {
+      return '.draw, .drawio, .xml';
+    };
+
     watch(
       () => props.enabled,
       (val) => {
@@ -730,6 +743,7 @@ export default defineComponent({
       imageInsert,
       loadXmlData,
       loadImage,
+      onRecentColorsChanged,
       pagesToFit,
       paste,
       pasteShapes,
@@ -738,6 +752,7 @@ export default defineComponent({
       removePageFromCurrentPageWindow,
       setGraphEnabled,
       showingDialog,
+      supportedExtension,
       updateCellImage,
       updateCellLink,
     };
@@ -749,5 +764,9 @@ export default defineComponent({
 .div
   .geEditor(ref='containerRef')
   modals(:editorUi='editorUiRef', :shape-libraries='shapeLibraries', @insert-image='imageInsert')
-  window(:editorUi='editorUiRef')
+  window(
+    :editorUi='editorUiRef',
+    :recentColors='recentColors',
+    @recent-colors-changed='onRecentColorsChanged'
+  )
 </template>
