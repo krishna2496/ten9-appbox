@@ -85,6 +85,18 @@ module.exports = {
     strictExportPresence: true,
     rules: [
       {
+        // TODO: harden up when we land on set rules
+        test: /jquery-mousewheel/,
+        use: [
+          {
+            loader: 'imports-loader',
+            options: {
+              additionalCode: 'var define = false; /* Disable AMD for misbehaving libraries */',
+            },
+          },
+        ],
+      },
+      {
         test: /\.vue$/,
         exclude: /node_modules/,
         loader: 'vue-loader',
@@ -105,12 +117,26 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
-        // include: [path.resolve(ROOT_PATH, 'src')],
       },
 
       // Load CSS files: css-loader, then minify, then apply vue style loader.
       {
-        test: /\.(less|css)$/,
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              esModule: false,
+            },
+          },
+          'css-loader',
+        ],
+      },
+
+      // Load Less files: less-loader, css-loader, then minify, then apply vue style loader.
+      {
+        test: /\.less$/,
         use: [
           'vue-style-loader',
           {
@@ -236,7 +262,7 @@ module.exports = {
       },
       // Use url-loader to convert images to data URIs. Use file-loader if the file is larger than 2K.
       {
-        test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
+        test: /\.(png|jpe?g|gif|webp|ico)(\?.*)?$/,
         use: [
           {
             loader: 'url-loader',
@@ -313,6 +339,11 @@ module.exports = {
     }),
 
     new CaseSensitivePathsPlugin(),
+
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+    }),
 
     new ESLintPlugin({
       extensions: ['js', 'ts', 'vue'],

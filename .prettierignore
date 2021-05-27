@@ -6,3 +6,5 @@ src/graph_editor/lib/jscolor/
 src/graph_editor/lib/rough/
 src/graph_editor/lib/spin/
 src/graph_editor/components/vue-colorpicker
+src/spreadsheet_editor/lib/luckysheet
+public/spreadsheet
