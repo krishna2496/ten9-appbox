@@ -153,7 +153,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
         'Material Pull',
         null,
         null,
-        this.getTagsForStencil(gn, 'physical_pull', dt).join(' '),
+        this.getTagsForStencil(gn, 'physical_pull', dt + 'circular arrow').join(' '),
       ),
       this.createVertexTemplateEntry(
         s + 'fifo_lane;overflow=fill;' + mxConstants.STYLE_VERTICAL_ALIGN + '=top;align=center;',

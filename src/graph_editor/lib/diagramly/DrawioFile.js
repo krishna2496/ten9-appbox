@@ -118,6 +118,13 @@ DrawioFile.prototype.autosaveDelay = 1500;
 DrawioFile.prototype.maxAutosaveDelay = 30000;
 
 /**
+ * Specifies the delay for loading the file after an optimistic sync message.
+ * This should be the delay for the file to be saved minus the delay for the
+ * sync message to travel.
+ */
+DrawioFile.prototype.optimisticSyncDelay = 300;
+
+/**
  * Contains the thread for the next autosave.
  */
 DrawioFile.prototype.autosaveThread = null;
@@ -683,7 +690,7 @@ DrawioFile.prototype.ignorePatches = function (patches) {
 /**
  * Applies the given patches to the file.
  */
-DrawioFile.prototype.patch = function (patches, resolver) {
+DrawioFile.prototype.patch = function (patches, resolver, undoable) {
   // Saves state of undo history
   var undoMgr = this.ui.editor.undoManager;
   var history = undoMgr.history.slice();
@@ -695,7 +702,7 @@ DrawioFile.prototype.patch = function (patches, resolver) {
 
   // Ignores change events
   var prev = this.changeListenerEnabled;
-  this.changeListenerEnabled = false;
+  this.changeListenerEnabled = undoable;
 
   // Folding and math change require special handling
   var fold = graph.foldingEnabled;
@@ -732,7 +739,7 @@ DrawioFile.prototype.patch = function (patches, resolver) {
     }
 
     // Checks if current page was removed
-    if (mxUtils.indexOf(this.ui.pages, this.ui.getCurrentPage()) < 0) {
+    if (mxUtils.indexOf(this.ui.pages, this.ui.currentPage) < 0) {
       this.ui.selectPage(this.ui.pages[0], true);
     }
   } finally {
@@ -745,11 +752,13 @@ DrawioFile.prototype.patch = function (patches, resolver) {
     this.changeListenerEnabled = prev;
 
     // Restores history state
-    undoMgr.history = history;
-    undoMgr.indexOfNextAdd = nextAdd;
-    undoMgr.fireEvent(new mxEventObject(mxEvent.CLEAR));
+    if (!undoable) {
+      undoMgr.history = history;
+      undoMgr.indexOfNextAdd = nextAdd;
+      undoMgr.fireEvent(new mxEventObject(mxEvent.CLEAR));
+    }
 
-    if (this.ui.getCurrentPage() == null || this.ui.getCurrentPage().needsUpdate) {
+    if (this.ui.currentPage == null || this.ui.currentPage.needsUpdate) {
       // Updates the graph and background
       if (math != graph.mathEnabled) {
         this.ui.editor.updateGraphComponents();
@@ -1123,6 +1132,7 @@ DrawioFile.prototype.loadPatchDescriptor = function (success, error) {
  */
 DrawioFile.prototype.patchDescriptor = function (desc, patch) {
   this.setDescriptorEtag(desc, this.getDescriptorEtag(patch));
+  this.descriptorChanged();
 };
 
 /**
@@ -1408,6 +1418,17 @@ DrawioFile.prototype.addUnsavedStatus = function (err) {
       var status =
         mxUtils.htmlEntities(mxResources.get('unsavedChangesClickHereToSave')) +
         (msg != null && msg != '' ? ' (' + mxUtils.htmlEntities(msg) + ')' : '');
+      this.ui.editor.setStatus(
+        '<div title="' +
+          status +
+          '" class="geStatusAlertOrange" style="cursor:pointer;overflow:hidden;">' +
+          status +
+          ' <img src="' +
+          Editor.saveImage +
+          '" align="top" style="width:16px;margin-top:' +
+          (mxClient.IS_FF ? -3 : -2) +
+          'px"/></div>',
+      );
 
       // TEN9: We don't want status in the menu bar
       // this.ui.editor.setStatus('<div title="'+ status +
@@ -1418,35 +1439,28 @@ DrawioFile.prototype.addUnsavedStatus = function (err) {
       // // Installs click handler for saving
       // var links = this.ui.statusContainer.getElementsByTagName('div');
 
-      // if (links != null && links.length > 0)
-      // {
-      // 	mxEvent.addListener(links[0], 'click', mxUtils.bind(this, function()
-      // 	{
-      // 		this.ui.actions.get((this.ui.mode == null || !this.isEditable()) ?
-      // 			'saveAs' : 'save').funct();
-      // 	}));
-      // }
-      // else
-      // {
-      // 	var status = mxUtils.htmlEntities(mxResources.get('unsavedChanges'));
+      this.ui.editor.setStatus(
+        '<div title="' +
+          status +
+          '" class="geStatusAlert" style="overflow:hidden;">' +
+          status +
+          ' (' +
+          mxUtils.htmlEntities(err.message) +
+          ')</div>',
+      );
+    }
 
-      // 	this.ui.editor.setStatus('<div title="'+ status +
-      // 		'" class="geStatusAlert" style="overflow:hidden;">' + status +
-      // 		' (' + mxUtils.htmlEntities(err.message) + ')</div>');
-      // }
-
-      if (EditorUi.enableDrafts && (this.getMode() == null || EditorUi.isElectronApp)) {
-        if (this.saveDraftThread != null) {
-          window.clearTimeout(this.saveDraftThread);
-        }
-
-        this.saveDraftThread = window.setTimeout(
-          mxUtils.bind(this, function () {
-            this.saveDraft();
-          }),
-          0,
-        );
+    if (EditorUi.enableDrafts && (this.getMode() == null || EditorUi.isElectronApp)) {
+      if (this.saveDraftThread != null) {
+        window.clearTimeout(this.saveDraftThread);
       }
+
+      this.saveDraftThread = window.setTimeout(
+        mxUtils.bind(this, function () {
+          this.saveDraft();
+        }),
+        0,
+      );
     }
   }
 };
@@ -1495,7 +1509,7 @@ DrawioFile.prototype.setConflictStatus = function (message) {
       message +
       '" class="geStatusAlert geBlink" style="cursor:pointer;overflow:hidden;">' +
       message +
-      ' <a href="https://desk.draw.io/support/solutions/articles/16000087947" target="_blank"><img border="0" ' +
+      ' <a href="https://www.diagrams.net/doc/faq/synchronize" target="_blank"><img border="0" ' +
       'style="margin-left:2px;cursor:help;opacity:0.5;width:16px;height:16px;" valign="bottom" src="' +
       Editor.helpImage +
       '" style=""/></a></div>',
@@ -1848,6 +1862,9 @@ DrawioFile.prototype.fileChanged = function () {
       this.ageStart = new Date();
     }
 
+    //Send changes immidiately if P2P is enabled
+    this.sendFileChanges();
+
     this.autosave(
       this.autosaveDelay,
       this.maxAutosaveDelay,
@@ -1877,12 +1894,20 @@ DrawioFile.prototype.fileChanged = function () {
 };
 
 /**
+ * Returns true if the notification to update should be sent
+ * together with the save request.
+ */
+DrawioFile.prototype.isOptimisticSync = function () {
+  return false;
+};
+
+/**
  * Creates a secret and token pair for writing a patch to the cache.
  */
 DrawioFile.prototype.createSecret = function (success) {
   var secret = Editor.guid(32);
 
-  if (this.sync != null) {
+  if (this.sync != null && !this.isOptimisticSync()) {
     this.sync.createToken(
       secret,
       mxUtils.bind(this, function (token) {
@@ -1900,6 +1925,38 @@ DrawioFile.prototype.createSecret = function (success) {
 /**
  * Invokes sync and updates shadow document.
  */
+DrawioFile.prototype.fileSaving = function () {
+  if (this.sync != null && this.isOptimisticSync()) {
+    this.sync.fileSaving();
+  }
+
+  if (urlParams['test'] == '1') {
+    EditorUi.debug('DrawioFile.fileSaving', [this]);
+  }
+};
+
+DrawioFile.prototype.sendFileChanges = function () {
+  try {
+    if (this.p2pCollab != null && this.sync != null) {
+      //TODO Should we check for modified?
+      this.updateFileData(); //TODO Calling this function ealy could have side effects + overhead of calling it twice (here and in save)
+      this.sync.sendFileChanges(
+        this.ui.getPagesForNode(mxUtils.parseXml(this.getData()).documentElement),
+        this.desc,
+      );
+
+      if (urlParams['test'] == '1') {
+        EditorUi.debug('DrawioFile.sendFileChanges', [this]);
+      }
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+/**
+ * Invokes sync and updates shadow document.
+ */
 DrawioFile.prototype.fileSaved = function (savedData, lastDesc, success, error, token) {
   this.lastSaved = new Date();
   this.ageStart = null;
@@ -1909,9 +1966,14 @@ DrawioFile.prototype.fileSaved = function (savedData, lastDesc, success, error, 
     this.inConflictState = false;
     this.invalidChecksum = false;
 
-    if (this.sync == null) {
+    if (this.sync == null || this.isOptimisticSync()) {
       this.shadowData = savedData;
       this.shadowPages = null;
+
+      if (this.sync != null) {
+        this.sync.lastModified = this.getLastModifiedDate();
+        this.sync.resetUpdateStatusThread();
+      }
 
       if (success != null) {
         success();
@@ -1946,6 +2008,10 @@ DrawioFile.prototype.fileSaved = function (savedData, lastDesc, success, error, 
     } catch (e2) {
       // ignore
     }
+  }
+
+  if (urlParams['test'] == '1') {
+    EditorUi.debug('DrawioFile.fileSaved', [this]);
   }
 };
 

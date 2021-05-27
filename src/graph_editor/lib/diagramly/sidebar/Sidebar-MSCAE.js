@@ -24,7 +24,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
     var gn = 'mxgraph.mscae';
     var r = 100;
     var sb = this;
-    var s = 'aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=/images/lib/mscae/';
+    var s = 'aspect=fixed;html=1;points=[];align=center;image;fontSize=12;image=images/lib/mscae/';
 
     this.setCurrentSearchEntryLibrary('mscae', 'mscaeCompanies');
     this.addMSCAECompaniesPalette(gn, r, sb, s);
@@ -2605,7 +2605,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
       ),
       this.createVertexTemplateEntry(
         s +
-          'aspect=fixed;html=1;perimeter=none;align=center;shadow=0;dashed=0;image;fontSize=12;image=/images/lib/mscae/Azure_Database_for_MariaDB_servers.svg;',
+          'aspect=fixed;html=1;perimeter=none;align=center;shadow=0;dashed=0;image;fontSize=12;image=img/lib/mscae/Azure_Database_for_MariaDB_servers.svg;',
         r * 0.38,
         r * 0.5,
         '',
@@ -2823,7 +2823,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
         this.getTagsForStencil(gn, 'azure devtest labs', dt).join(' '),
       ),
       this.createVertexTemplateEntry(
-        s + 'Azure_Pipelines	.svg;',
+        s + 'Azure_Pipelines.svg;',
         r * 0.5,
         r * 0.5,
         '',
@@ -4399,8 +4399,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
         this.getTagsForStencil(gn, 'virtual network networks', dt).join(' '),
       ),
       this.createVertexTemplateEntry(
-        s +
-          'aspect=fixed;html=1;perimeter=none;align=center;shadow=0;dashed=0;image;fontSize=12;image=/images/lib/mscae/Virtual_WANs.svg;',
+        s + 'Virtual_WANs.svg;',
         r * 0.5,
         r * 0.5,
         '',

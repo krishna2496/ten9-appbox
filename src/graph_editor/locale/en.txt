@@ -84,6 +84,7 @@ connectionArrows=Connection arrows
 constrainProportions=Constrain Proportions
 copy=Copy
 copyConnect=Copy on Connect
+copyData=Copy Data
 copySize=Copy Size
 copyStyle=Copy Style
 create=Create

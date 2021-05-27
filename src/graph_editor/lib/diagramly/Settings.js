@@ -22,7 +22,7 @@ const { Sidebar } = require('../jgraph/Sidebar.js');
 
 // TEN9: TODO: Consolidate globals
 var isLocalStorage = false;
-
+const urlParams = { dev: '1', sync: 'manual' };
 /**
  * Copyright (c) 2006-2017, JGraph Ltd
  * Copyright (c) 2006-2017, Gaudenz Alder
@@ -39,7 +39,7 @@ var mxSettings = {
   defaultFormatWidth: screen.width < 600 ? '0' : '240',
 
   // NOTE: Hardcoded in index.html due to timing of JS loading
-  key: '.drawio-config',
+  key: Editor.settingsKey,
 
   getLanguage: function () {
     return mxSettings.settings.language;
@@ -51,7 +51,17 @@ var mxSettings = {
     return mxSettings.settings.ui;
   },
   setUi: function (ui) {
-    mxSettings.settings.ui = ui;
+    // Writes to main configuration
+    var value = localStorage.getItem('.drawio-config');
+    if (value == null) {
+      value = mxSettings.getDefaults();
+    } else {
+      value = JSON.parse(value);
+    }
+    value.ui = ui;
+    delete value.isNew;
+    value.version = mxSettings.currentVersion;
+    localStorage.setItem('.drawio-config', JSON.stringify(value));
   },
   getShowStartScreen: function () {
     return mxSettings.settings.showStartScreen;
@@ -111,6 +121,11 @@ var mxSettings = {
   addCustomLibrary: function (id) {
     // Makes sure to update the latest data from the localStorage
     mxSettings.load();
+
+    //If the setting is incorrect, reset it to an empty array
+    if (!Array.isArray(mxSettings.settings.customLibraries)) {
+      mxSettings.settings.customLibraries = [];
+    }
 
     if (mxUtils.indexOf(mxSettings.settings.customLibraries, id) < 0) {
       // Makes sure scratchpad is below search in sidebar
@@ -174,8 +189,8 @@ var mxSettings = {
   setRulerOn: function (value) {
     mxSettings.settings.isRulerOn = value;
   },
-  init: function () {
-    mxSettings.settings = {
+  getDefaults: function () {
+    return {
       language: '',
       configVersion: Editor.configVersion,
       customFonts: [],
@@ -184,7 +199,7 @@ var mxSettings = {
       plugins: [],
       recentColors: [],
       formatWidth: mxSettings.defaultFormatWidth,
-      createTarget: false,
+      createTarget: urlParams['sketch'] == '1',
       pageFormat: mxGraph.prototype.pageFormat,
       search: true,
       showStartScreen: true,
@@ -201,6 +216,9 @@ var mxSettings = {
       unit: mxConstants.POINTS,
       isRulerOn: false,
     };
+  },
+  init: function () {
+    mxSettings.settings = mxSettings.getDefaults();
   },
   save: function () {
     if (isLocalStorage && typeof JSON !== 'undefined') {

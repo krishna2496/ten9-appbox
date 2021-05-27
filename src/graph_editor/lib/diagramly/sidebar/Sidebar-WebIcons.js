@@ -2698,6 +2698,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
         this.getTagsForStencil(gn, 'jira service desk logo atlassian', dt).join(' '),
       ),
       this.createVertexTemplateEntry(
+        'image;image=img/lib/atlassian/Jira_Software_Logo.svg;',
         'image;image=/images/lib/atlassian/Jira_Software_Logo.svg;',
         74,
         76,

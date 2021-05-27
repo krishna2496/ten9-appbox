@@ -162,7 +162,7 @@ Sidebar.prototype.init = function () {
   this.setCurrentSearchEntryLibrary();
 
   this.addUmlPalette(false);
-  this.addBpmnPalette(dir, false);
+  //this.addBpmnPalette(dir, false);
 
   this.setCurrentSearchEntryLibrary('flowchart');
   this.addStencilPalette(
@@ -170,6 +170,57 @@ Sidebar.prototype.init = function () {
     'Flowchart',
     dir + '/flowchart.xml',
     ';whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2',
+  );
+  this.setCurrentSearchEntryLibrary();
+
+  this.setCurrentSearchEntryLibrary('clipart');
+  this.addImagePalette(
+    'clipart',
+    mxResources.get('clipart'),
+    dir + '/clipart/',
+    '_128x128.png',
+    [
+      'Earth_globe',
+      'Empty_Folder',
+      'Full_Folder',
+      'Gear',
+      'Lock',
+      'Software',
+      'Virus',
+      'Email',
+      'Database',
+      'Router_Icon',
+      'iPad',
+      'iMac',
+      'Laptop',
+      'MacBook',
+      'Monitor_Tower',
+      'Printer',
+      'Server_Tower',
+      'Workstation',
+      'Firewall_02',
+      'Wireless_Router_N',
+      'Credit_Card',
+      'Piggy_Bank',
+      'Graph',
+      'Safe',
+      'Shopping_Cart',
+      'Suit1',
+      'Suit2',
+      'Suit3',
+      'Pilot1',
+      'Worker1',
+      'Soldier1',
+      'Doctor1',
+      'Tech1',
+      'Security1',
+      'Telesales1',
+    ],
+    null,
+    {
+      Wireless_Router_N: 'wireless router switch wap wifi access point wlan',
+      Router_Icon: 'router switch',
+    },
   );
   this.setCurrentSearchEntryLibrary();
 };
@@ -386,13 +437,7 @@ Sidebar.prototype.showTooltip = function (elt, cells, w, h, title, showLabel) {
         var width = bounds.width + 2 * this.tooltipBorder + 4;
         var height = bounds.height + 2 * this.tooltipBorder;
 
-        if (mxClient.IS_QUIRKS) {
-          height += 4;
-          this.tooltip.style.overflow = 'hidden';
-        } else {
-          this.tooltip.style.overflow = 'visible';
-        }
-
+        this.tooltip.style.overflow = 'visible';
         this.tooltip.style.width = width + 'px';
         var w2 = width;
 
@@ -480,6 +525,8 @@ Sidebar.prototype.showTooltip = function (elt, cells, w, h, title, showLabel) {
         this.tooltip.style.position = 'absolute';
         this.tooltip.style.left = left + 'px';
         this.tooltip.style.top = top + 'px';
+
+        mxUtils.fit(this.tooltip);
       });
 
       if (this.tooltip != null && this.tooltip.style.display != 'none') {
@@ -801,13 +848,7 @@ Sidebar.prototype.addSearchPalette = function (expand) {
   cross.setAttribute('title', mxResources.get('search'));
   cross.style.position = 'relative';
   cross.style.left = '-18px';
-
-  if (mxClient.IS_QUIRKS) {
-    input.style.height = '28px';
-    cross.style.top = '-4px';
-  } else {
-    cross.style.top = '1px';
-  }
+  cross.style.top = '1px';
 
   // Needed to block event transparency in IE
   cross.style.background = "url('" + this.editorUi.editor.transparentImage + "')";
@@ -985,6 +1026,11 @@ Sidebar.prototype.addSearchPalette = function (expand) {
     }
   });
 
+  this.searchShapes = function (value) {
+    input.value = value;
+    find();
+  };
+
   mxEvent.addListener(
     input,
     'keydown',
@@ -1082,6 +1128,15 @@ Sidebar.prototype.insertSearchHint = function (
 Sidebar.prototype.addGeneralPalette = function (expand) {
   var lineTags = 'line lines connector connectors connection connections arrow arrows ';
   this.setCurrentSearchEntryLibrary('general', 'general');
+  var sb = this;
+
+  // Reusable cells
+  var field = new mxCell(
+    'List Item',
+    new mxGeometry(0, 0, 60, 26),
+    'text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;',
+  );
+  field.vertex = true;
 
   var fns = [
     this.createVertexTemplateEntry(
@@ -1313,6 +1368,63 @@ Sidebar.prototype.addGeneralPalette = function (expand) {
       '',
       'Data Storage',
     ),
+    this.createVertexTemplateEntry(
+      'swimlane;startSize=0;',
+      200,
+      200,
+      '',
+      'Container',
+      null,
+      null,
+      'container swimlane lane pool group',
+    ),
+    this.createVertexTemplateEntry(
+      'swimlane;',
+      200,
+      200,
+      'Vertical Container',
+      'Container',
+      null,
+      null,
+      'container swimlane lane pool group',
+    ),
+    this.createVertexTemplateEntry(
+      'swimlane;horizontal=0;',
+      200,
+      200,
+      'Horizontal Container',
+      'Horizontal Container',
+      null,
+      null,
+      'container swimlane lane pool group',
+    ),
+    this.addEntry('list group erd table', function () {
+      var cell = new mxCell(
+        'List',
+        new mxGeometry(0, 0, 140, 110),
+        'swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;' +
+          'resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;',
+      );
+      cell.vertex = true;
+      cell.insert(sb.cloneCell(field, 'Item 1'));
+      cell.insert(sb.cloneCell(field, 'Item 2'));
+      cell.insert(sb.cloneCell(field, 'Item 3'));
+
+      return sb.createVertexTemplateFromCells(
+        [cell],
+        cell.geometry.width,
+        cell.geometry.height,
+        'List',
+      );
+    }),
+    this.addEntry('list item entry value group erd table', function () {
+      return sb.createVertexTemplateFromCells(
+        [sb.cloneCell(field, 'List Item')],
+        field.geometry.width,
+        field.geometry.height,
+        'List Item',
+      );
+    }),
     this.addEntry(
       'curve',
       mxUtils.bind(this, function () {
@@ -1815,7 +1927,14 @@ Sidebar.prototype.addMiscPalette = function (expand) {
       20,
       120,
       '',
-      'Curly Bracket',
+      'Left Curly Bracket',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;',
+      20,
+      120,
+      '',
+      'Right Curly Bracket',
     ),
     this.createVertexTemplateEntry('line;strokeWidth=2;html=1;', 160, 10, '', 'Horizontal Line'),
     this.createVertexTemplateEntry(
@@ -1850,7 +1969,17 @@ Sidebar.prototype.addMiscPalette = function (expand) {
       120,
       20,
       '',
-      'Crossbar',
+      'Horizontal Crossbar',
+      false,
+      null,
+      'crossbar distance measure dimension unit',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=crossbar;whiteSpace=wrap;html=1;rounded=1;direction=south;',
+      20,
+      120,
+      '',
+      'Vertical Crossbar',
       false,
       null,
       'crossbar distance measure dimension unit',
@@ -1939,11 +2068,32 @@ Sidebar.prototype.addMiscPalette = function (expand) {
       'Partial Rectangle',
     ),
     this.createVertexTemplateEntry(
+      'shape=partialRectangle;whiteSpace=wrap;html=1;bottom=0;top=0;fillColor=none;',
+      120,
+      60,
+      '',
+      'Partial Rectangle',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=partialRectangle;whiteSpace=wrap;html=1;bottom=0;right=0;fillColor=none;',
+      120,
+      60,
+      '',
+      'Partial Rectangle',
+    ),
+    this.createVertexTemplateEntry(
       'shape=partialRectangle;whiteSpace=wrap;html=1;bottom=1;right=1;left=1;top=0;fillColor=none;routingCenterX=-0.5;',
       120,
       60,
       '',
       'Partial Rectangle',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=waypoint;sketch=0;size=6;pointerEvents=1;points=[];fillColor=none;resizable=0;rotatable=0;perimeter=centerPerimeter;snapToPoint=1;',
+      40,
+      40,
+      '',
+      'Waypoint',
     ),
     this.createEdgeTemplateEntry(
       'edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;',
@@ -2277,6 +2427,286 @@ Sidebar.prototype.createAdvancedShapes = function () {
       );
     }),
   ];
+};
+
+/**
+ * Adds the container palette to the sidebar.
+ */
+Sidebar.prototype.createAdvancedShapes = function () {
+  // Avoids having to bind all functions to "this"
+  var sb = this;
+
+  // Reusable cells
+  var field = new mxCell(
+    'List Item',
+    new mxGeometry(0, 0, 60, 26),
+    'text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;',
+  );
+  field.vertex = true;
+
+  return [
+    this.createVertexTemplateEntry(
+      'shape=tapeData;whiteSpace=wrap;html=1;perimeter=ellipsePerimeter;',
+      80,
+      80,
+      '',
+      'Tape Data',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=manualInput;whiteSpace=wrap;html=1;',
+      80,
+      80,
+      '',
+      'Manual Input',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=loopLimit;whiteSpace=wrap;html=1;',
+      100,
+      80,
+      '',
+      'Loop Limit',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=offPageConnector;whiteSpace=wrap;html=1;',
+      80,
+      80,
+      '',
+      'Off Page Connector',
+    ),
+    this.createVertexTemplateEntry('shape=delay;whiteSpace=wrap;html=1;', 80, 40, '', 'Delay'),
+    this.createVertexTemplateEntry('shape=display;whiteSpace=wrap;html=1;', 80, 40, '', 'Display'),
+    this.createVertexTemplateEntry(
+      'shape=singleArrow;direction=west;whiteSpace=wrap;html=1;',
+      100,
+      60,
+      '',
+      'Arrow Left',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=singleArrow;whiteSpace=wrap;html=1;',
+      100,
+      60,
+      '',
+      'Arrow Right',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=singleArrow;direction=north;whiteSpace=wrap;html=1;',
+      60,
+      100,
+      '',
+      'Arrow Up',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=singleArrow;direction=south;whiteSpace=wrap;html=1;',
+      60,
+      100,
+      '',
+      'Arrow Down',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=doubleArrow;whiteSpace=wrap;html=1;',
+      100,
+      60,
+      '',
+      'Double Arrow',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=doubleArrow;direction=south;whiteSpace=wrap;html=1;',
+      60,
+      100,
+      '',
+      'Double Arrow Vertical',
+      null,
+      null,
+      'double arrow',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=actor;whiteSpace=wrap;html=1;',
+      40,
+      60,
+      '',
+      'User',
+      null,
+      null,
+      'user person human',
+    ),
+    this.createVertexTemplateEntry('shape=cross;whiteSpace=wrap;html=1;', 80, 80, '', 'Cross'),
+    this.createVertexTemplateEntry('shape=corner;whiteSpace=wrap;html=1;', 80, 80, '', 'Corner'),
+    this.createVertexTemplateEntry('shape=tee;whiteSpace=wrap;html=1;', 80, 80, '', 'Tee'),
+    this.createVertexTemplateEntry(
+      'shape=datastore;whiteSpace=wrap;html=1;',
+      60,
+      60,
+      '',
+      'Data Store',
+      null,
+      null,
+      'data store cylinder database',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=orEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;backgroundOutline=1;',
+      80,
+      80,
+      '',
+      'Or',
+      null,
+      null,
+      'or circle oval ellipse',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=sumEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;backgroundOutline=1;',
+      80,
+      80,
+      '',
+      'Sum',
+      null,
+      null,
+      'sum circle oval ellipse',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=lineEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;backgroundOutline=1;',
+      80,
+      80,
+      '',
+      'Ellipse with horizontal divider',
+      null,
+      null,
+      'circle oval ellipse',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=lineEllipse;line=vertical;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;backgroundOutline=1;',
+      80,
+      80,
+      '',
+      'Ellipse with vertical divider',
+      null,
+      null,
+      'circle oval ellipse',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=sortShape;perimeter=rhombusPerimeter;whiteSpace=wrap;html=1;',
+      80,
+      80,
+      '',
+      'Sort',
+      null,
+      null,
+      'sort',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=collate;whiteSpace=wrap;html=1;',
+      80,
+      80,
+      '',
+      'Collate',
+      null,
+      null,
+      'collate',
+    ),
+    this.createVertexTemplateEntry(
+      'shape=switch;whiteSpace=wrap;html=1;',
+      60,
+      60,
+      '',
+      'Switch',
+      null,
+      null,
+      'switch router',
+    ),
+    this.addEntry('process bar', function () {
+      return sb.createVertexTemplateFromData(
+        'zZXRaoMwFIafJpcDjbNrb2233rRQ8AkyPdPQaCRJV+3T7yTG2rUVBoOtgpDzn/xJzncCIdGyateKNeVW5iBI9EqipZLS9KOqXYIQhAY8J9GKUBrgT+jbRDZ02aBhCmrzEwPtDZ9MHKBXdkpmoDWKCVN9VptO+Kw+8kqwGqMkK7nIN6yTB7uTNizbD1FSSsVPsjYMC1qFKHxwIZZSSIVxLZ1/nJNar5+oQPMT7IYCrqUta1ENzuqGaeOFTArBGs3f3Vmtoo2Se7ja1h00kSoHK4bBIKUNy3hdoPYU0mF91i9mT8EEL2ocZ3gKa00ayWujLZY4IfHKFonVDLsRGgXuQ90zBmWgneyTk3yT1iArMKrDKUeem9L3ajHrbSXwohxsQd/ggOleKM7ese048J2/fwuim1uQGmhQCW8vQMkacP3GCQgBFMftHEsr7cYYe95CnmKTPMFbYD8CQ++DGQy+/M5X4ku5wHYmdIktfvk9tecpavThqS3m/0YtnqIWPTy1cD77K2wYjo+Ay317I74A',
+        296,
+        100,
+        'Process Bar',
+      );
+    }),
+    this.createVertexTemplateEntry(
+      'swimlane;',
+      200,
+      200,
+      'Container',
+      'Container',
+      null,
+      null,
+      'container swimlane lane pool group',
+    ),
+    this.addEntry('list group erd table', function () {
+      var cell = new mxCell(
+        'List',
+        new mxGeometry(0, 0, 140, 110),
+        'swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;' +
+          'resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;',
+      );
+      cell.vertex = true;
+      cell.insert(sb.cloneCell(field, 'Item 1'));
+      cell.insert(sb.cloneCell(field, 'Item 2'));
+      cell.insert(sb.cloneCell(field, 'Item 3'));
+
+      return sb.createVertexTemplateFromCells(
+        [cell],
+        cell.geometry.width,
+        cell.geometry.height,
+        'List',
+      );
+    }),
+    this.addEntry('list item entry value group erd table', function () {
+      return sb.createVertexTemplateFromCells(
+        [sb.cloneCell(field, 'List Item')],
+        field.geometry.width,
+        field.geometry.height,
+        'List Item',
+      );
+    }),
+  ];
+};
+
+/**
+ * Adds the general palette to the sidebar.
+ */
+Sidebar.prototype.addBasicPalette = function (dir) {
+  this.setCurrentSearchEntryLibrary('basic');
+  this.addStencilPalette(
+    'basic',
+    mxResources.get('basic'),
+    dir + '/basic.xml',
+    ';whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2',
+    null,
+    null,
+    null,
+    null,
+    [
+      this.createVertexTemplateEntry(
+        'shape=partialRectangle;whiteSpace=wrap;html=1;top=0;bottom=0;fillColor=none;',
+        120,
+        60,
+        '',
+        'Partial Rectangle',
+      ),
+      this.createVertexTemplateEntry(
+        'shape=partialRectangle;whiteSpace=wrap;html=1;right=0;top=0;bottom=0;fillColor=none;routingCenterX=-0.5;',
+        120,
+        60,
+        '',
+        'Partial Rectangle',
+      ),
+      this.createVertexTemplateEntry(
+        'shape=partialRectangle;whiteSpace=wrap;html=1;bottom=0;right=0;fillColor=none;',
+        120,
+        60,
+        '',
+        'Partial Rectangle',
+      ),
+      this.createVertexTemplateEntry(
+        'shape=partialRectangle;whiteSpace=wrap;html=1;top=0;left=0;fillColor=none;',
+        120,
+        60,
+        '',
+        'Partial Rectangle',
+      ),
+    ],
+  );
+  this.setCurrentSearchEntryLibrary();
 };
 
 /**
@@ -3249,590 +3679,591 @@ Sidebar.prototype.addBpmnPalette = function (dir, expand) {
   var sb = this;
   this.setCurrentSearchEntryLibrary('bpmn');
 
-  var fns = [
-    this.createVertexTemplateEntry(
-      'shape=ext;rounded=1;html=1;whiteSpace=wrap;',
-      120,
-      80,
-      'Task',
-      'Process',
-      null,
-      null,
-      'bpmn task process',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=ext;rounded=1;html=1;whiteSpace=wrap;double=1;',
-      120,
-      80,
-      'Transaction',
-      'Transaction',
-      null,
-      null,
-      'bpmn transaction',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=ext;rounded=1;html=1;whiteSpace=wrap;dashed=1;dashPattern=1 4;',
-      120,
-      80,
-      'Event\nSub-Process',
-      'Event Sub-Process',
-      null,
-      null,
-      'bpmn event subprocess sub process sub-process',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=ext;rounded=1;html=1;whiteSpace=wrap;strokeWidth=3;',
-      120,
-      80,
-      'Call Activity',
-      'Call Activity',
-      null,
-      null,
-      'bpmn call activity',
-    ),
-    this.addEntry('bpmn subprocess sub process sub-process', function () {
-      var cell = new mxCell(
-        'Sub-Process',
-        new mxGeometry(0, 0, 120, 80),
-        'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
-      );
-      cell.vertex = true;
+  // TEN9: comment out general shapes as we are adding it from diagramly
+  // var fns = [
+  //   this.createVertexTemplateEntry(
+  //     'shape=ext;rounded=1;html=1;whiteSpace=wrap;',
+  //     120,
+  //     80,
+  //     'Task',
+  //     'Process',
+  //     null,
+  //     null,
+  //     'bpmn task process',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=ext;rounded=1;html=1;whiteSpace=wrap;double=1;',
+  //     120,
+  //     80,
+  //     'Transaction',
+  //     'Transaction',
+  //     null,
+  //     null,
+  //     'bpmn transaction',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=ext;rounded=1;html=1;whiteSpace=wrap;dashed=1;dashPattern=1 4;',
+  //     120,
+  //     80,
+  //     'Event\nSub-Process',
+  //     'Event Sub-Process',
+  //     null,
+  //     null,
+  //     'bpmn event subprocess sub process sub-process',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=ext;rounded=1;html=1;whiteSpace=wrap;strokeWidth=3;',
+  //     120,
+  //     80,
+  //     'Call Activity',
+  //     'Call Activity',
+  //     null,
+  //     null,
+  //     'bpmn call activity',
+  //   ),
+  //   this.addEntry('bpmn subprocess sub process sub-process', function () {
+  //     var cell = new mxCell(
+  //       'Sub-Process',
+  //       new mxGeometry(0, 0, 120, 80),
+  //       'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
+  //     );
+  //     cell.vertex = true;
 
-      var cell1 = new mxCell(
-        '',
-        new mxGeometry(0.5, 1, 14, 14),
-        'html=1;shape=plus;outlineConnect=0;',
-      );
-      cell1.vertex = true;
-      cell1.geometry.relative = true;
-      cell1.geometry.offset = new mxPoint(-7, -14);
-      cell.insert(cell1);
+  //     var cell1 = new mxCell(
+  //       '',
+  //       new mxGeometry(0.5, 1, 14, 14),
+  //       'html=1;shape=plus;outlineConnect=0;',
+  //     );
+  //     cell1.vertex = true;
+  //     cell1.geometry.relative = true;
+  //     cell1.geometry.offset = new mxPoint(-7, -14);
+  //     cell.insert(cell1);
 
-      return sb.createVertexTemplateFromCells(
-        [cell],
-        cell.geometry.width,
-        cell.geometry.height,
-        'Sub-Process',
-      );
-    }),
-    this.addEntry(
-      this.getTagsForStencil(
-        'mxgraph.bpmn',
-        'loop',
-        'subprocess sub process sub-process looped',
-      ).join(' '),
-      function () {
-        var cell = new mxCell(
-          'Looped\nSub-Process',
-          new mxGeometry(0, 0, 120, 80),
-          'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
-        );
-        cell.vertex = true;
+  //     return sb.createVertexTemplateFromCells(
+  //       [cell],
+  //       cell.geometry.width,
+  //       cell.geometry.height,
+  //       'Sub-Process',
+  //     );
+  //   }),
+  //   this.addEntry(
+  //     this.getTagsForStencil(
+  //       'mxgraph.bpmn',
+  //       'loop',
+  //       'subprocess sub process sub-process looped',
+  //     ).join(' '),
+  //     function () {
+  //       var cell = new mxCell(
+  //         'Looped\nSub-Process',
+  //         new mxGeometry(0, 0, 120, 80),
+  //         'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
+  //       );
+  //       cell.vertex = true;
 
-        var cell1 = new mxCell(
-          '',
-          new mxGeometry(0.5, 1, 14, 14),
-          'html=1;shape=mxgraph.bpmn.loop;outlineConnect=0;',
-        );
-        cell1.vertex = true;
-        cell1.geometry.relative = true;
-        cell1.geometry.offset = new mxPoint(-15, -14);
-        cell.insert(cell1);
+  //       var cell1 = new mxCell(
+  //         '',
+  //         new mxGeometry(0.5, 1, 14, 14),
+  //         'html=1;shape=mxgraph.bpmn.loop;outlineConnect=0;',
+  //       );
+  //       cell1.vertex = true;
+  //       cell1.geometry.relative = true;
+  //       cell1.geometry.offset = new mxPoint(-15, -14);
+  //       cell.insert(cell1);
 
-        var cell2 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=plus;');
-        cell2.vertex = true;
-        cell2.geometry.relative = true;
-        cell2.geometry.offset = new mxPoint(1, -14);
-        cell.insert(cell2);
+  //       var cell2 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=plus;');
+  //       cell2.vertex = true;
+  //       cell2.geometry.relative = true;
+  //       cell2.geometry.offset = new mxPoint(1, -14);
+  //       cell.insert(cell2);
 
-        return sb.createVertexTemplateFromCells(
-          [cell],
-          cell.geometry.width,
-          cell.geometry.height,
-          'Looped Sub-Process',
-        );
-      },
-    ),
-    this.addEntry('bpmn receive task', function () {
-      var cell = new mxCell(
-        'Receive',
-        new mxGeometry(0, 0, 120, 80),
-        'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
-      );
-      cell.vertex = true;
+  //       return sb.createVertexTemplateFromCells(
+  //         [cell],
+  //         cell.geometry.width,
+  //         cell.geometry.height,
+  //         'Looped Sub-Process',
+  //       );
+  //     },
+  //   ),
+  //   this.addEntry('bpmn receive task', function () {
+  //     var cell = new mxCell(
+  //       'Receive',
+  //       new mxGeometry(0, 0, 120, 80),
+  //       'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
+  //     );
+  //     cell.vertex = true;
 
-      var cell1 = new mxCell(
-        '',
-        new mxGeometry(0, 0, 20, 14),
-        'html=1;shape=message;outlineConnect=0;',
-      );
-      cell1.vertex = true;
-      cell1.geometry.relative = true;
-      cell1.geometry.offset = new mxPoint(7, 7);
-      cell.insert(cell1);
+  //     var cell1 = new mxCell(
+  //       '',
+  //       new mxGeometry(0, 0, 20, 14),
+  //       'html=1;shape=message;outlineConnect=0;',
+  //     );
+  //     cell1.vertex = true;
+  //     cell1.geometry.relative = true;
+  //     cell1.geometry.offset = new mxPoint(7, 7);
+  //     cell.insert(cell1);
 
-      return sb.createVertexTemplateFromCells(
-        [cell],
-        cell.geometry.width,
-        cell.geometry.height,
-        'Receive Task',
-      );
-    }),
-    this.addEntry(this.getTagsForStencil('mxgraph.bpmn', 'user_task').join(' '), function () {
-      var cell = new mxCell(
-        'User',
-        new mxGeometry(0, 0, 120, 80),
-        'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
-      );
-      cell.vertex = true;
+  //     return sb.createVertexTemplateFromCells(
+  //       [cell],
+  //       cell.geometry.width,
+  //       cell.geometry.height,
+  //       'Receive Task',
+  //     );
+  //   }),
+  //   this.addEntry(this.getTagsForStencil('mxgraph.bpmn', 'user_task').join(' '), function () {
+  //     var cell = new mxCell(
+  //       'User',
+  //       new mxGeometry(0, 0, 120, 80),
+  //       'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
+  //     );
+  //     cell.vertex = true;
 
-      var cell1 = new mxCell(
-        '',
-        new mxGeometry(0, 0, 14, 14),
-        'html=1;shape=mxgraph.bpmn.user_task;outlineConnect=0;',
-      );
-      cell1.vertex = true;
-      cell1.geometry.relative = true;
-      cell1.geometry.offset = new mxPoint(7, 7);
-      cell.insert(cell1);
+  //     var cell1 = new mxCell(
+  //       '',
+  //       new mxGeometry(0, 0, 14, 14),
+  //       'html=1;shape=mxgraph.bpmn.user_task;outlineConnect=0;',
+  //     );
+  //     cell1.vertex = true;
+  //     cell1.geometry.relative = true;
+  //     cell1.geometry.offset = new mxPoint(7, 7);
+  //     cell.insert(cell1);
 
-      var cell2 = new mxCell(
-        '',
-        new mxGeometry(0.5, 1, 14, 14),
-        'html=1;shape=plus;outlineConnect=0;',
-      );
-      cell2.vertex = true;
-      cell2.geometry.relative = true;
-      cell2.geometry.offset = new mxPoint(-7, -14);
-      cell.insert(cell2);
+  //     var cell2 = new mxCell(
+  //       '',
+  //       new mxGeometry(0.5, 1, 14, 14),
+  //       'html=1;shape=plus;outlineConnect=0;',
+  //     );
+  //     cell2.vertex = true;
+  //     cell2.geometry.relative = true;
+  //     cell2.geometry.offset = new mxPoint(-7, -14);
+  //     cell.insert(cell2);
 
-      return sb.createVertexTemplateFromCells(
-        [cell],
-        cell.geometry.width,
-        cell.geometry.height,
-        'User Task',
-      );
-    }),
-    this.addEntry(
-      this.getTagsForStencil('mxgraph.bpmn', 'timer_start', 'attached').join(' '),
-      function () {
-        var cell = new mxCell(
-          'Process',
-          new mxGeometry(0, 0, 120, 80),
-          'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
-        );
-        cell.vertex = true;
+  //     return sb.createVertexTemplateFromCells(
+  //       [cell],
+  //       cell.geometry.width,
+  //       cell.geometry.height,
+  //       'User Task',
+  //     );
+  //   }),
+  //   this.addEntry(
+  //     this.getTagsForStencil('mxgraph.bpmn', 'timer_start', 'attached').join(' '),
+  //     function () {
+  //       var cell = new mxCell(
+  //         'Process',
+  //         new mxGeometry(0, 0, 120, 80),
+  //         'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
+  //       );
+  //       cell.vertex = true;
 
-        var cell1 = new mxCell(
-          '',
-          new mxGeometry(1, 1, 30, 30),
-          'shape=mxgraph.bpmn.timer_start;perimeter=ellipsePerimeter;html=1;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;',
-        );
-        cell1.vertex = true;
-        cell1.geometry.relative = true;
-        cell1.geometry.offset = new mxPoint(-40, -15);
-        cell.insert(cell1);
+  //       var cell1 = new mxCell(
+  //         '',
+  //         new mxGeometry(1, 1, 30, 30),
+  //         'shape=mxgraph.bpmn.timer_start;perimeter=ellipsePerimeter;html=1;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;',
+  //       );
+  //       cell1.vertex = true;
+  //       cell1.geometry.relative = true;
+  //       cell1.geometry.offset = new mxPoint(-40, -15);
+  //       cell.insert(cell1);
 
-        return sb.createVertexTemplateFromCells([cell], 120, 95, 'Attached Timer Event 1');
-      },
-    ),
-    this.addEntry(
-      this.getTagsForStencil('mxgraph.bpmn', 'timer_start', 'attached').join(' '),
-      function () {
-        var cell = new mxCell(
-          'Process',
-          new mxGeometry(0, 0, 120, 80),
-          'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
-        );
-        cell.vertex = true;
+  //       return sb.createVertexTemplateFromCells([cell], 120, 95, 'Attached Timer Event 1');
+  //     },
+  //   ),
+  //   this.addEntry(
+  //     this.getTagsForStencil('mxgraph.bpmn', 'timer_start', 'attached').join(' '),
+  //     function () {
+  //       var cell = new mxCell(
+  //         'Process',
+  //         new mxGeometry(0, 0, 120, 80),
+  //         'html=1;whiteSpace=wrap;rounded=1;dropTarget=0;',
+  //       );
+  //       cell.vertex = true;
 
-        var cell1 = new mxCell(
-          '',
-          new mxGeometry(1, 0, 30, 30),
-          'shape=mxgraph.bpmn.timer_start;perimeter=ellipsePerimeter;html=1;labelPosition=right;align=left;outlineConnect=0;',
-        );
-        cell1.vertex = true;
-        cell1.geometry.relative = true;
-        cell1.geometry.offset = new mxPoint(-15, 10);
-        cell.insert(cell1);
+  //       var cell1 = new mxCell(
+  //         '',
+  //         new mxGeometry(1, 0, 30, 30),
+  //         'shape=mxgraph.bpmn.timer_start;perimeter=ellipsePerimeter;html=1;labelPosition=right;align=left;outlineConnect=0;',
+  //       );
+  //       cell1.vertex = true;
+  //       cell1.geometry.relative = true;
+  //       cell1.geometry.offset = new mxPoint(-15, 10);
+  //       cell.insert(cell1);
 
-        return sb.createVertexTemplateFromCells([cell], 135, 80, 'Attached Timer Event 2');
-      },
-    ),
-    this.createVertexTemplateEntry(
-      'swimlane;html=1;horizontal=0;startSize=20;',
-      320,
-      240,
-      'Pool',
-      'Pool',
-      null,
-      null,
-      'bpmn pool',
-    ),
-    this.createVertexTemplateEntry(
-      'swimlane;html=1;horizontal=0;swimlaneLine=0;',
-      300,
-      120,
-      'Lane',
-      'Lane',
-      null,
-      null,
-      'bpmn lane',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=hexagon;html=1;whiteSpace=wrap;perimeter=hexagonPerimeter;rounded=0;',
-      60,
-      50,
-      '',
-      'Conversation',
-      null,
-      null,
-      'bpmn conversation',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=hexagon;html=1;whiteSpace=wrap;perimeter=hexagonPerimeter;strokeWidth=4;rounded=0;',
-      60,
-      50,
-      '',
-      'Call Conversation',
-      null,
-      null,
-      'bpmn call conversation',
-    ),
-    this.addEntry('bpmn subconversation sub conversation sub-conversation', function () {
-      var cell = new mxCell(
-        '',
-        new mxGeometry(0, 0, 60, 50),
-        'shape=hexagon;whiteSpace=wrap;html=1;perimeter=hexagonPerimeter;rounded=0;dropTarget=0;',
-      );
-      cell.vertex = true;
+  //       return sb.createVertexTemplateFromCells([cell], 135, 80, 'Attached Timer Event 2');
+  //     },
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'swimlane;html=1;horizontal=0;startSize=20;',
+  //     320,
+  //     240,
+  //     'Pool',
+  //     'Pool',
+  //     null,
+  //     null,
+  //     'bpmn pool',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'swimlane;html=1;horizontal=0;swimlaneLine=0;',
+  //     300,
+  //     120,
+  //     'Lane',
+  //     'Lane',
+  //     null,
+  //     null,
+  //     'bpmn lane',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=hexagon;html=1;whiteSpace=wrap;perimeter=hexagonPerimeter;rounded=0;',
+  //     60,
+  //     50,
+  //     '',
+  //     'Conversation',
+  //     null,
+  //     null,
+  //     'bpmn conversation',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=hexagon;html=1;whiteSpace=wrap;perimeter=hexagonPerimeter;strokeWidth=4;rounded=0;',
+  //     60,
+  //     50,
+  //     '',
+  //     'Call Conversation',
+  //     null,
+  //     null,
+  //     'bpmn call conversation',
+  //   ),
+  //   this.addEntry('bpmn subconversation sub conversation sub-conversation', function () {
+  //     var cell = new mxCell(
+  //       '',
+  //       new mxGeometry(0, 0, 60, 50),
+  //       'shape=hexagon;whiteSpace=wrap;html=1;perimeter=hexagonPerimeter;rounded=0;dropTarget=0;',
+  //     );
+  //     cell.vertex = true;
 
-      var cell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=plus;');
-      cell1.vertex = true;
-      cell1.geometry.relative = true;
-      cell1.geometry.offset = new mxPoint(-7, -14);
-      cell.insert(cell1);
+  //     var cell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=plus;');
+  //     cell1.vertex = true;
+  //     cell1.geometry.relative = true;
+  //     cell1.geometry.offset = new mxPoint(-7, -14);
+  //     cell.insert(cell1);
 
-      return sb.createVertexTemplateFromCells(
-        [cell],
-        cell.geometry.width,
-        cell.geometry.height,
-        'Sub-Conversation',
-      );
-    }),
-    this.addEntry('bpmn data object', function () {
-      var cell = new mxCell(
-        '',
-        new mxGeometry(0, 0, 40, 60),
-        'shape=note;whiteSpace=wrap;size=16;html=1;dropTarget=0;',
-      );
-      cell.vertex = true;
+  //     return sb.createVertexTemplateFromCells(
+  //       [cell],
+  //       cell.geometry.width,
+  //       cell.geometry.height,
+  //       'Sub-Conversation',
+  //     );
+  //   }),
+  //   this.addEntry('bpmn data object', function () {
+  //     var cell = new mxCell(
+  //       '',
+  //       new mxGeometry(0, 0, 40, 60),
+  //       'shape=note;whiteSpace=wrap;size=16;html=1;dropTarget=0;',
+  //     );
+  //     cell.vertex = true;
 
-      var cell1 = new mxCell(
-        '',
-        new mxGeometry(0, 0, 14, 14),
-        'html=1;shape=singleArrow;arrowWidth=0.4;arrowSize=0.4;outlineConnect=0;',
-      );
-      cell1.vertex = true;
-      cell1.geometry.relative = true;
-      cell1.geometry.offset = new mxPoint(2, 2);
-      cell.insert(cell1);
+  //     var cell1 = new mxCell(
+  //       '',
+  //       new mxGeometry(0, 0, 14, 14),
+  //       'html=1;shape=singleArrow;arrowWidth=0.4;arrowSize=0.4;outlineConnect=0;',
+  //     );
+  //     cell1.vertex = true;
+  //     cell1.geometry.relative = true;
+  //     cell1.geometry.offset = new mxPoint(2, 2);
+  //     cell.insert(cell1);
 
-      var cell2 = new mxCell(
-        '',
-        new mxGeometry(0.5, 1, 14, 14),
-        'html=1;whiteSpace=wrap;shape=parallelMarker;outlineConnect=0;',
-      );
-      cell2.vertex = true;
-      cell2.geometry.relative = true;
-      cell2.geometry.offset = new mxPoint(-7, -14);
-      cell.insert(cell2);
+  //     var cell2 = new mxCell(
+  //       '',
+  //       new mxGeometry(0.5, 1, 14, 14),
+  //       'html=1;whiteSpace=wrap;shape=parallelMarker;outlineConnect=0;',
+  //     );
+  //     cell2.vertex = true;
+  //     cell2.geometry.relative = true;
+  //     cell2.geometry.offset = new mxPoint(-7, -14);
+  //     cell.insert(cell2);
 
-      return sb.createVertexTemplateFromCells(
-        [cell],
-        cell.geometry.width,
-        cell.geometry.height,
-        'Data Object',
-      );
-    }),
-    this.createVertexTemplateEntry(
-      'shape=datastore;whiteSpace=wrap;html=1;',
-      60,
-      60,
-      '',
-      'Data Store',
-      null,
-      null,
-      'bpmn data store',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=plus;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'Sub-Process Marker',
-      null,
-      null,
-      'bpmn subprocess sub process sub-process marker',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=mxgraph.bpmn.loop;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'Loop Marker',
-      null,
-      null,
-      'bpmn loop marker',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=parallelMarker;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'Parallel MI Marker',
-      null,
-      null,
-      'bpmn parallel mi marker',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=parallelMarker;direction=south;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'Sequential MI Marker',
-      null,
-      null,
-      'bpmn sequential mi marker',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=mxgraph.bpmn.ad_hoc;fillColor=#000000;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'Ad Hoc Marker',
-      null,
-      null,
-      'bpmn ad hoc marker',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=mxgraph.bpmn.compensation;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'Compensation Marker',
-      null,
-      null,
-      'bpmn compensation marker',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=message;whiteSpace=wrap;html=1;outlineConnect=0;fillColor=#000000;strokeColor=#ffffff;strokeWidth=2;',
-      40,
-      30,
-      '',
-      'Send Task',
-      null,
-      null,
-      'bpmn send task',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=message;whiteSpace=wrap;html=1;outlineConnect=0;',
-      40,
-      30,
-      '',
-      'Receive Task',
-      null,
-      null,
-      'bpmn receive task',
-    ),
-    this.createVertexTemplateEntry(
-      'shape=mxgraph.bpmn.user_task;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'User Task',
-      null,
-      null,
-      this.getTagsForStencil('mxgraph.bpmn', 'user_task').join(' '),
-    ),
-    this.createVertexTemplateEntry(
-      'shape=mxgraph.bpmn.manual_task;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'Manual Task',
-      null,
-      null,
-      this.getTagsForStencil('mxgraph.bpmn', 'user_task').join(' '),
-    ),
-    this.createVertexTemplateEntry(
-      'shape=mxgraph.bpmn.business_rule_task;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'Business Rule Task',
-      null,
-      null,
-      this.getTagsForStencil('mxgraph.bpmn', 'business_rule_task').join(' '),
-    ),
-    this.createVertexTemplateEntry(
-      'shape=mxgraph.bpmn.service_task;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'Service Task',
-      null,
-      null,
-      this.getTagsForStencil('mxgraph.bpmn', 'service_task').join(' '),
-    ),
-    this.createVertexTemplateEntry(
-      'shape=mxgraph.bpmn.script_task;html=1;outlineConnect=0;',
-      14,
-      14,
-      '',
-      'Script Task',
-      null,
-      null,
-      this.getTagsForStencil('mxgraph.bpmn', 'script_task').join(' '),
-    ),
-    this.createVertexTemplateEntry(
-      'html=1;shape=mxgraph.flowchart.annotation_2;align=left;labelPosition=right;',
-      50,
-      100,
-      '',
-      'Annotation',
-      null,
-      null,
-      this.getTagsForStencil('bpmn', 'annotation_1', 'bpmn business process model ').join(' '),
-    ),
-    this.addDataEntry(
-      'crossfunctional cross-functional cross functional flowchart swimlane table',
-      400,
-      400,
-      'Cross-Functional Flowchart',
-      '7ZhRb5swEMc/DY+bMCRt97jQpi+tVC2fwINbbMnYyD4C6aefjaHpBrTRlNCoTALJPp9t+P25O5kgTvL6XtOCPaoMRBDfBXGilULfyusEhAiikGdBfBtEUWjvIFqPjJJmNCyoBonHTIj8hB0VJXiL3dyYL+tSpsiVpM55LVSVMqrROxvci9bZMFq4JtKfzrRKGRfZA92rEjtr11tpVT1wCcYOhM5ViTKXry0G7RYb/uwWXDgDw9wCuSW2WTGOsClo6gYri8uvIGhheLN1s4KGtNSG7+AHGL+Os0JdUJm1nUJxiaDvdhZQt/EvJXHTvpTbjAq+lbadgnO1hhYSaIR6FHRjainfg8oB9d66VDxD5j0WoRcjZMC3DP8yUuMN25e5B91so5VuWMa4J+P3FJW2JtLXrOK5oNLJxZTmz/blqXhNp3mO5cpe9smS8OsyWNp5ie2TQ99ezl1joqRBTXmDAajBCgxejprHKBcNK7fvBPIz3hOSRCcQctET8olRA+8JmSopIW2j8GOD6Sji8TDxepT4C9yTE1+OEo/mQ5xcTYn8ahR5PB/k0c2UyK9HC8SbX/mnLBAnqAlD8XK+onDTE+/fw+TiQF9fTin4Nl/O0xYAEs6X9LR5n5Ae6S7xv1lr/yf+4cQ/pN75Ej/pH88/UZyQkRPzR6R+0j9Bz4f0xMm/f8adD+qzZn/bPfw5bMb++LH4Gw==',
-    ),
-    this.addDataEntry(
-      'container swimlane pool horizontal',
-      480,
-      380,
-      'Horizontal Pool 1',
-      'zZRLbsIwEIZP4709TlHXhJYNSEicwCIjbNWJkWNKwumZxA6IlrRUaisWlmb+eX8LM5mXzdyrnV66Ai2TL0zm3rkQrbLJ0VoG3BRMzhgAp8fgdSQq+ijfKY9VuKcAYsG7snuMyso5G8U6tDaJ9cGUVlXkTXUoacuZIHOjjS0WqnX7blYd1OZt8KYea3PE1bCI+CAtVUMq7/o5b46uCmroSn18WFMm+XCdse5GpLq0OPqAzejxvZQun6MrMfiWUg6mCDpmZM8RENdotjqVyUFUdRS259oLSzISztto5Se0i44gcHEn3i9A/IQB3GbQpmi69DskAn4BSTaGBB4Jicj+k8nTGBP5SExg8odMyL38eH3s6kM8AQ==',
-    ),
-    this.addDataEntry(
-      'container swimlane pool horizontal',
-      480,
-      360,
-      'Horizontal Pool 2',
-      'zZTBbsIwDIafJvfU6dDOlI0LSEg8QUQtEi1tUBJGy9PPbcJQWTsxaZs4VLJ//07sT1WYKKpm6eRBrW2JhokXJgpnbYhR1RRoDAOuSyYWDIDTx+B1opr1VX6QDutwTwPEhndpjhiVjbUmij60Jon+pCsja8rmKlQ05SKjcKe0KVeytcfuLh/k7u2SzR16fcbNZZDsRlrLhlTenWedPts6SJMEOseFLTkph6Fj212RbGlwdAGbyeV7KW2+RFthcC1ZTroMKjry5wiIK9R7ldrELInSR2H/2XtlSUHCOY5WfEG76ggCz+7E+w2InzCAcQapIf0fAySzESQZ/AKSfAoJPCKS9mbzf0H0NIVIPDAiyP8QEaXX97CvDZ7LDw==',
-    ),
-    this.createVertexTemplateEntry(
-      'swimlane;startSize=20;horizontal=0;',
-      320,
-      120,
-      'Lane',
-      'Horizontal Swimlane',
-      null,
-      null,
-      'swimlane lane pool',
-    ),
-    this.addDataEntry(
-      'container swimlane pool horizontal',
-      360,
-      480,
-      'Vertical Pool 1',
-      'xZRBbsIwEEVP4709ThFrQssGJKSewCIjbNXGyDEl4fSdxKa0NJFQVTULSzP/e+T5b2EmS9esgjrqja/QMvnMZBm8j6lyTYnWMuCmYnLJADgdBi8jruhdflQBD/GRAUgD78qeMClb720S69jaLNZn46w6ULfQ0dGWS0HlThtbrVXrT91bdVS7t2u3CFibC26vi4g7aaMaUjmpNBbiKxnUQyfkjTBEbEZT9VKOtELvMIaWrpxNFXW6IWcpOddo9jqPFfMsqjoJ+8/ZGyQqMqdhZvIHs3WHBrh4kNvvIsNw5Da7OdgXAgKGCMz+gEAxRgCmINDcxZ2CyNMYETkhESj+jwi1t1+r9759ah8=',
-    ),
-    this.addDataEntry(
-      'container swimlane pool vertical',
-      380,
-      480,
-      'Vertical Pool 2',
-      'xZTPbsIwDMafJvf86dDOlI0LSEg8QUQtEi1pUBJGy9PPbdJ1G1TqhXGoZH/219g/RSGitM3ay5PaugoMEW9ElN65mCLblGAM4VRXRKwI5xQ/wt8nqqyv0pP0UMc5Bp4Mn9KcISk750wSQ2xNFsNFWyNrzJYqWpxyxTA8KG2qjWzduTsrRHn4GLKlh6CvsBsGYX+krWxQpaiizcc9FjDnnaCc11dXR2lyxyjsuyPy3/Lg4CM0k8v3Ut58Dc5C9C22XHQVVeoQrwkQVaCPKtuKQZQhCcdv78gSg4zzPlpxg3bTEeSUzcR7Q2bWyvz+ytmQr8NPAow/ikAxRYA/kQAr/hPByxQC8cxLsHggAkzH56uv/XrdvgA=',
-    ),
-    this.createVertexTemplateEntry(
-      'swimlane;startSize=20;',
-      120,
-      320,
-      'Lane',
-      'Vertical Swimlane',
-      null,
-      null,
-      'swimlane lane pool',
-    ),
-    this.createVertexTemplateEntry(
-      'rounded=1;arcSize=10;dashed=1;strokeColor=#000000;fillColor=none;gradientColor=none;dashPattern=8 3 1 3;strokeWidth=2;',
-      200,
-      200,
-      '',
-      'Group',
-      null,
-      null,
-      this.getTagsForStencil('bpmn', 'group', 'bpmn business process model ').join(' '),
-    ),
-    this.createEdgeTemplateEntry(
-      'endArrow=block;endFill=1;endSize=6;html=1;',
-      100,
-      0,
-      '',
-      'Sequence Flow',
-      null,
-      'bpmn sequence flow',
-    ),
-    this.createEdgeTemplateEntry(
-      'startArrow=dash;startSize=8;endArrow=block;endFill=1;endSize=6;html=1;',
-      100,
-      0,
-      '',
-      'Default Flow',
-      null,
-      'bpmn default flow',
-    ),
-    this.createEdgeTemplateEntry(
-      'startArrow=diamondThin;startFill=0;startSize=14;endArrow=block;endFill=1;endSize=6;html=1;',
-      100,
-      0,
-      '',
-      'Conditional Flow',
-      null,
-      'bpmn conditional flow',
-    ),
-    this.createEdgeTemplateEntry(
-      'startArrow=oval;startFill=0;startSize=7;endArrow=block;endFill=0;endSize=10;dashed=1;html=1;',
-      100,
-      0,
-      '',
-      'Message Flow 1',
-      null,
-      'bpmn message flow',
-    ),
-    this.addEntry('bpmn message flow', function () {
-      var edge = new mxCell(
-        '',
-        new mxGeometry(0, 0, 0, 0),
-        'startArrow=oval;startFill=0;startSize=7;endArrow=block;endFill=0;endSize=10;dashed=1;html=1;',
-      );
-      edge.geometry.setTerminalPoint(new mxPoint(0, 0), true);
-      edge.geometry.setTerminalPoint(new mxPoint(100, 0), false);
-      edge.geometry.relative = true;
-      edge.edge = true;
+  //     return sb.createVertexTemplateFromCells(
+  //       [cell],
+  //       cell.geometry.width,
+  //       cell.geometry.height,
+  //       'Data Object',
+  //     );
+  //   }),
+  //   this.createVertexTemplateEntry(
+  //     'shape=datastore;whiteSpace=wrap;html=1;',
+  //     60,
+  //     60,
+  //     '',
+  //     'Data Store',
+  //     null,
+  //     null,
+  //     'bpmn data store',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=plus;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'Sub-Process Marker',
+  //     null,
+  //     null,
+  //     'bpmn subprocess sub process sub-process marker',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=mxgraph.bpmn.loop;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'Loop Marker',
+  //     null,
+  //     null,
+  //     'bpmn loop marker',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=parallelMarker;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'Parallel MI Marker',
+  //     null,
+  //     null,
+  //     'bpmn parallel mi marker',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=parallelMarker;direction=south;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'Sequential MI Marker',
+  //     null,
+  //     null,
+  //     'bpmn sequential mi marker',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=mxgraph.bpmn.ad_hoc;fillColor=#000000;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'Ad Hoc Marker',
+  //     null,
+  //     null,
+  //     'bpmn ad hoc marker',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=mxgraph.bpmn.compensation;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'Compensation Marker',
+  //     null,
+  //     null,
+  //     'bpmn compensation marker',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=message;whiteSpace=wrap;html=1;outlineConnect=0;fillColor=#000000;strokeColor=#ffffff;strokeWidth=2;',
+  //     40,
+  //     30,
+  //     '',
+  //     'Send Task',
+  //     null,
+  //     null,
+  //     'bpmn send task',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=message;whiteSpace=wrap;html=1;outlineConnect=0;',
+  //     40,
+  //     30,
+  //     '',
+  //     'Receive Task',
+  //     null,
+  //     null,
+  //     'bpmn receive task',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=mxgraph.bpmn.user_task;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'User Task',
+  //     null,
+  //     null,
+  //     this.getTagsForStencil('mxgraph.bpmn', 'user_task').join(' '),
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=mxgraph.bpmn.manual_task;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'Manual Task',
+  //     null,
+  //     null,
+  //     this.getTagsForStencil('mxgraph.bpmn', 'user_task').join(' '),
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=mxgraph.bpmn.business_rule_task;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'Business Rule Task',
+  //     null,
+  //     null,
+  //     this.getTagsForStencil('mxgraph.bpmn', 'business_rule_task').join(' '),
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=mxgraph.bpmn.service_task;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'Service Task',
+  //     null,
+  //     null,
+  //     this.getTagsForStencil('mxgraph.bpmn', 'service_task').join(' '),
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'shape=mxgraph.bpmn.script_task;html=1;outlineConnect=0;',
+  //     14,
+  //     14,
+  //     '',
+  //     'Script Task',
+  //     null,
+  //     null,
+  //     this.getTagsForStencil('mxgraph.bpmn', 'script_task').join(' '),
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'html=1;shape=mxgraph.flowchart.annotation_2;align=left;labelPosition=right;',
+  //     50,
+  //     100,
+  //     '',
+  //     'Annotation',
+  //     null,
+  //     null,
+  //     this.getTagsForStencil('bpmn', 'annotation_1', 'bpmn business process model ').join(' '),
+  //   ),
+  //   this.addDataEntry(
+  //     'crossfunctional cross-functional cross functional flowchart swimlane table',
+  //     400,
+  //     400,
+  //     'Cross-Functional Flowchart',
+  //     '7ZhRb5swEMc/DY+bMCRt97jQpi+tVC2fwINbbMnYyD4C6aefjaHpBrTRlNCoTALJPp9t+P25O5kgTvL6XtOCPaoMRBDfBXGilULfyusEhAiikGdBfBtEUWjvIFqPjJJmNCyoBonHTIj8hB0VJXiL3dyYL+tSpsiVpM55LVSVMqrROxvci9bZMFq4JtKfzrRKGRfZA92rEjtr11tpVT1wCcYOhM5ViTKXry0G7RYb/uwWXDgDw9wCuSW2WTGOsClo6gYri8uvIGhheLN1s4KGtNSG7+AHGL+Os0JdUJm1nUJxiaDvdhZQt/EvJXHTvpTbjAq+lbadgnO1hhYSaIR6FHRjainfg8oB9d66VDxD5j0WoRcjZMC3DP8yUuMN25e5B91so5VuWMa4J+P3FJW2JtLXrOK5oNLJxZTmz/blqXhNp3mO5cpe9smS8OsyWNp5ie2TQ99ezl1joqRBTXmDAajBCgxejprHKBcNK7fvBPIz3hOSRCcQctET8olRA+8JmSopIW2j8GOD6Sji8TDxepT4C9yTE1+OEo/mQ5xcTYn8ahR5PB/k0c2UyK9HC8SbX/mnLBAnqAlD8XK+onDTE+/fw+TiQF9fTin4Nl/O0xYAEs6X9LR5n5Ae6S7xv1lr/yf+4cQ/pN75Ej/pH88/UZyQkRPzR6R+0j9Bz4f0xMm/f8adD+qzZn/bPfw5bMb++LH4Gw==',
+  //   ),
+  //   this.addDataEntry(
+  //     'container swimlane pool horizontal',
+  //     480,
+  //     380,
+  //     'Horizontal Pool 1',
+  //     'zZRLbsIwEIZP4709TlHXhJYNSEicwCIjbNWJkWNKwumZxA6IlrRUaisWlmb+eX8LM5mXzdyrnV66Ai2TL0zm3rkQrbLJ0VoG3BRMzhgAp8fgdSQq+ijfKY9VuKcAYsG7snuMyso5G8U6tDaJ9cGUVlXkTXUoacuZIHOjjS0WqnX7blYd1OZt8KYea3PE1bCI+CAtVUMq7/o5b46uCmroSn18WFMm+XCdse5GpLq0OPqAzejxvZQun6MrMfiWUg6mCDpmZM8RENdotjqVyUFUdRS259oLSzISztto5Se0i44gcHEn3i9A/IQB3GbQpmi69DskAn4BSTaGBB4Jicj+k8nTGBP5SExg8odMyL38eH3s6kM8AQ==',
+  //   ),
+  //   this.addDataEntry(
+  //     'container swimlane pool horizontal',
+  //     480,
+  //     360,
+  //     'Horizontal Pool 2',
+  //     'zZTBbsIwDIafJvfU6dDOlI0LSEg8QUQtEi1tUBJGy9PPbcJQWTsxaZs4VLJ//07sT1WYKKpm6eRBrW2JhokXJgpnbYhR1RRoDAOuSyYWDIDTx+B1opr1VX6QDutwTwPEhndpjhiVjbUmij60Jon+pCsja8rmKlQ05SKjcKe0KVeytcfuLh/k7u2SzR16fcbNZZDsRlrLhlTenWedPts6SJMEOseFLTkph6Fj212RbGlwdAGbyeV7KW2+RFthcC1ZTroMKjry5wiIK9R7ldrELInSR2H/2XtlSUHCOY5WfEG76ggCz+7E+w2InzCAcQapIf0fAySzESQZ/AKSfAoJPCKS9mbzf0H0NIVIPDAiyP8QEaXX97CvDZ7LDw==',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'swimlane;startSize=20;horizontal=0;',
+  //     320,
+  //     120,
+  //     'Lane',
+  //     'Horizontal Swimlane',
+  //     null,
+  //     null,
+  //     'swimlane lane pool',
+  //   ),
+  //   this.addDataEntry(
+  //     'container swimlane pool horizontal',
+  //     360,
+  //     480,
+  //     'Vertical Pool 1',
+  //     'xZRBbsIwEEVP4709ThFrQssGJKSewCIjbNXGyDEl4fSdxKa0NJFQVTULSzP/e+T5b2EmS9esgjrqja/QMvnMZBm8j6lyTYnWMuCmYnLJADgdBi8jruhdflQBD/GRAUgD78qeMClb720S69jaLNZn46w6ULfQ0dGWS0HlThtbrVXrT91bdVS7t2u3CFibC26vi4g7aaMaUjmpNBbiKxnUQyfkjTBEbEZT9VKOtELvMIaWrpxNFXW6IWcpOddo9jqPFfMsqjoJ+8/ZGyQqMqdhZvIHs3WHBrh4kNvvIsNw5Da7OdgXAgKGCMz+gEAxRgCmINDcxZ2CyNMYETkhESj+jwi1t1+r9759ah8=',
+  //   ),
+  //   this.addDataEntry(
+  //     'container swimlane pool vertical',
+  //     380,
+  //     480,
+  //     'Vertical Pool 2',
+  //     'xZTPbsIwDMafJvf86dDOlI0LSEg8QUQtEi1pUBJGy9PPbdJ1G1TqhXGoZH/219g/RSGitM3ay5PaugoMEW9ElN65mCLblGAM4VRXRKwI5xQ/wt8nqqyv0pP0UMc5Bp4Mn9KcISk750wSQ2xNFsNFWyNrzJYqWpxyxTA8KG2qjWzduTsrRHn4GLKlh6CvsBsGYX+krWxQpaiizcc9FjDnnaCc11dXR2lyxyjsuyPy3/Lg4CM0k8v3Ut58Dc5C9C22XHQVVeoQrwkQVaCPKtuKQZQhCcdv78gSg4zzPlpxg3bTEeSUzcR7Q2bWyvz+ytmQr8NPAow/ikAxRYA/kQAr/hPByxQC8cxLsHggAkzH56uv/XrdvgA=',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'swimlane;startSize=20;',
+  //     120,
+  //     320,
+  //     'Lane',
+  //     'Vertical Swimlane',
+  //     null,
+  //     null,
+  //     'swimlane lane pool',
+  //   ),
+  //   this.createVertexTemplateEntry(
+  //     'rounded=1;arcSize=10;dashed=1;strokeColor=#000000;fillColor=none;gradientColor=none;dashPattern=8 3 1 3;strokeWidth=2;',
+  //     200,
+  //     200,
+  //     '',
+  //     'Group',
+  //     null,
+  //     null,
+  //     this.getTagsForStencil('bpmn', 'group', 'bpmn business process model ').join(' '),
+  //   ),
+  //   this.createEdgeTemplateEntry(
+  //     'endArrow=block;endFill=1;endSize=6;html=1;',
+  //     100,
+  //     0,
+  //     '',
+  //     'Sequence Flow',
+  //     null,
+  //     'bpmn sequence flow',
+  //   ),
+  //   this.createEdgeTemplateEntry(
+  //     'startArrow=dash;startSize=8;endArrow=block;endFill=1;endSize=6;html=1;',
+  //     100,
+  //     0,
+  //     '',
+  //     'Default Flow',
+  //     null,
+  //     'bpmn default flow',
+  //   ),
+  //   this.createEdgeTemplateEntry(
+  //     'startArrow=diamondThin;startFill=0;startSize=14;endArrow=block;endFill=1;endSize=6;html=1;',
+  //     100,
+  //     0,
+  //     '',
+  //     'Conditional Flow',
+  //     null,
+  //     'bpmn conditional flow',
+  //   ),
+  //   this.createEdgeTemplateEntry(
+  //     'startArrow=oval;startFill=0;startSize=7;endArrow=block;endFill=0;endSize=10;dashed=1;html=1;',
+  //     100,
+  //     0,
+  //     '',
+  //     'Message Flow 1',
+  //     null,
+  //     'bpmn message flow',
+  //   ),
+  //   this.addEntry('bpmn message flow', function () {
+  //     var edge = new mxCell(
+  //       '',
+  //       new mxGeometry(0, 0, 0, 0),
+  //       'startArrow=oval;startFill=0;startSize=7;endArrow=block;endFill=0;endSize=10;dashed=1;html=1;',
+  //     );
+  //     edge.geometry.setTerminalPoint(new mxPoint(0, 0), true);
+  //     edge.geometry.setTerminalPoint(new mxPoint(100, 0), false);
+  //     edge.geometry.relative = true;
+  //     edge.edge = true;
 
-      var cell = new mxCell(
-        '',
-        new mxGeometry(0, 0, 20, 14),
-        'shape=message;html=1;outlineConnect=0;',
-      );
-      cell.geometry.relative = true;
-      cell.vertex = true;
-      cell.geometry.offset = new mxPoint(-10, -7);
-      edge.insert(cell);
+  //     var cell = new mxCell(
+  //       '',
+  //       new mxGeometry(0, 0, 20, 14),
+  //       'shape=message;html=1;outlineConnect=0;',
+  //     );
+  //     cell.geometry.relative = true;
+  //     cell.vertex = true;
+  //     cell.geometry.offset = new mxPoint(-10, -7);
+  //     edge.insert(cell);
 
-      return sb.createEdgeTemplateFromCells([edge], 100, 0, 'Message Flow 2');
-    }),
-    this.createEdgeTemplateEntry('shape=link;html=1;', 100, 0, '', 'Link', null, 'bpmn link'),
-  ];
+  //     return sb.createEdgeTemplateFromCells([edge], 100, 0, 'Message Flow 2');
+  //   }),
+  //   this.createEdgeTemplateEntry('shape=link;html=1;', 100, 0, '', 'Link', null, 'bpmn link'),
+  // ];
 
-  this.addPaletteFunctions('bpmn', 'BPMN ' + mxResources.get('general'), false, fns);
+  // this.addPaletteFunctions('bpmn', 'BPMN ' + mxResources.get('general'), false, fns);
   this.setCurrentSearchEntryLibrary();
 };
 
@@ -3894,20 +4325,10 @@ Sidebar.prototype.createThumb = function (
   else {
     node = this.graph.container.cloneNode(false);
     node.innerHTML = this.graph.container.innerHTML;
-
-    // Workaround for clipping in older IE versions
-    if (mxClient.IS_QUIRKS || document.documentMode == 8) {
-      node.firstChild.style.overflow = 'visible';
-    }
   }
 
   this.graph.getModel().clear();
   mxClient.NO_FO = fo;
-
-  // Catch-all event handling
-  if (mxClient.IS_IE6) {
-    parent.style.backgroundImage = 'url(' + this.editorUi.editor.transparentImage + ')';
-  }
 
   node.style.position = 'relative';
   node.style.overflow = 'hidden';
@@ -3924,7 +4345,7 @@ Sidebar.prototype.createThumb = function (
 
   // Adds title for sidebar entries
   if (this.sidebarTitles && title != null && showTitle != false) {
-    var border = mxClient.IS_QUIRKS ? 2 * this.thumbPadding + 2 : 0;
+    var border = 0;
     parent.style.height = this.thumbHeight + border + this.sidebarTitleSize + 8 + 'px';
 
     var div = document.createElement('div');
@@ -3946,6 +4367,26 @@ Sidebar.prototype.createThumb = function (
 };
 
 /**
+ * Returns a function that creates a title.
+ */
+Sidebar.prototype.createSection = function (title) {
+  return mxUtils.bind(this, function () {
+    var elt = document.createElement('div');
+    elt.setAttribute('title', title);
+    elt.style.textOverflow = 'ellipsis';
+    elt.style.whiteSpace = 'nowrap';
+    elt.style.textAlign = 'center';
+    elt.style.overflow = 'hidden';
+    elt.style.width = '100%';
+    elt.style.padding = '14px 0';
+
+    mxUtils.write(elt, title);
+
+    return elt;
+  });
+};
+
+/**
  * Creates and returns a new palette item for the given image.
  */
 Sidebar.prototype.createItem = function (
@@ -3956,18 +4397,17 @@ Sidebar.prototype.createItem = function (
   width,
   height,
   allowCellsInserted,
+  showTooltip,
 ) {
+  showTooltip = showTooltip != null ? showTooltip : true;
+
   var elt = document.createElement('a');
   elt.className = 'geItem';
   elt.style.overflow = 'hidden';
-  var border = mxClient.IS_QUIRKS ? 8 + 2 * this.thumbPadding : 2 * this.thumbBorder;
+  var border = 2 * this.thumbBorder;
   elt.style.width = this.thumbWidth + border + 'px';
   elt.style.height = this.thumbHeight + border + 'px';
   elt.style.padding = this.thumbPadding + 'px';
-
-  if (mxClient.IS_IE6) {
-    elt.style.border = 'none';
-  }
 
   // Blocks default click action
   mxEvent.addListener(elt, 'click', function (evt) {
@@ -4013,7 +4453,7 @@ Sidebar.prototype.createItem = function (
   }
 
   // Shows a tooltip with the rendered cell
-  if (!mxClient.IS_IOS) {
+  if (!mxClient.IS_IOS && showTooltip) {
     mxEvent.addGestureListeners(
       elt,
       null,
@@ -5481,6 +5921,7 @@ Sidebar.prototype.createVertexTemplate = function (
   showLabel,
   showTitle,
   allowCellsInserted,
+  showTooltip,
 ) {
   var cells = [new mxCell(value != null ? value : '', new mxGeometry(0, 0, width, height), style)];
   cells[0].vertex = true;
@@ -5493,6 +5934,7 @@ Sidebar.prototype.createVertexTemplate = function (
     showLabel,
     showTitle,
     allowCellsInserted,
+    showTooltip,
   );
 };
 
@@ -5507,6 +5949,7 @@ Sidebar.prototype.createVertexTemplateFromData = function (
   showLabel,
   showTitle,
   allowCellsInserted,
+  showTooltip,
 ) {
   var doc = mxUtils.parseXml(Graph.decompress(data));
   var codec = new mxCodec(doc);
@@ -5524,6 +5967,7 @@ Sidebar.prototype.createVertexTemplateFromData = function (
     showLabel,
     showTitle,
     allowCellsInserted,
+    showTooltip,
   );
 };
 
@@ -5538,10 +5982,20 @@ Sidebar.prototype.createVertexTemplateFromCells = function (
   showLabel,
   showTitle,
   allowCellsInserted,
+  showTooltip,
 ) {
   // Use this line to convert calls to this function with lots of boilerplate code for creating cells
   //console.trace('xml', Graph.compress(mxUtils.getXml(this.graph.encodeCells(cells))), cells);
-  return this.createItem(cells, title, showLabel, showTitle, width, height, allowCellsInserted);
+  return this.createItem(
+    cells,
+    title,
+    showLabel,
+    showTitle,
+    width,
+    height,
+    allowCellsInserted,
+    showTooltip,
+  );
 };
 
 /**
@@ -5556,6 +6010,7 @@ Sidebar.prototype.createEdgeTemplateEntry = function (
   showLabel,
   tags,
   allowCellsInserted,
+  showTooltip,
 ) {
   tags = tags != null && tags.length > 0 ? tags : title.toLowerCase();
 
@@ -5570,6 +6025,7 @@ Sidebar.prototype.createEdgeTemplateEntry = function (
         title,
         showLabel,
         allowCellsInserted,
+        showTooltip,
       );
     }),
   );
@@ -5586,6 +6042,7 @@ Sidebar.prototype.createEdgeTemplate = function (
   title,
   showLabel,
   allowCellsInserted,
+  showTooltip,
 ) {
   var cell = new mxCell(value != null ? value : '', new mxGeometry(0, 0, width, height), style);
   cell.geometry.setTerminalPoint(new mxPoint(0, height), true);
@@ -5600,6 +6057,7 @@ Sidebar.prototype.createEdgeTemplate = function (
     title,
     showLabel,
     allowCellsInserted,
+    showTooltip,
   );
 };
 
@@ -5613,8 +6071,18 @@ Sidebar.prototype.createEdgeTemplateFromCells = function (
   title,
   showLabel,
   allowCellsInserted,
+  showTooltip,
 ) {
-  return this.createItem(cells, title, showLabel, true, width, height, allowCellsInserted);
+  return this.createItem(
+    cells,
+    title,
+    showLabel,
+    true,
+    width,
+    height,
+    allowCellsInserted,
+    showTooltip,
+  );
 };
 
 /**
@@ -5731,15 +6199,13 @@ Sidebar.prototype.addFoldingHandler = function (title, content, funct) {
   );
 
   // Prevents focus
-  if (!mxClient.IS_QUIRKS) {
-    mxEvent.addListener(
-      title,
-      mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
-      mxUtils.bind(this, function (evt) {
-        evt.preventDefault();
-      }),
-    );
-  }
+  mxEvent.addListener(
+    title,
+    mxClient.IS_POINTER ? 'pointerdown' : 'mousedown',
+    mxUtils.bind(this, function (evt) {
+      evt.preventDefault();
+    }),
+  );
 };
 
 /**

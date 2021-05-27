@@ -740,6 +740,11 @@ Actions.prototype.init = function () {
       );
       linkCell.vertex = true;
 
+      var pt = graph.getCenterInsertPoint(graph.getBoundingBoxFromGeometry([linkCell], true));
+      linkCell.geometry.x = pt.x;
+      linkCell.geometry.y = pt.y;
+
+      graph.setAttributeForCell(linkCell, 'linkTarget', linkTarget);
       graph.setLinkForCell(linkCell, link);
       graph.cellSizeUpdated(linkCell, true);
 
@@ -1022,6 +1027,15 @@ Actions.prototype.init = function () {
         graph.zoomTo(1);
         ui.resetScrollbars();
       } else {
+        var b = Editor.fitWindowBorders;
+
+        if (b != null) {
+          bounds.x -= b.x;
+          bounds.y -= b.y;
+          bounds.width += b.width + b.x;
+          bounds.height += b.height + b.y;
+        }
+
         graph.fitWindow(bounds);
       }
     },

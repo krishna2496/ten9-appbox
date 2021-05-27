@@ -98,14 +98,14 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
         'xVXbboMwDP0aXicKY9oz7PLSvbT7gYy4EC2NUeIWuq+fQ0JZd9EqbdMkkHJObGOfAyHJq+1wb0XXPqAEneS3SV5ZRAqr7VCB1kmWKpnkN0mWpXwn2d0Xu4txN+2EBUPnJGQhYS/0DgITCEcHHQnXis4vSTx5qnQkLK3Vi+dSxjUaEsqAZbwYsdaic2qMDkyrtFyKA+5oqjOhcqMGkCvsXYy12C+5mIvFN1x8HXvxWGjVGF7XPJ9/YmnBcStL4SgWcGTxGSrU6BsyaGB8itbvqDg4WILhS/FGKip3D7gFsgcO6ZWkNkZcB4HTFlTTxrQ8csIF3BxTZyt4Ed343Jn8fGe4Y1JCr6AmYZrRpFMTvHLSYvcobAMUiQ6V1/B2z9Me5f6oE2EXNzVsptwnJMJtBDYOfiw6Tl2UfLEOVXpRJAW3WzFezJgvH26pQsOe8RvkawAb2YM38zyDsv8z6PKHBhnj4WzQj7UHqaZ6/kNAlm6jsWfYKinBnKtp/q2m+R9JWnyQlE+Gf1Z1OnFCbOk6USvTLEPm1R/oPJzq+fZVLn5Hd4bzH2bcO/kBvQI=',
       ),
       this.addDataEntry(
-        dt,
+        dt + ' fk pk foreign key primary',
         180,
         30,
         'Table Row 2',
         'xVXbTsMwDP2avqKupYjnljEhxguDDwir10ZkcUm8tePrcZpsYxsTQ9ykVMo5sV37nF6itJh3IyOa+g5LUFE6jNLCIJLfzbsClIqSWJZRehUlScxXlFwfOR30p3EjDGg6JSHxCUuhFuAZT1haqUDYWjRuS+LJUbklYWgiXx0XM56iJiE1GMaDHislGiv7aM/UUpVjscIFreusUT6THZT32NoQa7AdczEbis+4+CT04rBQstK8n/J87o65AcutjIWlUMCSwWcoUKFrSKOG/i5K7VFhcDAE3VHxeiooNwKcA5kVh7SypDpEXHqB4xpkVYe0NHDCelxtUrdW8Ca48bEz6enOcMckhbqHKQld9SbtmuCUKw02D8JUQIFoUDoNh0uediP3oU6ETThUMFvnPiERzgMwYfBN0X7qLOfFOhTxWRZl3G7BeLDFvFy4oQI1e8ZPkKsBbGQLzszTDEr+z6DzA4Oub79mkdYObi36tvr7bwuyejOFLcNaliXoU2VNP5U1/SVVswNVH7V8WcDN1T9ru/7y+NjcNmIqdTX2mRd/IH63K/L7Rzz7GTMYbv88/dnOj+kN',
       ),
       this.addDataEntry(
-        dt,
+        dt + ' fk pk foreign key primary',
         180,
         30,
         'Table Row 3',
