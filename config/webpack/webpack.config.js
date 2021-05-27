@@ -128,7 +128,22 @@ module.exports = {
 
       // Load CSS files: css-loader, then minify, then apply vue style loader.
       {
-        test: /\.(less|css)$/,
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              esModule: false,
+            },
+          },
+          'css-loader',
+        ],
+      },
+
+      // Load Less files: less-loader, css-loader, then minify, then apply vue style loader.
+      {
+        test: /\.less$/,
         use: [
           'vue-style-loader',
           {
@@ -254,7 +269,7 @@ module.exports = {
       },
       // Use url-loader to convert images to data URIs. Use file-loader if the file is larger than 2K.
       {
-        test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
+        test: /\.(png|jpe?g|gif|webp|ico)(\?.*)?$/,
         use: [
           {
             loader: 'url-loader',
@@ -271,11 +286,6 @@ module.exports = {
             },
           },
         ],
-      },
-
-      {
-        test: /\.(ttf|eot|svg|png|jpg|gif|ico)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file-loader',
       },
     ],
   },
