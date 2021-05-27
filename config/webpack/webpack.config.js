@@ -117,14 +117,7 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
-        // include: [path.resolve(ROOT_PATH, 'src')],
       },
-      // {
-      //   test: /\.js$/,
-      //   exclude: /src/,
-      //   loader: 'babel-loader',
-      //   // include: [path.resolve(ROOT_PATH, 'src')],
-      // },
 
       // Load CSS files: css-loader, then minify, then apply vue style loader.
       {
