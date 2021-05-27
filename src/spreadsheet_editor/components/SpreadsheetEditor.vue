@@ -50,8 +50,8 @@ export default defineComponent({
       nextTick(() => {
         luckysheet.create({
           container: 'luckysheet',
-          title: 'Spreadsheet',
           lang: 'en',
+          showinfobar: false,
           data: [
             {
               name: 'Sheet1',
