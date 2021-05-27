@@ -1439,15 +1439,18 @@ DrawioFile.prototype.addUnsavedStatus = function (err) {
       // // Installs click handler for saving
       // var links = this.ui.statusContainer.getElementsByTagName('div');
 
-      this.ui.editor.setStatus(
-        '<div title="' +
-          status +
-          '" class="geStatusAlert" style="overflow:hidden;">' +
-          status +
-          ' (' +
-          mxUtils.htmlEntities(err.message) +
-          ')</div>',
-      );
+      // TEN9: Add err variable check for safety to fix throwing error
+      if (err) {
+        this.ui.editor.setStatus(
+          '<div title="' +
+            status +
+            '" class="geStatusAlert" style="overflow:hidden;">' +
+            status +
+            ' (' +
+            mxUtils.htmlEntities(err.message) +
+            ')</div>',
+        );
+      }
     }
 
     if (EditorUi.enableDrafts && (this.getMode() == null || EditorUi.isElectronApp)) {
