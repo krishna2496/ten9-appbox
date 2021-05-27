@@ -83,6 +83,7 @@ const icons = [
   // url: https://fontawesome.com/v4.7.0/icon/file-excel-o
   {
     extensions: [
+      'sheet',
       'xls',
       'xlt',
       'xlm',

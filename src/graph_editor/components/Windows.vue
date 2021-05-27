@@ -47,11 +47,11 @@ export default defineComponent({
     },
   },
   setup(_props, ctx) {
-    function saveRecentColors(colors: string) {
-      ctx.emit('save-recent-colors', colors);
+    function onRecentColorsChanged(colors: string) {
+      ctx.emit('recent-colors-changed', colors);
     }
     return {
-      saveRecentColors,
+      onRecentColorsChanged,
     };
   },
 });
@@ -62,7 +62,7 @@ export default defineComponent({
   color-picker-window(
     :editorUi='editorUi',
     :recentColors='recentColors',
-    @saveRecentColors='saveRecentColors'
+    @recent-colors-changed='onRecentColorsChanged'
   )
   find-window(:editorUi='editorUi')
   layers-window(:editorUi='editorUi', :isEnableBind='isEnableBind')

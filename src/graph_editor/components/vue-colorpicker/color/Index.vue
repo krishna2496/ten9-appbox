@@ -256,7 +256,7 @@ export default {
           this.recentColorsArray.unshift(`#${this.alphaHexString}`);
         }
 
-        this.$emit('saveRecentColors', this.recentColorsArray.toString())
+        this.$emit('recent-colors-changed', this.recentColorsArray.toString())
       }
       this.previousAlphaHexString = this.alphaHexString;
     });

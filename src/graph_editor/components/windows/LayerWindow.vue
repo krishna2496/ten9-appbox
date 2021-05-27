@@ -290,6 +290,9 @@ export default defineComponent({
 
     // Set layer window's coordinates on window close for next open
     function setLayerWindowCoordinates() {
+      if (!layerWindow.value) {
+        return;
+      }
       const layerWindowStyle = layerWindow.value.style;
       const layerWindowStyleTop = layerWindowStyle.top.split('px');
       const layerWindowStyleLeft = layerWindowStyle.left.split('px');

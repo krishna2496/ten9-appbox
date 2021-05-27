@@ -250,6 +250,10 @@ export default defineComponent({
       addLog(fileLogEvent);
     }
 
+    function onRecentColorsChanged(colors: string) {
+      saveRecentColorsToStorage(colors);
+    }
+
     function onThemeChanged(themeName: string) {
       window.localStorage.setItem('theme', themeName);
     }
@@ -486,6 +490,7 @@ export default defineComponent({
       onGraphChanged,
       onGraphMounted,
       onPreviewModeChanged,
+      onRecentColorsChanged,
       onScratchpadDataChanged,
       onShapeLibrariesChanged,
       onThemeChanged,
@@ -493,7 +498,6 @@ export default defineComponent({
       recentColors,
       refreshLink,
       saveFile,
-      saveRecentColorsToStorage,
       scratchpadData,
       setEditorType,
       shapeLibraries,
@@ -580,11 +584,11 @@ export default defineComponent({
           :theme='theme',
           :refreshLinkHandler='refreshLink',
           :recentColors='recentColors',
-          @shape-libraries-changed='onShapeLibrariesChanged',
           @graph-changed='onGraphChanged',
+          @recent-colors-changed='onRecentColorsChanged',
           @scratchpad-data-changed='onScratchpadDataChanged',
-          @theme-changed='onThemeChanged',
-          @save-recent-colors='saveRecentColorsToStorage'
+          @shape-libraries-changed='onShapeLibrariesChanged',
+          @theme-changed='onThemeChanged'
         )
         spreadsheet-editor(v-if='getEditorType() === EditorList.Spreadsheet', ref='spreadsheet')
         .col-md-12(
