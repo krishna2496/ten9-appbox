@@ -326,11 +326,11 @@ export default defineComponent({
         v-model='searchInput',
         :class='{ bgLightPink: notFound }'
       )
-      .row.mt-2
+      .row.mt-2.ml-1
         b-form-checkbox#checkbox-1(name='checkbox-1', @change='isRegularExpression')
           span.checkbox-text
             | Regular Expression
-      .row
+      .row.ml-1
         b-form-checkbox#checkbox-2(
           name='checkbox-2',
           @change='checkAllPages',
