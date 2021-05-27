@@ -189,7 +189,7 @@ const { Sidebar } = require('../../jgraph/Sidebar.js');
         this.getTagsForStencil(gn, 'manual_input', dt).join(' '),
       ),
       this.createVertexTemplateEntry(
-        s3 + 'trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;size=0.23;arcSize=10;flipV=1;',
+        'verticalLabelPosition=middle;verticalAlign=middle;html=1;shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;size=0.23;arcSize=10;flipV=1;labelPosition=center;align=center;',
         w,
         h * 0.6,
         '',

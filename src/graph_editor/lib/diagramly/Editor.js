@@ -21,6 +21,7 @@
 // TEN9: Added imports
 const {
   mxCellHighlight,
+  mxCellRenderer,
   mxCodecRegistry,
   mxClient,
   mxCodec,
@@ -49,7 +50,7 @@ const { ChangePageSetup, ChangeGridColor } = require('../jgraph/EditorUi.js');
 
 // TEN9: Consolidate variables
 const IMAGE_PATH = '/images';
-// const SHAPES_PATH = '../../../graph_editor/lib/shapes';
+const SHAPES_PATH = '../../../graph_editor/lib/shapes';
 // const STENCIL_PATH = '../../../../public/stencils';
 const urlParams = {};
 const DRAW_MATH_URL = 'math';
@@ -79,11 +80,11 @@ const uiTheme = null;
    * Known file types.
    */
   Editor.prototype.diagramFileTypes = [
-    { description: 'diagramXmlDesc', extension: 'drawio' },
-    { description: 'diagramPngDesc', extension: 'png' },
-    { description: 'diagramSvgDesc', extension: 'svg' },
-    { description: 'diagramHtmlDesc', extension: 'html' },
-    { description: 'diagramXmlDesc', extension: 'xml' },
+    { description: 'diagramXmlDesc', extension: 'drawio', mimeType: 'text/xml' },
+    { description: 'diagramPngDesc', extension: 'png', mimeType: 'image/png' },
+    { description: 'diagramSvgDesc', extension: 'svg', mimeType: 'image/svg' },
+    { description: 'diagramHtmlDesc', extension: 'html', mimeType: 'text/html' },
+    { description: 'diagramXmlDesc', extension: 'xml', mimeType: 'text/xml' },
   ];
 
   /**
@@ -306,6 +307,22 @@ const uiTheme = null;
   );
 
   /**
+   * Error image for not found images
+   */
+  Editor.errorImage =
+    'data:image/gif;base64,R0lGODlhEAAQAPcAAADGAIQAAISEhP8AAP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH5BAEAAAAALAAAAAAQABAAAAhoAAEIFBigYMGBCAkGGMCQ4cGECxtKHBAAYUQCEzFSHLiQgMeGHjEGEAAg4oCQJz86LCkxpEqHAkwyRClxpEyXGmGaREmTIsmOL1GO/DkzI0yOE2sKIMlRJsWhCQHENDiUaVSpS5cmDAgAOw==';
+
+  /**
+   * Error image for not found images
+   */
+  Editor.configurationKey = '.configuration';
+
+  /**
+   * Error image for not found images
+   */
+  Editor.settingsKey = '.drawio-config';
+
+  /**
    * Default value for custom libraries in mxSettings.
    */
   Editor.defaultCustomLibraries = [];
@@ -319,6 +336,16 @@ const uiTheme = null;
    * Specifies if custom properties should be enabled.
    */
   Editor.enableCustomProperties = true;
+
+  /**
+   * Specifies if custom properties should be enabled.
+   */
+  Editor.enableServiceWorker =
+    urlParams['pwa'] != '0' &&
+    'serviceWorker' in navigator &&
+    (urlParams['offline'] == '1' ||
+      /.*\.diagrams\.net$/.test(window.location.hostname) ||
+      /.*\.draw\.io$/.test(window.location.hostname));
 
   /**
    * Specifies if XML files should be compressed. Default is true.
@@ -591,8 +618,11 @@ const uiTheme = null;
     { name: 'movable', dispName: 'Movable', type: 'bool', defVal: true },
     { name: 'cloneable', dispName: 'Cloneable', type: 'bool', defVal: true },
     { name: 'deletable', dispName: 'Deletable', type: 'bool', defVal: true },
-    { name: 'orthogonalLoop', dispName: 'Loop Routing', type: 'bool', defVal: false },
     { name: 'noJump', dispName: 'No Jumps', type: 'bool', defVal: false },
+    { name: 'flowAnimation', dispName: 'Flow Animation', type: 'bool', defVal: false },
+    { name: 'ignoreEdge', dispName: 'Ignore Edge', type: 'bool', defVal: false },
+    { name: 'orthogonalLoop', dispName: 'Loop Routing', type: 'bool', defVal: false },
+    { name: 'orthogonal', dispName: 'Orthogonal', type: 'bool', defVal: false },
   ].concat(Editor.commonProperties);
 
   /**
@@ -655,6 +685,7 @@ const uiTheme = null;
       enumList: [
         { val: 'visible', dispName: 'Visible' },
         { val: 'hidden', dispName: 'Hidden' },
+        { val: 'block', dispName: 'Block' },
         { val: 'fill', dispName: 'Fill' },
         { val: 'width', dispName: 'Width' },
       ],
@@ -722,6 +753,7 @@ const uiTheme = null;
         { val: 'parallelogramPerimeter', dispName: 'Parallelogram' },
         { val: 'trapezoidPerimeter', dispName: 'Trapezoid' },
         { val: 'stepPerimeter', dispName: 'Step' },
+        { val: 'centerPerimeter', dispName: 'Center' },
       ],
     },
     { name: 'fixDash', dispName: 'Fixed Dash', type: 'bool', defVal: false },
@@ -920,10 +952,14 @@ const uiTheme = null;
     '## An optional placeholders can be set to target to use data from the target instead.\n' +
     '## In addition to label, an optional fromlabel and tolabel can be used to name the column\n' +
     '## that contains the text for the label in the edges source or target (invert ignored).\n' +
-    '## The label is concatenated in the form fromlabel + label + tolabel if all are defined.\n' +
+    '## In addition to those, an optional source and targetlabel can be used to specify a label\n' +
+    '## that contains placeholders referencing the respective columns in the source or target row.\n' +
+    '## The label is created in the form fromlabel + sourcelabel + label + tolabel + targetlabel.\n' +
     '## Additional labels can be added by using an optional labels array with entries of the\n' +
     '## form {"label": string, "x": number, "y": number, "dx": number, "dy": number} where\n' +
     '## x is from -1 to 1 along the edge, y is orthogonal, and dx/dy are offsets in pixels.\n' +
+    '## An optional placeholders with the string value "source" or "target" can be specified\n' +
+    '## to replace placeholders in the additional label with data from the source or target.\n' +
     '## The target column may contain a comma-separated list of values.\n' +
     '## Multiple connect entries are allowed.\n' +
     '#\n' +
@@ -1179,7 +1215,7 @@ const uiTheme = null;
         gradient =
           this.canvas.state.gradientColor === 'none' ? null : this.canvas.state.gradientColor;
       } else {
-        style.fill == '';
+        style.fill = '';
       }
 
       // Applies cell style
@@ -1495,49 +1531,77 @@ const uiTheme = null;
     // Overrides for event handling on transparent background for sketch style
     var shapePaint = mxShape.prototype.paint;
     mxShape.prototype.paint = function (c) {
-      var fillStyle = null;
+      var addTolerance = c.addTolerance;
       var events = true;
 
       if (this.style != null) {
         events = mxUtils.getValue(this.style, mxConstants.STYLE_POINTER_EVENTS, '1') == '1';
-        fillStyle = mxUtils.getValue(this.style, 'fillStyle', 'auto');
-
-        if (this.state != null && fillStyle == 'auto') {
-          var bg = this.state.view.graph.defaultPageBackgroundColor;
-
-          if (
-            this.fill != null &&
-            (this.gradient != null || (bg != null && this.fill.toLowerCase() == bg.toLowerCase()))
-          ) {
-            fillStyle = 'solid';
-          }
-        }
       }
 
-      if (
-        events &&
-        c.handJiggle != null &&
-        c.handJiggle.constructor == RoughCanvas &&
-        !this.outline &&
-        (this.fill == null || this.fill == mxConstants.NONE || fillStyle != 'solid')
-      ) {
+      if (c.handJiggle != null && c.handJiggle.constructor == RoughCanvas && !this.outline) {
         // Save needed for possible transforms applied during paint
         c.save();
         var fill = this.fill;
         var stroke = this.stroke;
         this.fill = null;
         this.stroke = null;
+
+        var configurePointerEvents = this.configurePointerEvents;
+
+        // Ignores color changes during paint
+        var setStrokeColor = c.setStrokeColor;
+
+        c.setStrokeColor = function () {
+          // ignore
+        };
+
+        var setFillColor = c.setFillColor;
+
+        c.setFillColor = function () {
+          // ignore
+        };
+
+        // Adds stroke tolerance for plain rendering if filled
+        if (!events && fill != null) {
+          this.configurePointerEvents = function () {
+            // ignore
+          };
+        }
+
         c.handJiggle.passThrough = true;
 
         shapePaint.apply(this, arguments);
 
         c.handJiggle.passThrough = false;
-        this.fill = fill;
+        c.setFillColor = setFillColor;
+        c.setStrokeColor = setStrokeColor;
+        this.configurePointerEvents = configurePointerEvents;
         this.stroke = stroke;
+        this.fill = fill;
         c.restore();
+
+        // Bypasses stroke tolerance for sketched rendering if filled
+        if (events && fill != null) {
+          c.addTolerance = function () {
+            // ignore
+          };
+        }
       }
 
       shapePaint.apply(this, arguments);
+      c.addTolerance = addTolerance;
+    };
+
+    // Overrides glass effect to disable sketch style
+    var shapePaintGlassEffect = mxShape.prototype.paintGlassEffect;
+    mxShape.prototype.paintGlassEffect = function (c, x, y, w, h, arc) {
+      if (c.handJiggle != null && c.handJiggle.constructor == RoughCanvas) {
+        c.handJiggle.passThrough = true;
+        shapePaintGlassEffect.apply(this, arguments);
+        c.handJiggle.passThrough = false;
+      } else {
+        shapePaintGlassEffect.apply(this, arguments);
+      }
     };
   })();
 
@@ -1548,7 +1612,7 @@ const uiTheme = null;
     if (data == null || data.length == 0 || typeof pako === 'undefined') {
       return data;
     } else {
-      return pako.deflateRaw(data, { to: 'string' });
+      return Graph.arrayBufferToString(pako.deflateRaw(data));
     }
   };
 
@@ -1559,7 +1623,7 @@ const uiTheme = null;
     if (data == null || data.length == 0 || typeof pako === 'undefined') {
       return data;
     } else {
-      return pako.inflateRaw(data, { to: 'string' });
+      return pako.inflateRaw(Graph.stringToArrayBuffer(atob(data)), { to: 'string' });
     }
   };
 
@@ -1705,6 +1769,28 @@ const uiTheme = null;
 
     // Workaround for invalid character error in Safari
     var f = window.atob && !mxClient.IS_SF ? atob(base64) : Base64.decode(base64, true);
+
+    //The new format of embedding diagram XML as embedded file (attachment) is in PDF 1.7
+    if (f.substring(0, 8) == '%PDF-1.7') {
+      var blockStart = f.indexOf('EmbeddedFile');
+
+      if (blockStart > -1) {
+        var streamStart = f.indexOf('stream', blockStart) + 9; //the start of the stream [skipping header check]
+        var fileInfo = f.substring(blockStart, streamStart);
+
+        if (fileInfo.indexOf('application#2Fvnd.jgraph.mxfile') > 0) {
+          var streamEnd = f.indexOf('endstream', streamStart - 1);
+
+          return pako.inflateRaw(Graph.stringToArrayBuffer(f.substring(streamStart, streamEnd)), {
+            to: 'string',
+          });
+        }
+      }
+
+      //Not found
+      return null;
+    }
+
     var check = '/Subject (%3Cmxfile';
     var result = null;
     var curline = '';
@@ -1830,7 +1916,7 @@ const uiTheme = null;
             if (value.substring(0, idx) == 'mxGraphModel') {
               // Workaround for Java URL Encoder using + for spaces, which isn't compatible with JS
               var xmlData = pako
-                .inflateRaw(value.substring(idx + 2), { to: 'string' })
+                .inflateRaw(Graph.stringToArrayBuffer(value.substring(idx + 2)), { to: 'string' })
                 .replace(/\+/g, ' ');
 
               if (xmlData != null && xmlData.length > 0) {
@@ -1904,7 +1990,7 @@ const uiTheme = null;
 
   /**
    * Global configuration of the Editor
-   * see https://desk.draw.io/solution/articles/16000058316
+   * see https://www.diagrams.net/doc/faq/configure-diagram-editor
    *
    * For defaultVertexStyle, defaultEdgeStyle and defaultLibraries, this must be called before
    * mxSettings.load via global config variable window.mxLoadSettings = false.
@@ -1939,6 +2025,10 @@ const uiTheme = null;
 
       if (config.compressXml != null) {
         Editor.compressXml = config.compressXml;
+      }
+
+      if (config.simpleLabels != null) {
+        Editor.simpleLabels = config.simpleLabels;
       }
 
       if (config.customFonts) {
@@ -2000,6 +2090,24 @@ const uiTheme = null;
       // Overrides default edge style
       if (config.defaultEdgeStyle != null) {
         Graph.prototype.defaultEdgeStyle = config.defaultEdgeStyle;
+      }
+
+      // Overrides zoom factor
+      if (config.zoomFactor != null) {
+        var val = parseFloat(config.zoomFactor);
+
+        if (!isNaN(val) && val > 1) {
+          Graph.prototype.zoomFactor = val;
+        }
+      }
+
+      // Overrides grid steps
+      if (config.gridSteps != null) {
+        var val = parseInt(config.gridSteps);
+
+        if (!isNaN(val) && val > 0) {
+          mxGraphView.prototype.gridSteps = val;
+        }
       }
 
       if (config.emptyDiagramXml) {
@@ -2218,6 +2326,7 @@ const uiTheme = null;
         this.graph.useCssTransforms =
           !mxClient.NO_FO && this.isChromelessView() && this.graph.isCssTransformsSupported();
         this.graph.updateCssTransform();
+
         this.graph.setShadowVisible(node.getAttribute('shadow') == '1', false);
 
         var extFonts = node.getAttribute('extFonts');
@@ -2235,6 +2344,8 @@ const uiTheme = null;
           } catch (e) {
             console.log('ExtFonts format error: ' + e.message);
           }
+        } else if (this.graph.extFonts != null && this.graph.extFonts.length > 0) {
+          this.graph.extFonts = [];
         }
       }
 
@@ -2357,123 +2468,129 @@ const uiTheme = null;
   };
 
   /**
+   * Overrides relative position to fix clipping bug in Webkit.
+   */
+  Editor.mathJaxWebkitCss =
+    'div.MathJax_SVG_Display { position: static; }\n' +
+    'span.MathJax_SVG { position: static !important; }';
+
+  /**
    * Initializes math typesetting and loads respective code.
    */
   Editor.initMath = function (src, config) {
-    src = src != null ? src : DRAW_MATH_URL + '/MathJax.js';
-    Editor.mathJaxQueue = [];
-
-    Editor.doMathJaxRender = function (container) {
-      window.setTimeout(function () {
-        if (container.style.visibility != 'hidden') {
-          MathJax.Hub.Queue(['Typeset', MathJax.Hub, container]);
-        }
-      }, 0);
-    };
-
-    var font = urlParams['math-font'] != null ? decodeURIComponent(urlParams['math-font']) : 'TeX';
-
-    config =
-      config != null
-        ? config
-        : {
-            jax: ['input/TeX', 'input/MathML', 'input/AsciiMath'].concat([
-              urlParams['math-output'] == 'html' ? 'output/HTML-CSS' : 'output/SVG',
-            ]),
-            extensions: ['tex2jax.js', 'mml2jax.js', 'asciimath2jax.js'],
-            TeX: {
-              extensions: ['AMSmath.js', 'AMSsymbols.js', 'noErrors.js', 'noUndefined.js'],
-            },
-            'HTML-CSS': {
-              availableFonts: [font],
-              imageFont: null,
-            },
-            SVG: {
-              font: font,
-              // Needed for client-side export to work
-              useFontCache: false,
-            },
-            // Ignores math in in-place editor
-            tex2jax: {
-              ignoreClass: 'mxCellEditor',
-            },
-            asciimath2jax: {
-              ignoreClass: 'mxCellEditor',
-            },
-          };
-
-    // Disables global typesetting and messages on startup, adds queue for
-    // asynchronous rendering while MathJax is loading
-    window.MathJax = {
-      skipStartupTypeset: true,
-      showMathMenu: false,
-      messageStyle: 'none',
-      AuthorInit: function () {
-        MathJax.Hub.Config(config);
-
-        MathJax.Hub.Register.StartupHook('Begin', function () {
-          for (var i = 0; i < Editor.mathJaxQueue.length; i++) {
-            Editor.doMathJaxRender(Editor.mathJaxQueue[i]);
-          }
-        });
-      },
-    };
-
-    // Adds global enqueue method for async rendering
-    Editor.MathJaxRender = function (container) {
-      // Initial rendering when MathJax finished loading
-      if (typeof MathJax !== 'undefined' && typeof MathJax.Hub !== 'undefined') {
-        Editor.doMathJaxRender(container);
-      } else {
-        Editor.mathJaxQueue.push(container);
-      }
-    };
-
-    // Adds global clear queue method
-    Editor.MathJaxClear = function () {
+    if (typeof window.MathJax === 'undefined') {
+      src =
+        (src != null ? src : DRAW_MATH_URL + '/MathJax.js') +
+        '?config=TeX-MML-AM_' +
+        (urlParams['math-output'] == 'html' ? 'HTMLorMML' : 'SVG') +
+        '-full';
       Editor.mathJaxQueue = [];
-    };
 
-    // Updates math typesetting after changes
-    var editorInit = Editor.prototype.init;
-
-    Editor.prototype.init = function () {
-      editorInit.apply(this, arguments);
-
-      this.graph.addListener(
-        mxEvent.SIZE,
-        mxUtils.bind(this, function (sender, evt) {
-          if (
-            this.graph.container != null &&
-            this.graph.mathEnabled &&
-            !this.graph.blockMathRender
-          ) {
-            Editor.MathJaxRender(this.graph.container);
+      Editor.doMathJaxRender = function (container) {
+        window.setTimeout(function () {
+          if (container.style.visibility != 'hidden') {
+            MathJax.Hub.Queue(['Typeset', MathJax.Hub, container]);
           }
-        }),
-      );
-    };
+        }, 0);
+      };
 
-    var tags = document.getElementsByTagName('script');
+      var font =
+        urlParams['math-font'] != null ? decodeURIComponent(urlParams['math-font']) : 'TeX';
 
-    if (tags != null && tags.length > 0) {
-      var script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = src;
-      tags[0].parentNode.appendChild(script);
-    }
+      config =
+        config != null
+          ? config
+          : {
+              'HTML-CSS': {
+                availableFonts: [font],
+                imageFont: null,
+              },
+              SVG: {
+                font: font,
+                // Needed for client-side export to work
+                useFontCache: false,
+              },
+              // Ignores math in in-place editor
+              tex2jax: {
+                ignoreClass: 'mxCellEditor',
+              },
+              asciimath2jax: {
+                ignoreClass: 'mxCellEditor',
+              },
+            };
 
-    // Overrides position relative for block elements to fix
-    // zoomed math clipping in Webkit (drawio/issues/1213)
-    try {
-      if (mxClient.IS_GC || mxClient.IS_SF) {
-        var style = document.createElement('style');
-        style.type = 'text/css';
-        style.innerHTML = 'div.MathJax_SVG_Display { position: static; }';
-        document.getElementsByTagName('head')[0].appendChild(style);
+      // Disables global typesetting and messages on startup, adds queue for
+      // asynchronous rendering while MathJax is loading
+      window.MathJax = {
+        skipStartupTypeset: true,
+        showMathMenu: false,
+        messageStyle: 'none',
+        AuthorInit: function () {
+          MathJax.Hub.Config(config);
+
+          MathJax.Hub.Register.StartupHook('Begin', function () {
+            for (var i = 0; i < Editor.mathJaxQueue.length; i++) {
+              Editor.doMathJaxRender(Editor.mathJaxQueue[i]);
+            }
+          });
+        },
+      };
+
+      // Adds global enqueue method for async rendering
+      Editor.MathJaxRender = function (container) {
+        // Initial rendering when MathJax finished loading
+        if (typeof MathJax !== 'undefined' && typeof MathJax.Hub !== 'undefined') {
+          Editor.doMathJaxRender(container);
+        } else {
+          Editor.mathJaxQueue.push(container);
+        }
+      };
+
+      // Adds global clear queue method
+      Editor.MathJaxClear = function () {
+        Editor.mathJaxQueue = [];
+      };
+
+      // Updates math typesetting after changes
+      var editorInit = Editor.prototype.init;
+
+      Editor.prototype.init = function () {
+        editorInit.apply(this, arguments);
+
+        this.graph.addListener(
+          mxEvent.SIZE,
+          mxUtils.bind(this, function (sender, evt) {
+            if (
+              this.graph.container != null &&
+              this.graph.mathEnabled &&
+              !this.graph.blockMathRender
+            ) {
+              Editor.MathJaxRender(this.graph.container);
+            }
+          }),
+        );
+      };
+
+      var tags = document.getElementsByTagName('script');
+
+      if (tags != null && tags.length > 0) {
+        var s = document.createElement('script');
+        s.setAttribute('type', 'text/javascript');
+        s.setAttribute('src', src);
+        tags[0].parentNode.appendChild(s);
       }
-    } catch (e) {
-      // ignore
+
+      // Workaround for zoomed math clipping in Webkit
+      try {
+        if (mxClient.IS_GC || mxClient.IS_SF) {
+          var style = document.createElement('style');
+          style.type = 'text/css';
+          style.innerHTML = Editor.mathJaxWebkitCss;
+          document.getElementsByTagName('head')[0].appendChild(style);
+        }
+      } catch (e) {
+        // ignore
+      }
     }
   };
 
@@ -3176,6 +3293,8 @@ const uiTheme = null;
     noCrop,
     grid,
     keepTheme,
+    exportType,
+    cells,
   ) {
     try {
       limitHeight = limitHeight != null ? limitHeight : true;
@@ -3212,6 +3331,8 @@ const uiTheme = null;
           addShadow,
           null,
           keepTheme,
+          exportType,
+          cells,
         ),
         mxUtils.bind(this, function (svgRoot) {
           try {
@@ -3254,11 +3375,11 @@ const uiTheme = null;
                   if (mxClient.IS_SF) {
                     window.setTimeout(function () {
                       ctx.drawImage(img, 0, 0);
-                      callback(canvas);
+                      callback(canvas, svgRoot);
                     }, 0);
                   } else {
                     ctx.drawImage(img, 0, 0);
-                    callback(canvas);
+                    callback(canvas, svgRoot);
                   }
                 }
 
@@ -3512,7 +3633,7 @@ const uiTheme = null;
    * Adds persistence for recent colors
    */
   if (window.ColorDialog) {
-    FilenameDialog.filenameHelpLink = 'https://desk.draw.io/support/solutions/articles/16000091426';
+    FilenameDialog.filenameHelpLink = 'https://www.diagrams.net/doc/faq/save-file-formats';
 
     var colorDialogAddRecentColor = ColorDialog.addRecentColor;
 
@@ -3540,8 +3661,8 @@ const uiTheme = null;
 
       if (ui.editor.graph.getModel().getParent(cell) != null) {
         id = cell.getId();
-      } else if (ui.getCurrentPage() != null) {
-        id = ui.getCurrentPage().getId();
+      } else if (ui.currentPage != null) {
+        id = ui.currentPage.getId();
       }
 
       return id;
@@ -3759,376 +3880,485 @@ const uiTheme = null;
       // }
     };
 
-    // 	/**
-    // 	 * Hook for subclassers.
-    // 	 */
+    /**
+     * Hook for subclassers.
+     */
     DiagramFormatPanel.prototype.isShadowOptionVisible = function () {
       var file = this.editorUi.getCurrentFile();
 
       return urlParams['embed'] == '1' || (file != null && file.isEditable());
     };
 
-    // 	/**
-    // 	 * Option is not visible in default theme.
-    // 	 */
-    //     DiagramFormatPanel.prototype.isMathOptionVisible = function(div)
-    //     {
-    //         return false;
-    //     };
+    /**
+     * Option is not visible in default theme.
+     */
+    DiagramFormatPanel.prototype.isMathOptionVisible = function (div) {
+      return false;
+    };
 
-    // 	/**
-    // 	 * Add global shadow option.
-    // 	 */
+    /**
+     * Add global shadow option.
+     */
     var diagramFormatPanelAddView = DiagramFormatPanel.prototype.addView;
 
     DiagramFormatPanel.prototype.addView = function (div) {
       var div = diagramFormatPanelAddView.apply(this, arguments);
       var file = this.editorUi.getCurrentFile();
 
-      // if (mxClient.IS_SVG && this.isShadowOptionVisible())
-      // {
-      var ui = this.editorUi;
-      var editor = ui.editor;
-      var graph = editor.graph;
+      if (mxClient.IS_SVG && this.isShadowOptionVisible()) {
+        var ui = this.editorUi;
+        var editor = ui.editor;
+        var graph = editor.graph;
 
-      var option = this.createOption(
-        mxResources.get('shadow'),
-        function () {
-          return graph.shadowVisible;
-        },
-        function (checked) {
-          var change = new ChangePageSetup(ui);
-          change.ignoreColor = true;
-          change.ignoreImage = true;
-          change.shadowVisible = checked;
-          graph.model.execute(change);
-        },
-        {
-          install: function (apply) {
-            this.listener = function () {
-              apply(graph.shadowVisible);
-            };
-
-            ui.addListener('shadowVisibleChanged', this.listener);
+        var option = this.createOption(
+          mxResources.get('shadow'),
+          function () {
+            return graph.shadowVisible;
           },
-          destroy: function () {
-            ui.removeListener(this.listener);
-          },
-        },
-      );
+          function (checked) {
+            var change = new ChangePageSetup(ui);
+            change.ignoreColor = true;
+            change.ignoreImage = true;
+            change.shadowVisible = checked;
 
-      if (!Editor.shadowOptionEnabled) {
-        option.getElementsByTagName('input')[0].setAttribute('disabled', 'disabled');
-        mxUtils.setOpacity(option, 60);
+            graph.model.execute(change);
+          },
+          {
+            install: function (apply) {
+              this.listener = function () {
+                apply(graph.shadowVisible);
+              };
+
+              ui.addListener('shadowVisibleChanged', this.listener);
+            },
+            destroy: function () {
+              ui.removeListener(this.listener);
+            },
+          },
+        );
+
+        if (!Editor.shadowOptionEnabled) {
+          option.getElementsByTagName('input')[0].setAttribute('disabled', 'disabled');
+          mxUtils.setOpacity(option, 60);
+        }
+
+        div.appendChild(option);
       }
-      div.appendChild(option);
-      //}
 
       return div;
     };
 
-    // 	/**
-    // 	 * Adds autosave and math typesetting options.
-    // 	 */
-    // var diagramFormatPanelAddOptions = DiagramFormatPanel.prototype.addOptions;
-    // DiagramFormatPanel.prototype.addOptions = function(div)
-    // {
-    // 	div = diagramFormatPanelAddOptions.apply(this, arguments);
+    /**
+     * Adds autosave and math typesetting options.
+     */
+    var diagramFormatPanelAddOptions = DiagramFormatPanel.prototype.addOptions;
+    DiagramFormatPanel.prototype.addOptions = function (div) {
+      div = diagramFormatPanelAddOptions.apply(this, arguments);
 
-    // 	var ui = this.editorUi;
-    // 	var editor = ui.editor;
-    // 	var graph = editor.graph;
+      var ui = this.editorUi;
+      var editor = ui.editor;
+      var graph = editor.graph;
 
-    // 	if (graph.isEnabled())
-    // 	{
-    // 		var file = ui.getCurrentFile();
+      if (graph.isEnabled()) {
+        var file = ui.getCurrentFile();
 
-    // 		if (file != null && file.isAutosaveOptional())
-    // 		{
-    // 			var opt = this.createOption(mxResources.get('autosave'), function()
-    // 			{
-    // 				return ui.editor.autosave;
-    // 			}, function(checked)
-    // 			{
-    // 				ui.editor.setAutosave(checked);
+        if (file != null && file.isAutosaveOptional()) {
+          var opt = this.createOption(
+            mxResources.get('autosave'),
+            function () {
+              return ui.editor.autosave;
+            },
+            function (checked) {
+              ui.editor.setAutosave(checked);
 
-    // 				if (ui.editor.autosave && file.isModified())
-    // 				{
-    // 					file.fileChanged();
-    // 				}
-    // 			},
-    // 			{
-    // 				install: function(apply)
-    // 				{
-    // 					this.listener = function()
-    // 					{
-    // 						apply(ui.editor.autosave);
-    // 					};
+              if (ui.editor.autosave && file.isModified()) {
+                file.fileChanged();
+              }
+            },
+            {
+              install: function (apply) {
+                this.listener = function () {
+                  apply(ui.editor.autosave);
+                };
 
-    // 					ui.editor.addListener('autosaveChanged', this.listener);
-    // 				},
-    // 				destroy: function()
-    // 				{
-    // 					ui.editor.removeListener(this.listener);
-    // 				}
-    // 			});
+                ui.editor.addListener('autosaveChanged', this.listener);
+              },
+              destroy: function () {
+                ui.editor.removeListener(this.listener);
+              },
+            },
+          );
 
-    // 			div.appendChild(opt);
-    // 		}
-    // 	}
+          div.appendChild(opt);
+        }
+      }
 
-    //       if (this.isMathOptionVisible() && graph.isEnabled() && typeof(MathJax) !== 'undefined')
-    //       {
-    //           // Math
-    //           var option = this.createOption(mxResources.get('mathematicalTypesetting'), function()
-    //           {
-    //               return graph.mathEnabled;
-    //           }, function(checked)
-    //           {
-    //               ui.actions.get('mathematicalTypesetting').funct();
-    //           },
-    //           {
-    //               install: function(apply)
-    //               {
-    //                   this.listener = function()
-    //                   {
-    //                       apply(graph.mathEnabled);
-    //                   };
+      if (this.isMathOptionVisible() && graph.isEnabled() && typeof MathJax !== 'undefined') {
+        // Math
+        var option = this.createOption(
+          mxResources.get('mathematicalTypesetting'),
+          function () {
+            return graph.mathEnabled;
+          },
+          function (checked) {
+            ui.actions.get('mathematicalTypesetting').funct();
+          },
+          {
+            install: function (apply) {
+              this.listener = function () {
+                apply(graph.mathEnabled);
+              };
 
-    //                   ui.addListener('mathEnabledChanged', this.listener);
-    //               },
-    //               destroy: function()
-    //               {
-    //                   ui.removeListener(this.listener);
-    //               }
-    //           });
+              ui.addListener('mathEnabledChanged', this.listener);
+            },
+            destroy: function () {
+              ui.removeListener(this.listener);
+            },
+          },
+        );
 
-    //           option.style.paddingTop = '5px';
-    //           div.appendChild(option);
+        option.style.paddingTop = '5px';
+        div.appendChild(option);
 
-    //           var help = ui.menus.createHelpLink('https://desk.draw.io/support/solutions/articles/16000032875');
-    //           help.style.position = 'relative';
-    //           help.style.marginLeft = '6px';
-    //           help.style.top = '2px';
-    //           option.appendChild(help);
-    //       }
+        var help = ui.menus.createHelpLink('https://www.diagrams.net/doc/faq/math-typesetting');
+        help.style.position = 'relative';
+        help.style.marginLeft = '6px';
+        help.style.top = '2px';
+        option.appendChild(help);
+      }
 
-    // 	return div;
-    // };
+      return div;
+    };
 
-    // 	mxCellRenderer.prototype.defaultVertexShape.prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: mxConstants.LINE_ARCSIZE},
-    //         {name: 'absoluteArcSize', dispName: 'Abs. Arc Size', type: 'bool', defVal: false}
-    //       ];
+    mxCellRenderer.prototype.defaultVertexShape.prototype.customProperties = [
+      {
+        name: 'arcSize',
+        dispName: 'Arc Size',
+        type: 'float',
+        min: 0,
+        defVal: mxConstants.LINE_ARCSIZE,
+      },
+      { name: 'absoluteArcSize', dispName: 'Abs. Arc Size', type: 'bool', defVal: false },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['link'].prototype.customProperties = [
-    //         {name: 'width', dispName: 'Width', type: 'float', min:0, defVal: 4}
-    // 	];
+    mxCellRenderer.defaultShapes['link'].prototype.customProperties = [
+      { name: 'width', dispName: 'Width', type: 'float', min: 0, defVal: 4 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['flexArrow'].prototype.customProperties = [
-    //         {name: 'width', dispName: 'Width', type: 'float', min:0, defVal: 10},
-    //         {name: 'startWidth', dispName: 'Start Width', type: 'float', min:0, defVal: 20},
-    //         {name: 'endWidth', dispName: 'End Width', type: 'float', min:0, defVal: 20}
-    // 	];
+    mxCellRenderer.defaultShapes['flexArrow'].prototype.customProperties = [
+      { name: 'width', dispName: 'Width', type: 'float', min: 0, defVal: 10 },
+      { name: 'startWidth', dispName: 'Start Width', type: 'float', min: 0, defVal: 20 },
+      { name: 'endWidth', dispName: 'End Width', type: 'float', min: 0, defVal: 20 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['process'].prototype.customProperties = [
-    // 		{name: 'size', dispName: 'Indent', type: 'float', min: 0, max: 0.5, defVal: 0.1}
-    // 	];
+    mxCellRenderer.defaultShapes['process'].prototype.customProperties = [
+      { name: 'size', dispName: 'Indent', type: 'float', min: 0, max: 0.5, defVal: 0.1 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['rhombus'].prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, max: 50, defVal: mxConstants.LINE_ARCSIZE},
-    //         {name: 'double', dispName: 'Double', type: 'bool', defVal: false}
-    // 	];
+    mxCellRenderer.defaultShapes['rhombus'].prototype.customProperties = [
+      {
+        name: 'arcSize',
+        dispName: 'Arc Size',
+        type: 'float',
+        min: 0,
+        max: 50,
+        defVal: mxConstants.LINE_ARCSIZE,
+      },
+      { name: 'double', dispName: 'Double', type: 'bool', defVal: false },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['partialRectangle'].prototype.customProperties = [
-    //         {name: 'top', dispName: 'Top Line', type: 'bool', defVal: true},
-    //         {name: 'bottom', dispName: 'Bottom Line', type: 'bool', defVal: true},
-    //         {name: 'left', dispName: 'Left Line', type: 'bool', defVal: true},
-    //         {name: 'right', dispName: 'Right Line', type: 'bool', defVal: true}
-    //     ];
+    mxCellRenderer.defaultShapes['partialRectangle'].prototype.customProperties = [
+      { name: 'top', dispName: 'Top Line', type: 'bool', defVal: true },
+      { name: 'bottom', dispName: 'Bottom Line', type: 'bool', defVal: true },
+      { name: 'left', dispName: 'Left Line', type: 'bool', defVal: true },
+      { name: 'right', dispName: 'Right Line', type: 'bool', defVal: true },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['parallelogram'].prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: mxConstants.LINE_ARCSIZE},
-    //         {name: 'size', dispName: 'Slope Angle', type: 'float', min:0, max: 1, defVal: 0.2}
-    // 	];
+    mxCellRenderer.defaultShapes['parallelogram'].prototype.customProperties = [
+      {
+        name: 'arcSize',
+        dispName: 'Arc Size',
+        type: 'float',
+        min: 0,
+        defVal: mxConstants.LINE_ARCSIZE,
+      },
+      { name: 'size', dispName: 'Slope Angle', type: 'float', min: 0, max: 1, defVal: 0.2 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['hexagon'].prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: mxConstants.LINE_ARCSIZE},
-    //         {name: 'size', dispName: 'Slope Angle', type: 'float', min:0, max: 1, defVal: 0.25}
-    // 	];
+    mxCellRenderer.defaultShapes['hexagon'].prototype.customProperties = [
+      {
+        name: 'arcSize',
+        dispName: 'Arc Size',
+        type: 'float',
+        min: 0,
+        defVal: mxConstants.LINE_ARCSIZE,
+      },
+      { name: 'size', dispName: 'Slope Angle', type: 'float', min: 0, max: 1, defVal: 0.25 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['triangle'].prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: mxConstants.LINE_ARCSIZE}
-    // 	];
+    mxCellRenderer.defaultShapes['triangle'].prototype.customProperties = [
+      {
+        name: 'arcSize',
+        dispName: 'Arc Size',
+        type: 'float',
+        min: 0,
+        defVal: mxConstants.LINE_ARCSIZE,
+      },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['document'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Size', type: 'float', defVal: 0.3, min:0, max:1}
-    // 	];
+    mxCellRenderer.defaultShapes['document'].prototype.customProperties = [
+      { name: 'size', dispName: 'Size', type: 'float', defVal: 0.3, min: 0, max: 1 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['internalStorage'].prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: mxConstants.LINE_ARCSIZE},
-    //         {name: 'dx', dispName: 'Left Line', type: 'float', min:0, defVal: 20},
-    //         {name: 'dy', dispName: 'Top Line', type: 'float', min:0, defVal: 20}
-    // 	];
+    mxCellRenderer.defaultShapes['internalStorage'].prototype.customProperties = [
+      {
+        name: 'arcSize',
+        dispName: 'Arc Size',
+        type: 'float',
+        min: 0,
+        defVal: mxConstants.LINE_ARCSIZE,
+      },
+      { name: 'dx', dispName: 'Left Line', type: 'float', min: 0, defVal: 20 },
+      { name: 'dy', dispName: 'Top Line', type: 'float', min: 0, defVal: 20 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['cube'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Size', type: 'float', min:0, defVal:20 },
-    //         {name: 'darkOpacity', dispName: 'Dark Opacity', type: 'float', min:-1, max:1, defVal:0 },
-    //         {name: 'darkOpacity2', dispName: 'Dark Opacity 2', type: 'float', min:-1, max:1, defVal:0 }
-    // 	];
+    mxCellRenderer.defaultShapes['cube'].prototype.customProperties = [
+      { name: 'size', dispName: 'Size', type: 'float', min: 0, defVal: 20 },
+      { name: 'darkOpacity', dispName: 'Dark Opacity', type: 'float', min: -1, max: 1, defVal: 0 },
+      {
+        name: 'darkOpacity2',
+        dispName: 'Dark Opacity 2',
+        type: 'float',
+        min: -1,
+        max: 1,
+        defVal: 0,
+      },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['step'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Notch Size', type: 'float', min:0, defVal:20},
-    //         {name: 'fixedSize', dispName: 'Fixed Size', type: 'bool', defVal:true}
-    // 	];
+    mxCellRenderer.defaultShapes['step'].prototype.customProperties = [
+      { name: 'size', dispName: 'Notch Size', type: 'float', min: 0, defVal: 20 },
+      { name: 'fixedSize', dispName: 'Fixed Size', type: 'bool', defVal: true },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['trapezoid'].prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: mxConstants.LINE_ARCSIZE},
-    //         {name: 'size', dispName: 'Slope Angle', type: 'float', min:0, max: 1, defVal: 0.2}
-    // 	];
+    mxCellRenderer.defaultShapes['trapezoid'].prototype.customProperties = [
+      {
+        name: 'arcSize',
+        dispName: 'Arc Size',
+        type: 'float',
+        min: 0,
+        defVal: mxConstants.LINE_ARCSIZE,
+      },
+      { name: 'size', dispName: 'Slope Angle', type: 'float', min: 0, max: 1, defVal: 0.2 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['tape'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Size', type: 'float', min:0, max:1, defVal:0.4 }
-    // 	];
+    mxCellRenderer.defaultShapes['tape'].prototype.customProperties = [
+      { name: 'size', dispName: 'Size', type: 'float', min: 0, max: 1, defVal: 0.4 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['note'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Fold Size', type: 'float', min:0, defVal: 30},
-    //         {name: 'darkOpacity', dispName: 'Dark Opacity', type: 'float', min:-1, max:1, defVal:0 },
-    //     ];
+    mxCellRenderer.defaultShapes['note'].prototype.customProperties = [
+      { name: 'size', dispName: 'Fold Size', type: 'float', min: 0, defVal: 30 },
+      { name: 'darkOpacity', dispName: 'Dark Opacity', type: 'float', min: -1, max: 1, defVal: 0 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['card'].prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: mxConstants.LINE_ARCSIZE},
-    //         {name: 'size', dispName: 'Cutoff Size', type: 'float', min:0, defVal: 30}
-    //     ];
+    mxCellRenderer.defaultShapes['card'].prototype.customProperties = [
+      {
+        name: 'arcSize',
+        dispName: 'Arc Size',
+        type: 'float',
+        min: 0,
+        defVal: mxConstants.LINE_ARCSIZE,
+      },
+      { name: 'size', dispName: 'Cutoff Size', type: 'float', min: 0, defVal: 30 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['callout'].prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: mxConstants.LINE_ARCSIZE},
-    //         {name: 'base', dispName: 'Callout Width', type: 'float', min:0, defVal: 20},
-    //         {name: 'size', dispName: 'Callout Length', type: 'float', min:0, defVal: 30},
-    //         {name: 'position', dispName: 'Callout Position', type: 'float', min:0, max:1, defVal: 0.5},
-    //         {name: 'position2', dispName: 'Callout Tip Position', type: 'float', min:0, max:1, defVal: 0.5}
-    //     ];
+    mxCellRenderer.defaultShapes['callout'].prototype.customProperties = [
+      {
+        name: 'arcSize',
+        dispName: 'Arc Size',
+        type: 'float',
+        min: 0,
+        defVal: mxConstants.LINE_ARCSIZE,
+      },
+      { name: 'base', dispName: 'Callout Width', type: 'float', min: 0, defVal: 20 },
+      { name: 'size', dispName: 'Callout Length', type: 'float', min: 0, defVal: 30 },
+      {
+        name: 'position',
+        dispName: 'Callout Position',
+        type: 'float',
+        min: 0,
+        max: 1,
+        defVal: 0.5,
+      },
+      {
+        name: 'position2',
+        dispName: 'Callout Tip Position',
+        type: 'float',
+        min: 0,
+        max: 1,
+        defVal: 0.5,
+      },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['folder'].prototype.customProperties = [
-    //         {name: 'tabWidth', dispName: 'Tab Width', type: 'float'},
-    //         {name: 'tabHeight', dispName: 'Tab Height', type: 'float'},
-    //         {name: 'tabPosition', dispName: 'Tap Position', type: 'enum',
-    //         	enumList: [{val: 'left', dispName: 'Left'}, {val: 'right', dispName: 'Right'}]
-    //         }
-    //     ];
+    mxCellRenderer.defaultShapes['folder'].prototype.customProperties = [
+      { name: 'tabWidth', dispName: 'Tab Width', type: 'float' },
+      { name: 'tabHeight', dispName: 'Tab Height', type: 'float' },
+      {
+        name: 'tabPosition',
+        dispName: 'Tap Position',
+        type: 'enum',
+        enumList: [
+          { val: 'left', dispName: 'Left' },
+          { val: 'right', dispName: 'Right' },
+        ],
+      },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['swimlane'].prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: 15},
-    //         {name: 'startSize', dispName: 'Header Size', type: 'float'},
-    //         {name: 'horizontal', dispName: 'Horizontal', type: 'bool', defVal: true},
-    //         {name: 'separatorColor', dispName: 'Separator Color', type: 'color', defVal: null},
-    //     ];
+    mxCellRenderer.defaultShapes['swimlane'].prototype.customProperties = [
+      { name: 'arcSize', dispName: 'Arc Size', type: 'float', min: 0, defVal: 15 },
+      { name: 'startSize', dispName: 'Header Size', type: 'float' },
+      { name: 'horizontal', dispName: 'Horizontal', type: 'bool', defVal: true },
+      { name: 'separatorColor', dispName: 'Separator Color', type: 'color', defVal: null },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['table'].prototype.customProperties = [
-    // 		{name: 'rowLines', dispName: 'Row Lines', type: 'bool', defVal: true},
-    // 		{name: 'columnLines', dispName: 'Column Lines', type: 'bool', defVal: true},
-    // 		{name: 'fixedRows', dispName: 'Fixed Rows', type: 'bool', defVal: false},
-    // 		{name: 'resizeLast', dispName: 'Resize Last Column', type: 'bool', defVal: false},
-    // 		{name: 'resizeLastRow', dispName: 'Resize Last Row', type: 'bool', defVal: false}].
-    // 		concat(mxCellRenderer.defaultShapes['swimlane'].prototype.customProperties);
+    mxCellRenderer.defaultShapes['table'].prototype.customProperties = [
+      { name: 'rowLines', dispName: 'Row Lines', type: 'bool', defVal: true },
+      { name: 'columnLines', dispName: 'Column Lines', type: 'bool', defVal: true },
+      { name: 'fixedRows', dispName: 'Fixed Rows', type: 'bool', defVal: false },
+      { name: 'resizeLast', dispName: 'Resize Last Column', type: 'bool', defVal: false },
+      { name: 'resizeLastRow', dispName: 'Resize Last Row', type: 'bool', defVal: false },
+    ].concat(mxCellRenderer.defaultShapes['swimlane'].prototype.customProperties);
 
-    // 	mxCellRenderer.defaultShapes['doubleEllipse'].prototype.customProperties = [
-    //         {name: 'margin', dispName: 'Indent', type: 'float', min:0, defVal:4}
-    //     ];
+    mxCellRenderer.defaultShapes['doubleEllipse'].prototype.customProperties = [
+      { name: 'margin', dispName: 'Indent', type: 'float', min: 0, defVal: 4 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['ext'].prototype.customProperties = [
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: 15},
-    // 		{name: 'double', dispName: 'Double', type: 'bool', defVal: false},
-    //         {name: 'margin', dispName: 'Indent', type: 'float', min: 0, defVal:0}
-    //     ];
+    mxCellRenderer.defaultShapes['ext'].prototype.customProperties = [
+      { name: 'arcSize', dispName: 'Arc Size', type: 'float', min: 0, defVal: 15 },
+      { name: 'double', dispName: 'Double', type: 'bool', defVal: false },
+      { name: 'margin', dispName: 'Indent', type: 'float', min: 0, defVal: 0 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['curlyBracket'].prototype.customProperties = [
-    // 		{name: 'rounded', dispName: 'Rounded', type: 'bool', defVal: true},
-    //         {name: 'size', dispName: 'Size', type: 'float', min:0, max: 1, defVal: 0.5}
-    //     ];
+    mxCellRenderer.defaultShapes['curlyBracket'].prototype.customProperties = [
+      { name: 'rounded', dispName: 'Rounded', type: 'bool', defVal: true },
+      { name: 'size', dispName: 'Size', type: 'float', min: 0, max: 1, defVal: 0.5 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['image'].prototype.customProperties = [
-    // 		{name: 'imageAspect', dispName: 'Fixed Image Aspect', type: 'bool', defVal:true}
-    //     ];
+    mxCellRenderer.defaultShapes['image'].prototype.customProperties = [
+      { name: 'imageAspect', dispName: 'Fixed Image Aspect', type: 'bool', defVal: true },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['label'].prototype.customProperties = [
-    // 		{name: 'imageAspect', dispName: 'Fixed Image Aspect', type: 'bool', defVal:true},
-    // 		{name: 'imageAlign', dispName: 'Image Align', type: 'enum',
-    // 			enumList: [{val: 'left', dispName: 'Left'},
-    // 					   {val: 'center', dispName: 'Center'},
-    // 					   {val: 'right', dispName: 'Right'}], defVal: 'left'},
-    // 		{name: 'imageVerticalAlign', dispName: 'Image Vertical Align', type: 'enum',
-    // 			enumList: [{val: 'top', dispName: 'Top'},
-    // 				       {val: 'middle', dispName: 'Middle'},
-    // 				       {val: 'bottom', dispName: 'Bottom'}], defVal: 'middle'},
-    //         {name: 'imageWidth', dispName: 'Image Width', type: 'float', min:0, defVal: 24},
-    //         {name: 'imageHeight', dispName: 'Image Height', type: 'float', min:0, defVal: 24},
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: 12},
-    //         {name: 'absoluteArcSize', dispName: 'Abs. Arc Size', type: 'bool', defVal: false}
-    //     ];
+    mxCellRenderer.defaultShapes['label'].prototype.customProperties = [
+      { name: 'imageAspect', dispName: 'Fixed Image Aspect', type: 'bool', defVal: true },
+      {
+        name: 'imageAlign',
+        dispName: 'Image Align',
+        type: 'enum',
+        enumList: [
+          { val: 'left', dispName: 'Left' },
+          { val: 'center', dispName: 'Center' },
+          { val: 'right', dispName: 'Right' },
+        ],
+        defVal: 'left',
+      },
+      {
+        name: 'imageVerticalAlign',
+        dispName: 'Image Vertical Align',
+        type: 'enum',
+        enumList: [
+          { val: 'top', dispName: 'Top' },
+          { val: 'middle', dispName: 'Middle' },
+          { val: 'bottom', dispName: 'Bottom' },
+        ],
+        defVal: 'middle',
+      },
+      { name: 'imageWidth', dispName: 'Image Width', type: 'float', min: 0, defVal: 24 },
+      { name: 'imageHeight', dispName: 'Image Height', type: 'float', min: 0, defVal: 24 },
+      { name: 'arcSize', dispName: 'Arc Size', type: 'float', min: 0, defVal: 12 },
+      { name: 'absoluteArcSize', dispName: 'Abs. Arc Size', type: 'bool', defVal: false },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['dataStorage'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Size', type: 'float', min:0, max:1, defVal:0.1 }
-    // 	];
+    mxCellRenderer.defaultShapes['dataStorage'].prototype.customProperties = [
+      { name: 'size', dispName: 'Size', type: 'float', min: 0, max: 1, defVal: 0.1 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['manualInput'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Size', type: 'float', min:0, defVal:30 },
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: 20}
-    // 	];
+    mxCellRenderer.defaultShapes['manualInput'].prototype.customProperties = [
+      { name: 'size', dispName: 'Size', type: 'float', min: 0, defVal: 30 },
+      { name: 'arcSize', dispName: 'Arc Size', type: 'float', min: 0, defVal: 20 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['loopLimit'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Size', type: 'float', min:0, defVal:20 },
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: 20}
-    // 	];
+    mxCellRenderer.defaultShapes['loopLimit'].prototype.customProperties = [
+      { name: 'size', dispName: 'Size', type: 'float', min: 0, defVal: 20 },
+      { name: 'arcSize', dispName: 'Arc Size', type: 'float', min: 0, defVal: 20 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['offPageConnector'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Size', type: 'float', min:0, defVal:38 },
-    //         {name: 'arcSize', dispName: 'Arc Size', type: 'float', min:0, defVal: 20}
-    // 	];
+    mxCellRenderer.defaultShapes['offPageConnector'].prototype.customProperties = [
+      { name: 'size', dispName: 'Size', type: 'float', min: 0, defVal: 38 },
+      { name: 'arcSize', dispName: 'Arc Size', type: 'float', min: 0, defVal: 20 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['display'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Size', type: 'float', min: 0, max: 1, defVal: 0.25 }
-    // 	];
+    mxCellRenderer.defaultShapes['display'].prototype.customProperties = [
+      { name: 'size', dispName: 'Size', type: 'float', min: 0, max: 1, defVal: 0.25 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['singleArrow'].prototype.customProperties = [
-    //         {name: 'arrowWidth', dispName: 'Arrow Width', type: 'float', min: 0, max: 1, defVal: 0.3 },
-    //         {name: 'arrowSize', dispName: 'Arrowhead Length', type: 'float', min: 0, max: 1, defVal: 0.2 }
-    // 	];
+    mxCellRenderer.defaultShapes['singleArrow'].prototype.customProperties = [
+      { name: 'arrowWidth', dispName: 'Arrow Width', type: 'float', min: 0, max: 1, defVal: 0.3 },
+      {
+        name: 'arrowSize',
+        dispName: 'Arrowhead Length',
+        type: 'float',
+        min: 0,
+        max: 1,
+        defVal: 0.2,
+      },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['doubleArrow'].prototype.customProperties = [
-    //         {name: 'arrowWidth', dispName: 'Arrow Width', type: 'float', min: 0, max: 1, defVal: 0.3 },
-    //         {name: 'arrowSize', dispName: 'Arrowhead Length', type: 'float', min: 0, max: 1, defVal: 0.2 }
-    // 	];
+    mxCellRenderer.defaultShapes['doubleArrow'].prototype.customProperties = [
+      { name: 'arrowWidth', dispName: 'Arrow Width', type: 'float', min: 0, max: 1, defVal: 0.3 },
+      {
+        name: 'arrowSize',
+        dispName: 'Arrowhead Length',
+        type: 'float',
+        min: 0,
+        max: 1,
+        defVal: 0.2,
+      },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['cross'].prototype.customProperties = [
-    //         {name: 'size', dispName: 'Size', type: 'float', min: 0, max: 1, defVal: 0.2 }
-    // 	];
+    mxCellRenderer.defaultShapes['cross'].prototype.customProperties = [
+      { name: 'size', dispName: 'Size', type: 'float', min: 0, max: 1, defVal: 0.2 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['corner'].prototype.customProperties = [
-    //         {name: 'dx', dispName: 'Width1', type: 'float', min: 0, defVal: 20 },
-    //         {name: 'dy', dispName: 'Width2', type: 'float', min: 0, defVal: 20 }
-    // 	];
+    mxCellRenderer.defaultShapes['corner'].prototype.customProperties = [
+      { name: 'dx', dispName: 'Width1', type: 'float', min: 0, defVal: 20 },
+      { name: 'dy', dispName: 'Width2', type: 'float', min: 0, defVal: 20 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['tee'].prototype.customProperties = [
-    //         {name: 'dx', dispName: 'Width1', type: 'float', min: 0, defVal: 20 },
-    //         {name: 'dy', dispName: 'Width2', type: 'float', min: 0, defVal: 20 }
-    // 	];
+    mxCellRenderer.defaultShapes['tee'].prototype.customProperties = [
+      { name: 'dx', dispName: 'Width1', type: 'float', min: 0, defVal: 20 },
+      { name: 'dy', dispName: 'Width2', type: 'float', min: 0, defVal: 20 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['umlLifeline'].prototype.customProperties = [
-    // 		{name: 'participant', dispName:'Participant', type:'enum', defVal:'none', enumList:[
-    // 			{val:'none', dispName: 'Default'},
-    // 			{val:'umlActor', dispName: 'Actor'},
-    // 			{val:'umlBoundary', dispName: 'Boundary'},
-    // 			{val:'umlEntity', dispName: 'Entity'},
-    // 			{val:'umlControl', dispName: 'Control'},
-    // 			]},
-    // 		{name: 'size', dispName:'Height', type:'float', defVal:40, min:0}
-    // 	];
+    mxCellRenderer.defaultShapes['umlLifeline'].prototype.customProperties = [
+      {
+        name: 'participant',
+        dispName: 'Participant',
+        type: 'enum',
+        defVal: 'none',
+        enumList: [
+          { val: 'none', dispName: 'Default' },
+          { val: 'umlActor', dispName: 'Actor' },
+          { val: 'umlBoundary', dispName: 'Boundary' },
+          { val: 'umlEntity', dispName: 'Entity' },
+          { val: 'umlControl', dispName: 'Control' },
+        ],
+      },
+      { name: 'size', dispName: 'Height', type: 'float', defVal: 40, min: 0 },
+    ];
 
-    // 	mxCellRenderer.defaultShapes['umlFrame'].prototype.customProperties = [
-    // 		{name: 'width', dispName:'Title Width', type:'float', defVal:60, min:0},
-    // 		{name: 'height', dispName:'Title Height', type:'float', defVal:30, min:0}
-    // 	];
+    mxCellRenderer.defaultShapes['umlFrame'].prototype.customProperties = [
+      { name: 'width', dispName: 'Title Width', type: 'float', defVal: 60, min: 0 },
+      { name: 'height', dispName: 'Title Height', type: 'float', defVal: 30, min: 0 },
+    ];
 
     /**
      * Configures global color schemes.
@@ -4157,9 +4387,9 @@ const uiTheme = null;
       ],
       [
         { fill: '#e51400', stroke: '#B20000', font: '#ffffff' },
-        { fill: '#fa6800', stroke: '#C73500', font: '#ffffff' },
-        { fill: '#f0a30a', stroke: '#BD7000', font: '#ffffff' },
-        { fill: '#e3c800', stroke: '#B09500', font: '#ffffff' },
+        { fill: '#fa6800', stroke: '#C73500', font: '#000000' },
+        { fill: '#f0a30a', stroke: '#BD7000', font: '#000000' },
+        { fill: '#e3c800', stroke: '#B09500', font: '#000000' },
         { fill: '#6d8764', stroke: '#3A5431', font: '#ffffff' },
         { fill: '#647687', stroke: '#314354', font: '#ffffff' },
         { fill: '#76608a', stroke: '#432D57', font: '#ffffff' },
@@ -4314,7 +4544,10 @@ const uiTheme = null;
         }),
       );
 
-      btn.setAttribute('title', mxResources.get('copyStyle') + ' (Ctrl+Shift+C)');
+      btn.setAttribute(
+        'title',
+        mxResources.get('copyStyle') + ' (' + this.editorUi.actions.get('copyStyle').shortcut + ')',
+      );
       btn.style.marginBottom = '2px';
       btn.style.width = '100px';
       btn.style.marginRight = '2px';
@@ -4328,7 +4561,13 @@ const uiTheme = null;
         }),
       );
 
-      btn.setAttribute('title', mxResources.get('pasteStyle') + ' (Ctrl+Shift+V)');
+      btn.setAttribute(
+        'title',
+        mxResources.get('pasteStyle') +
+          ' (' +
+          this.editorUi.actions.get('pasteStyle').shortcut +
+          ')',
+      );
       btn.style.marginBottom = '2px';
       btn.style.width = '100px';
 
@@ -4673,6 +4912,13 @@ const uiTheme = null;
               flipBkg,
             ),
           );
+        } else if (pType == 'readOnly') {
+          var inp = document.createElement('input');
+          inp.setAttribute('readonly', '');
+          inp.value = pValue;
+          inp.style.width = '96px';
+          inp.style.borderWidth = '0px';
+          td.appendChild(inp);
         } else {
           td.innerHTML = pValue;
 
@@ -4778,8 +5024,7 @@ const uiTheme = null;
       var th = document.createElement('th');
       th.className = 'gePropHeaderCell';
       var collapseImg = document.createElement('img');
-      collapseImg.src =
-        'data:image/gif;base64,R0lGODlhDQANAIABAJmZmf///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxREY3NzBERjZGNUYxMUU1QjZEOThCNDYxMDQ2MzNCQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxREY3NzBFMDZGNUYxMUU1QjZEOThCNDYxMDQ2MzNCQiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjFERjc3MERENkY1RjExRTVCNkQ5OEI0NjEwNDYzM0JCIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjFERjc3MERFNkY1RjExRTVCNkQ5OEI0NjEwNDYzM0JCIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAQAAAQAsAAAAAA0ADQAAAhGMj6nL3QAjVHIu6azbvPtWAAA7';
+      collapseImg.src = Sidebar.prototype.expandedImage;
       th.appendChild(collapseImg);
       mxUtils.write(th, mxResources.get('property'));
       hrow.style.cursor = 'pointer';
@@ -4789,12 +5034,10 @@ const uiTheme = null;
         var display;
 
         if (!that.editorUi.propertiesCollapsed) {
-          collapseImg.src =
-            'data:image/gif;base64,R0lGODlhDQANAIABAJmZmf///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxREY3NzBERjZGNUYxMUU1QjZEOThCNDYxMDQ2MzNCQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxREY3NzBFMDZGNUYxMUU1QjZEOThCNDYxMDQ2MzNCQiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjFERjc3MERENkY1RjExRTVCNkQ5OEI0NjEwNDYzM0JCIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjFERjc3MERFNkY1RjExRTVCNkQ5OEI0NjEwNDYzM0JCIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAQAAAQAsAAAAAA0ADQAAAhGMj6nL3QAjVHIu6azbvPtWAAA7';
+          collapseImg.src = Sidebar.prototype.expandedImage;
           display = '';
         } else {
-          collapseImg.src =
-            'data:image/gif;base64,R0lGODlhDQANAIABAJmZmf///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozNUQyRTJFNjZGNUYxMUU1QjZEOThCNDYxMDQ2MzNCQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozNUQyRTJFNzZGNUYxMUU1QjZEOThCNDYxMDQ2MzNCQiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjFERjc3MEUxNkY1RjExRTVCNkQ5OEI0NjEwNDYzM0JCIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjFERjc3MEUyNkY1RjExRTVCNkQ5OEI0NjEwNDYzM0JCIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAQAAAQAsAAAAAA0ADQAAAhSMj6lrwAjcC1GyahV+dcZJgeIIFgA7';
+          collapseImg.src = Sidebar.prototype.collapsedImage;
           display = 'none';
 
           for (var e = div.childNodes.length - 1; e >= 0; e--) {
@@ -4828,6 +5071,27 @@ const uiTheme = null;
 
       var isOdd = false;
       var flipBkg = false;
+
+      var cellId = null;
+
+      if (state.vertices.length == 1 && state.edges.length == 0) {
+        cellId = state.vertices[0].id;
+      } else if (state.vertices.length == 0 && state.edges.length == 1) {
+        cellId = state.edges[0].id;
+      }
+
+      //Add it to top (always)
+      if (cellId != null) {
+        grid.appendChild(
+          createPropertyRow(
+            'id',
+            mxUtils.htmlEntities(cellId),
+            { dispName: 'ID', type: 'readOnly' },
+            true,
+            false,
+          ),
+        );
+      }
 
       for (var key in properties) {
         var prop = properties[key];
@@ -5089,8 +5353,10 @@ const uiTheme = null;
           btn.style.margin = '0px 6px 6px 0px';
 
           if (colorset != null) {
+            var b = urlParams['sketch'] == '1' ? '2px solid' : '1px solid';
+
             if (colorset['gradient'] != null) {
-              if (mxClient.IS_IE && (mxClient.IS_QUIRKS || document.documentMode < 10)) {
+              if (mxClient.IS_IE && document.documentMode < 10) {
                 btn.style.filter =
                   'progid:DXImageTransform.Microsoft.Gradient(' +
                   "StartColorStr='" +
@@ -5103,8 +5369,7 @@ const uiTheme = null;
                   'linear-gradient(' + colorset['fill'] + ' 0px,' + colorset['gradient'] + ' 100%)';
               }
             } else if (colorset['fill'] == mxConstants.NONE) {
-              btn.style.background =
-                'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkEzRDlBMUUwODYxMTExRTFCMzA4RDdDMjJBMEMxRDM3IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkEzRDlBMUUxODYxMTExRTFCMzA4RDdDMjJBMEMxRDM3Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QTNEOUExREU4NjExMTFFMUIzMDhEN0MyMkEwQzFEMzciIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QTNEOUExREY4NjExMTFFMUIzMDhEN0MyMkEwQzFEMzciLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5xh3fmAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC)';
+              btn.style.background = "url('" + Dialog.prototype.noColorImage + "')";
             } else if (colorset['fill'] == '') {
               btn.style.backgroundColor = mxUtils.getValue(
                 ui.initialDefaultVertexStyle,
@@ -5122,10 +5387,11 @@ const uiTheme = null;
             }
 
             if (colorset['stroke'] == mxConstants.NONE) {
-              btn.style.border = '1px solid transparent';
+              btn.style.border = b + ' transparent';
             } else if (colorset['stroke'] == '') {
               btn.style.border =
-                '1px solid ' +
+                b +
+                ' ' +
                 mxUtils.getValue(
                   ui.initialDefaultVertexStyle,
                   mxConstants.STYLE_STROKECOLOR,
@@ -5133,7 +5399,8 @@ const uiTheme = null;
                 );
             } else {
               btn.style.border =
-                '1px solid ' +
+                b +
+                ' ' +
                 (colorset['stroke'] ||
                   mxUtils.getValue(
                     ui.initialDefaultVertexStyle,
@@ -5157,6 +5424,8 @@ const uiTheme = null;
             btn.style.border = '1px solid ' + bd;
           }
 
+          btn.style.borderRadius = '0';
+
           picker.appendChild(btn);
         });
 
@@ -5172,7 +5441,7 @@ const uiTheme = null;
       });
 
       if (this.format.currentScheme == null) {
-        setScheme(uiTheme == 'dark' ? 1 : 0);
+        setScheme(true ? 1 : urlParams['sketch'] == '1' ? 5 : 0);
       } else {
         setScheme(this.format.currentScheme);
       }
@@ -5248,7 +5517,13 @@ const uiTheme = null;
           }),
         );
 
-        btn.setAttribute('title', mxResources.get('editStyle') + ' (Ctrl+E)');
+        btn.setAttribute(
+          'title',
+          mxResources.get('editStyle') +
+            ' (' +
+            this.editorUi.actions.get('editStyle').shortcut +
+            ')',
+        );
         btn.style.width = '202px';
         btn.style.marginBottom = '2px';
 
@@ -5359,7 +5634,7 @@ const uiTheme = null;
   /**
    * Adds a font to the document.
    */
-  Graph.addFont = function (name, url) {
+  Graph.addFont = function (name, url, callback) {
     if (name != null && name.length > 0 && url != null && url.length > 0) {
       var key = name.toLowerCase();
 
@@ -5386,9 +5661,20 @@ const uiTheme = null;
           Graph.recentCustomFonts[key] = entry;
           var head = document.getElementsByTagName('head')[0];
 
+          if (callback != null) {
+            if (entry.elt.nodeName.toLowerCase() == 'link') {
+              entry.elt.onload = callback;
+              entry.elt.onerror = callback;
+            } else {
+              callback();
+            }
+          }
+
           if (head != null) {
             head.appendChild(entry.elt);
           }
+        } else if (callback != null) {
+          callback();
         }
       }
     }
@@ -5523,40 +5809,14 @@ const uiTheme = null;
 
     function setMouseEvent(evt) {
       mouseEvent = evt;
-
-      // Workaround for member not found in IE8-
-      try {
-        if (mxClient.IS_QUIRKS || document.documentMode == 7 || document.documentMode == 8) {
-          mouseEvent = document.createEventObject(evt);
-          mouseEvent.type = evt.type;
-          mouseEvent.canBubble = evt.canBubble;
-          mouseEvent.cancelable = evt.cancelable;
-          mouseEvent.view = evt.view;
-          mouseEvent.detail = evt.detail;
-          mouseEvent.screenX = evt.screenX;
-          mouseEvent.screenY = evt.screenY;
-          mouseEvent.clientX = evt.clientX;
-          mouseEvent.clientY = evt.clientY;
-          mouseEvent.ctrlKey = evt.ctrlKey;
-          mouseEvent.altKey = evt.altKey;
-          mouseEvent.shiftKey = evt.shiftKey;
-          mouseEvent.metaKey = evt.metaKey;
-          mouseEvent.button = evt.button;
-          mouseEvent.relatedTarget = evt.relatedTarget;
-        }
-      } catch (e) {
-        // ignores possible event cloning errors
-      }
     }
 
     mxEvent.addListener(this.container, 'mouseenter', setMouseEvent);
     mxEvent.addListener(this.container, 'mousemove', setMouseEvent);
-
     // TEN9: Add support for drag events to update the mousepoint too
     mxEvent.addListener(this.container, 'dragenter', setMouseEvent);
     mxEvent.addListener(this.container, 'dragover', setMouseEvent);
     mxEvent.addListener(this.container, 'drag', setMouseEvent);
-
     function clearMouseEvent(evt) {
       mouseEvent = null;
     }
@@ -5829,11 +6089,17 @@ const uiTheme = null;
     hasShadow,
     incExtFonts,
     keepTheme,
+    exportType,
+    cells,
   ) {
     var temp = null;
+    var tempBg = null;
 
     if (!keepTheme && this.themes != null && this.defaultThemeName == 'darkTheme') {
       temp = this.stylesheet;
+      tempBg = this.defaultPageBackgroundColor;
+      this.defaultPageBackgroundColor =
+        this.defaultThemeName == 'darkTheme' ? '#ffffff' : '#2a2a2a';
       this.stylesheet = this.getDefaultStylesheet();
       // LATER: Fix math export in dark mode by fetching text nodes before
       // calling refresh and changing the font color in-place
@@ -5880,6 +6146,7 @@ const uiTheme = null;
     }
 
     if (temp != null) {
+      this.defaultPageBackgroundColor = tempBg;
       this.stylesheet = temp;
       this.refresh();
     }
@@ -6524,7 +6791,6 @@ const uiTheme = null;
   mxStencilRegistry.libraries['mockup'] = [
     //SHAPES_PATH + '/mockup/mxMockupButtons.js'
   ];
-
   mxStencilRegistry.libraries['arrows2'] = [
     //SHAPES_PATH + '/mxArrows.js'
   ];
@@ -6533,10 +6799,18 @@ const uiTheme = null;
     //SHAPES_PATH + '/mxAtlassian.js',
   ];
   mxStencilRegistry.libraries['bpmn'] = [
-    //SHAPES_PATH + '/bpmn/mxBpmnShape2.js',
+    // SHAPES_PATH + '/mxBasic.js',
     STENCIL_PATH + '/bpmn.xml',
+    //SHAPES_PATH + '/bpmn/mxBpmnShape2.js',
   ];
-  // mxStencilRegistry.libraries['c4'] = [SHAPES_PATH + '/mxC4.js'];
+  mxStencilRegistry.libraries['bpmn2'] = [
+    //SHAPES_PATH + '/mxBasic.js',
+    STENCIL_PATH + '/bpmn.xml',
+    //SHAPES_PATH + '/bpmn/mxBpmnShape2.js',
+  ];
+  mxStencilRegistry.libraries['c4'] = [
+    //SHAPES_PATH + '/mxC4.js'
+  ];
   mxStencilRegistry.libraries['cisco19'] = [
     //SHAPES_PATH + '/mxCisco19.js',
     STENCIL_PATH + '/cisco19.xml',
@@ -6568,7 +6842,7 @@ const uiTheme = null;
     STENCIL_PATH + '/flowchart.xml',
   ];
   mxStencilRegistry.libraries['ios'] = [
-    // SHAPES_PATH + '/mockup/mxMockupiOS.js'
+    //SHAPES_PATH + '/mockup/mxMockupiOS.js'
   ];
   mxStencilRegistry.libraries['rackGeneral'] = [
     //SHAPES_PATH + '/rack/mxRack.js',
@@ -6592,21 +6866,25 @@ const uiTheme = null;
     //SHAPES_PATH + '/mxAndroid.js',
     STENCIL_PATH + '/android/android.xml',
   ];
-  mxStencilRegistry.libraries['electrical/miscellaneous'] = [
-    //SHAPES_PATH + '/mxElectrical.js',
-    STENCIL_PATH + '/electrical/miscellaneous.xml',
-  ];
-  mxStencilRegistry.libraries['electrical/transmission'] = [
-    //SHAPES_PATH + '/mxElectrical.js',
-    STENCIL_PATH + '/electrical/transmission.xml',
-  ];
-  mxStencilRegistry.libraries['electrical/logic_gates'] = [
-    //SHAPES_PATH + '/mxElectrical.js',
-    STENCIL_PATH + '/electrical/logic_gates.xml',
-  ];
   mxStencilRegistry.libraries['electrical/abstract'] = [
     //SHAPES_PATH + '/mxElectrical.js',
     STENCIL_PATH + '/electrical/abstract.xml',
+  ];
+  mxStencilRegistry.libraries['electrical/logic_gates'] = [
+    // SHAPES_PATH + '/mxElectrical.js',
+    STENCIL_PATH + '/electrical/logic_gates.xml',
+  ];
+  mxStencilRegistry.libraries['electrical/miscellaneous'] = [
+    // SHAPES_PATH + '/mxElectrical.js',
+    STENCIL_PATH + '/electrical/miscellaneous.xml',
+  ];
+  mxStencilRegistry.libraries['electrical/signal_sources'] = [
+    // SHAPES_PATH + '/mxElectrical.js',
+    STENCIL_PATH + '/electrical/signal_sources.xml',
+  ];
+  mxStencilRegistry.libraries['electrical/transmission'] = [
+    // SHAPES_PATH + '/mxElectrical.js',
+    STENCIL_PATH + '/electrical/transmission.xml',
   ];
   mxStencilRegistry.libraries['infographic'] = [
     //SHAPES_PATH + '/mxInfographic.js'
@@ -6615,7 +6893,7 @@ const uiTheme = null;
     //SHAPES_PATH + '/mockup/mxMockupButtons.js'
   ];
   mxStencilRegistry.libraries['mockup/containers'] = [
-    //SHAPES_PATH + '/mockup/mxMockupContainers.js'
+    //SHAPES_PATH + '/mockup/mxMockupContainers.js',
   ];
   mxStencilRegistry.libraries['mockup/forms'] = [
     //SHAPES_PATH + '/mockup/mxMockupForms.js'
@@ -6643,8 +6921,8 @@ const uiTheme = null;
     STENCIL_PATH + '/floorplan.xml',
   ];
   mxStencilRegistry.libraries['bootstrap'] = [
-    //SHAPES_PATH + '/mxBootstrap.js',
-    //SHAPES_PATH + '/mxBasic.js',
+    // SHAPES_PATH + '/mxBootstrap.js',
+    // SHAPES_PATH + '/mxBasic.js',
     STENCIL_PATH + '/bootstrap.xml',
   ];
   mxStencilRegistry.libraries['gmdl'] = [
@@ -6691,6 +6969,9 @@ const uiTheme = null;
   mxStencilRegistry.libraries['aws4b'] = [
     //SHAPES_PATH + '/mxAWS4.js',
     STENCIL_PATH + '/aws4.xml',
+  ];
+  mxStencilRegistry.libraries['uml25'] = [
+    //SHAPES_PATH + '/mxUML25.js'
   ];
   mxStencilRegistry.libraries['veeam'] = [
     STENCIL_PATH + '/veeam/2d.xml',
@@ -6761,683 +7042,689 @@ const uiTheme = null;
   /**
    * Constructs a new print dialog.
    */
-  // PrintDialog.prototype.create = function (editorUi, titleText) {
-  //   var graph = editorUi.editor.graph;
-  //   var div = document.createElement('div');
-
-  //   var title = document.createElement('h3');
-  //   title.style.width = '100%';
-  //   title.style.textAlign = 'center';
-  //   title.style.marginTop = '0px';
-  //   mxUtils.write(title, titleText || mxResources.get('print'));
-  //   div.appendChild(title);
-
-  //   var pageCount = 1;
-  //   var currentPage = 1;
-
-  //   // Pages
-  //   var pagesSection = document.createElement('div');
-  //   pagesSection.style.cssText =
-  //     'border-bottom:1px solid lightGray;padding-bottom:12px;margin-bottom:12px;';
-
-  //   var allPagesRadio = document.createElement('input');
-  //   allPagesRadio.style.cssText = 'margin-right:8px;margin-bottom:8px;';
-  //   allPagesRadio.setAttribute('value', 'all');
-  //   allPagesRadio.setAttribute('type', 'radio');
-  //   allPagesRadio.setAttribute('name', 'pages-printdialog');
-
-  //   pagesSection.appendChild(allPagesRadio);
-
-  //   var span = document.createElement('span');
-  //   mxUtils.write(span, mxResources.get('printAllPages'));
-  //   pagesSection.appendChild(span);
-
-  //   mxUtils.br(pagesSection);
-
-  //   // Pages ... to ...
-  //   var pagesRadio = allPagesRadio.cloneNode(true);
-  //   allPagesRadio.setAttribute('checked', 'checked');
-  //   pagesRadio.setAttribute('value', 'range');
-  //   pagesSection.appendChild(pagesRadio);
-
-  //   var span = document.createElement('span');
-  //   mxUtils.write(span, mxResources.get('pages') + ':');
-  //   pagesSection.appendChild(span);
-
-  //   var pagesFromInput = document.createElement('input');
-  //   pagesFromInput.style.cssText = 'margin:0 8px 0 8px;';
-  //   pagesFromInput.setAttribute('value', '1');
-  //   pagesFromInput.setAttribute('type', 'number');
-  //   pagesFromInput.setAttribute('min', '1');
-  //   pagesFromInput.style.width = '50px';
-  //   pagesSection.appendChild(pagesFromInput);
-
-  //   var span = document.createElement('span');
-  //   mxUtils.write(span, mxResources.get('to'));
-  //   pagesSection.appendChild(span);
-
-  //   var pagesToInput = pagesFromInput.cloneNode(true);
-  //   pagesSection.appendChild(pagesToInput);
-
-  //   mxEvent.addListener(pagesFromInput, 'focus', function () {
-  //     pagesRadio.checked = true;
-  //   });
-
-  //   mxEvent.addListener(pagesToInput, 'focus', function () {
-  //     pagesRadio.checked = true;
-  //   });
-
-  //   function validatePageRange() {
-  //     pagesToInput.value = Math.max(
-  //       1,
-  //       Math.min(pageCount, Math.max(parseInt(pagesToInput.value), parseInt(pagesFromInput.value))),
-  //     );
-  //     pagesFromInput.value = Math.max(
-  //       1,
-  //       Math.min(pageCount, Math.min(parseInt(pagesToInput.value), parseInt(pagesFromInput.value))),
-  //     );
-  //   }
-
-  //   mxEvent.addListener(pagesFromInput, 'change', validatePageRange);
-  //   mxEvent.addListener(pagesToInput, 'change', validatePageRange);
-
-  //   if (editorUi.pages != null) {
-  //     pageCount = editorUi.pages.length;
-
-  //     if (editorUi.getCurrentPage() != null) {
-  //       for (var i = 0; i < editorUi.pages.length; i++) {
-  //         if (editorUi.getCurrentPage() == editorUi.pages[i]) {
-  //           currentPage = i + 1;
-  //           pagesFromInput.value = currentPage;
-  //           pagesToInput.value = currentPage;
-  //           break;
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   pagesFromInput.setAttribute('max', pageCount);
-  //   pagesToInput.setAttribute('max', pageCount);
-
-  //   if (!editorUi.isPagesEnabled()) {
-  //     pagesRadio.checked = true;
-  //   } else if (pageCount > 1) {
-  //     div.appendChild(pagesSection);
-  //     pagesRadio.checked = true;
-  //   }
+  PrintDialog.prototype.create = function (editorUi, titleText) {
+    var graph = editorUi.editor.graph;
+    var div = document.createElement('div');
+
+    var title = document.createElement('h3');
+    title.style.width = '100%';
+    title.style.textAlign = 'center';
+    title.style.marginTop = '0px';
+    mxUtils.write(title, titleText || mxResources.get('print'));
+    div.appendChild(title);
+
+    var pageCount = 1;
+    var currentPage = 1;
+
+    // Pages
+    var pagesSection = document.createElement('div');
+    pagesSection.style.cssText =
+      'border-bottom:1px solid lightGray;padding-bottom:12px;margin-bottom:12px;';
+
+    var allPagesRadio = document.createElement('input');
+    allPagesRadio.style.cssText = 'margin-right:8px;margin-bottom:8px;';
+    allPagesRadio.setAttribute('value', 'all');
+    allPagesRadio.setAttribute('type', 'radio');
+    allPagesRadio.setAttribute('name', 'pages-printdialog');
+
+    pagesSection.appendChild(allPagesRadio);
+
+    var span = document.createElement('span');
+    mxUtils.write(span, mxResources.get('printAllPages'));
+    pagesSection.appendChild(span);
+
+    mxUtils.br(pagesSection);
+
+    // Pages ... to ...
+    var pagesRadio = allPagesRadio.cloneNode(true);
+    allPagesRadio.setAttribute('checked', 'checked');
+    pagesRadio.setAttribute('value', 'range');
+    pagesSection.appendChild(pagesRadio);
+
+    var span = document.createElement('span');
+    mxUtils.write(span, mxResources.get('pages') + ':');
+    pagesSection.appendChild(span);
+
+    var pagesFromInput = document.createElement('input');
+    pagesFromInput.style.cssText = 'margin:0 8px 0 8px;';
+    pagesFromInput.setAttribute('value', '1');
+    pagesFromInput.setAttribute('type', 'number');
+    pagesFromInput.setAttribute('min', '1');
+    pagesFromInput.style.width = '50px';
+    pagesSection.appendChild(pagesFromInput);
+
+    var span = document.createElement('span');
+    mxUtils.write(span, mxResources.get('to'));
+    pagesSection.appendChild(span);
+
+    var pagesToInput = pagesFromInput.cloneNode(true);
+    pagesSection.appendChild(pagesToInput);
+
+    mxEvent.addListener(pagesFromInput, 'focus', function () {
+      pagesRadio.checked = true;
+    });
+
+    mxEvent.addListener(pagesToInput, 'focus', function () {
+      pagesRadio.checked = true;
+    });
+
+    function validatePageRange() {
+      pagesToInput.value = Math.max(
+        1,
+        Math.min(pageCount, Math.max(parseInt(pagesToInput.value), parseInt(pagesFromInput.value))),
+      );
+      pagesFromInput.value = Math.max(
+        1,
+        Math.min(pageCount, Math.min(parseInt(pagesToInput.value), parseInt(pagesFromInput.value))),
+      );
+    }
+
+    mxEvent.addListener(pagesFromInput, 'change', validatePageRange);
+    mxEvent.addListener(pagesToInput, 'change', validatePageRange);
+
+    if (editorUi.pages != null) {
+      pageCount = editorUi.pages.length;
+
+      if (editorUi.currentPage != null) {
+        for (var i = 0; i < editorUi.pages.length; i++) {
+          if (editorUi.currentPage == editorUi.pages[i]) {
+            currentPage = i + 1;
+            pagesFromInput.value = currentPage;
+            pagesToInput.value = currentPage;
+            break;
+          }
+        }
+      }
+    }
+
+    pagesFromInput.setAttribute('max', pageCount);
+    pagesToInput.setAttribute('max', pageCount);
+
+    if (!editorUi.isPagesEnabled()) {
+      pagesRadio.checked = true;
+    } else if (pageCount > 1) {
+      div.appendChild(pagesSection);
+      pagesRadio.checked = true;
+    }
 
-  //   // Adjust to ...
-  //   var adjustSection = document.createElement('div');
-  //   adjustSection.style.marginBottom = '10px';
+    // Adjust to ...
+    var adjustSection = document.createElement('div');
+    adjustSection.style.marginBottom = '10px';
 
-  //   var adjustRadio = document.createElement('input');
-  //   adjustRadio.style.marginRight = '8px';
+    var adjustRadio = document.createElement('input');
+    adjustRadio.style.marginRight = '8px';
 
-  //   adjustRadio.setAttribute('value', 'adjust');
-  //   adjustRadio.setAttribute('type', 'radio');
-  //   adjustRadio.setAttribute('name', 'printZoom');
-  //   adjustSection.appendChild(adjustRadio);
+    adjustRadio.setAttribute('value', 'adjust');
+    adjustRadio.setAttribute('type', 'radio');
+    adjustRadio.setAttribute('name', 'printZoom');
+    adjustSection.appendChild(adjustRadio);
 
-  //   var span = document.createElement('span');
-  //   mxUtils.write(span, mxResources.get('adjustTo'));
-  //   adjustSection.appendChild(span);
+    var span = document.createElement('span');
+    mxUtils.write(span, mxResources.get('adjustTo'));
+    adjustSection.appendChild(span);
 
-  //   var zoomInput = document.createElement('input');
-  //   zoomInput.style.cssText = 'margin:0 8px 0 8px;';
-  //   zoomInput.setAttribute('value', '100 %');
-  //   zoomInput.style.width = '50px';
-  //   adjustSection.appendChild(zoomInput);
-
-  //   mxEvent.addListener(zoomInput, 'focus', function () {
-  //     adjustRadio.checked = true;
-  //   });
-
-  //   div.appendChild(adjustSection);
-
-  //   // Fit to ...
-  //   var fitSection = pagesSection.cloneNode(false);
-
-  //   var fitRadio = adjustRadio.cloneNode(true);
-  //   fitRadio.setAttribute('value', 'fit');
-  //   adjustRadio.setAttribute('checked', 'checked');
-
-  //   var spanFitRadio = document.createElement('div');
-  //   spanFitRadio.style.cssText =
-  //     'display:inline-block;height:100%;vertical-align:top;padding-top:2px;';
-  //   spanFitRadio.appendChild(fitRadio);
-  //   fitSection.appendChild(spanFitRadio);
-
-  //   var table = document.createElement('table');
-  //   table.style.display = 'inline-block';
-  //   var tbody = document.createElement('tbody');
-
-  //   var row1 = document.createElement('tr');
-  //   var row2 = row1.cloneNode(true);
-
-  //   var td1 = document.createElement('td');
-  //   var td2 = td1.cloneNode(true);
-  //   var td3 = td1.cloneNode(true);
-
-  //   var td4 = td1.cloneNode(true);
-  //   var td5 = td1.cloneNode(true);
-  //   var td6 = td1.cloneNode(true);
+    var zoomInput = document.createElement('input');
+    zoomInput.style.cssText = 'margin:0 8px 0 8px;';
+    zoomInput.setAttribute('value', '100 %');
+    zoomInput.style.width = '50px';
+    adjustSection.appendChild(zoomInput);
+
+    mxEvent.addListener(zoomInput, 'focus', function () {
+      adjustRadio.checked = true;
+    });
+
+    div.appendChild(adjustSection);
+
+    // Fit to ...
+    var fitSection = pagesSection.cloneNode(false);
+
+    var fitRadio = adjustRadio.cloneNode(true);
+    fitRadio.setAttribute('value', 'fit');
+    adjustRadio.setAttribute('checked', 'checked');
+
+    var spanFitRadio = document.createElement('div');
+    spanFitRadio.style.cssText =
+      'display:inline-block;height:100%;vertical-align:top;padding-top:2px;';
+    spanFitRadio.appendChild(fitRadio);
+    fitSection.appendChild(spanFitRadio);
+
+    var table = document.createElement('table');
+    table.style.display = 'inline-block';
+    var tbody = document.createElement('tbody');
+
+    var row1 = document.createElement('tr');
+    var row2 = row1.cloneNode(true);
+
+    var td1 = document.createElement('td');
+    var td2 = td1.cloneNode(true);
+    var td3 = td1.cloneNode(true);
+
+    var td4 = td1.cloneNode(true);
+    var td5 = td1.cloneNode(true);
+    var td6 = td1.cloneNode(true);
 
-  //   td1.style.textAlign = 'right';
-  //   td4.style.textAlign = 'right';
-
-  //   mxUtils.write(td1, mxResources.get('fitTo'));
-
-  //   var sheetsAcrossInput = document.createElement('input');
-  //   sheetsAcrossInput.style.cssText = 'margin:0 8px 0 8px;';
-  //   sheetsAcrossInput.setAttribute('value', '1');
-  //   sheetsAcrossInput.setAttribute('min', '1');
-  //   sheetsAcrossInput.setAttribute('type', 'number');
-  //   sheetsAcrossInput.style.width = '40px';
-  //   td2.appendChild(sheetsAcrossInput);
-
-  //   var span = document.createElement('span');
-  //   mxUtils.write(span, mxResources.get('fitToSheetsAcross'));
-  //   td3.appendChild(span);
-
-  //   mxUtils.write(td4, mxResources.get('fitToBy'));
-
-  //   var sheetsDownInput = sheetsAcrossInput.cloneNode(true);
-  //   td5.appendChild(sheetsDownInput);
-
-  //   mxEvent.addListener(sheetsAcrossInput, 'focus', function () {
-  //     fitRadio.checked = true;
-  //   });
-
-  //   mxEvent.addListener(sheetsDownInput, 'focus', function () {
-  //     fitRadio.checked = true;
-  //   });
-
-  //   var span = document.createElement('span');
-  //   mxUtils.write(span, mxResources.get('fitToSheetsDown'));
-  //   td6.appendChild(span);
-
-  //   row1.appendChild(td1);
-  //   row1.appendChild(td2);
-  //   row1.appendChild(td3);
-
-  //   row2.appendChild(td4);
-  //   row2.appendChild(td5);
-  //   row2.appendChild(td6);
-
-  //   tbody.appendChild(row1);
-  //   tbody.appendChild(row2);
-  //   table.appendChild(tbody);
-  //   fitSection.appendChild(table);
-
-  //   div.appendChild(fitSection);
-
-  //   // Page scale ...
-  //   var pageScaleSection = document.createElement('div');
-
-  //   var span = document.createElement('div');
-  //   span.style.fontWeight = 'bold';
-  //   span.style.marginBottom = '12px';
-  //   mxUtils.write(span, mxResources.get('paperSize'));
-  //   pageScaleSection.appendChild(span);
-
-  //   var span = document.createElement('div');
-  //   span.style.marginBottom = '12px';
-
-  //   var accessor = PageSetupDialog.addPageFormatPanel(
-  //     span,
-  //     'printdialog',
-  //     editorUi.editor.graph.pageFormat || mxConstants.PAGE_FORMAT_A4_PORTRAIT,
-  //   );
-  //   pageScaleSection.appendChild(span);
-
-  //   var span = document.createElement('span');
-  //   mxUtils.write(span, mxResources.get('pageScale'));
-  //   pageScaleSection.appendChild(span);
-
-  //   var pageScaleInput = document.createElement('input');
-  //   pageScaleInput.style.cssText = 'margin:0 8px 0 8px;';
-  //   pageScaleInput.setAttribute('value', '100 %');
-  //   pageScaleInput.style.width = '60px';
-  //   pageScaleSection.appendChild(pageScaleInput);
-
-  //   div.appendChild(pageScaleSection);
-
-  //   // Buttons
-  //   var buttons = document.createElement('div');
-  //   buttons.style.cssText = 'text-align:right;margin:48px 0 0 0;';
-
-  //   // Overall scale for print-out to account for print borders in dialogs etc
-  //   function preview(print) {
-  //     var printScale = parseInt(pageScaleInput.value) / 100;
-
-  //     if (isNaN(printScale)) {
-  //       printScale = 1;
-  //       pageScaleInput.value = '100 %';
-  //     }
-
-  //     // Workaround to match available paper size in actual print output
-  //     printScale *= 0.75;
-
-  //     // Disables dark mode while printing
-  //     var darkStylesheet = null;
-
-  //     if (graph.themes != null && graph.defaultThemeName == 'darkTheme') {
-  //       darkStylesheet = graph.stylesheet;
-  //       graph.stylesheet = graph.getDefaultStylesheet();
-  //       graph.refresh();
-  //     }
-
-  //     function printGraph(thisGraph, pv, forcePageBreaks) {
-  //       // Workaround for CSS transforms affecting the print output
-  //       // is to disable during print output and restore after
-  //       var prev = thisGraph.useCssTransforms;
-  //       var prevTranslate = thisGraph.currentTranslate;
-  //       var prevScale = thisGraph.currentScale;
-  //       var prevViewTranslate = thisGraph.view.translate;
-  //       var prevViewScale = thisGraph.view.scale;
-
-  //       if (thisGraph.useCssTransforms) {
-  //         thisGraph.useCssTransforms = false;
-  //         thisGraph.currentTranslate = new mxPoint(0, 0);
-  //         thisGraph.currentScale = 1;
-  //         thisGraph.view.translate = new mxPoint(0, 0);
-  //         thisGraph.view.scale = 1;
-  //       }
-
-  //       // Negative coordinates are cropped or shifted if page visible
-  //       var gb = thisGraph.getGraphBounds();
-  //       var border = 0;
-  //       var x0 = 0;
-  //       var y0 = 0;
-
-  //       var pf = accessor.get();
-  //       var scale = 1 / thisGraph.pageScale;
-  //       var autoOrigin = fitRadio.checked;
-
-  //       if (autoOrigin) {
-  //         var h = parseInt(sheetsAcrossInput.value);
-  //         var v = parseInt(sheetsDownInput.value);
-
-  //         scale = Math.min(
-  //           (pf.height * v) / (gb.height / thisGraph.view.scale),
-  //           (pf.width * h) / (gb.width / thisGraph.view.scale),
-  //         );
-  //       } else {
-  //         scale = parseInt(zoomInput.value) / (100 * thisGraph.pageScale);
-
-  //         if (isNaN(scale)) {
-  //           printScale = 1 / thisGraph.pageScale;
-  //           zoomInput.value = '100 %';
-  //         }
-  //       }
-
-  //       // Applies print scale
-  //       pf = mxRectangle.fromRectangle(pf);
-  //       pf.width = Math.ceil(pf.width * printScale);
-  //       pf.height = Math.ceil(pf.height * printScale);
-  //       scale *= printScale;
-
-  //       // Starts at first visible page
-  //       if (!autoOrigin && thisGraph.pageVisible) {
-  //         var layout = thisGraph.getPageLayout();
-  //         x0 -= layout.x * pf.width;
-  //         y0 -= layout.y * pf.height;
-  //       } else {
-  //         autoOrigin = true;
-  //       }
-
-  //       if (pv == null) {
-  //         pv = PrintDialog.createPrintPreview(thisGraph, scale, pf, border, x0, y0, autoOrigin);
-  //         pv.pageSelector = false;
-  //         pv.mathEnabled = false;
-
-  //         var file = editorUi.getCurrentFile();
-
-  //         if (file != null) {
-  //           pv.title = file.getTitle();
-  //         }
-
-  //         var writeHead = pv.writeHead;
-
-  //         // Overridden to add custom fonts
-  //         pv.writeHead = function (doc) {
-  //           writeHead.apply(this, arguments);
-
-  //           // Fixes clipping for transformed math
-  //           if (mxClient.IS_GC || mxClient.IS_SF) {
-  //             doc.writeln('<style type="text/css">');
-  //             doc.writeln('div.MathJax_SVG_Display { position: static; }');
-  //             doc.writeln('</style>');
-  //           }
-
-  //           // Fixes font weight for PDF export in Chrome
-  //           if (mxClient.IS_GC) {
-  //             doc.writeln('<style type="text/css">');
-  //             doc.writeln('@media print {');
-  //             doc.writeln('span.MathJax_SVG svg { shape-rendering: crispEdges; }');
-  //             doc.writeln('}');
-  //             doc.writeln('</style>');
-  //           }
-
-  //           if (editorUi.editor.fontCss != null) {
-  //             doc.writeln('<style type="text/css">');
-  //             doc.writeln(editorUi.editor.fontCss);
-  //             doc.writeln('</style>');
-  //           }
-
-  //           var extFonts = thisGraph.getCustomFonts();
-
-  //           for (var i = 0; i < extFonts.length; i++) {
-  //             var fontName = extFonts[i].name;
-  //             var fontUrl = extFonts[i].url;
-
-  //             if (Graph.isCssFontUrl(fontUrl)) {
-  //               doc.writeln(
-  //                 '<link rel="stylesheet" href="' +
-  //                   mxUtils.htmlEntities(fontUrl) +
-  //                   '" charset="UTF-8" type="text/css">',
-  //               );
-  //             } else {
-  //               doc.writeln('<style type="text/css">');
-  //               doc.writeln(
-  //                 '@font-face {\n' +
-  //                   'font-family: "' +
-  //                   mxUtils.htmlEntities(fontName) +
-  //                   '";\n' +
-  //                   'src: url("' +
-  //                   mxUtils.htmlEntities(fontUrl) +
-  //                   '");\n}',
-  //               );
-  //               doc.writeln('</style>');
-  //             }
-  //           }
-  //         };
-
-  //         if (typeof MathJax !== 'undefined') {
-  //           // Adds class to ignore if math is disabled
-  //           var printPreviewRenderPage = pv.renderPage;
-
-  //           pv.renderPage = function (w, h, dx, dy, content, pageNumber) {
-  //             var prev = mxClient.NO_FO;
-  //             mxClient.NO_FO =
-  //               this.graph.mathEnabled && !editorUi.editor.useForeignObjectForMath
-  //                 ? true
-  //                 : editorUi.editor.originalNoForeignObject;
-  //             var result = printPreviewRenderPage.apply(this, arguments);
-  //             mxClient.NO_FO = prev;
-
-  //             if (this.graph.mathEnabled) {
-  //               this.mathEnabled = this.mathEnabled || true;
-  //             } else {
-  //               result.className = 'geDisableMathJax';
-  //             }
-
-  //             return result;
-  //           };
-  //         }
-
-  //         // Switches stylesheet for print output in dark mode
-  //         var temp = null;
-
-  //         if (graph.themes != null && graph.defaultThemeName == 'darkTheme') {
-  //           temp = graph.stylesheet;
-  //           graph.stylesheet = graph.getDefaultStylesheet();
-  //           graph.refresh();
-  //         }
-
-  //         // Generates the print output
-  //         pv.open(null, null, forcePageBreaks, true);
-
-  //         // Restores the stylesheet
-  //         if (temp != null) {
-  //           graph.stylesheet = temp;
-  //           graph.refresh();
-  //         }
-  //       } else {
-  //         var bg = thisGraph.background;
-
-  //         if (bg == null || bg == '' || bg == mxConstants.NONE) {
-  //           bg = '#ffffff';
-  //         }
-
-  //         pv.backgroundColor = bg;
-  //         pv.autoOrigin = autoOrigin;
-  //         pv.appendGraph(thisGraph, scale, x0, y0, forcePageBreaks, true);
-
-  //         var extFonts = thisGraph.getCustomFonts();
-
-  //         if (pv.wnd != null) {
-  //           for (var i = 0; i < extFonts.length; i++) {
-  //             var fontName = extFonts[i].name;
-  //             var fontUrl = extFonts[i].url;
-
-  //             if (Graph.isCssFontUrl(fontUrl)) {
-  //               pv.wnd.document.writeln(
-  //                 '<link rel="stylesheet" href="' +
-  //                   mxUtils.htmlEntities(fontUrl) +
-  //                   '" charset="UTF-8" type="text/css">',
-  //               );
-  //             } else {
-  //               pv.wnd.document.writeln('<style type="text/css">');
-  //               pv.wnd.document.writeln(
-  //                 '@font-face {\n' +
-  //                   'font-family: "' +
-  //                   mxUtils.htmlEntities(fontName) +
-  //                   '";\n' +
-  //                   'src: url("' +
-  //                   mxUtils.htmlEntities(fontUrl) +
-  //                   '");\n}',
-  //               );
-  //               pv.wnd.document.writeln('</style>');
-  //             }
-  //           }
-  //         }
-  //       }
-
-  //       // Restores state if css transforms are used
-  //       if (prev) {
-  //         thisGraph.useCssTransforms = prev;
-  //         thisGraph.currentTranslate = prevTranslate;
-  //         thisGraph.currentScale = prevScale;
-  //         thisGraph.view.translate = prevViewTranslate;
-  //         thisGraph.view.scale = prevViewScale;
-  //       }
-
-  //       return pv;
-  //     }
-
-  //     var pagesFrom = pagesFromInput.value;
-  //     var pagesTo = pagesToInput.value;
-  //     var ignorePages = !allPagesRadio.checked;
-  //     var pv = null;
-
-  //     if (EditorUi.isElectronApp) {
-  //       PrintDialog.electronPrint(
-  //         editorUi,
-  //         allPagesRadio.checked,
-  //         pagesFrom,
-  //         pagesTo,
-  //         fitRadio.checked,
-  //         sheetsAcrossInput.value,
-  //         sheetsDownInput.value,
-  //         parseInt(zoomInput.value) / 100,
-  //         parseInt(pageScaleInput.value) / 100,
-  //         accessor.get(),
-  //       );
-
-  //       return;
-  //     }
-
-  //     if (ignorePages) {
-  //       ignorePages = pagesFrom == currentPage && pagesTo == currentPage;
-  //     }
-
-  //     if (!ignorePages && editorUi.pages != null && editorUi.pages.length) {
-  //       var i0 = 0;
-  //       var imax = editorUi.pages.length - 1;
-
-  //       if (!allPagesRadio.checked) {
-  //         i0 = parseInt(pagesFrom) - 1;
-  //         imax = parseInt(pagesTo) - 1;
-  //       }
-
-  //       for (var i = i0; i <= imax; i++) {
-  //         var page = editorUi.pages[i];
-  //         var tempGraph = page == editorUi.getCurrentPage() ? graph : null;
-
-  //         if (tempGraph == null) {
-  //           tempGraph = editorUi.createTemporaryGraph(graph.stylesheet); //getStylesheet());
-
-  //           // Restores graph settings that are relevant for printing
-  //           var pageVisible = true;
-  //           var mathEnabled = false;
-  //           var bg = null;
-  //           var bgImage = null;
-
-  //           if (page.viewState == null) {
-  //             // Workaround to extract view state from XML node
-  //             // This changes the state of the page and parses
-  //             // the XML for the graph model even if not needed.
-  //             if (page.root == null) {
-  //               editorUi.updatePageRoot(page);
-  //             }
-  //           }
-
-  //           if (page.viewState != null) {
-  //             pageVisible = page.viewState.pageVisible;
-  //             mathEnabled = page.viewState.mathEnabled;
-  //             bg = page.viewState.background;
-  //             bgImage = page.viewState.backgroundImage;
-  //             tempGraph.extFonts = page.viewState.extFonts;
-  //           }
-
-  //           tempGraph.background = bg;
-  //           tempGraph.backgroundImage =
-  //             bgImage != null ? new mxImage(bgImage.src, bgImage.width, bgImage.height) : null;
-  //           tempGraph.pageVisible = pageVisible;
-  //           tempGraph.mathEnabled = mathEnabled;
-
-  //           // Redirects placeholders to current page
-  //           var graphGetGlobalVariable = tempGraph.getGlobalVariable;
-
-  //           tempGraph.getGlobalVariable = function (name) {
-  //             if (name == 'page') {
-  //               return page.getName();
-  //             } else if (name == 'pagenumber') {
-  //               return i + 1;
-  //             } else if (name == 'pagecount') {
-  //               return editorUi.pages != null ? editorUi.pages.length : 1;
-  //             }
-
-  //             return graphGetGlobalVariable.apply(this, arguments);
-  //           };
-
-  //           document.body.appendChild(tempGraph.container);
-  //           editorUi.updatePageRoot(page);
-  //           tempGraph.model.setRoot(page.root);
-  //         }
-
-  //         pv = printGraph(tempGraph, pv, i != imax);
-
-  //         if (tempGraph != graph) {
-  //           tempGraph.container.parentNode.removeChild(tempGraph.container);
-  //         }
-  //       }
-  //     } else {
-  //       pv = printGraph(graph);
-  //     }
-
-  //     if (pv == null) {
-  //       editorUi.handleError({ message: mxResources.get('errorUpdatingPreview') });
-  //     } else {
-  //       if (pv.mathEnabled) {
-  //         var doc = pv.wnd.document;
-
-  //         // Adds asynchronous printing when MathJax finishes rendering
-  //         // via global variable that is checked in math-print.js to
-  //         // avoid generating unsafe-inline script or adding SHA to CSP
-  //         if (print) {
-  //           pv.wnd.IMMEDIATE_PRINT = true;
-  //         }
-
-  //         doc.writeln(
-  //           '<script type="text/javascript" src="' +
-  //             DRAWIO_BASE_URL +
-  //             '/js/math-print.js"></script>',
-  //         );
-  //       }
-
-  //       pv.closeDocument();
-
-  //       if (!pv.mathEnabled && print) {
-  //         PrintDialog.printPreview(pv);
-  //       }
-  //     }
-
-  //     // Restores dark mode
-  //     if (darkStylesheet != null) {
-  //       graph.stylesheet = darkStylesheet;
-  //       graph.refresh();
-  //     }
-  //   }
-
-  //   var cancelBtn = mxUtils.button(mxResources.get('cancel'), function () {
-  //     editorUi.hideDialog();
-  //   });
-  //   cancelBtn.className = 'geBtn';
-
-  //   if (editorUi.editor.cancelFirst) {
-  //     buttons.appendChild(cancelBtn);
-  //   }
-
-  //   // TEN9: No help button for our app
-  //   // if (!editorUi.isOffline()) {
-  //   //   var helpBtn = mxUtils.button(mxResources.get('help'), function () {
-  //   //     graph.openLink('https://desk.draw.io/support/solutions/articles/16000048947');
-  //   //   });
-
-  //   //   helpBtn.className = 'geBtn';
-  //   //   buttons.appendChild(helpBtn);
-  //   // }
-
-  //   if (PrintDialog.previewEnabled) {
-  //     var previewBtn = mxUtils.button(mxResources.get('preview'), function () {
-  //       editorUi.hideDialog();
-  //       preview(false);
-  //     });
-  //     previewBtn.className = 'geBtn';
-  //     buttons.appendChild(previewBtn);
-  //   }
-
-  //   var printBtn = mxUtils.button(
-  //     mxResources.get(!PrintDialog.previewEnabled ? 'ok' : 'print'),
-  //     function () {
-  //       editorUi.hideDialog();
-  //       preview(true);
-  //     },
-  //   );
-  //   printBtn.className = 'geBtn gePrimaryBtn';
-  //   buttons.appendChild(printBtn);
-
-  //   if (!editorUi.editor.cancelFirst) {
-  //     buttons.appendChild(cancelBtn);
-  //   }
-
-  //   div.appendChild(buttons);
-
-  //   this.container = div;
-  // };
+    td1.style.textAlign = 'right';
+    td4.style.textAlign = 'right';
+
+    mxUtils.write(td1, mxResources.get('fitTo'));
+
+    var sheetsAcrossInput = document.createElement('input');
+    sheetsAcrossInput.style.cssText = 'margin:0 8px 0 8px;';
+    sheetsAcrossInput.setAttribute('value', '1');
+    sheetsAcrossInput.setAttribute('min', '1');
+    sheetsAcrossInput.setAttribute('type', 'number');
+    sheetsAcrossInput.style.width = '40px';
+    td2.appendChild(sheetsAcrossInput);
+
+    var span = document.createElement('span');
+    mxUtils.write(span, mxResources.get('fitToSheetsAcross'));
+    td3.appendChild(span);
+
+    mxUtils.write(td4, mxResources.get('fitToBy'));
+
+    var sheetsDownInput = sheetsAcrossInput.cloneNode(true);
+    td5.appendChild(sheetsDownInput);
+
+    mxEvent.addListener(sheetsAcrossInput, 'focus', function () {
+      fitRadio.checked = true;
+    });
+
+    mxEvent.addListener(sheetsDownInput, 'focus', function () {
+      fitRadio.checked = true;
+    });
+
+    var span = document.createElement('span');
+    mxUtils.write(span, mxResources.get('fitToSheetsDown'));
+    td6.appendChild(span);
+
+    row1.appendChild(td1);
+    row1.appendChild(td2);
+    row1.appendChild(td3);
+
+    row2.appendChild(td4);
+    row2.appendChild(td5);
+    row2.appendChild(td6);
+
+    tbody.appendChild(row1);
+    tbody.appendChild(row2);
+    table.appendChild(tbody);
+    fitSection.appendChild(table);
+
+    div.appendChild(fitSection);
+
+    // Page scale ...
+    var pageScaleSection = document.createElement('div');
+
+    var span = document.createElement('div');
+    span.style.fontWeight = 'bold';
+    span.style.marginBottom = '12px';
+    mxUtils.write(span, mxResources.get('paperSize'));
+    pageScaleSection.appendChild(span);
+
+    var span = document.createElement('div');
+    span.style.marginBottom = '12px';
+
+    var accessor = PageSetupDialog.addPageFormatPanel(
+      span,
+      'printdialog',
+      editorUi.editor.graph.pageFormat || mxConstants.PAGE_FORMAT_A4_PORTRAIT,
+    );
+    pageScaleSection.appendChild(span);
+
+    var span = document.createElement('span');
+    mxUtils.write(span, mxResources.get('pageScale'));
+    pageScaleSection.appendChild(span);
+
+    var pageScaleInput = document.createElement('input');
+    pageScaleInput.style.cssText = 'margin:0 8px 0 8px;';
+    pageScaleInput.setAttribute('value', '100 %');
+    pageScaleInput.style.width = '60px';
+    pageScaleSection.appendChild(pageScaleInput);
+
+    div.appendChild(pageScaleSection);
+
+    // Buttons
+    var buttons = document.createElement('div');
+    buttons.style.cssText = 'text-align:right;margin:48px 0 0 0;';
+
+    // Overall scale for print-out to account for print borders in dialogs etc
+    function preview(print) {
+      var printScale = parseInt(pageScaleInput.value) / 100;
+
+      if (isNaN(printScale)) {
+        printScale = 1;
+        pageScaleInput.value = '100 %';
+      }
+
+      // Workaround to match available paper size in actual print output
+      printScale *= 0.75;
+
+      // Disables dark mode while printing
+      var darkStylesheet = null;
+
+      if (graph.themes != null && graph.defaultThemeName == 'darkTheme') {
+        darkStylesheet = graph.stylesheet;
+        graph.stylesheet = graph.getDefaultStylesheet();
+        graph.refresh();
+      }
+
+      function printGraph(thisGraph, pv, forcePageBreaks) {
+        // Workaround for CSS transforms affecting the print output
+        // is to disable during print output and restore after
+        var prev = thisGraph.useCssTransforms;
+        var prevTranslate = thisGraph.currentTranslate;
+        var prevScale = thisGraph.currentScale;
+        var prevViewTranslate = thisGraph.view.translate;
+        var prevViewScale = thisGraph.view.scale;
+
+        if (thisGraph.useCssTransforms) {
+          thisGraph.useCssTransforms = false;
+          thisGraph.currentTranslate = new mxPoint(0, 0);
+          thisGraph.currentScale = 1;
+          thisGraph.view.translate = new mxPoint(0, 0);
+          thisGraph.view.scale = 1;
+        }
+
+        // Negative coordinates are cropped or shifted if page visible
+        var gb = thisGraph.getGraphBounds();
+        var border = 0;
+        var x0 = 0;
+        var y0 = 0;
+
+        var pf = accessor.get();
+        var scale = 1 / thisGraph.pageScale;
+        var autoOrigin = fitRadio.checked;
+
+        if (autoOrigin) {
+          var h = parseInt(sheetsAcrossInput.value);
+          var v = parseInt(sheetsDownInput.value);
+
+          scale = Math.min(
+            (pf.height * v) / (gb.height / thisGraph.view.scale),
+            (pf.width * h) / (gb.width / thisGraph.view.scale),
+          );
+        } else {
+          scale = parseInt(zoomInput.value) / (100 * thisGraph.pageScale);
+
+          if (isNaN(scale)) {
+            printScale = 1 / thisGraph.pageScale;
+            zoomInput.value = '100 %';
+          }
+        }
+
+        // Applies print scale
+        pf = mxRectangle.fromRectangle(pf);
+        pf.width = Math.ceil(pf.width * printScale);
+        pf.height = Math.ceil(pf.height * printScale);
+        scale *= printScale;
+
+        // Starts at first visible page
+        if (!autoOrigin && thisGraph.pageVisible) {
+          var layout = thisGraph.getPageLayout();
+          x0 -= layout.x * pf.width;
+          y0 -= layout.y * pf.height;
+        } else {
+          autoOrigin = true;
+        }
+
+        if (pv == null) {
+          pv = PrintDialog.createPrintPreview(thisGraph, scale, pf, border, x0, y0, autoOrigin);
+          pv.pageSelector = false;
+          pv.mathEnabled = false;
+
+          var file = editorUi.getCurrentFile();
+
+          if (file != null) {
+            pv.title = file.getTitle();
+          }
+
+          var writeHead = pv.writeHead;
+
+          // Overridden to add custom fonts
+          pv.writeHead = function (doc) {
+            writeHead.apply(this, arguments);
+
+            // Workaround for zoomed math clipping in Webkit
+            if (mxClient.IS_GC || mxClient.IS_SF) {
+              doc.writeln('<style type="text/css">');
+              doc.writeln(Editor.mathJaxWebkitCss);
+              doc.writeln('</style>');
+            }
+
+            // Fixes font weight for PDF export in Chrome
+            if (mxClient.IS_GC) {
+              doc.writeln('<style type="text/css">');
+              doc.writeln('@media print {');
+              doc.writeln('span.MathJax_SVG svg { shape-rendering: crispEdges; }');
+              doc.writeln('}');
+              doc.writeln('</style>');
+            }
+
+            if (editorUi.editor.fontCss != null) {
+              doc.writeln('<style type="text/css">');
+              doc.writeln(editorUi.editor.fontCss);
+              doc.writeln('</style>');
+            }
+
+            var extFonts = thisGraph.getCustomFonts();
+
+            for (var i = 0; i < extFonts.length; i++) {
+              var fontName = extFonts[i].name;
+              var fontUrl = extFonts[i].url;
+
+              if (Graph.isCssFontUrl(fontUrl)) {
+                doc.writeln(
+                  '<link rel="stylesheet" href="' +
+                    mxUtils.htmlEntities(fontUrl) +
+                    '" charset="UTF-8" type="text/css">',
+                );
+              } else {
+                doc.writeln('<style type="text/css">');
+                doc.writeln(
+                  '@font-face {\n' +
+                    'font-family: "' +
+                    mxUtils.htmlEntities(fontName) +
+                    '";\n' +
+                    'src: url("' +
+                    mxUtils.htmlEntities(fontUrl) +
+                    '");\n}',
+                );
+                doc.writeln('</style>');
+              }
+            }
+          };
+
+          if (typeof MathJax !== 'undefined') {
+            // Adds class to ignore if math is disabled
+            var printPreviewRenderPage = pv.renderPage;
+
+            pv.renderPage = function (w, h, dx, dy, content, pageNumber) {
+              var prev = mxClient.NO_FO;
+              mxClient.NO_FO =
+                this.graph.mathEnabled && !editorUi.editor.useForeignObjectForMath
+                  ? true
+                  : editorUi.editor.originalNoForeignObject;
+              var result = printPreviewRenderPage.apply(this, arguments);
+              mxClient.NO_FO = prev;
+
+              if (this.graph.mathEnabled) {
+                this.mathEnabled = this.mathEnabled || true;
+              } else {
+                result.className = 'geDisableMathJax';
+              }
+
+              return result;
+            };
+          }
+
+          // Switches stylesheet for print output in dark mode
+          var temp = null;
+
+          // Disables dashed printing of flowAnimation
+          var enableFlowAnimation = graph.enableFlowAnimation;
+          graph.enableFlowAnimation = false;
+
+          if (graph.themes != null && graph.defaultThemeName == 'darkTheme') {
+            temp = graph.stylesheet;
+            graph.stylesheet = graph.getDefaultStylesheet();
+            graph.refresh();
+          }
+
+          // Generates the print output
+          pv.open(null, null, forcePageBreaks, true);
+
+          // Restores flowAnimation
+          graph.enableFlowAnimation = enableFlowAnimation;
+
+          // Restores the stylesheet
+          if (temp != null) {
+            graph.stylesheet = temp;
+            graph.refresh();
+          }
+        } else {
+          var bg = thisGraph.background;
+
+          if (bg == null || bg == '' || bg == mxConstants.NONE) {
+            bg = '#ffffff';
+          }
+
+          pv.backgroundColor = bg;
+          pv.autoOrigin = autoOrigin;
+          pv.appendGraph(thisGraph, scale, x0, y0, forcePageBreaks, true);
+
+          var extFonts = thisGraph.getCustomFonts();
+
+          if (pv.wnd != null) {
+            for (var i = 0; i < extFonts.length; i++) {
+              var fontName = extFonts[i].name;
+              var fontUrl = extFonts[i].url;
+
+              if (Graph.isCssFontUrl(fontUrl)) {
+                pv.wnd.document.writeln(
+                  '<link rel="stylesheet" href="' +
+                    mxUtils.htmlEntities(fontUrl) +
+                    '" charset="UTF-8" type="text/css">',
+                );
+              } else {
+                pv.wnd.document.writeln('<style type="text/css">');
+                pv.wnd.document.writeln(
+                  '@font-face {\n' +
+                    'font-family: "' +
+                    mxUtils.htmlEntities(fontName) +
+                    '";\n' +
+                    'src: url("' +
+                    mxUtils.htmlEntities(fontUrl) +
+                    '");\n}',
+                );
+                pv.wnd.document.writeln('</style>');
+              }
+            }
+          }
+        }
+
+        // Restores state if css transforms are used
+        if (prev) {
+          thisGraph.useCssTransforms = prev;
+          thisGraph.currentTranslate = prevTranslate;
+          thisGraph.currentScale = prevScale;
+          thisGraph.view.translate = prevViewTranslate;
+          thisGraph.view.scale = prevViewScale;
+        }
+
+        return pv;
+      }
+
+      var pagesFrom = pagesFromInput.value;
+      var pagesTo = pagesToInput.value;
+      var ignorePages = !allPagesRadio.checked;
+      var pv = null;
+
+      if (EditorUi.isElectronApp) {
+        PrintDialog.electronPrint(
+          editorUi,
+          allPagesRadio.checked,
+          pagesFrom,
+          pagesTo,
+          fitRadio.checked,
+          sheetsAcrossInput.value,
+          sheetsDownInput.value,
+          parseInt(zoomInput.value) / 100,
+          parseInt(pageScaleInput.value) / 100,
+          accessor.get(),
+        );
+
+        return;
+      }
+
+      if (ignorePages) {
+        ignorePages = pagesFrom == currentPage && pagesTo == currentPage;
+      }
+
+      if (!ignorePages && editorUi.pages != null && editorUi.pages.length) {
+        var i0 = 0;
+        var imax = editorUi.pages.length - 1;
+
+        if (!allPagesRadio.checked) {
+          i0 = parseInt(pagesFrom) - 1;
+          imax = parseInt(pagesTo) - 1;
+        }
+
+        for (var i = i0; i <= imax; i++) {
+          var page = editorUi.pages[i];
+          var tempGraph = page == editorUi.currentPage ? graph : null;
+
+          if (tempGraph == null) {
+            tempGraph = editorUi.createTemporaryGraph(graph.stylesheet);
+
+            // Restores graph settings that are relevant for printing
+            var pageVisible = true;
+            var mathEnabled = false;
+            var bg = null;
+            var bgImage = null;
+
+            if (page.viewState == null) {
+              // Workaround to extract view state from XML node
+              // This changes the state of the page and parses
+              // the XML for the graph model even if not needed.
+              if (page.root == null) {
+                editorUi.updatePageRoot(page);
+              }
+            }
+
+            if (page.viewState != null) {
+              pageVisible = page.viewState.pageVisible;
+              mathEnabled = page.viewState.mathEnabled;
+              bg = page.viewState.background;
+              bgImage = page.viewState.backgroundImage;
+              tempGraph.extFonts = page.viewState.extFonts;
+            }
+
+            tempGraph.background = bg;
+            tempGraph.backgroundImage =
+              bgImage != null ? new mxImage(bgImage.src, bgImage.width, bgImage.height) : null;
+            tempGraph.pageVisible = pageVisible;
+            tempGraph.mathEnabled = mathEnabled;
+
+            // Redirects placeholders to current page
+            var graphGetGlobalVariable = tempGraph.getGlobalVariable;
+
+            tempGraph.getGlobalVariable = function (name) {
+              if (name == 'page') {
+                return page.getName();
+              } else if (name == 'pagenumber') {
+                return i + 1;
+              } else if (name == 'pagecount') {
+                return editorUi.pages != null ? editorUi.pages.length : 1;
+              }
+
+              return graphGetGlobalVariable.apply(this, arguments);
+            };
+
+            document.body.appendChild(tempGraph.container);
+            editorUi.updatePageRoot(page);
+            tempGraph.model.setRoot(page.root);
+          }
+
+          pv = printGraph(tempGraph, pv, i != imax);
+
+          if (tempGraph != graph) {
+            tempGraph.container.parentNode.removeChild(tempGraph.container);
+          }
+        }
+      } else {
+        pv = printGraph(graph);
+      }
+
+      if (pv == null) {
+        editorUi.handleError({ message: mxResources.get('errorUpdatingPreview') });
+      } else {
+        if (pv.mathEnabled) {
+          var doc = pv.wnd.document;
+
+          // Adds asynchronous printing when MathJax finishes rendering
+          // via global variable that is checked in math-print.js to
+          // avoid generating unsafe-inline script or adding SHA to CSP
+          if (print) {
+            pv.wnd.IMMEDIATE_PRINT = true;
+          }
+
+          doc.writeln(
+            '<script type="text/javascript" src="' +
+              DRAWIO_BASE_URL +
+              '/js/math-print.js"></script>',
+          );
+        }
+
+        pv.closeDocument();
+
+        if (!pv.mathEnabled && print) {
+          PrintDialog.printPreview(pv);
+        }
+      }
+
+      // Restores dark mode
+      if (darkStylesheet != null) {
+        graph.stylesheet = darkStylesheet;
+        graph.refresh();
+      }
+    }
+
+    var cancelBtn = mxUtils.button(mxResources.get('cancel'), function () {
+      editorUi.hideDialog();
+    });
+    cancelBtn.className = 'geBtn';
+
+    if (editorUi.editor.cancelFirst) {
+      buttons.appendChild(cancelBtn);
+    }
+
+    if (!editorUi.isOffline()) {
+      var helpBtn = mxUtils.button(mxResources.get('help'), function () {
+        graph.openLink('https://www.diagrams.net/doc/faq/print-diagram');
+      });
+
+      helpBtn.className = 'geBtn';
+      buttons.appendChild(helpBtn);
+    }
+
+    if (PrintDialog.previewEnabled) {
+      var previewBtn = mxUtils.button(mxResources.get('preview'), function () {
+        editorUi.hideDialog();
+        preview(false);
+      });
+      previewBtn.className = 'geBtn';
+      buttons.appendChild(previewBtn);
+    }
+
+    var printBtn = mxUtils.button(
+      mxResources.get(!PrintDialog.previewEnabled ? 'ok' : 'print'),
+      function () {
+        editorUi.hideDialog();
+        preview(true);
+      },
+    );
+    printBtn.className = 'geBtn gePrimaryBtn';
+    buttons.appendChild(printBtn);
+
+    if (!editorUi.editor.cancelFirst) {
+      buttons.appendChild(cancelBtn);
+    }
+
+    div.appendChild(buttons);
+
+    this.container = div;
+  };
 
   // Execute fit page on page setup changes
   var changePageSetupExecute = ChangePageSetup.prototype.execute;
 
   ChangePageSetup.prototype.execute = function () {
     if (this.page == null) {
-      this.page = this.ui.getCurrentPage();
+      this.page = this.ui.currentPage;
     }
 
     // Workaround for redo existing change with different current page
-    if (this.page != this.ui.getCurrentPage()) {
+    if (this.page != this.ui.currentPage) {
       if (this.page.viewState != null) {
         if (!this.ignoreColor) {
           this.page.viewState.background = this.color;
@@ -7506,7 +7793,7 @@ const uiTheme = null;
   }
 })();
 
-//Extends codec for ChangePageSetup
+// Extends codec for ChangePageSetup
 (function () {
   var codec = new mxObjectCodec(new ChangePageSetup(), [
     'ui',
@@ -7544,7 +7831,7 @@ const uiTheme = null;
   mxCodecRegistry.register(codec);
 })();
 
-// //Extends codec for ChangeGridColor
+// Extends codec for ChangeGridColor
 (function () {
   var codec = new mxObjectCodec(new ChangeGridColor(), ['ui']);
 

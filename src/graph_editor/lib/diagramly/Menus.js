@@ -146,14 +146,19 @@ DriveFile = function () {};
       !mxClient.IS_IOS &&
       (navigator.userAgent.indexOf('MSIE') < 0 || document.documentMode >= 10);
     var trelloEnabled =
-      ((urlParams['embed'] != '1' && urlParams['tr'] != '0') ||
-        (urlParams['embed'] == '1' && urlParams['tr'] == '1')) &&
+      urlParams['tr'] == '1' &&
       mxClient.IS_SVG &&
       (document.documentMode == null || document.documentMode > 9);
 
     if (!mxClient.IS_SVG && !editorUi.isOffline()) {
       var img = new Image();
       img.src = IMAGE_PATH + '/help.png';
+    }
+
+    if (urlParams['noFileMenu'] == '1') {
+      this.defaultMenuItems = this.defaultMenuItems.filter(function (m) {
+        return m != 'file';
+      });
     }
 
     editorUi.actions.addAction('new...', function () {
@@ -186,17 +191,6 @@ DriveFile = function () {};
     // 	var dlg = new NewDialog(editorUi, null, false, function(xml)
     // 	{
     // 		editorUi.hideDialog();
-
-    // 		if (xml != null)
-    // 		{
-    // 			var insertPoint = editorUi.editor.graph.getFreeInsertPoint();
-    // 			graph.setSelectionCells(editorUi.importXml(xml,
-    // 				Math.max(insertPoint.x, 20),
-    // 				Math.max(insertPoint.y, 20), true));
-    // 			graph.scrollCellToVisible(graph.getSelectionCell());
-    // 		}
-    // 	}, null, null, null, null, null, null, null, null, null, null,
-    // 		false, mxResources.get('insert'));
 
     // 	editorUi.showDialog(dlg.container, 620, 440, true, true);
     // })).isEnabled = isGraphEnabled;
@@ -251,6 +245,20 @@ DriveFile = function () {};
     rulerAction.setToggleAction(true);
     rulerAction.setSelectedCallback(function () {
       return editorUi.ruler != null;
+    });
+
+    var fullscreenAction = editorUi.actions.addAction('fullscreen', function () {
+      if (document.fullscreenElement == null) {
+        document.body.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    });
+    fullscreenAction.visible =
+      document.fullscreenEnabled && document.body.requestFullscreen != null;
+    fullscreenAction.setToggleAction(true);
+    fullscreenAction.setSelectedCallback(function () {
+      return document.fullscreenElement != null;
     });
 
     editorUi.actions.addAction('properties...', function () {
@@ -512,6 +520,11 @@ DriveFile = function () {};
           var transparentBkg = null,
             include = null;
 
+          if (EditorUi.isElectronApp || isDrawioWeb) {
+            include = editorUi.addCheckbox(div, mxResources.get('includeCopyOfMyDiagram'), true);
+            dlgH += 30;
+          }
+
           if (isDrawioWeb) {
             include = editorUi.addCheckbox(div, mxResources.get('includeCopyOfMyDiagram'), true);
             transparentBkg = editorUi.addCheckbox(
@@ -520,7 +533,7 @@ DriveFile = function () {};
               false,
             );
 
-            dlgH += 60;
+            dlgH += 30;
           }
 
           var dlg = new CustomDialog(
@@ -779,7 +792,7 @@ DriveFile = function () {};
           mxResources.get('formatSvg'),
           true,
           mxResources.get('export'),
-          'https://desk.draw.io/support/solutions/articles/16000067785',
+          'https://www.diagrams.net/doc/faq/export-diagram',
           mxUtils.bind(
             this,
             function (
@@ -795,6 +808,7 @@ DriveFile = function () {};
               linkTarget,
               grid,
               keepTheme,
+              exportType,
             ) {
               var val = parseInt(scale);
 
@@ -811,6 +825,7 @@ DriveFile = function () {};
                   false,
                   linkTarget,
                   keepTheme,
+                  exportType,
                 );
               }
             },
@@ -818,6 +833,7 @@ DriveFile = function () {};
           true,
           null,
           'svg',
+          true,
         );
       }),
     );
@@ -830,7 +846,7 @@ DriveFile = function () {};
             mxResources.get('image'),
             false,
             mxResources.get('export'),
-            'https://desk.draw.io/support/solutions/articles/16000067785',
+            'https://www.diagrams.net/doc/faq/export-diagram',
             mxUtils.bind(
               this,
               function (
@@ -846,6 +862,7 @@ DriveFile = function () {};
                 dummy,
                 grid,
                 keepTheme,
+                exportType,
               ) {
                 var val = parseInt(scale);
 
@@ -863,6 +880,7 @@ DriveFile = function () {};
                     grid,
                     null,
                     keepTheme,
+                    exportType,
                   );
                 }
               },
@@ -870,6 +888,7 @@ DriveFile = function () {};
             true,
             true,
             'png',
+            true,
           );
         } else if (!editorUi.isOffline() && (!mxClient.IS_IOS || !navigator.standalone)) {
           editorUi.showRemoteExportDialog(
@@ -903,7 +922,7 @@ DriveFile = function () {};
             mxResources.get('image'),
             false,
             mxResources.get('export'),
-            'https://desk.draw.io/support/solutions/articles/16000067785',
+            'https://www.diagrams.net/doc/faq/export-diagram',
             mxUtils.bind(
               this,
               function (
@@ -919,6 +938,7 @@ DriveFile = function () {};
                 dummy,
                 grid,
                 keepTheme,
+                exportType,
               ) {
                 var val = parseInt(scale);
 
@@ -936,6 +956,7 @@ DriveFile = function () {};
                     grid,
                     null,
                     keepTheme,
+                    exportType,
                   );
                 }
               },
@@ -943,6 +964,7 @@ DriveFile = function () {};
             true,
             false,
             'jpeg',
+            true,
           );
         } else if (!editorUi.isOffline() && (!mxClient.IS_IOS || !navigator.standalone)) {
           editorUi.showRemoteExportDialog(
@@ -967,6 +989,20 @@ DriveFile = function () {};
         }
       }),
     );
+
+    action = editorUi.actions.addAction(
+      'copyAsImage',
+      mxUtils.bind(this, function () {
+        var cells = mxUtils.sortCells(graph.model.getTopmostCells(graph.getSelectionCells()));
+        var xml = mxUtils.getXml(
+          cells.length == 0 ? editorUi.editor.getGraphXml() : graph.encodeCells(cells),
+        );
+        editorUi.copyImage(cells, xml);
+      }),
+    );
+
+    // Disabled in Safari as operation is not allowed
+    action.visible = Editor.enableNativeCipboard && editorUi.isExportToCanvas() && !mxClient.IS_SF;
 
     action = editorUi.actions.put(
       'shadowVisible',
@@ -995,7 +1031,11 @@ DriveFile = function () {};
     );
 
     editorUi.actions.addAction('support...', function () {
-      editorUi.openLink('https://github.com/jgraph/drawio/wiki/Getting-Support');
+      if (EditorUi.isElectronApp) {
+        editorUi.openLink('https://github.com/jgraph/drawio-desktop/wiki/Getting-Support');
+      } else {
+        editorUi.openLink('https://github.com/jgraph/drawio/wiki/Getting-Support');
+      }
     });
 
     editorUi.actions.addAction('exportOptionsDisabled...', function () {
@@ -1026,7 +1066,11 @@ DriveFile = function () {};
     });
 
     editorUi.actions.addAction('forkme', function () {
-      editorUi.openLink('https://github.com/jgraph/drawio');
+      if (EditorUi.isElectronApp) {
+        editorUi.openLink('https://github.com/jgraph/drawio-desktop');
+      } else {
+        editorUi.openLink('https://github.com/jgraph/drawio');
+      }
     }).label = 'Fork me on GitHub...';
 
     editorUi.actions.addAction('downloadDesktop...', function () {
@@ -1105,14 +1149,92 @@ DriveFile = function () {};
     editorUi.actions.put(
       'exportVsdx',
       new Action(mxResources.get('formatVsdx') + ' (beta)...', function () {
-        editorUi.exportVisio();
+        var noPages = editorUi.pages == null || editorUi.pages.length <= 1;
+
+        if (noPages) {
+          editorUi.exportVisio();
+        } else {
+          var div = document.createElement('div');
+          div.style.whiteSpace = 'nowrap';
+
+          var hd = document.createElement('h3');
+          mxUtils.write(hd, mxResources.get('formatVsdx'));
+          hd.style.cssText = 'width:100%;text-align:center;margin-top:0px;margin-bottom:4px';
+          div.appendChild(hd);
+
+          var pages = editorUi.addCheckbox(div, mxResources.get('allPages'), !noPages, noPages);
+          pages.style.marginBottom = '16px';
+
+          var dlg = new CustomDialog(
+            editorUi,
+            div,
+            mxUtils.bind(this, function () {
+              editorUi.exportVisio(!pages.checked);
+            }),
+            null,
+            mxResources.get('export'),
+          );
+
+          editorUi.showDialog(dlg.container, 300, 110, true, true);
+        }
       }),
     );
 
     if (isLocalStorage && localStorage != null && urlParams['embed'] != '1') {
       editorUi.actions.addAction('configuration...', function () {
         // Add help, link button
-        var value = localStorage.getItem('.configuration');
+        var value = localStorage.getItem(Editor.configurationKey);
+
+        var buttons = [
+          [
+            mxResources.get('reset'),
+            function (evt, input) {
+              editorUi.confirm(mxResources.get('areYouSure'), function () {
+                try {
+                  localStorage.removeItem(Editor.configurationKey);
+
+                  if (mxEvent.isShiftDown(evt)) {
+                    localStorage.removeItem('.drawio-config');
+                    localStorage.removeItem('.mode');
+                  }
+
+                  editorUi.hideDialog();
+                  editorUi.alert(mxResources.get('restartForChangeRequired'));
+                } catch (e) {
+                  editorUi.handleError(e);
+                }
+              });
+            },
+          ],
+        ];
+
+        if (!EditorUi.isElectronApp) {
+          buttons.push([
+            mxResources.get('share'),
+            function (evt, input) {
+              if (input.value.length > 0) {
+                try {
+                  var obj = JSON.parse(input.value);
+                  var url =
+                    window.location.protocol +
+                    '//' +
+                    window.location.host +
+                    '/' +
+                    editorUi.getSearch() +
+                    '#_CONFIG_' +
+                    Graph.compress(JSON.stringify(obj));
+                  var dlg = new EmbedDialog(editorUi, url);
+                  // editorUi.showDialog(dlg.container, 440, 240, true);
+                  // dlg.init();
+                } catch (e) {
+                  editorUi.handleError(e);
+                }
+              } else {
+                editorUi.handleError({ message: mxResources.get('invalidInput') });
+              }
+            },
+          ]);
+        }
 
         var dlg = new TextareaDialog(
           editorUi,
@@ -1124,9 +1246,9 @@ DriveFile = function () {};
                 if (newValue.length > 0) {
                   var obj = JSON.parse(newValue);
 
-                  localStorage.setItem('.configuration', JSON.stringify(obj));
+                  localStorage.setItem(Editor.configurationKey, JSON.stringify(obj));
                 } else {
-                  localStorage.removeItem('.configuration');
+                  localStorage.removeItem(Editor.configurationKey);
                 }
 
                 editorUi.hideDialog();
@@ -1144,53 +1266,8 @@ DriveFile = function () {};
           true,
           null,
           null,
-          'https://desk.draw.io/support/solutions/articles/16000058316',
-          EditorUi.isElectronApp
-            ? null
-            : [
-                [
-                  mxResources.get('reset'),
-                  function (evt, input) {
-                    editorUi.confirm(mxResources.get('areYouSure'), function () {
-                      try {
-                        localStorage.removeItem('.configuration');
-                        localStorage.removeItem('.drawio-config');
-                        localStorage.removeItem('.mode');
-
-                        editorUi.hideDialog();
-                        editorUi.alert(mxResources.get('restartForChangeRequired'));
-                      } catch (e) {
-                        editorUi.handleError(e);
-                      }
-                    });
-                  },
-                ],
-                [
-                  mxResources.get('link'),
-                  function (evt, input) {
-                    if (input.value.length > 0) {
-                      try {
-                        var obj = JSON.parse(input.value);
-                        var url =
-                          window.location.protocol +
-                          '//' +
-                          window.location.host +
-                          '/' +
-                          editorUi.getSearch() +
-                          '#_CONFIG_' +
-                          Graph.compress(JSON.stringify(obj));
-                        var dlg = new EmbedDialog(editorUi, url);
-                        // editorUi.showDialog(dlg.container, 440, 240, true);
-                        // dlg.init();
-                      } catch (e) {
-                        editorUi.handleError(e);
-                      }
-                    } else {
-                      editorUi.handleError({ message: mxResources.get('invalidInput') });
-                    }
-                  },
-                ],
-              ],
+          'https://www.diagrams.net/doc/faq/configure-diagram-editor',
+          buttons,
         );
 
         dlg.textarea.style.width = '600px';
@@ -1343,6 +1420,15 @@ DriveFile = function () {};
             }
           }
         },
+        null,
+        null,
+        null,
+        null,
+        null,
+        true,
+        null,
+        null,
+        'https://www.diagrams.net/doc/faq/apply-layouts',
       );
 
       dlg.textarea.style.width = '600px';
@@ -1560,7 +1646,7 @@ DriveFile = function () {};
 
                 if (e.keyCode == 13 && term.length > 0) {
                   this.editorUi.openLink(
-                    'https://desk.draw.io/support/search/solutions?term=' +
+                    'https://www.google.com/search?q=site%3Adiagrams.net+inurl%3A%2Fdoc%2Ffaq%2F+' +
                       encodeURIComponent(term),
                   );
                   input.value = '';
@@ -1603,21 +1689,30 @@ DriveFile = function () {};
               input.focus();
             }, 0);
 
-            this.addMenuItems(
-              menu,
-              [
-                '-',
-                'keyboardShortcuts',
-                'quickStart',
-                'support',
-                '-',
-                'forkme',
-                'downloadDesktop',
-                '-',
-                'about',
-              ],
-              parent,
-            );
+            if (EditorUi.isElectronApp) {
+              console.log('electron help menu');
+              this.addMenuItems(
+                menu,
+                ['-', 'keyboardShortcuts', 'quickStart', 'support', '-', 'forkme', '-', 'about'],
+                parent,
+              );
+            } else {
+              this.addMenuItems(
+                menu,
+                [
+                  '-',
+                  'keyboardShortcuts',
+                  'quickStart',
+                  'support',
+                  '-',
+                  'forkme',
+                  'downloadDesktop',
+                  '-',
+                  'about',
+                ],
+                parent,
+              );
+            }
           }
 
           if (urlParams['test'] == '1') {
@@ -1645,7 +1740,7 @@ DriveFile = function () {};
       mxResources.parse('showBoundingBox=Show bounding box');
       mxResources.parse('createSidebarEntry=Create Sidebar Entry');
       mxResources.parse('testCheckFile=Check File');
-      mxResources.parse('testDiff=Diff');
+      mxResources.parse('testDiff=Diff/Sync');
       mxResources.parse('testInspect=Inspect');
       mxResources.parse('testShowConsole=Show Console');
       mxResources.parse('testXmlImageExport=XML Image Export');
@@ -1828,35 +1923,83 @@ DriveFile = function () {};
         }),
       );
 
+      var snapshot = null;
+
       editorUi.actions.addAction(
         'testDiff',
         mxUtils.bind(this, function () {
           if (editorUi.pages != null) {
-            var dlg = new TextareaDialog(editorUi, 'Paste Data:', '', function (newValue) {
-              if (newValue.length > 0) {
-                try {
-                  console.log(
-                    JSON.stringify(
-                      editorUi.diffPages(
-                        editorUi.pages,
-                        editorUi.getPagesForNode(mxUtils.parseXml(newValue).documentElement),
-                      ),
+            var buttons = [
+              [
+                'Snapshot',
+                function (evt, input) {
+                  snapshot = editorUi.getPagesForNode(
+                    mxUtils.parseXml(editorUi.getFileData(true)).documentElement,
+                  );
+                  dlg.textarea.value = 'Snapshot updated ' + new Date().toLocaleString();
+                },
+              ],
+              [
+                'Diff',
+                function (evt, input) {
+                  try {
+                    dlg.textarea.value = JSON.stringify(
+                      editorUi.diffPages(snapshot, editorUi.pages),
                       null,
                       2,
-                    ),
-                  );
-                } catch (e) {
-                  editorUi.handleError(e);
+                    );
+                  } catch (e) {
+                    editorUi.handleError(e);
+                  }
+                },
+              ],
+            ];
 
-                  if (window.console != null) {
-                    console.error(e);
+            var dlg = new TextareaDialog(
+              editorUi,
+              'Diff/Sync:',
+              '',
+              function (newValue) {
+                var file = editorUi.getCurrentFile();
+
+                if (newValue.length > 0 && file != null) {
+                  try {
+                    var patch = JSON.parse(newValue);
+                    file.patch([patch], null, true);
+                    editorUi.hideDialog();
+                  } catch (e) {
+                    editorUi.handleError(e);
                   }
                 }
-              }
-            });
+              },
+              null,
+              'Close',
+              null,
+              null,
+              null,
+              true,
+              null,
+              'Patch',
+              null,
+              buttons,
+            );
 
             dlg.textarea.style.width = '600px';
             dlg.textarea.style.height = '380px';
+
+            if (snapshot == null) {
+              snapshot = editorUi.getPagesForNode(
+                mxUtils.parseXml(editorUi.getFileData(true)).documentElement,
+              );
+              dlg.textarea.value = 'Snapshot created ' + new Date().toLocaleString();
+            } else {
+              dlg.textarea.value = JSON.stringify(
+                editorUi.diffPages(snapshot, editorUi.pages),
+                null,
+                2,
+              );
+            }
+
             editorUi.showDialog(dlg.container, 620, 460, true, true);
             dlg.init();
           } else {
@@ -2022,7 +2165,7 @@ DriveFile = function () {};
 
             editorUi.showHtmlDialog(
               mxResources.get('create'),
-              'https://desk.draw.io/support/solutions/articles/16000042542',
+              'https://www.diagrams.net/doc/faq/embed-html-options',
               url,
               function (
                 publicUrl,
@@ -2222,7 +2365,7 @@ DriveFile = function () {};
           mxResources.get('formatSvg'),
           mxResources.get('image'),
           true,
-          'https://desk.draw.io/support/solutions/articles/16000042548',
+          'https://www.diagrams.net/doc/faq/embed-svg.html',
         );
       }),
     );
@@ -2269,7 +2412,42 @@ DriveFile = function () {};
         );
       }),
     );
-
+    editorUi.actions.put(
+      'embedNotion',
+      new Action(mxResources.get('notion') + '...', function () {
+        editorUi.showPublishLinkDialog(
+          mxResources.get('notion'),
+          null,
+          null,
+          null,
+          function (linkTarget, linkColor, allPages, lightbox, editLink, layers, width, height) {
+            if (editorUi.spinner.spin(document.body, mxResources.get('loading'))) {
+              editorUi.getPublicUrl(editorUi.getCurrentFile(), function (url) {
+                editorUi.spinner.stop();
+                var dlg = new EmbedDialog(
+                  editorUi,
+                  editorUi.createLink(
+                    linkTarget,
+                    linkColor,
+                    allPages,
+                    lightbox,
+                    editLink,
+                    layers,
+                    url,
+                    null,
+                    ['border=0'],
+                    true,
+                  ),
+                );
+                editorUi.showDialog(dlg.container, 440, 240, true, true);
+                dlg.init();
+              });
+            }
+          },
+          true,
+        );
+      }),
+    );
     editorUi.actions.put(
       'publishLink',
       new Action(mxResources.get('link') + '...', function () {
@@ -3833,6 +4011,10 @@ DriveFile = function () {};
             ['-', 'connectionArrows', 'connectionPoints', '-', 'resetView', 'zoomIn', 'zoomOut'],
             parent,
           );
+
+          if (urlParams['sketch'] != '1') {
+            this.addMenuItems(menu, ['-', 'fullscreen'], parent);
+          }
         }),
       ),
     );
@@ -3841,6 +4023,11 @@ DriveFile = function () {};
       'extras',
       new Menu(
         mxUtils.bind(this, function (menu, parent) {
+          if (urlParams['noLangIcon'] == '1') {
+            this.addSubmenu('language', menu, parent);
+            menu.addSeparator(parent);
+          }
+
           if (urlParams['embed'] != '1') {
             this.addSubmenu('theme', menu, parent);
             menu.addSeparator(parent);
@@ -3850,10 +4037,7 @@ DriveFile = function () {};
             var item = this.addMenuItem(menu, 'mathematicalTypesetting', parent);
 
             if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) {
-              this.addLinkToItem(
-                item,
-                'https://desk.draw.io/support/solutions/articles/16000032875',
-              );
+              this.addLinkToItem(item, 'https://www.diagrams.net/doc/faq/math-typesetting');
             }
           }
 
@@ -4336,8 +4520,19 @@ DriveFile = function () {};
             },
           );
 
+          var reserved = {};
+
           for (var i = 0; i < this.defaultFonts.length; i++) {
-            addItem(this.defaultFonts[i]);
+            var value = this.defaultFonts[i];
+
+            if (typeof value === 'string') {
+              addItem(value);
+            } else if (value.fontFamily != null && value.fontUrl != null) {
+              reserved[
+                encodeURIComponent(value.fontFamily) + '@' + encodeURIComponent(value.fontUrl)
+              ] = true;
+              addItem(value.fontFamily, value.fontUrl);
+            }
           }
 
           // TEN9: Disable separator before custom fonts for our app
@@ -4354,28 +4549,36 @@ DriveFile = function () {};
               var key =
                 encodeURIComponent(entry.name) +
                 (entry.url == null ? '' : '@' + encodeURIComponent(entry.url));
-              var label = entry.name;
-              var counter = 0;
 
-              while (fontNames[label.toLowerCase()] != null) {
-                label = entry.name + ' (' + ++counter + ')';
-              }
+              if (!reserved[key]) {
+                var label = entry.name;
+                var counter = 0;
 
-              if (duplicates[key] == null) {
-                entries.push({ name: entry.name, url: entry.url, label: label, title: entry.url });
-                fontNames[label.toLowerCase()] = entry;
-                duplicates[key] = entry;
+                while (fontNames[label.toLowerCase()] != null) {
+                  label = entry.name + ' (' + ++counter + ')';
+                }
+
+                if (duplicates[key] == null) {
+                  entries.push({
+                    name: entry.name,
+                    url: entry.url,
+                    label: label,
+                    title: entry.url,
+                  });
+                  fontNames[label.toLowerCase()] = entry;
+                  duplicates[key] = entry;
+                }
               }
             }
 
             // Adds custom user defined fonts from local storage
             for (var i = 0; i < this.customFonts.length; i++) {
-              addEntry(this.customFonts[i], false);
+              addEntry(this.customFonts[i]);
             }
 
             // Adds fonts that were recently used in the editor
             for (var key in Graph.recentCustomFonts) {
-              addEntry(Graph.recentCustomFonts[key], true);
+              addEntry(Graph.recentCustomFonts[key]);
             }
 
             // Sorts by label

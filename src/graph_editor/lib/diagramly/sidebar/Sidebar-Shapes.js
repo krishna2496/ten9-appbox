@@ -56,3 +56,4 @@ require('../../shapes/mxAtlassian.js');
 require('../../shapes/mockup/mxMockupMarkup.js');
 require('../../shapes/mxFlowchart.js');
 require('../../shapes/bpmn/mxBpmnShape2.js');
+require('../../shapes/mxUML25.js');

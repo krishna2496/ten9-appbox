@@ -3154,7 +3154,7 @@ fieldset[disabled] .btn-danger.focus {
     opacity: 0.7;
     padding: 17px;
     position: absolute;
-    right: 0px;
+    right: 15px;
     top: 0px;
     width: 11px;
     color: #d4d4d4;
@@ -7192,6 +7192,7 @@ fieldset[disabled] .btn-danger.focus {
     border: none;
     outline-style: none;
     box-sizing: border-box;
+    background-color: transparent;
 }
 #luckysheet-dataVerification-dialog .box-item .range i.fa-table{
     float: right;
