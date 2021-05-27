@@ -1870,45 +1870,47 @@ ArrangePanel.prototype.addGroupOps = function (div) {
     }
   }
 
-  if (graph.getSelectionCount() > 0) {
-    if (count > 0) {
-      mxUtils.br(div);
-      count = 0;
-    }
+  // // TEN9: Disable copyData button to match latest draw.
+  // if (graph.getSelectionCount() > 0) {
+  //   if (count > 0) {
+  //     mxUtils.br(div);
+  //     count = 0;
+  //   }
 
-    var btn = mxUtils.button(mxResources.get('copyData'), function (evt) {
-      ui.actions.get('copyData').funct(evt);
-    });
+    // // TEN9: Disable copyData button to match latest draw.
+    // var btn = mxUtils.button(mxResources.get('copyData'), function (evt) {
+    //   ui.actions.get('copyData').funct(evt);
+    // });
 
-    btn.setAttribute(
-      'title',
-      mxResources.get('copyData') + ' (' + this.editorUi.actions.get('copyData') + ')',
-    );
-    btn.style.width = '202px';
-    btn.style.marginBottom = '2px';
+    // btn.setAttribute(
+    //   'title',
+    //   mxResources.get('copyData') + ' (' + this.editorUi.actions.get('copyData') + ')',
+    // );
+    // btn.style.width = '202px';
+    // btn.style.marginBottom = '2px';
 
-    div.appendChild(btn);
-    count++;
+    // div.appendChild(btn);
+    // count++;
 
-    if (ui.copiedValue != null) {
-      var btn2 = mxUtils.button(mxResources.get('pasteData'), function (evt) {
-        ui.actions.get('pasteData').funct(evt);
-      });
+    // if (ui.copiedValue != null) {
+    //   var btn2 = mxUtils.button(mxResources.get('pasteData'), function (evt) {
+    //     ui.actions.get('pasteData').funct(evt);
+    //   });
 
-      btn2.setAttribute(
-        'title',
-        mxResources.get('pasteData') + ' (' + this.editorUi.actions.get('pasteData') + ')',
-      );
+    //   btn2.setAttribute(
+    //     'title',
+    //     mxResources.get('pasteData') + ' (' + this.editorUi.actions.get('pasteData') + ')',
+    //   );
 
-      div.appendChild(btn2);
-      count++;
+    //   div.appendChild(btn2);
+    //   count++;
 
-      btn.style.width = '100px';
-      btn.style.marginBottom = '2px';
-      btn2.style.width = '100px';
-      btn2.style.marginBottom = '2px';
-    }
-  }
+    //   btn.style.width = '100px';
+    //   btn.style.marginBottom = '2px';
+    //   btn2.style.width = '100px';
+    //   btn2.style.marginBottom = '2px';
+    // }
+  // }
 
   if (
     graph.getSelectionCount() == 1 &&
