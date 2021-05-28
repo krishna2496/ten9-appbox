@@ -4325,7 +4325,7 @@ fieldset[disabled] .btn-danger.focus {
     bottom: 1px;
     position: absolute;
     right: 0px;
-    width: 260px;
+    width: 318px;
     border: 1px solid #E5E5E5;
     z-index: 1004;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
@@ -4338,6 +4338,11 @@ fieldset[disabled] .btn-danger.focus {
     user-select: none;
     /*display: none;*/
 }
+
+
+.luckysheet-modal-dialog-slider input[type="checkbox"] {
+    margin-right: 10px;
+} 
 
 .luckysheet-modal-dialog-slider .luckysheet-modal-dialog-slider-title {
     background: #333;
@@ -4352,7 +4357,7 @@ fieldset[disabled] .btn-danger.focus {
 }
 
 .luckysheet-modal-dialog-slider .luckysheet-modal-dialog-slider-title>span:first-child {
-    margin-left: 5px;
+    margin-left: 10px;
     font-weight: bold;
 }
 
@@ -4371,6 +4376,7 @@ fieldset[disabled] .btn-danger.focus {
     top: 0px;
     bottom: 0px;
     font-size: 12px;
+    padding: 5px;
 }
 
 .luckysheet-modal-dialog-slider-range {
@@ -6344,6 +6350,7 @@ fieldset[disabled] .btn-danger.focus {
 #luckysheet-locationCell-dialog .listbox .listItem input[type="radio"] {
     float: left;
     margin-top: 5px;
+    margin-right: 5px;
 }
 
 #luckysheet-locationCell-dialog .listbox .listItem .subbox {
@@ -6426,6 +6433,7 @@ fieldset[disabled] .btn-danger.focus {
 #luckysheet-splitColumn-dialog .box .boxMain {
     padding: 5px;
     border: 1px solid #dfdfdf;
+    padding-bottom: 10px;
 }
 
 #luckysheet-splitColumn-dialog .box input[type="checkbox"] {
@@ -6435,8 +6443,10 @@ fieldset[disabled] .btn-danger.focus {
 
 #luckysheet-splitColumn-dialog .box .boxMain input[type="text"] {
     margin-left: 5px;
-    width: 50px;
+    width: 64px;
     padding: 0 5px;
+    border-radius: 2.1px !important;
+    border: 1px solid gray;
 }
 
 #luckysheet-splitColumn-dialog .box #splitColumnData {
@@ -7125,7 +7135,7 @@ fieldset[disabled] .btn-danger.focus {
 }
 #luckysheet-insertLink-dialog .box-item label{
     display: inline-block;
-    width: 80px;
+    width: 81px;
     text-align: right;
     margin-right: 10px;
 }
@@ -7319,4 +7329,22 @@ fieldset[disabled] .btn-danger.focus {
     cursor: default;
     white-space: nowrap;
 }
+.luckysheet-modal-dialog-content label {
+    font-weight: 100 !important;
+    line-height: 24px;
+}
 
+.luckysheet-modal-dialog-content input[type="checkbox"] {
+    font-weight: 100 !important;
+    margin-right: 3px;
+    border-radius : 0px !important;
+    width: 30px !important;
+}
+
+/* .luckysheet-modal-dialog-content input[type="text"] {
+border: 1px solid;
+} */
+
+.ctBox input.formulaInputFocus {
+    height: 25px;
+}
