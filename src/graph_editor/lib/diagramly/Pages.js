@@ -2016,6 +2016,7 @@ EditorUi.prototype.createPageMenu = function (page, label) {
 })();
 
 module.exports = {
+  SelectPage,
   DiagramPage,
   RenamePage,
 };

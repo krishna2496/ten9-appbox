@@ -20,6 +20,7 @@ import { mxUtils } from '../../lib/jgraph/mxClient.js';
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 // TODO: Figure out why we can't import here
 const { dragElement, bringWindowToFront } = require('./utils.ts');
+const { SelectPage } = require('../../lib/diagramly/Pages.js');
 
 interface RegularExpression {
   test: FunctionStringCallback;
@@ -69,6 +70,8 @@ export default defineComponent({
     const notFound = ref<boolean>(false);
 
     const isMin = ref<boolean>(false);
+
+    const replaceInput = ref<string>('');
 
     function close() {
       show.value = false;
@@ -229,6 +232,103 @@ export default defineComponent({
       // }
     }
 
+    function replace(find = false) {
+      try {
+        const lblMatch = searchInput.value;
+        const lblMatchPos = lblMatch.length;
+        if (lblMatch != null && lastFound.value != null && replaceInput.value) {
+          const { cell } = lastFound.value,
+            lbl = graph.value.getLabel(cell);
+
+          graph.value.model.setValue(
+            cell,
+            props.editorUi.replaceInLabel(
+              lbl,
+              lblMatch,
+              replaceInput.value,
+              lblMatchPos - lblMatch.length,
+              graph.value.getCurrentCellStyle(cell),
+            ),
+          );
+          if (find) {
+            searchText(false);
+          }
+        }
+      } catch (e) {
+        props.editorUi.handleError(e);
+      }
+    }
+
+    function replaceAll() {
+      if (replaceInput.value) {
+        const currentPage = props.editorUi.getCurrentPage();
+        const cells = props.editorUi.editor.graph.getSelectionCells();
+        let marker = 1;
+        // eslint-disable-next-line vue/no-mutating-props
+        props.editorUi.editor.graph.rendering = false;
+
+        graph.value.getModel().beginUpdate();
+        try {
+          let safeguard = 0;
+          const seen = {};
+          const lblMatch = searchInput.value;
+          const lblMatchPos = lblMatch.length;
+          const safeguardCount = 100;
+
+          while (
+            props.editorUi.search(
+              false,
+              true,
+              true,
+              lblMatch,
+              regexInput.value,
+              allPagesInput.value,
+            ) &&
+            safeguard < safeguardCount
+          ) {
+            const { cell } = lastFound.value,
+              lbl = graph.value.getLabel(cell);
+            const oldSeen = seen[cell.id];
+
+            if (oldSeen && oldSeen.replAllMrk == marker && oldSeen.replAllPos >= lblMatchPos) {
+              break;
+            }
+
+            seen[cell.id] = { replAllMrk: marker, replAllPos: lblMatchPos };
+
+            graph.value.model.setValue(
+              cell,
+              props.editorUi.replaceInLabel(
+                lbl,
+                lblMatch,
+                replaceInput.value,
+                lblMatchPos - lblMatch.length,
+                graph.value.getCurrentCellStyle(cell),
+              ),
+            );
+            // eslint-disable-next-line no-plusplus
+            safeguard++;
+          }
+
+          if (currentPage != props.editorUi.getCurrentPage()) {
+            props.editorUi.editor.graph.model.execute(new SelectPage(props.editorUi, currentPage));
+          }
+
+          //mxUtils.write(replAllNotif, mxResources.get('matchesRepl', [safeguard]));
+        } catch (e) {
+          props.editorUi.handleError(e);
+        } finally {
+          graph.value.getModel().endUpdate();
+          props.editorUi.editor.graph.setSelectionCells(cells);
+          // eslint-disable-next-line vue/no-mutating-props
+          props.editorUi.editor.graph.rendering = true;
+        }
+
+        // eslint-disable-next-line no-plusplus
+        marker++;
+      }
+    }
+
     function enableAllPage() {
       allPagesDisable.value = false;
     }
@@ -295,6 +395,9 @@ export default defineComponent({
       isRegularExpression,
       lastFound,
       notFound,
+      replace,
+      replaceAll,
+      replaceInput,
       regexInput,
       reset,
       searchText,
@@ -326,6 +429,22 @@ export default defineComponent({
         v-model='searchInput',
         :class='{ bgLightPink: notFound }'
       )
+      input.mt-2.txt-input-window(type='text', v-model='replaceInput')
+      .row.mt-2.ml-1
+        .col-md-6.pl-0
+          button.btn-center.btn.btn-primary(@click='reset') Find
+        .col-md-6.pl-0
+          button.btn-center.btn.btn-primary(@click='replace("true")') Replae/Find
+      .row.mt-2.ml-1
+        .col-md-6.pl-0
+          button.btn-center.btn.btn-primary(@click='replace') Replace
+        .col-md-6.pl-0
+          button.btn-center.btn.btn-primary(@click='replaceAll') Replace All
+      .row.mt-2.ml-1
+        .col-md-6.pl-0
+          button.btn-center.btn.btn-grey(@click='reset') Reset
+        .col-md-6.pl-0
+          button.btn-center.btn.btn-grey(@click='close') Close
       .row.mt-2.ml-1
         b-form-checkbox#checkbox-1(name='checkbox-1', @change='isRegularExpression')
           span.checkbox-text
@@ -338,8 +457,8 @@ export default defineComponent({
         )
           span.checkbox-text
             | All Pages
-    template(#footer)
-      .span.footer-buttons
-        button.btn.btn-grey.ml-3(@click='reset') Reset
-        button.btn.btn-primary.ml-2(@click='searchText(false)') Find
+    //- template(#footer)
+    //-   .span.footer-buttons
+    //-     button.btn.btn-grey.ml-3(@click='reset') Reset
+    //-     button.btn.btn-primary.ml-2(@click='searchText(false)') Find
 </template>

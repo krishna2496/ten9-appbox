@@ -15037,6 +15037,242 @@ var SelectedFile;
     this.pageStyle = style;
   };
 
+  // TEN9: replace functionality
+  EditorUi.prototype.replaceInLabel = function (str, substr, newSubstr, startIndex, style) {
+    if (style == null || style['html'] != '1') {
+      var replStart = str.toLowerCase().indexOf(substr, startIndex);
+      return replStart < 0
+        ? str
+        : str.substr(0, replStart) + newSubstr + str.substr(replStart + substr.length);
+    }
+
+    var origStr = str;
+    substr = mxUtils.htmlEntities(substr);
+    var tagPos = [],
+      p = -1;
+
+    while ((p = str.indexOf('<', p + 1)) > -1) {
+      tagPos.push(p);
+    }
+
+    var tags = str.match(/<[^>]*>/g);
+    str = str.replace(/<[^>]*>/g, '');
+    var lStr = str.toLowerCase();
+    var replStart = lStr.indexOf(substr, startIndex);
+
+    if (replStart < 0) {
+      return origStr;
+    }
+
+    var replEnd = replStart + substr.length;
+    var newSubstr = mxUtils.htmlEntities(newSubstr);
+
+    //Tags within the replaced text is added before it
+    var newStr = str.substr(0, replStart) + newSubstr + str.substr(replEnd);
+    var tagDiff = 0;
+
+    for (var i = 0; i < tagPos.length; i++) {
+      if (tagPos[i] - tagDiff < replStart) {
+        newStr = newStr.substr(0, tagPos[i]) + tags[i] + newStr.substr(tagPos[i]);
+      } else if (tagPos[i] - tagDiff < replEnd) {
+        var inPos = replStart + tagDiff;
+        newStr = newStr.substr(0, inPos) + tags[i] + newStr.substr(inPos);
+      } else {
+        var inPos = tagPos[i] + (newSubstr.length - substr.length);
+        newStr = newStr.substr(0, inPos) + tags[i] + newStr.substr(inPos);
+      }
+
+      tagDiff += tags[i].length;
+    }
+
+    return newStr;
+  };
+
+  // TEN9:
+  EditorUi.prototype.lastFound = null;
+
+  // TEN9: search function for searching the label form multiple pages
+  EditorUi.prototype.search = function (
+    internalCall,
+    trySameCell,
+    stayOnPage,
+    searchInput,
+    regexInput,
+    allPagesInput,
+  ) {
+    debugger;
+    const graph = this.editor.graph;
+    var cells = graph.model.getDescendants(graph.model.getRoot());
+    var searchStr = searchInput.toLowerCase();
+    var re = regexInput ? new RegExp(searchStr) : null;
+    var firstMatch = null;
+    var lastSearch = null;
+    const withReplace = true;
+    var tmp = document.createElement('div');
+    lblMatch = null;
+
+    if (lastSearch != searchStr) {
+      lastSearch = searchStr;
+      this.lastFound = null;
+      allChecked = false;
+    }
+
+    var active = this.lastFound == null;
+
+    if (searchStr.length > 0) {
+      if (allChecked) {
+        allChecked = false;
+
+        //Find current page index
+        var currentPageIndex;
+
+        for (var i = 0; i < this.pages.length; i++) {
+          if (this.currentPage == this.pages[i]) {
+            currentPageIndex = i;
+            break;
+          }
+        }
+
+        var nextPageIndex = (currentPageIndex + 1) % this.pages.length,
+          nextPage;
+        this.lastFound = null;
+
+        do {
+          allChecked = false;
+          nextPage = this.pages[nextPageIndex];
+          graph = this.createTemporaryGraph(graph.getStylesheet());
+          this.updatePageRoot(nextPage);
+          graph.model.setRoot(nextPage.root);
+          nextPageIndex = (nextPageIndex + 1) % this.pages.length;
+        } while (
+          !search(true, trySameCell, stayOnPage, searchInput, regexInput, allPagesInput) &&
+          nextPageIndex != currentPageIndex
+        );
+
+        if (this.lastFound) {
+          console.log('yes');
+          this.lastFound = null;
+
+          if (!stayOnPage) {
+            console.log(1);
+            this.selectPage(nextPage);
+          } else {
+            console.log(2);
+            this.editor.graph.model.execute(new SelectPage(this, nextPage));
+          }
+        }
+
+        allChecked = false;
+        graph = this.editor.graph;
+
+        return search(true, trySameCell, stayOnPage, searchInput, regexInput, allPagesInput);
+      }
+
+      var i;
+
+      for (i = 0; i < cells.length; i++) {
+        var state = graph.view.getState(cells[i]);
+
+        //Try the same cell with replace to find other occurances
+        if (trySameCell && re != null) {
+          active = active || state == this.lastFound;
+        }
+
+        if (
+          state != null &&
+          state.cell.value != null &&
+          (active || firstMatch == null) &&
+          (graph.model.isVertex(state.cell) || graph.model.isEdge(state.cell))
+        ) {
+          if (state.style != null && state.style['html'] == '1') {
+            tmp.innerHTML = graph.sanitizeHtml(graph.getLabel(state.cell));
+            label = mxUtils.extractTextWithWhitespace([tmp]);
+          } else {
+            label = graph.getLabel(state.cell);
+          }
+
+          label = mxUtils.trim(label.replace(/[\x00-\x1F\x7F-\x9F]|\s+/g, ' ')).toLowerCase();
+          var lblPosShift = 0;
+
+          if (trySameCell && withReplace && re != null && state == this.lastFound) {
+            label = label.substr(lblMatchPos);
+            lblPosShift = lblMatchPos;
+          }
+
+          var checkMeta = false;
+          var checkIndex = checkMeta;
+
+          if (
+            (re == null &&
+              ((checkIndex && label.indexOf(searchStr) >= 0) ||
+                (!checkIndex && label.substring(0, searchStr.length) === searchStr) ||
+                (checkMeta && testMeta(re, state.cell, searchStr, checkIndex)))) ||
+            (re != null &&
+              (re.test(label) || (checkMeta && testMeta(re, state.cell, searchStr, checkIndex))))
+          ) {
+            if (withReplace) {
+              if (re != null) {
+                var result = label.match(re);
+                lblMatch = result[0].toLowerCase();
+                lblMatchPos = lblPosShift + result.index + lblMatch.length;
+              } else {
+                lblMatch = searchStr;
+                lblMatchPos = lblMatch.length;
+              }
+            }
+
+            if (active) {
+              firstMatch = state;
+              break;
+            } else if (firstMatch == null) {
+              firstMatch = state;
+            }
+          }
+        }
+
+        active = active || state == this.lastFound;
+      }
+    }
+
+    if (firstMatch != null) {
+      if (i == cells.length && allPagesInput) {
+        this.lastFound = null;
+        allChecked = true;
+        return this.search(true, trySameCell, stayOnPage, searchInput, regexInput, allPagesInput);
+      }
+      console.log('match');
+      this.lastFound = firstMatch;
+      graph.scrollCellToVisible(this.lastFound.cell);
+
+      if (graph.isEnabled()) {
+        if (
+          !stayOnPage &&
+          (graph.getSelectionCell() != this.lastFound.cell || graph.getSelectionCount() != 1)
+        ) {
+          graph.setSelectionCell(this.lastFound.cell);
+        }
+      } else {
+        graph.highlightCell(this.lastFound.cell);
+      }
+    }
+    //Check other pages
+    else if (!internalCall && allPagesInput) {
+      console.log('at elsif');
+      allChecked = true;
+      return this.search(true, trySameCell, stayOnPage, searchInput, regexInput, allPagesInput);
+    } else if (graph.isEnabled() && !stayOnPage) {
+      graph.clearSelection();
+    }
+
+    lastSearchSuccessful = firstMatch != null;
+
+    if (withReplace && !internalCall) {
+      //updateReplBtns();
+    }
+
+    return searchStr.length == 0 || firstMatch != null;
+  };
+
   EditorUi.prototype.getBoundingBoxFromGeometry = function (cells) {
     this.editor.graph.getBoundingBoxFromGeometry(cells);
   };
