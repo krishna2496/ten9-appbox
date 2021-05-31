@@ -51,6 +51,7 @@ const {
 } = require('./Dialogs.js');
 const { Spinner } = require('../spin/spin.js');
 const { Sidebar } = require('../jgraph/Sidebar.js');
+const { SelectPage } = require('../diagramly/Pages.js');
 
 // TEN9: TODO: Consolidate all constants
 // const urlParams = {dev: '1', sync: 'manual'};
@@ -15091,6 +15092,8 @@ var SelectedFile;
   // TEN9:
   EditorUi.prototype.lastFound = null;
 
+  EditorUi.prototype.lastSearch = null;
+
   // TEN9: search function for searching the label form multiple pages
   EditorUi.prototype.search = function (
     internalCall,
@@ -15100,19 +15103,19 @@ var SelectedFile;
     regexInput,
     allPagesInput,
   ) {
-    debugger;
-    const graph = this.editor.graph;
+    //debugger
+    let graph = this.editor.graph;
     var cells = graph.model.getDescendants(graph.model.getRoot());
     var searchStr = searchInput.toLowerCase();
     var re = regexInput ? new RegExp(searchStr) : null;
     var firstMatch = null;
-    var lastSearch = null;
     const withReplace = true;
     var tmp = document.createElement('div');
     lblMatch = null;
+    var nextPage = null;
 
-    if (lastSearch != searchStr) {
-      lastSearch = searchStr;
+    if (this.lastSearch != searchStr) {
+      this.lastSearch = searchStr;
       this.lastFound = null;
       allChecked = false;
     }
@@ -15127,7 +15130,7 @@ var SelectedFile;
         var currentPageIndex;
 
         for (var i = 0; i < this.pages.length; i++) {
-          if (this.currentPage == this.pages[i]) {
+          if (this.getCurrentPage() == this.pages[i]) {
             currentPageIndex = i;
             break;
           }
@@ -15135,29 +15138,28 @@ var SelectedFile;
 
         var nextPageIndex = (currentPageIndex + 1) % this.pages.length,
           nextPage;
-        this.lastFound = null;
+        //this.lastFound = null;
 
         do {
           allChecked = false;
           nextPage = this.pages[nextPageIndex];
+          console.log('this.pages', this.pages);
+          console.log('nextPageIndex', nextPageIndex);
           graph = this.createTemporaryGraph(graph.getStylesheet());
           this.updatePageRoot(nextPage);
           graph.model.setRoot(nextPage.root);
           nextPageIndex = (nextPageIndex + 1) % this.pages.length;
         } while (
-          !search(true, trySameCell, stayOnPage, searchInput, regexInput, allPagesInput) &&
+          !this.search(true, trySameCell, stayOnPage, searchInput, regexInput, allPagesInput) &&
           nextPageIndex != currentPageIndex
         );
 
         if (this.lastFound) {
-          console.log('yes');
           this.lastFound = null;
 
           if (!stayOnPage) {
-            console.log(1);
             this.selectPage(nextPage);
           } else {
-            console.log(2);
             this.editor.graph.model.execute(new SelectPage(this, nextPage));
           }
         }
@@ -15165,7 +15167,7 @@ var SelectedFile;
         allChecked = false;
         graph = this.editor.graph;
 
-        return search(true, trySameCell, stayOnPage, searchInput, regexInput, allPagesInput);
+        return this.search(true, trySameCell, stayOnPage, searchInput, regexInput, allPagesInput);
       }
 
       var i;
@@ -15240,7 +15242,7 @@ var SelectedFile;
         allChecked = true;
         return this.search(true, trySameCell, stayOnPage, searchInput, regexInput, allPagesInput);
       }
-      console.log('match');
+
       this.lastFound = firstMatch;
       graph.scrollCellToVisible(this.lastFound.cell);
 
@@ -15257,7 +15259,6 @@ var SelectedFile;
     }
     //Check other pages
     else if (!internalCall && allPagesInput) {
-      console.log('at elsif');
       allChecked = true;
       return this.search(true, trySameCell, stayOnPage, searchInput, regexInput, allPagesInput);
     } else if (graph.isEnabled() && !stayOnPage) {

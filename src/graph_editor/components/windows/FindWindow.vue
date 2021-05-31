@@ -73,6 +73,14 @@ export default defineComponent({
 
     const replaceInput = ref<string>('');
 
+    const validated = ref<boolean>(true);
+
+    const replaceAllBtn = ref<boolean>(true);
+
+    const safeguard = ref<number>(0);
+
+    const visibleRplaceCount = ref<boolean>(false);
+
     function close() {
       show.value = false;
       lastFound.value = null;
@@ -252,6 +260,8 @@ export default defineComponent({
           );
           if (find) {
             searchText(false);
+          } else {
+            validated.value = true;
           }
         }
       } catch (e) {
@@ -269,7 +279,6 @@ export default defineComponent({
 
         graph.value.getModel().beginUpdate();
         try {
-          let safeguard = 0;
           const seen = {};
           const lblMatch = searchInput.value;
           const lblMatchPos = lblMatch.length;
@@ -284,8 +293,9 @@ export default defineComponent({
               regexInput.value,
               allPagesInput.value,
             ) &&
-            safeguard < safeguardCount
+            safeguard.value < safeguardCount
           ) {
+            lastFound.value = props.editorUi.lastFound;
             const { cell } = lastFound.value,
               lbl = graph.value.getLabel(cell);
             const oldSeen = seen[cell.id];
@@ -307,7 +317,7 @@ export default defineComponent({
               ),
             );
             // eslint-disable-next-line no-plusplus
-            safeguard++;
+            safeguard.value++;
           }
 
           if (currentPage != props.editorUi.getCurrentPage()) {
@@ -327,6 +337,7 @@ export default defineComponent({
         // eslint-disable-next-line no-plusplus
         marker++;
       }
+      visibleRplaceCount.value = true;
     }
 
     function enableAllPage() {
@@ -378,6 +389,23 @@ export default defineComponent({
         if (val !== '') {
           searchText(false);
         }
+        visibleRplaceCount.value = false;
+        safeguard.value = 0;
+      },
+    );
+
+    watch(
+      () => replaceInput.value,
+      (val) => {
+        if (val !== '' && searchInput.value !== '') {
+          validated.value = false;
+          replaceAllBtn.value = false;
+        } else {
+          validated.value = true;
+          replaceAllBtn.value = true;
+        }
+        visibleRplaceCount.value = false;
+        safeguard.value = 0;
       },
     );
 
@@ -397,12 +425,16 @@ export default defineComponent({
       notFound,
       replace,
       replaceAll,
+      replaceAllBtn,
       replaceInput,
       regexInput,
       reset,
       searchText,
+      safeguard,
       show,
       searchInput,
+      validated,
+      visibleRplaceCount,
     };
   },
 });
@@ -427,19 +459,20 @@ export default defineComponent({
       input.txt-input-window(
         type='text',
         v-model='searchInput',
-        :class='{ bgLightPink: notFound }'
+        :class='{ bgLightPink: notFound }',
+        placeholder='find'
       )
-      input.mt-2.txt-input-window(type='text', v-model='replaceInput')
+      input.mt-2.txt-input-window(type='text', v-model='replaceInput', placeholder='replace')
       .row.mt-2.ml-1
         .col-md-6.pl-0
           button.btn-center.btn.btn-primary(@click='reset') Find
         .col-md-6.pl-0
-          button.btn-center.btn.btn-primary(@click='replace("true")') Replae/Find
+          button.btn-center.btn.btn-primary(@click='replace("true")', :disabled='validated') Replae/Find
       .row.mt-2.ml-1
         .col-md-6.pl-0
-          button.btn-center.btn.btn-primary(@click='replace') Replace
+          button.btn-center.btn.btn-primary(@click='replace', :disabled='validated') Replace
         .col-md-6.pl-0
-          button.btn-center.btn.btn-primary(@click='replaceAll') Replace All
+          button.btn-center.btn.btn-primary(@click='replaceAll', :disabled='replaceAllBtn') Replace All
       .row.mt-2.ml-1
         .col-md-6.pl-0
           button.btn-center.btn.btn-grey(@click='reset') Reset
@@ -457,6 +490,8 @@ export default defineComponent({
         )
           span.checkbox-text
             | All Pages
+      .row
+        label.ml-5(v-show='visibleRplaceCount') {{ safeguard }} matches replaced
     //- template(#footer)
     //-   .span.footer-buttons
     //-     button.btn.btn-grey.ml-3(@click='reset') Reset
