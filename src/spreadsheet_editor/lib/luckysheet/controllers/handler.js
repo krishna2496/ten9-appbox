@@ -69,6 +69,7 @@ import { createLuckyChart, hideAllNeedRangeShow } from '../expendPlugins/chart/p
 
 // TEN9: Add jquery-mousewheel import here for webpack to pickup and handle
 require('jquery-mousewheel')($);
+// TEN9: Add spectrum-colorpicker import here for webpack to pickup and handle
 require('spectrum-colorpicker');
 
 //, columeflowset, rowflowset

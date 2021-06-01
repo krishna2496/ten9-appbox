@@ -2,6 +2,7 @@ import './utils/math'
 import { luckysheet } from './core'
 import __firefox from './utils/polyfill'
 
+/* TEN9: css imported for spreadsheet editor */
 import './css/iconCustom.css';
 import './css/luckysheet-cellFormat.css';
 import './css/luckysheet-core.css';
