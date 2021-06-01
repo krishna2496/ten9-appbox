@@ -124,7 +124,7 @@ export default defineComponent({
       return false;
     }
 
-    function searchText(internalCall: boolean): boolean {
+    function searchText(internalCall: boolean, replaceAllCall: boolean): boolean {
       const tmp = document.createElement('div');
       const cells = graph.value.model.getDescendants(graph.value.model.getRoot());
       const searchStr = searchInput.value.toLowerCase();
@@ -158,7 +158,7 @@ export default defineComponent({
             props.editorUi.updatePageRoot(nextPage);
             graph.value.model.setRoot(nextPage.root);
             nextPageIndex = (nextPageIndex + 1) % props.editorUi.pages.length;
-          } while (!searchText(true) && nextPageIndex != currentPageIndex);
+          } while (!searchText(true, false) && nextPageIndex != currentPageIndex);
           if (lastFound.value) {
             lastFound.value = null;
             props.editorUi.selectPage(nextPage);
@@ -166,7 +166,11 @@ export default defineComponent({
 
           allChecked.value = false;
           graph.value = props.editorUi.editor.graph;
-          return searchText(true);
+          if (replaceAllCall) {
+            return searchText(true, true);
+          } else {
+            return searchText(true, false);
+          }
         }
 
         for (i = 0; i < cells.length; i++) {
@@ -213,7 +217,7 @@ export default defineComponent({
         if (i == cells.length && allPagesInput.value) {
           lastFound.value = null;
           allChecked.value = true;
-          return searchText(true);
+          return searchText(true, false);
         }
         lastFound.value = firstMatch;
         graph.value.scrollCellToVisible(lastFound.value.cell);
@@ -228,10 +232,12 @@ export default defineComponent({
       //Check other pages
       else if (!internalCall && allPagesInput.value) {
         allChecked.value = true;
-        return searchText(true);
+        return searchText(true, false);
       } else if (graph.value.isEnabled()) {
         graph.value.clearSelection();
-        notFound.value = true;
+        if (!replaceAllCall) {
+          notFound.value = true;
+        }
       }
 
       return searchStr.length == 0 || firstMatch != null;
@@ -259,7 +265,7 @@ export default defineComponent({
             ),
           );
           if (find) {
-            searchText(false);
+            searchText(false, false);
           } else {
             validated.value = true;
           }
@@ -271,7 +277,7 @@ export default defineComponent({
 
     function replaceAll() {
       if (replaceInput.value) {
-        const currentPage = props.editorUi.getCurrentPage();
+        const prasentPage = props.editorUi.getCurrentPage();
         const cells = props.editorUi.editor.graph.getSelectionCells();
         let marker = 1;
         // eslint-disable-next-line vue/no-mutating-props
@@ -284,18 +290,7 @@ export default defineComponent({
           const lblMatchPos = lblMatch.length;
           const safeguardCount = 100;
 
-          while (
-            props.editorUi.search(
-              false,
-              true,
-              true,
-              lblMatch,
-              regexInput.value,
-              allPagesInput.value,
-            ) &&
-            safeguard.value < safeguardCount
-          ) {
-            lastFound.value = props.editorUi.lastFound;
+          while (searchText(false, true) && safeguard.value < safeguardCount) {
             const { cell } = lastFound.value,
               lbl = graph.value.getLabel(cell);
             const oldSeen = seen[cell.id];
@@ -316,12 +311,12 @@ export default defineComponent({
                 graph.value.getCurrentCellStyle(cell),
               ),
             );
-            // eslint-disable-next-line no-plusplus
-            safeguard.value++;
+
+            safeguard.value += 1;
           }
 
-          if (currentPage != props.editorUi.getCurrentPage()) {
-            props.editorUi.editor.graph.model.execute(new SelectPage(props.editorUi, currentPage));
+          if (prasentPage != props.editorUi.getCurrentPage()) {
+            props.editorUi.editor.graph.model.execute(new SelectPage(props.editorUi, prasentPage));
           }
 
           //mxUtils.write(replAllNotif, mxResources.get('matchesRepl', [safeguard]));
@@ -330,12 +325,9 @@ export default defineComponent({
         } finally {
           graph.value.getModel().endUpdate();
           props.editorUi.editor.graph.setSelectionCells(cells);
-          // eslint-disable-next-line vue/no-mutating-props
-          props.editorUi.editor.graph.rendering = true;
         }
 
-        // eslint-disable-next-line no-plusplus
-        marker++;
+        marker += 1;
       }
       visibleRplaceCount.value = true;
     }
@@ -387,7 +379,7 @@ export default defineComponent({
       () => searchInput.value,
       (val) => {
         if (val !== '') {
-          searchText(false);
+          searchText(false, false);
         }
         visibleRplaceCount.value = false;
         safeguard.value = 0;
@@ -423,11 +415,11 @@ export default defineComponent({
       isRegularExpression,
       lastFound,
       notFound,
+      regexInput,
       replace,
       replaceAll,
       replaceAllBtn,
       replaceInput,
-      regexInput,
       reset,
       searchText,
       safeguard,
