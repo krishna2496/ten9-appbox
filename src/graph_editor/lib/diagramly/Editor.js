@@ -1197,7 +1197,11 @@ const uiTheme = null;
         }
       }
 
-      var style = { strokeWidth: this.canvas.state.strokeWidth, seed: seed };
+      var style = {
+        strokeWidth: this.canvas.state.strokeWidth,
+        seed: seed,
+        preserveVertices: true,
+      };
       var defs = this.rc.getDefaultOptions();
 
       if (stroke) {
@@ -6811,6 +6815,7 @@ const uiTheme = null;
   mxStencilRegistry.libraries['c4'] = [
     //SHAPES_PATH + '/mxC4.js'
   ];
+
   mxStencilRegistry.libraries['cisco19'] = [
     //SHAPES_PATH + '/mxCisco19.js',
     STENCIL_PATH + '/cisco19.xml',
@@ -6898,6 +6903,7 @@ const uiTheme = null;
   mxStencilRegistry.libraries['mockup/forms'] = [
     //SHAPES_PATH + '/mockup/mxMockupForms.js'
   ];
+
   mxStencilRegistry.libraries['mockup/graphics'] = [
     //SHAPES_PATH + '/mockup/mxMockupGraphics.js',
     STENCIL_PATH + '/mockup/misc.xml',

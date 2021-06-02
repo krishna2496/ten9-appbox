@@ -730,7 +730,7 @@ App.main = function (createUi) {
       if (scripts != null && scripts.length > 1) {
         var content = mxUtils.getTextContent(scripts[1]);
 
-        if (CryptoJS.MD5(content).toString() != 'd53805dd6f0bbba2da4966491ca0a505') {
+        if (CryptoJS.MD5(content).toString() != 'd41d8cd98f00b204e9800998ecf8427e') {
           console.log(
             'Change main script MD5 in the previous line:',
             CryptoJS.MD5(content).toString(),

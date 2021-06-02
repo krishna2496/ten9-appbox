@@ -236,29 +236,30 @@ export default {
     });
 
     this.editorUi.addListener('inactiveColorButton', () => {
-      //debugger
       this.buttonInactive();
-      this.colorPickerType = '';
-      this.applyFn = null;
+      if(this.colorPickerType != '') {
+        this.colorPickerType = '';
+        this.applyFn = null;
 
-      if(this.alphaHexString != this.previousAlphaHexString && this.recentColorsArray[0] != `#${this.alphaHexString}`) {
-        Array.prototype.move = function(from,to){
-          this.splice(to,0,this.splice(from,1)[0]);
-          return this;
-        };
-        if(this.recentColorsArray.indexOf(`#${this.alphaHexString}`) != -1) {
-          this.recentColorsArray.move(this.recentColorsArray.indexOf(`#${this.alphaHexString}`),0)
-        }
-        else {
-          if(this.recentColorsArray.length == 8) {
-          this.recentColorsArray.splice(-1,1);
+        if(this.alphaHexString != this.previousAlphaHexString && this.recentColorsArray[0] != `#${this.alphaHexString}`) {
+          Array.prototype.move = function(from,to){
+            this.splice(to,0,this.splice(from,1)[0]);
+            return this;
+          };
+          if(this.recentColorsArray.indexOf(`#${this.alphaHexString}`) != -1) {
+            this.recentColorsArray.move(this.recentColorsArray.indexOf(`#${this.alphaHexString}`),0)
           }
-          this.recentColorsArray.unshift(`#${this.alphaHexString}`);
-        }
+          else {
+            if(this.recentColorsArray.length == 8) {
+            this.recentColorsArray.splice(-1,1);
+            }
+            this.recentColorsArray.unshift(`#${this.alphaHexString}`);
+          }
 
-        this.$emit('recent-colors-changed', this.recentColorsArray.toString())
+          this.$emit('recent-colors-changed', this.recentColorsArray.toString())
+        }
+        this.previousAlphaHexString = this.alphaHexString;
       }
-      this.previousAlphaHexString = this.alphaHexString;
     });
 
     this.$nextTick(() => {
@@ -271,12 +272,6 @@ export default {
         colorWindow.style.left = `${containerRect.width -  formatPanelWidth - colorWindowWidth - rightPadding}px`;
         colorWindow.style.top = `${this.editorUi.menubarHeight + this.editorUi.toolbarHeight + topPadding}px`;
     });
-
-    if(this.recentColors != '') {
-      this.recentColorsArray = this.recentColors.split(",");
-    } else {
-      this.recentColorsArray = [];
-    }
   },
   methods: {
     selectSaturation(color) {
@@ -397,6 +392,15 @@ export default {
       }
     },
   },
+  watch:{
+    recentColors(newVal, oldVal) {
+      if(newVal != '') {
+        this.recentColorsArray = newVal.split(",");
+      } else {
+        this.recentColorsArray = [];
+    }
+    }
+  }
 };
 </script>
 
