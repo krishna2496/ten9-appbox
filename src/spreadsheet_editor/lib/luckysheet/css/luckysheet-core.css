@@ -3152,7 +3152,7 @@ fieldset[disabled] .btn-danger.focus {
 .luckysheet-modal-dialog-title-close {
     height: 11px;
     opacity: 0.7;
-    /* TEN9: Make padding change for close icon */
+    /* TEN9: padding added to close icon  */
     padding: 28px; 
     position: absolute;
     right: 15px;
@@ -4326,6 +4326,8 @@ fieldset[disabled] .btn-danger.focus {
     bottom: 1px;
     position: absolute;
     right: 0px;
+    /* TEN9: style added width: 318px from 260px for better layout
+    <div class="luckysheet-slider-protection-column luckysheet-protection-column-3x" style="left:70%;"> */
     width: 318px;
     border: 1px solid #E5E5E5;
     z-index: 1004;
@@ -4340,7 +4342,8 @@ fieldset[disabled] .btn-danger.focus {
     /*display: none;*/
 }
 
-
+/* TEN9: style added checkbox margin right for better layout 
+<div class="luckysheet-slider-protection-column luckysheet-protection-column-3x" style="left:70%;"> */
 .luckysheet-modal-dialog-slider input[type="checkbox"] {
     margin-right: 10px;
 } 
@@ -4358,6 +4361,8 @@ fieldset[disabled] .btn-danger.focus {
 }
 
 .luckysheet-modal-dialog-slider .luckysheet-modal-dialog-slider-title>span:first-child {
+    /* TEN9: style added margin-left 10px instead of 5px for better layout 
+    margin-left: 5px; */
     margin-left: 10px;
     font-weight: bold;
 }
@@ -6351,6 +6356,7 @@ fieldset[disabled] .btn-danger.focus {
 #luckysheet-locationCell-dialog .listbox .listItem input[type="radio"] {
     float: left;
     margin-top: 5px;
+    /* TEN9: style added margin right 5px for better layout */
     margin-right: 5px;
 }
 
@@ -6434,6 +6440,7 @@ fieldset[disabled] .btn-danger.focus {
 #luckysheet-splitColumn-dialog .box .boxMain {
     padding: 5px;
     border: 1px solid #dfdfdf;
+    /* TEN9: style added padding bottom for better layout */
     padding-bottom: 10px;
 }
 
@@ -6444,8 +6451,11 @@ fieldset[disabled] .btn-danger.focus {
 
 #luckysheet-splitColumn-dialog .box .boxMain input[type="text"] {
     margin-left: 5px;
+    /* TEN9: style added width changes 64px from 50px for better layout
+    width: 50px; */
     width: 64px;
     padding: 0 5px;
+    /* TEN9: border radius and border for better layout */
     border-radius: 2.1px !important;
     border: 1px solid gray;
 }
@@ -7136,6 +7146,8 @@ fieldset[disabled] .btn-danger.focus {
 }
 #luckysheet-insertLink-dialog .box-item label{
     display: inline-block;
+    /* TEN9: width changes 81px from 80px for better layout
+    width: 80px */
     width: 81px;
     text-align: right;
     margin-right: 10px;
@@ -7330,6 +7342,8 @@ fieldset[disabled] .btn-danger.focus {
     cursor: default;
     white-space: nowrap;
 }
+
+/* TEN9: new class added for better layout */
 .luckysheet-modal-dialog-content label {
     font-weight: 100 !important;
     line-height: 24px;
@@ -7341,10 +7355,6 @@ fieldset[disabled] .btn-danger.focus {
     border-radius : 0px !important;
     width: 30px !important;
 }
-
-/* .luckysheet-modal-dialog-content input[type="text"] {
-border: 1px solid;
-} */
 
 .ctBox input.formulaInputFocus {
     height: 25px;

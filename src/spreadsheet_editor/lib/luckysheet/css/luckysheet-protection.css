@@ -33,8 +33,9 @@
 
 .luckysheet-protection-input{
     width: 100%;
-    height: 30px;
     position: relative;
+    /* TEN9: style added height: 30px;padding: 5px; for better layout */
+    height: 30px;
     padding: 5px;
 }
 
@@ -43,6 +44,7 @@
     height: 47px;
     position: relative;
     resize:none;
+    /* TEN9: style added margin-top: 10px;padding: 5px; for better layout */
     margin-top: 10px;
     padding: 5px;
 }

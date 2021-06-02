@@ -530,6 +530,8 @@ function initialProtectionRIghtBar(file){
         let name = authorityItemArr[i];
 
         authorityItemHtml += `
+            // TEN9: Changing height from 18px to 19px to improve layout
+            // <div class="luckysheet-slider-protection-row" style="height:18px;">
             <div class="luckysheet-slider-protection-row" style="height:19px;">
                 <div class="luckysheet-slider-protection-column luckysheet-protection-column-10x">
                 <label for="luckysheet-protection-check-${name}"><input id="luckysheet-protection-check-${name}" name="luckysheet-protection-check-${name}" type="checkbox">${local_protection[name]}</label>
@@ -559,17 +561,27 @@ function initialProtectionRIghtBar(file){
                     </div>
                 </div>
             </div>
+            // TEN9: Changing top:138px from 130px for better layout
+            // <div class="luckysheet-slider-protection-config" style="top:130px;height:290px;border-top:1px solid #c5c5c5">
             <div class="luckysheet-slider-protection-config" style="top:138px;height:290px;border-top:1px solid #c5c5c5">
+                // TEN9: style added margin-bottom: 6px;margin-top: 6px; for better layout
+                // <div class="luckysheet-slider-protection-row" style="height:20px;">
                 <div class="luckysheet-slider-protection-row" style="height:20px;margin-bottom: 6px;margin-top: 6px;">
                     ${local_protection.authorityTitle}
                 </div>
                 ${authorityItemHtml}
             </div>
+            // TEN9: Changing top:458px from top:440px for better layout
+            // <div class="luckysheet-slider-protection-config" style="top:440px;bottom:45px;border-top:1px solid #c5c5c5">
             <div class="luckysheet-slider-protection-config" style="top:458px;bottom:45px;border-top:1px solid #c5c5c5">
                 <div class="luckysheet-slider-protection-row" style="height:25px;">
+                    // TEN9: style added line-height: 30px instead of line-height: 25px; for better layout
+                    // <div class="luckysheet-slider-protection-column luckysheet-protection-column-7x" style="left:0px;line-height: 25px;">
                     <div class="luckysheet-slider-protection-column luckysheet-protection-column-7x" style="left:0px;line-height: 30px;">
                         ${local_protection.allowRangeTitle}
                     </div>
+                    // TEN9: style added margin-top: 8px; for better layout
+                    // <div class="luckysheet-slider-protection-column luckysheet-protection-column-3x" style="left:70%;">
                     <div class="luckysheet-slider-protection-column luckysheet-protection-column-3x" style="left:70%;margin-top: 8px;">
                         <div class="luckysheet-slider-protection-ok luckysheet-slider-protection-addRange" id="luckysheet-slider-protection-addRange">
                             ${local_protection.allowRangeAdd}
