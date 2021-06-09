@@ -79,7 +79,7 @@ export default defineComponent({
 
     const safeguard = ref<number>(0);
 
-    const visibleRplaceCount = ref<boolean>(false);
+    const visibleReplaceCount = ref<boolean>(false);
 
     const lblMatch = ref<string>('');
 
@@ -352,7 +352,7 @@ export default defineComponent({
 
         marker += 1;
       }
-      visibleRplaceCount.value = true;
+      visibleReplaceCount.value = true;
     }
 
     function enableAllPage() {
@@ -405,7 +405,7 @@ export default defineComponent({
         if (val !== '') {
           searchText(false, false);
         }
-        visibleRplaceCount.value = false;
+        visibleReplaceCount.value = false;
         safeguard.value = 0;
       },
     );
@@ -420,7 +420,7 @@ export default defineComponent({
           validated.value = true;
           replaceAllBtn.value = true;
         }
-        visibleRplaceCount.value = false;
+        visibleReplaceCount.value = false;
         safeguard.value = 0;
       },
     );
@@ -450,7 +450,7 @@ export default defineComponent({
       show,
       searchInput,
       validated,
-      visibleRplaceCount,
+      visibleReplaceCount,
     };
   },
 });
@@ -471,7 +471,7 @@ export default defineComponent({
         :isMin='isMin',
         @change-min-status='changeMinStatus'
       )
-    .card-body.py-0.mt-4.mb-4
+    .card-body.py-0.mt-4.mb-2
       input.txt-input-window(
         type='text',
         v-model='searchInput',
@@ -507,7 +507,7 @@ export default defineComponent({
           span.checkbox-text
             | All Pages
       .row
-        label.ml-5(v-show='visibleRplaceCount') {{ safeguard }} matches replaced
+        label.ml-5.mt-3.font-weight-normal.mb-0(v-show='visibleReplaceCount') {{ safeguard }} {{ safeguard > 1 ? "matches" : "match" }} replaced
     //- template(#footer)
     //-   .span.footer-buttons
     //-     button.btn.btn-grey.ml-3(@click='reset') Reset
