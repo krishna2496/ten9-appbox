@@ -81,6 +81,10 @@ export default defineComponent({
 
     const visibleRplaceCount = ref<boolean>(false);
 
+    const lblMatch = ref<string>('');
+
+    const lblMatchPos = ref<number>(0);
+
     function close() {
       show.value = false;
       lastFound.value = null;
@@ -130,6 +134,8 @@ export default defineComponent({
       const searchStr = searchInput.value.toLowerCase();
       const re = regexInput.value ? new RegExp(searchStr) : null;
       let firstMatch = null;
+      lblMatch.value = searchInput.value;
+      lblMatchPos.value = lblMatch.value.length;
 
       let active = lastFound.value == null;
       let i;
@@ -193,12 +199,29 @@ export default defineComponent({
             // since we are looking to convert control chars to spaces for safety.
             // eslint-disable-next-line no-control-regex
             label = mxUtils.trim(label.replace(/[\x00-\x1F\x7F-\x9F]|\s+/g, ' ')).toLowerCase();
+
+            let lblPosShift = 0;
+
+            if (re != null && state == lastFound) {
+              label = label.substr(lblMatchPos);
+              lblPosShift = lblMatchPos.value;
+            }
+
             if (
               (re == null &&
                 (label.substring(0, searchStr.length) === searchStr ||
                   testMeta(re, state.cell, searchStr))) ||
               (re != null && (re.test(label) || testMeta(re, state.cell, searchStr)))
             ) {
+              if (re != null) {
+                const result = label.match(re);
+                lblMatch.value = result[0].toLowerCase();
+                lblMatchPos.value = lblPosShift + parseInt(result.index) + lblMatch.value.length;
+              } else {
+                lblMatch.value = searchStr;
+                lblMatchPos.value = lblMatch.value.length;
+              }
+
               if (active) {
                 firstMatch = state;
 
@@ -248,8 +271,6 @@ export default defineComponent({
 
     function replace(find = false) {
       try {
-        const lblMatch = searchInput.value;
-        const lblMatchPos = lblMatch.length;
         if (lblMatch != null && lastFound.value != null && replaceInput.value) {
           const { cell } = lastFound.value,
             lbl = graph.value.getLabel(cell);
@@ -258,9 +279,9 @@ export default defineComponent({
             cell,
             props.editorUi.replaceInLabel(
               lbl,
-              lblMatch,
+              lblMatch.value,
               replaceInput.value,
-              lblMatchPos - lblMatch.length,
+              lblMatchPos.value - lblMatch.value.length,
               graph.value.getCurrentCellStyle(cell),
             ),
           );
@@ -277,7 +298,7 @@ export default defineComponent({
 
     function replaceAll() {
       if (replaceInput.value) {
-        const prasentPage = props.editorUi.getCurrentPage();
+        const currentPage = props.editorUi.getCurrentPage();
         const cells = props.editorUi.editor.graph.getSelectionCells();
         let marker = 1;
         // eslint-disable-next-line vue/no-mutating-props
@@ -286,8 +307,6 @@ export default defineComponent({
         graph.value.getModel().beginUpdate();
         try {
           const seen = {};
-          const lblMatch = searchInput.value;
-          const lblMatchPos = lblMatch.length;
           const safeguardCount = 100;
 
           while (searchText(false, true) && safeguard.value < safeguardCount) {
@@ -295,19 +314,23 @@ export default defineComponent({
               lbl = graph.value.getLabel(cell);
             const oldSeen = seen[cell.id];
 
-            if (oldSeen && oldSeen.replAllMrk == marker && oldSeen.replAllPos >= lblMatchPos) {
+            if (
+              oldSeen &&
+              oldSeen.replAllMrk == marker &&
+              oldSeen.replAllPos >= lblMatchPos.value
+            ) {
               break;
             }
 
-            seen[cell.id] = { replAllMrk: marker, replAllPos: lblMatchPos };
+            seen[cell.id] = { replAllMrk: marker, replAllPos: lblMatchPos.value };
 
             graph.value.model.setValue(
               cell,
               props.editorUi.replaceInLabel(
                 lbl,
-                lblMatch,
+                lblMatch.value,
                 replaceInput.value,
-                lblMatchPos - lblMatch.length,
+                lblMatchPos.value - lblMatch.value.length,
                 graph.value.getCurrentCellStyle(cell),
               ),
             );
@@ -315,8 +338,8 @@ export default defineComponent({
             safeguard.value += 1;
           }
 
-          if (prasentPage != props.editorUi.getCurrentPage()) {
-            props.editorUi.editor.graph.model.execute(new SelectPage(props.editorUi, prasentPage));
+          if (currentPage != props.editorUi.getCurrentPage()) {
+            props.editorUi.editor.graph.model.execute(new SelectPage(props.editorUi, currentPage));
           }
 
           //mxUtils.write(replAllNotif, mxResources.get('matchesRepl', [safeguard]));
@@ -363,6 +386,7 @@ export default defineComponent({
       allChecked.value = true;
       searchInput.value = '';
       notFound.value = false;
+      replaceInput.value = '';
     }
 
     function changeMinStatus() {
@@ -442,7 +466,7 @@ export default defineComponent({
   )
     template.row(#header='')
       window-header(
-        title='Find',
+        title='Find/Replace',
         @close-window='close',
         :isMin='isMin',
         @change-min-status='changeMinStatus'
@@ -452,12 +476,12 @@ export default defineComponent({
         type='text',
         v-model='searchInput',
         :class='{ bgLightPink: notFound }',
-        placeholder='find'
+        placeholder='Find'
       )
-      input.mt-2.txt-input-window(type='text', v-model='replaceInput', placeholder='replace')
+      input.mt-2.txt-input-window(type='text', v-model='replaceInput', placeholder='Replace With')
       .row.mt-2.ml-1
         .col-md-6.pl-0
-          button.btn-center.btn.btn-primary(@click='reset') Find
+          button.btn-center.btn.btn-primary(@click='searchText(true, false)') Find
         .col-md-6.pl-0
           button.btn-center.btn.btn-primary(@click='replace("true")', :disabled='validated') Replae/Find
       .row.mt-2.ml-1
