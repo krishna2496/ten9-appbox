@@ -93,8 +93,8 @@ export default defineComponent({
       allPagesInput.value = false;
       regexInput.value = false;
       notFound.value = false;
-      const FindWindow = props.editorUi.actions.get('hideFindWindows');
-      FindWindow.funct();
+      const hideFindWindowAction = props.editorUi.actions.get('hideFindWindows');
+      hideFindWindowAction.funct();
     }
 
     function openFindWindow() {
@@ -143,7 +143,7 @@ export default defineComponent({
         if (allChecked.value) {
           allChecked.value = false;
 
-          //Find current page index
+          // Find current page index
           let currentPageIndex;
 
           for (let j = 0; j < props.editorUi.pages.length; j++) {
@@ -300,9 +300,10 @@ export default defineComponent({
       if (replaceInput.value) {
         const currentPage = props.editorUi.getCurrentPage();
         const cells = props.editorUi.editor.graph.getSelectionCells();
+        const thisGraph = props.editorUi.editor.graph;
+
         let marker = 1;
-        // eslint-disable-next-line vue/no-mutating-props
-        props.editorUi.editor.graph.rendering = false;
+        thisGraph.rendering = false;
 
         graph.value.getModel().beginUpdate();
         try {
@@ -445,10 +446,10 @@ export default defineComponent({
       replaceAllBtn,
       replaceInput,
       reset,
-      searchText,
       safeguard,
-      show,
       searchInput,
+      searchText,
+      show,
       validated,
       visibleReplaceCount,
     };
@@ -478,12 +479,12 @@ export default defineComponent({
         :class='{ bgLightPink: notFound }',
         placeholder='Find'
       )
-      input.mt-2.txt-input-window(type='text', v-model='replaceInput', placeholder='Replace With')
+      input.mt-2.txt-input-window(type='text', v-model='replaceInput', placeholder='Replace with')
       .row.mt-2.ml-1
         .col-md-6.pl-0
           button.btn-center.btn.btn-primary(@click='searchText(true, false)') Find
         .col-md-6.pl-0
-          button.btn-center.btn.btn-primary(@click='replace("true")', :disabled='validated') Replae/Find
+          button.btn-center.btn.btn-primary(@click='replace("true")', :disabled='validated') Replace/Find
       .row.mt-2.ml-1
         .col-md-6.pl-0
           button.btn-center.btn.btn-primary(@click='replace', :disabled='validated') Replace
@@ -508,8 +509,4 @@ export default defineComponent({
             | All Pages
       .row
         label.ml-5.mt-3.font-weight-normal.mb-0(v-show='visibleReplaceCount') {{ safeguard }} {{ safeguard > 1 ? "matches" : "match" }} replaced
-    //- template(#footer)
-    //-   .span.footer-buttons
-    //-     button.btn.btn-grey.ml-3(@click='reset') Reset
-    //-     button.btn.btn-primary.ml-2(@click='searchText(false)') Find
 </template>

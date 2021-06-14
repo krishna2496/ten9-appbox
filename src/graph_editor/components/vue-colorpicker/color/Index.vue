@@ -128,7 +128,6 @@ export default {
     },
     totalWidth() {
       // TEN9: Added even more spacing (from 8 to 27) to account for ten9 UX reqs
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       return this.hueHeight + (this.hueWidth + 27) * 2;
     },
     previewWidth() {
@@ -182,7 +181,6 @@ export default {
   },
   // TEN9: add mounted property
   mounted() {
-    // eslint-disable-next-line no-undef
     this.editorUi.addListener('openColorPicker', (ui, event) => {
       const ele = this.$refs.colorWindow;
       // Add drag property on layer window.
