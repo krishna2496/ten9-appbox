@@ -508,5 +508,5 @@ export default defineComponent({
           span.checkbox-text
             | All Pages
       .row
-        label.ml-5.mt-3.font-weight-normal.mb-0(v-show='visibleReplaceCount') {{ safeguard }} {{ safeguard > 1 ? "matches" : "match" }} replaced
+        label.ml-5.mt-3.font-weight-normal.mb-0(v-show='visibleReplaceCount') {{ safeguard }} {{ safeguard === 1 ? "match" : "matches" }} replaced
 </template>
