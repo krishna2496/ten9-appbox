@@ -4382,6 +4382,7 @@ fieldset[disabled] .btn-danger.focus {
     top: 0px;
     bottom: 0px;
     font-size: 12px;
+    /* TEN9: style added padding 5px for better layout */
     padding: 5px;
 }
 
