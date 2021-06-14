@@ -1449,8 +1449,8 @@ Sidebar.prototype.addGeneralPalette = function (expand) {
     ),
     this.createEdgeTemplateEntry(
       'shape=flexArrow;endArrow=classic;startArrow=classic;html=1;',
-      50,
-      50,
+      100,
+      100,
       '',
       'Bidirectional Arrow',
       null,
@@ -3424,6 +3424,7 @@ Sidebar.prototype.addUmlPalette = function (expand) {
       null,
       'uml sequence activation',
     ),
+
     this.createEdgeTemplateEntry(
       'html=1;verticalAlign=bottom;startArrow=oval;startFill=1;endArrow=block;startSize=8;',
       60,
@@ -4298,6 +4299,7 @@ Sidebar.prototype.createThumb = function (
   mxClient.NO_FO = Editor.prototype.originalNoForeignObject;
   this.graph.view.scaleAndTranslate(1, 0, 0);
   this.graph.addCells(cells);
+
   var bounds = this.graph.getGraphBounds();
   var s =
     Math.floor(
@@ -4413,6 +4415,18 @@ Sidebar.prototype.createItem = function (
   mxEvent.addListener(elt, 'click', function (evt) {
     mxEvent.consume(evt);
   });
+
+  // Applies default styles
+  cells = this.graph.cloneCells(cells);
+  this.editorUi.insertHandler(
+    cells,
+    null,
+    this.graph.model,
+    Graph.prototype.defaultVertexStyle,
+    Graph.prototype.defaultEdgeStyle,
+    urlParams['sketch'] == '1',
+    urlParams['sketch'] == '1',
+  );
 
   this.createThumb(
     cells,
