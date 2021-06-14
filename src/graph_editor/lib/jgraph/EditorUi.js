@@ -127,6 +127,266 @@ EditorUi = function (editor, container, lightbox) {
   this.menus = this.createMenus();
 
   if (!graph.standalone) {
+    // Stores the current style and assigns it to new cells
+    var styles = [
+      'rounded',
+      'shadow',
+      'glass',
+      'dashed',
+      'dashPattern',
+      'labelBackgroundColor',
+      'comic',
+      'sketch',
+      'fillWeight',
+      'hachureGap',
+      'hachureAngle',
+      'jiggle',
+      'disableMultiStroke',
+      'disableMultiStrokeFill',
+      'fillStyle',
+      'curveFitting',
+      'simplification',
+      'sketchStyle',
+      'pointerEvents',
+    ];
+    var connectStyles = [
+      'shape',
+      'edgeStyle',
+      'curved',
+      'rounded',
+      'elbow',
+      'jumpStyle',
+      'jumpSize',
+      'comic',
+      'sketch',
+      'fillWeight',
+      'hachureGap',
+      'hachureAngle',
+      'jiggle',
+      'disableMultiStroke',
+      'disableMultiStrokeFill',
+      'fillStyle',
+      'curveFitting',
+      'simplification',
+      'sketchStyle',
+    ];
+
+    // Note: Everything that is not in styles is ignored (styles is augmented below)
+    this.setDefaultStyle = function (cell) {
+      try {
+        var state = graph.view.getState(cell);
+
+        if (state != null) {
+          // Ignores default styles
+          var clone = cell.clone();
+          clone.style = '';
+          var defaultStyle = graph.getCellStyle(clone);
+          var values = [];
+          var keys = [];
+
+          for (var key in state.style) {
+            if (defaultStyle[key] != state.style[key]) {
+              values.push(state.style[key]);
+              keys.push(key);
+            }
+          }
+
+          // Handles special case for value "none"
+          var cellStyle = graph.getModel().getStyle(state.cell);
+          var tokens = cellStyle != null ? cellStyle.split(';') : [];
+
+          for (var i = 0; i < tokens.length; i++) {
+            var tmp = tokens[i];
+            var pos = tmp.indexOf('=');
+
+            if (pos >= 0) {
+              var key = tmp.substring(0, pos);
+              var value = tmp.substring(pos + 1);
+
+              if (defaultStyle[key] != null && value == 'none') {
+                values.push(value);
+                keys.push(key);
+              }
+            }
+          }
+
+          // Resets current style
+          if (graph.getModel().isEdge(state.cell)) {
+            graph.currentEdgeStyle = {};
+          } else {
+            graph.currentVertexStyle = {};
+          }
+
+          this.fireEvent(
+            new mxEventObject('styleChanged', 'keys', keys, 'values', values, 'cells', [
+              state.cell,
+            ]),
+          );
+        }
+      } catch (e) {
+        this.handleError(e);
+      }
+    };
+
+    this.clearDefaultStyle = function () {
+      graph.currentEdgeStyle = mxUtils.clone(graph.defaultEdgeStyle);
+      graph.currentVertexStyle = mxUtils.clone(graph.defaultVertexStyle);
+
+      // Updates UI
+      this.fireEvent(new mxEventObject('styleChanged', 'keys', [], 'values', [], 'cells', []));
+    };
+
+    // Keys that should be ignored if the cell has a value (known: new default for all cells is html=1 so
+    // for the html key this effecticely only works for edges inserted via the connection handler)
+    var valueStyles = ['fontFamily', 'fontSource', 'fontSize', 'fontColor'];
+
+    for (var i = 0; i < valueStyles.length; i++) {
+      if (mxUtils.indexOf(styles, valueStyles[i]) < 0) {
+        styles.push(valueStyles[i]);
+      }
+    }
+
+    // Keys that always update the current edge style regardless of selection
+    var alwaysEdgeStyles = [
+      'edgeStyle',
+      'startArrow',
+      'startFill',
+      'startSize',
+      'endArrow',
+      'endFill',
+      'endSize',
+    ];
+
+    // Keys that are ignored together (if one appears all are ignored)
+    var keyGroups = [
+      ['startArrow', 'startFill', 'endArrow', 'endFill'],
+      ['startSize', 'endSize'],
+      ['sourcePerimeterSpacing', 'targetPerimeterSpacing'],
+      ['strokeColor', 'strokeWidth'],
+      ['fillColor', 'gradientColor'],
+      ['align', 'verticalAlign'],
+      ['opacity'],
+      ['html'],
+    ];
+
+    // Adds all keys used above to the styles array
+    for (var i = 0; i < keyGroups.length; i++) {
+      for (var j = 0; j < keyGroups[i].length; j++) {
+        styles.push(keyGroups[i][j]);
+      }
+    }
+
+    for (var i = 0; i < connectStyles.length; i++) {
+      if (mxUtils.indexOf(styles, connectStyles[i]) < 0) {
+        styles.push(connectStyles[i]);
+      }
+    }
+
+    // Implements a global current style for edges and vertices that is applied to new cells
+    var insertHandler = function (cells, asText, model, vertexStyle, edgeStyle, applyAll, recurse) {
+      vertexStyle = vertexStyle != null ? vertexStyle : graph.currentVertexStyle;
+      edgeStyle = edgeStyle != null ? edgeStyle : graph.currentEdgeStyle;
+
+      model = model != null ? model : graph.getModel();
+
+      if (recurse) {
+        var temp = [];
+
+        for (var i = 0; i < cells.length; i++) {
+          temp = temp.concat(model.getDescendants(cells[i]));
+        }
+
+        cells = temp;
+      }
+
+      model.beginUpdate();
+      try {
+        for (var i = 0; i < cells.length; i++) {
+          var cell = cells[i];
+
+          var appliedStyles;
+
+          if (asText) {
+            // Applies only basic text styles
+            appliedStyles = ['fontSize', 'fontFamily', 'fontColor'];
+          } else {
+            // Removes styles defined in the cell style from the styles to be applied
+            var cellStyle = model.getStyle(cell);
+            var tokens = cellStyle != null ? cellStyle.split(';') : [];
+            appliedStyles = styles.slice();
+
+            for (var j = 0; j < tokens.length; j++) {
+              var tmp = tokens[j];
+              var pos = tmp.indexOf('=');
+
+              if (pos >= 0) {
+                var key = tmp.substring(0, pos);
+                var index = mxUtils.indexOf(appliedStyles, key);
+
+                if (index >= 0) {
+                  appliedStyles.splice(index, 1);
+                }
+
+                // Handles special cases where one defined style ignores other styles
+                for (var k = 0; k < keyGroups.length; k++) {
+                  var group = keyGroups[k];
+
+                  if (mxUtils.indexOf(group, key) >= 0) {
+                    for (var l = 0; l < group.length; l++) {
+                      var index2 = mxUtils.indexOf(appliedStyles, group[l]);
+
+                      if (index2 >= 0) {
+                        appliedStyles.splice(index2, 1);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // Applies the current style to the cell
+          var edge = model.isEdge(cell);
+          var current = edge ? edgeStyle : vertexStyle;
+          var newStyle = model.getStyle(cell);
+
+          for (var j = 0; j < appliedStyles.length; j++) {
+            var key = appliedStyles[j];
+            var styleValue = current[key];
+
+            if (styleValue != null && (key != 'shape' || edge)) {
+              // Special case: Connect styles are not applied here but in the connection handler
+              if (!edge || applyAll || mxUtils.indexOf(connectStyles, key) < 0) {
+                newStyle = mxUtils.setStyle(newStyle, key, styleValue);
+              }
+            }
+          }
+
+          if (Editor.simpleLabels) {
+            newStyle = mxUtils.setStyle(
+              mxUtils.setStyle(newStyle, 'html', null),
+              'whiteSpace',
+              null,
+            );
+          }
+
+          model.setStyle(cell, newStyle);
+        }
+      } finally {
+        model.endUpdate();
+      }
+    };
+
+    graph.addListener('cellsInserted', function (sender, evt) {
+      insertHandler(evt.getProperty('cells'));
+    });
+
+    graph.addListener('textInserted', function (sender, evt) {
+      insertHandler(evt.getProperty('cells'), true);
+    });
+
+    this.insertHandler = insertHandler;
+
     this.createDivs();
     this.createUi();
     this.refresh();
@@ -594,7 +854,7 @@ EditorUi = function (editor, container, lightbox) {
       ['fillColor', 'gradientColor'],
       valueStyles,
       ['opacity'],
-      ['align'],
+      ['align', 'verticalAlign'],
       ['html'],
     ];
 
@@ -988,6 +1248,7 @@ EditorUi = function (editor, container, lightbox) {
 
 // Extends mxEventSource
 mxUtils.extend(EditorUi, mxEventSource);
+
 /**
  * Global config that specifies if the compact UI elements should be used.
  */
@@ -1483,7 +1744,9 @@ EditorUi.prototype.createShapePicker = function (
       x +
       'px;top:' +
       y +
-      'px;width:140px;border-radius:10px;padding:4px;text-align:center;' +
+      'px;width:' +
+      w +
+      'px;border-radius:10px;padding:4px;text-align:center;' +
       'box-shadow:0px 0px 3px 1px #d1d1d1;padding: 6px 0 8px 0;';
     mxUtils.setPrefixedStyle(div.style, 'transform', 'translate(-22px,-22px)');
 
@@ -1600,7 +1863,7 @@ EditorUi.prototype.getCellsForShapePicker = function (cell) {
     cell != null
       ? this.editor.graph.cloneCell(cell)
       : createVertex(
-          'text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;',
+          'text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;',
           40,
           20,
           'Text',
@@ -4224,6 +4487,7 @@ EditorUi.prototype.createFooter = function () {
 EditorUi.prototype.createDiv = function (classname) {
   var elt = document.createElement('div');
   elt.className = classname;
+
   return elt;
 };
 

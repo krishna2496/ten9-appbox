@@ -1228,6 +1228,12 @@ BaseFormatPanel.prototype.createColorOption = function (
           myUi.setShapeColor('labelBackgroundColor', alphaHexString);
         } else if (type === 'Border Color') {
           myUi.setShapeColor('labelBorderColor', alphaHexString);
+        } else if (type == 'laneColor') {
+          myUi.setShapeColor('swimlaneFillColor', alphaHexString);
+        } else if (type == 'Image Background') {
+          myUi.setShapeColor('imageBackground', alphaHexString);
+        } else if (type == 'Image Border') {
+          myUi.setShapeColor('imageBorder', alphaHexString);
         }
       }
 
@@ -4861,7 +4867,7 @@ StyleFormatPanel.prototype.addFill = function (container) {
       graph.updateCellStyles(fillKey, color, graph.getSelectionCells());
     }),
     // TEN9: add extra parameter for color type
-    'Fill',
+    ss.style.shape == 'image' ? 'Image Background' : 'Fill',
   );
   fillPanel.style.fontWeight = 'bold';
 
@@ -4962,7 +4968,14 @@ StyleFormatPanel.prototype.addFill = function (container) {
 
   for (var i = 0; i < custom.length; i++) {
     container.appendChild(
-      this.createCellColorOption(custom[i].title, custom[i].key, custom[i].defaultValue),
+      this.createCellColorOption(
+        custom[i].title,
+        custom[i].key,
+        custom[i].defaultValue,
+        null,
+        null,
+        'laneColor',
+      ),
     );
   }
 
@@ -5074,7 +5087,7 @@ StyleFormatPanel.prototype.addStroke = function (container) {
       graph.updateCellStyles(strokeKey, color, graph.getSelectionCells());
     }),
     // TEN9: add extra parameter for color type
-    'Line',
+    ss.style.shape == 'image' ? 'Image Border' : 'Line',
   );
 
   lineColor.appendChild(styleSelect);

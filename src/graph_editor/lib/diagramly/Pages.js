@@ -2018,4 +2018,5 @@ EditorUi.prototype.createPageMenu = function (page, label) {
 module.exports = {
   DiagramPage,
   RenamePage,
+  SelectPage,
 };

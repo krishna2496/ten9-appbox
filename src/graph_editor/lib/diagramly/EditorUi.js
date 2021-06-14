@@ -51,6 +51,7 @@ const {
 } = require('./Dialogs.js');
 const { Spinner } = require('../spin/spin.js');
 const { Sidebar } = require('../jgraph/Sidebar.js');
+const { SelectPage } = require('../diagramly/Pages.js');
 
 // TEN9: TODO: Consolidate all constants
 // const urlParams = {dev: '1', sync: 'manual'};
@@ -1123,6 +1124,7 @@ var SelectedFile;
       return '';
     } else {
       var fileNode = node;
+
       // Ignores case for possible HTML or XML nodes
       if (fileNode.nodeName.toLowerCase() != 'mxfile') {
         if (uncompressed) {
@@ -1289,6 +1291,7 @@ var SelectedFile;
         } else {
           clone = pageNode.cloneNode(true);
         }
+
         node.appendChild(clone);
       }
 
@@ -1311,10 +1314,12 @@ var SelectedFile;
               delete this.pages[i].needsUpdate;
             }
           }
+
           appendPage(this.pages[i].node);
         }
       }
     }
+
     return node;
   };
 
@@ -1819,6 +1824,7 @@ var SelectedFile;
             if (page.getName() == null) {
               page.setName(mxResources.get('pageWithNumber', [i + 1]));
             }
+
             this.pages.push(page);
 
             if (urlParams['page-id'] != null && page.getId() == urlParams['page-id']) {
@@ -4182,6 +4188,7 @@ var SelectedFile;
     Editor.sketchFontFamily = 'Architects Daughter';
     Editor.sketchFontSource =
       'https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DArchitects%2BDaughter';
+
     // Implements the sketch-min UI
     if (urlParams['sketch'] == '1') {
       Graph.prototype.defaultVertexStyle = { pointerEvents: '0', hachureGap: '4' };
@@ -4208,6 +4215,7 @@ var SelectedFile;
       Graph.prototype.defaultEdgeStyle['fontSource'] = Editor.sketchFontSource;
       Graph.prototype.defaultEdgeStyle['fontSize'] = '20';
       Graph.prototype.defaultEdgeStyle['sketch'] = '1';
+
       Menus.prototype.defaultFonts = [
         {
           fontFamily: Editor.sketchFontFamily,
@@ -4220,13 +4228,6 @@ var SelectedFile;
         },
       ].concat(Menus.prototype.defaultFonts);
     }
-
-    Editor.configurationKey = '.sketch-configuration';
-    Editor.settingsKey = '.sketch-config';
-    Graph.prototype.defaultGridEnabled = false;
-    Graph.prototype.defaultPageVisible = false;
-    Graph.prototype.defaultEdgeLength = 120;
-    Editor.fitWindowBorders = new mxRectangle(60, 30, 30, 30);
 
     Editor.configurationKey = '.sketch-configuration';
     Editor.settingsKey = '.sketch-config';
@@ -7404,6 +7405,7 @@ var SelectedFile;
 
   /**
    * Embeds font CSS as data URIs into the given svgRoot.
+
    EditorUi.prototype.embedFonts = function (svgRoot, callback) {
     this.editor.loadFonts(
       mxUtils.bind(this, function () {
@@ -11693,6 +11695,32 @@ var SelectedFile;
             this.mode = App.MODE_EMBED;
             this.setFileData(xml);
 
+            if (convertToSketch) {
+              try {
+                //Disable grid and page view
+                var graph = this.editor.graph;
+                graph.setGridEnabled(false);
+                graph.pageVisible = false;
+                var cells = graph.model.cells;
+
+                //Add sketch style and font to all cells
+                for (var id in cells) {
+                  var cell = cells[id];
+
+                  if (cell != null && cell.style != null) {
+                    cell.style +=
+                      ';sketch=1;' +
+                      (cell.style.indexOf('fontFamily=') == -1 ||
+                      cell.style.indexOf('fontFamily=Helvetica;') > -1
+                        ? 'fontFamily=Architects Daughter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DArchitects%2BDaughter;'
+                        : '');
+                  }
+                }
+              } catch (e) {
+                console.log(e); //Ignore
+              }
+            }
+
             if (!this.editor.isChromelessView()) {
               this.showLayersDialog();
             } else if (this.editor.graph.isLightboxView()) {
@@ -11822,6 +11850,8 @@ var SelectedFile;
         });
 
         if (urlParams['proto'] == 'json') {
+          var convertToSketch = false;
+
           try {
             data = JSON.parse(data);
           } catch (e) {
@@ -12742,6 +12772,7 @@ var SelectedFile;
 
   /**
    *
+
    EditorUi.prototype.showImportCsvDialog = function () {
     if (this.importCsvDialog == null) {
       this.importCsvDialog = new TextareaDialog(
@@ -13775,6 +13806,7 @@ var SelectedFile;
       // var active = this.isDiagramActive();
       const active = graph.isEnabled();
       var file = this.getCurrentFile();
+
       this.actions.get('pageSetup').setEnabled(active);
       this.actions
         .get('autosave')
@@ -14436,6 +14468,7 @@ var SelectedFile;
                 }),
               ); //Ignore errors
             }
+
             success(db);
 
             db.onversionchange = function () {
@@ -14562,6 +14595,7 @@ var SelectedFile;
           var trx = db.transaction([storeName], 'readonly');
           var req = trx.objectStore(storeName).openCursor(IDBKeyRange.lowerBound(0));
           var items = [];
+
           req.onsuccess = function (e) {
             // TEN9: TODO: BU: Review - Check all this. DB should be used/needed.
 
@@ -15036,6 +15070,62 @@ var SelectedFile;
   EditorUi.prototype.setPageStyle = function (style) {
     this.pageStyle = style;
   };
+
+  // TEN9: replace functionality
+  EditorUi.prototype.replaceInLabel = function (str, substr, newSubstr, startIndex, style) {
+    if (style == null || style['html'] != '1') {
+      var replStart = str.toLowerCase().indexOf(substr, startIndex);
+      return replStart < 0
+        ? str
+        : str.substr(0, replStart) + newSubstr + str.substr(replStart + substr.length);
+    }
+
+    var origStr = str;
+    substr = mxUtils.htmlEntities(substr);
+    var tagPos = [],
+      p = -1;
+
+    while ((p = str.indexOf('<', p + 1)) > -1) {
+      tagPos.push(p);
+    }
+
+    var tags = str.match(/<[^>]*>/g);
+    str = str.replace(/<[^>]*>/g, '');
+    var lStr = str.toLowerCase();
+    var replStart = lStr.indexOf(substr, startIndex);
+
+    if (replStart < 0) {
+      return origStr;
+    }
+
+    var replEnd = replStart + substr.length;
+    var newSubstr = mxUtils.htmlEntities(newSubstr);
+
+    //Tags within the replaced text is added before it
+    var newStr = str.substr(0, replStart) + newSubstr + str.substr(replEnd);
+    var tagDiff = 0;
+
+    for (var i = 0; i < tagPos.length; i++) {
+      if (tagPos[i] - tagDiff < replStart) {
+        newStr = newStr.substr(0, tagPos[i]) + tags[i] + newStr.substr(tagPos[i]);
+      } else if (tagPos[i] - tagDiff < replEnd) {
+        var inPos = replStart + tagDiff;
+        newStr = newStr.substr(0, inPos) + tags[i] + newStr.substr(inPos);
+      } else {
+        var inPos = tagPos[i] + (newSubstr.length - substr.length);
+        newStr = newStr.substr(0, inPos) + tags[i] + newStr.substr(inPos);
+      }
+
+      tagDiff += tags[i].length;
+    }
+
+    return newStr;
+  };
+
+  // TEN9:
+  EditorUi.prototype.lastFound = null;
+
+  EditorUi.prototype.lastSearch = null;
 
   EditorUi.prototype.getBoundingBoxFromGeometry = function (cells) {
     this.editor.graph.getBoundingBoxFromGeometry(cells);
