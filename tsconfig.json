@@ -59,7 +59,7 @@
     "paths": {
       /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
       "@/*": ["./src/*"],
-      "@graphEditorImages/*": ["./src/graph_editor/assets/images/*"],
+      "@graphEditorImages/*": ["./src/apps//assets/images/*"],
       "*": [
         /* https://www.typescriptlang.org/docs/handbook/module-resolution.html */
         "./node_modules/*",
@@ -126,7 +126,7 @@
     "./src/**/*.tsx",
     "./src/**/*.js"
   ],
-  "exclude": ["**/node_modules", "./src/spreadsheet_editor/lib/luckysheet"],
+  "exclude": ["**/node_modules", "./src/apps/spreadsheet_editor/lib/luckysheet"],
   "watchOptions": {
     // Use native file system events for files and directories
     "watchFile": "useFsEvents",

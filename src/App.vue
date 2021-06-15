@@ -15,10 +15,10 @@
 -->
 
 <script lang="ts">
-import GraphEditor from './graph_editor/components/GraphEditor.vue';
-import SpreadsheetEditor from './spreadsheet_editor/components/SpreadsheetEditor.vue';
+import GraphEditor from './apps/graph_editor/components/GraphEditor.vue';
+import SpreadsheetEditor from './apps/spreadsheet_editor/components/SpreadsheetEditor.vue';
 import OpenFile from './components/OpenFile.vue';
-import { mxCell } from './graph_editor/lib/jgraph/mxClient';
+import { mxCell } from './apps/graph_editor/lib/jgraph/mxClient';
 import {
   defineComponent,
   nextTick,
