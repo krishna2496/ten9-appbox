@@ -17,6 +17,7 @@
 <script lang="ts">
 import Modals from './Modals.vue';
 import Window from './Windows.vue';
+import { CommonAppProps, CommonAppPropsOptions } from '../../app_api';
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
@@ -40,7 +41,6 @@ import {
   onMounted,
   ref,
   watch,
-  PropType,
 } from '@vue/composition-api';
 
 const {
@@ -60,8 +60,11 @@ const {
 
 const defaultStyleXml = require('../styles/default.xml');
 const resourcesFile = require('../locale/en.txt');
-const DEFAULT_THEME = 'kennedy';
 const MAX_IMAGE_SIZE = 520;
+
+const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows2;clipart;flowchart';
+const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
+const DEFAULT_THEME = 'kennedy';
 
 export type GraphEditorCell = typeof mxCell;
 
@@ -73,12 +76,6 @@ interface InsertLinkInfo {
   noTruncateTitle?: boolean;
 }
 
-export interface RefreshedLinkInfo {
-  url?: string;
-  width?: number;
-  height?: number;
-}
-
 interface GraphBounds {
   x?: number;
   y?: number;
@@ -88,37 +85,34 @@ interface GraphBounds {
 
 import '../styles/main.scss';
 
-export default defineComponent({
+interface GraphEditorProps extends CommonAppProps {}
+
+export default defineComponent<GraphEditorProps>({
   name: 'GraphEditor',
   components: {
     Modals,
     Window,
   },
   props: {
-    shapeLibraries: {
-      required: true,
-      type: String,
-    },
-    scratchpadData: {
-      required: true,
-      type: String,
-    },
-    enabled: Boolean,
-    theme: {
-      required: false,
-      type: String,
-      default: DEFAULT_THEME,
-    },
-    refreshLinkHandler: {
-      type: Function as PropType<(url: string) => Promise<RefreshedLinkInfo>> | null,
-      required: false,
-      default: null,
-    },
-    recentColors: {
-      require: false,
-      type: String,
-      default: '',
-    },
+    ...CommonAppPropsOptions,
+    // shapeLibraries: {
+    //   required: true,
+    //   type: String,
+    // },
+    // scratchpadData: {
+    //   required: true,
+    //   type: String,
+    // },
+    // theme: {
+    //   required: false,
+    //   type: String,
+    //   default: DEFAULT_THEME,
+    // },
+    // recentColors: {
+    //   required: false,
+    //   type: String,
+    //   default: '',
+    // },
   },
 
   setup(props, ctx) {
@@ -235,7 +229,7 @@ export default defineComponent({
       const graph = graphRef.value;
       const editorUi = editorUiRef.value;
 
-      if (!props.refreshLinkHandler || !props.enabled) {
+      if (!props.refreshLinkHandler || !props.isEditing) {
         return;
       }
 
@@ -299,7 +293,7 @@ export default defineComponent({
     }
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      ctx.emit('graph-changed', event.name);
+      ctx.emit('content-changed', event.name);
     }
 
     function onLibrariesChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
@@ -356,7 +350,7 @@ export default defineComponent({
       editorUi.removeListener(onThemeChanged);
     }
 
-    function getXmlData(): string {
+    function getContent(): string {
       const app = appRef.value;
 
       app.currentFile.updateFileData();
@@ -364,19 +358,48 @@ export default defineComponent({
       return xmlData;
     }
 
+    function getContentType(): string {
+      return 'application/xml';
+    }
+
     function registerUndoListeners() {
       const debounceDelay = 200;
       const undoListener = debounce(() => {
-        ctx.emit('on-undo', getXmlData());
+        ctx.emit('on-undo', getContent());
       }, debounceDelay);
 
       const redoListener = debounce(() => {
-        ctx.emit('on-redo', getXmlData());
+        ctx.emit('on-redo', getContent());
       }, debounceDelay);
 
       const editor = editorRef.value;
       editor.undoManager.addListener(mxEvent.UNDO, undoListener);
       editor.undoManager.addListener(mxEvent.REDO, redoListener);
+    }
+
+    function initUserData() {
+      debugger;
+      let changed = false;
+      const { userData } = props;
+
+      if (!userData?.scratchpadData) {
+        userData.scratchpadData = DEFAULT_SCRATCHPAD_DATA;
+        changed = true;
+      }
+
+      if (!userData?.shapeLbraries) {
+        userData.shapeLibraries = DEFAULT_SHAPE_LIBRARIES;
+        changed = true;
+      }
+
+      if (!userData?.theme) {
+        userData.theme = DEFAULT_THEME;
+        changed = true;
+      }
+
+      if (changed) {
+        ctx.emit('user-data-changed', userData);
+      }
     }
 
     onMounted(() => {
@@ -394,16 +417,18 @@ export default defineComponent({
       sidebarRef.value = editorUiRef.value.sidebar;
       appRef.value = createApp(editorUiRef.value, editorRef.value, containerRef.value);
 
-      // Add scratchpad to the sidebar
-      editorUiRef.value.loadScratchpadData(props.scratchpadData);
+      initUserData();
 
-      // Add stencils to the sidebar
-      sidebarRef.value.showEntries(props.shapeLibraries);
+      // // Add scratchpad to the sidebar
+      // editorUiRef.value.loadScratchpadData(props.userData.scratchpadData);
+
+      // // Add stencils to the sidebar
+      // sidebarRef.value.showEntries(props.userData.shapeLibraries);
 
       addListeners();
 
       nextTick(() => {
-        setGraphEnabled(props.enabled);
+        setGraphEnabled(props.isEditing);
         editorUiRef.value.resetViewToShowFullGraph();
         // TODO: Re-enable this when theme switching is all worked out
         // editorUiRef.value.theme = props.theme;
@@ -421,18 +446,27 @@ export default defineComponent({
     });
 
     watch(
-      () => props.scratchpadData,
-      (val: string) => {
-        editorUiRef.value.loadScratchpadData(val);
+      () => props.userData,
+      (val: Record<string, unknown>) => {
+        initUserData();
+        editorUiRef.value.loadScratchpadData(val.scratchpadData);
+        sidebarRef.value.showEntries(val.shapeLibraries);
       },
     );
 
-    watch(
-      () => props.shapeLibraries,
-      (val: string) => {
-        sidebarRef.value.showEntries(val);
-      },
-    );
+    // watch(
+    //   () => props.scratchpadData,
+    //   (val: string) => {
+    //     editorUiRef.value.loadScratchpadData(val);
+    //   },
+    // );
+
+    // watch(
+    //   () => props.shapeLibraries,
+    //   (val: string) => {
+    //     sidebarRef.value.showEntries(val);
+    //   },
+    // );
 
     // TODO: Re-enable this watch when theme switching is all worked out
     // watch(
@@ -453,25 +487,13 @@ export default defineComponent({
     //   },
     // );
 
-    async function canLoadFile(file: File): Promise<boolean> {
-      const ext = file.name.split('.').pop();
-      if (ext === 'draw' || ext === 'drawio' || ext === 'xml' || file.type.startsWith('text/')) {
-        // Read start of file and see if it matches either <mxGraphModel or <
-        const fileData = await file.text();
-        if (fileData.startsWith('<mxfile ') || fileData.startsWith('<mxGraphModel ')) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    function loadXmlData(data: string) {
+    function loadContent(content: string) {
       const editorUi = editorUiRef.value;
 
-      editorUi.openLocalFile(data, null, null, null, null);
+      editorUi.openLocalFile(content, null, null, null, null);
       // Reset the view after loading a file
       nextTick(() => {
-        setGraphEnabled(props.enabled);
+        setGraphEnabled(props.isEditing);
         editorUi.resetViewToShowFullGraph();
 
         for (let i = 0; i < editorUi.pages.length; i++) {
@@ -695,7 +717,7 @@ export default defineComponent({
       return fileAttachmentCell;
     }
 
-    function refreshUi() {
+    function resize() {
       editorUiRef.value?.refresh();
     }
 
@@ -708,15 +730,13 @@ export default defineComponent({
     }
 
     function onRecentColorsChanged(colors: string) {
-      ctx.emit('recent-colors-changed', colors);
+      const newUserData = props.userData;
+      newUserData['recentColors'] = colors;
+      ctx.emit('user-data-changed', newUserData);
     }
 
-    const supportedExtension = () => {
-      return '.draw, .drawio, .xml';
-    };
-
     watch(
-      () => props.enabled,
+      () => props.isEditing,
       (val) => {
         nextTick(() => {
           setGraphEnabled(val);
@@ -728,31 +748,30 @@ export default defineComponent({
 
     return {
       appRef,
-      canLoadFile,
       containerRef,
       editorRef,
       editorUiRef,
       fitCurrentPageWindow,
+      getContent,
+      getContentType,
       getImageData,
       getStyleForFile,
-      getXmlData,
       graphRef,
       insertImage,
       insertLink,
       insertFile,
       imageInsert,
-      loadXmlData,
+      loadContent,
       loadImage,
       onRecentColorsChanged,
       pagesToFit,
       paste,
       pasteShapes,
       refreshCurrentPageLinks,
-      refreshUi,
       removePageFromCurrentPageWindow,
+      resize,
       setGraphEnabled,
       showingDialog,
-      supportedExtension,
       updateCellImage,
       updateCellLink,
     };
@@ -763,10 +782,14 @@ export default defineComponent({
 <template lang="pug">
 .div
   .geEditor(ref='containerRef')
-  modals(:editorUi='editorUiRef', :shape-libraries='shapeLibraries', @insert-image='imageInsert')
+  modals(
+    :editorUi='editorUiRef',
+    :shape-libraries='userData.shapeLibraries',
+    @insert-image='imageInsert'
+  )
   window(
     :editorUi='editorUiRef',
-    :recentColors='recentColors',
+    :recentColors='userData.recentColors',
     @recent-colors-changed='onRecentColorsChanged'
   )
 </template>

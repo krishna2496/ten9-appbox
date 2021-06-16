@@ -15,11 +15,15 @@
 -->
 
 <script lang="ts">
-import GraphEditor from './apps/graph_editor/components/GraphEditor.vue';
-import SpreadsheetEditor from './apps/spreadsheet_editor/components/SpreadsheetEditor.vue';
 import OpenFile from './components/OpenFile.vue';
-import { mxCell } from './apps/graph_editor/lib/jgraph/mxClient';
+// import { mxCell } from './apps/graph_editor/lib/jgraph/mxClient';
+
+import { AppInfo, canLoadFile } from './apps/app_api';
+import { getAppInfo as getGraphEditorAppInfo } from '@/apps/graph_editor/index';
+import { getAppInfo as getSpreadsheetEditorAppInfo } from '@/apps/spreadsheet_editor/index';
+
 import {
+  computed,
   defineComponent,
   nextTick,
   onBeforeUnmount,
@@ -41,30 +45,34 @@ interface FileLogEvent extends EventFileInfo {
   title: string;
 }
 
-const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows2;clipart;flowchart';
-const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
-const DEFAULT_THEME = 'kennedy';
-
-enum EditorList {
-  None = 'NONE',
-  Graph = 'GRAPH',
-  Spreadsheet = 'SPREADSHEET',
-}
-
 export default defineComponent({
   name: 'App',
   components: {
-    GraphEditor,
+    // GraphEditor,
     OpenFile,
-    SpreadsheetEditor,
+    // SpreadsheetEditor,
   },
 
   setup() {
     const logs = ref([]);
 
-    const editor = ref(null);
+    const apps = ref<Record<string, AppInfo>>({});
 
-    const previewMode = ref(false);
+    const activeApp = ref<AppInfo | null>(null);
+
+    const isEditing = ref(true);
+
+    const isLoading = ref(false);
+
+    const userData = ref<Record<string, unknown>>({});
+
+    function userDataChanged(newUserData: unknown) {
+      console.log(newUserData);
+    }
+
+    const contentChanged = ref(false);
+
+    // const editor = ref(null);
 
     const shapeLibraries = ref('');
 
@@ -74,12 +82,11 @@ export default defineComponent({
 
     const recentColors = ref('');
 
-    const editorType = ref(EditorList.None);
+    // const editorType = ref(EditorList.None);
 
     const spreadsheet = ref(null);
 
-    const supportedExtension = ref('.xlsx,.sheet,.draw, .drawio, .xml');
-
+    // TODO: Replace with user data
     function getShapeLibrariesFromStorage() {
       return window.localStorage.getItem('shapeLibraries');
     }
@@ -108,9 +115,12 @@ export default defineComponent({
       window.localStorage.setItem('recentColors', colors);
     }
 
-    function getEditorType() {
-      return editorType.value;
-    }
+    const viewer = computed(() => {
+      if (activeApp && activeApp.value && activeApp.value.asyncComponent) {
+        return activeApp.value.asyncComponent;
+      }
+      return null;
+    });
 
     function updateAppHeight() {
       const container = document.getElementById('container');
@@ -121,14 +131,18 @@ export default defineComponent({
       container.style.height = `${newHeight}px`;
 
       nextTick(() => {
-        if (getEditorType() === EditorList.Spreadsheet) {
-          const isLuckySheetLoaded = document.querySelector<HTMLElement>('.luckysheet');
-          if (isLuckySheetLoaded) {
-            spreadsheet.value.resizeEditor();
-          }
-        } else if (getEditorType() === EditorList.Graph) {
-          editor.value.editorUiRef.refresh();
+        if (viewer && viewer.value && 'resize' in viewer.value) {
+          viewer.value.resize();
         }
+
+        // if (getEditorType() === EditorList.Spreadsheet) {
+        //   const isLuckySheetLoaded = document.querySelector<HTMLElement>('.luckysheet');
+        //   if (isLuckySheetLoaded) {
+        //     spreadsheet.value.resizeEditor();
+        //   }
+        // } else if (getEditorType() === EditorList.Graph) {
+        //   editor.value.editorUiRef.refresh();
+        // }
       });
     }
 
@@ -152,13 +166,18 @@ export default defineComponent({
       });
     }
 
+    // TODO: Reimplement insertImage as App Api
     function insertDummyImage(dataUri: string) {
+      // TODO: Reimplement insertImage as App Api
       // add a dummy image to graph to emulate what will happen in production app
-      editor.value.insertImage(dataUri).then((result: typeof mxCell) => {
+      viewer.value.insertImage(dataUri).then((result: unknown) => {
+      // viewer.value.insertImage(dataUri).then((result: typeof mxCell) => {
+      // editor.value.insertImage(dataUri).then((result: typeof mxCell) => {
         const waitingTime = 3000;
         setTimeout(() => {
           const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
-          editor.value.updateCellImage(result, newUrl);
+          // editor.value.updateCellImage(result, newUrl);
+          viewer.value.updateImage(result, newUrl);
         }, waitingTime);
       });
     }
@@ -171,11 +190,15 @@ export default defineComponent({
       });
     }
 
-    function loadFileData(xmlData: string) {
-      editor.value.loadXmlData(xmlData);
-      editor.value.fitCurrentPageWindow();
+    function loadFileData(content: string) {
+      if (viewer.value.loadContent) {
+        viewer.value.loadContent(content);
+      }
+      // TODO: replace this with generic refresh
+      // editor.value.fitCurrentPageWindow();
     }
 
+    // TODO: Re-enable this when needed
     function onFileDropped(event: EventFileInfo) {
       const fileLogEvent: FileLogEvent = {
         title: 'File Dropped',
@@ -188,10 +211,13 @@ export default defineComponent({
         insertDummyImage(fileLogEvent.imageData);
       } else {
         const url = 'https://www.google.com';
-        editor.value.insertFile(fileLogEvent.file, url);
+        // TODO: Implement this as App API
+        viewer.value.insertFile(fileLogEvent.file, url);
+        // editor.value.insertFile(fileLogEvent.file, url);
       }
     }
 
+    // TODO: Re-enable this when needed
     function onImagePasted(event: EventFileInfo) {
       const fileLogEvent: FileLogEvent = {
         title: 'Image Pasted',
@@ -201,11 +227,14 @@ export default defineComponent({
       insertDummyImage(fileLogEvent.imageData);
     }
 
-    function saveXmlFile(xmlData: string) {
-      const filename = 'diagram';
-      const ext = 'draw';
+    function saveFile() {
+      debugger;
+      const content = viewer.value.getContent();
+      const contentType = viewer.value.getContentType();
+      const filename = activeApp.value.documentName.toLowerCase();
+      const ext = activeApp.value.defaultExtension;
 
-      const blob = new Blob([xmlData], { type: 'application/xml' });
+      const blob = new Blob([content], { type: contentType });
 
       const a = document.createElement('a');
       a.download = `${filename}.${ext}`;
@@ -220,18 +249,7 @@ export default defineComponent({
       }, 0);
     }
 
-    function saveFile() {
-      // if (editor.value.graph.isEditing()) {
-      //   editor.valule.graph.stopEditing();
-      // }
-      if (EditorList.Graph == editorType.value) {
-        const xmlData = editor.value.getXmlData();
-        saveXmlFile(xmlData);
-      } else {
-        spreadsheet.value.saveFile();
-      }
-    }
-
+    // TODO: Re-enable this when needed
     function onKeydown(event: KeyboardEvent) {
       if (event.key === 's' && (event.ctrlKey || event.metaKey)) {
         event.preventDefault();
@@ -239,16 +257,34 @@ export default defineComponent({
       }
     }
 
-    function onGraphChanged(what: string) {
-      const xmlData = editor.value.getXmlData();
+    function onContentChanged(flag: boolean) {
+      contentChanged.value = flag;
+
+      let size = 0;
+      if (viewer?.value?.getContent) {
+        const content = viewer.value.getContent();
+        if (typeof content === 'string') {
+          size = content.length;
+        } else {
+          // Blob
+          ({ size } = content);
+        }
+      }
+
       const fileLogEvent: FileLogEvent = {
-        title: 'Graph Changed',
-        size: xmlData.length,
+        title: 'Content Changed',
+        size,
         lastModified: Date.now(),
-        what: what,
+        what: 'TODO',
       };
       addLog(fileLogEvent);
     }
+
+    onMounted(() => {
+      window.addEventListener('resize', onResize);
+      document.addEventListener('keydown', onKeydown);
+      updateAppHeight();
+    });
 
     function onRecentColorsChanged(colors: string) {
       saveRecentColorsToStorage(colors);
@@ -269,162 +305,163 @@ export default defineComponent({
       });
     }
 
-    function onGraphMounted() {
-      updateAppHeight();
-      window.addEventListener('resize', onResize);
-      document.addEventListener('keydown', onKeydown);
+    // TODO: Initialize the Graph stuff somewhere as part of App API update
+    // function onGraphMounted() {
+    //   updateAppHeight();
 
-      shapeLibraries.value = getShapeLibrariesFromStorage();
-      if (!shapeLibraries.value) {
-        shapeLibraries.value = DEFAULT_SHAPE_LIBRARIES;
-        saveShapeLibrariesToStorage(shapeLibraries.value);
-      }
+      // shapeLibraries.value = getShapeLibrariesFromStorage();
+      // if (!shapeLibraries.value) {
+        
+      //   shapeLibraries.value = DEFAULT_SHAPE_LIBRARIES;
+      //   saveShapeLibrariesToStorage(shapeLibraries.value);
+      // }
 
-      scratchpadData.value = getScratchpadData();
-      if (!scratchpadData.value) {
-        scratchpadData.value = DEFAULT_SCRATCHPAD_DATA;
-        saveScratchpadDataToStorage(scratchpadData.value);
-      }
+      // scratchpadData.value = getScratchpadData();
+      // if (!scratchpadData.value) {
+      //   scratchpadData.value = DEFAULT_SCRATCHPAD_DATA;
+      //   saveScratchpadDataToStorage(scratchpadData.value);
+      // }
 
-      theme.value = getThemeData();
-      if (!theme.value) {
-        theme.value = DEFAULT_THEME;
-        onThemeChanged(theme.value);
-      }
+      // theme.value = getThemeData();
+      // if (!theme.value) {
+      //   theme.value = DEFAULT_THEME;
+      //   onThemeChanged(theme.value);
+      // }
 
-      recentColors.value = getRecentColorFromStorage();
-      if (!recentColors.value) {
-        recentColors.value = '';
-        saveRecentColorsToStorage(recentColors.value);
-      }
+      // recentColors.value = getRecentColorFromStorage();
+      // if (!recentColors.value) {
+      //   recentColors.value = '';
+      //   saveRecentColorsToStorage(recentColors.value);
+      // }
 
-      const drag: HTMLElement = document.querySelector('.geEditor');
+    //   const drag: HTMLElement = document.querySelector('.geEditor');
 
-      drag.addEventListener('dragenter', (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-      });
+    //   drag.addEventListener('dragenter', (e: DragEvent) => {
+    //     e.stopPropagation();
+    //     e.preventDefault();
+    //   });
 
-      drag.addEventListener('dragleave', (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-      });
+    //   drag.addEventListener('dragleave', (e: DragEvent) => {
+    //     e.stopPropagation();
+    //     e.preventDefault();
+    //   });
 
-      drag.addEventListener('dragover', (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-      });
+    //   drag.addEventListener('dragover', (e: DragEvent) => {
+    //     e.stopPropagation();
+    //     e.preventDefault();
+    //   });
 
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      drag.addEventListener('drop', (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
+    //   // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    //   drag.addEventListener('drop', (e: DragEvent) => {
+    //     e.stopPropagation();
+    //     e.preventDefault();
 
-        // Don't allow drops in Preview Mode
-        if (previewMode.value) {
-          return;
-        }
+    //     // Don't allow drops in Preview Mode
+    //     if (isEditing.value) {
+    //       return;
+    //     }
 
-        for (let i = 0; i < e.dataTransfer.items.length; i++) {
-          const file = e.dataTransfer.items[i].getAsFile();
-          // If the dropped item was not an editor file, process as attachment
-          if (e.dataTransfer.items[i].kind === 'file') {
-            editor.value.canLoadFile(file).then((canLoad: boolean) => {
-              if (canLoad) {
-                file.text().then((fileData) => {
-                  loadFileData(fileData);
-                });
-              } else {
-                const fileInfo: EventFileInfo = {
-                  file,
-                  size: file.size,
-                  lastModified: file.lastModified,
-                };
-                getImageData(file).then((imageData: string) => {
-                  alert('in');
-                  fileInfo.imageData = imageData;
-                  onFileDropped(fileInfo);
-                });
-              }
-            });
-          }
-        }
-      });
+    //     // // TODO: Implement the canLoadFile below as part of App API
+    //     // for (let i = 0; i < e.dataTransfer.items.length; i++) {
+    //     //   const file = e.dataTransfer.items[i].getAsFile();
+    //     //   // If the dropped item was not an editor file, process as attachment
+    //     //   if (e.dataTransfer.items[i].kind === 'file') {
+    //     //     editor.value.canLoadFile(file).then((canLoad: boolean) => {
+    //     //       if (canLoad) {
+    //     //         file.text().then((fileData) => {
+    //     //           loadFileData(fileData);
+    //     //         });
+    //     //       } else {
+    //     //         const fileInfo: EventFileInfo = {
+    //     //           file,
+    //     //           size: file.size,
+    //     //           lastModified: file.lastModified,
+    //     //         };
+    //     //         getImageData(file).then((imageData: string) => {
+    //     //           alert('in');
+    //     //           fileInfo.imageData = imageData;
+    //     //           onFileDropped(fileInfo);
+    //     //         });
+    //     //       }
+    //     //     });
+    //     //   }
+    //     // }
+    //   });
 
-      // Add our own ctrl+v event listener
-      drag.onpaste = (e) => {
-        // Don't allow pasting files in Preview Mode
-        if (previewMode.value) {
-          return;
-        }
+    //   // Add our own ctrl+v event listener
+    //   drag.onpaste = (e) => {
+    //     // Don't allow pasting files in Preview Mode
+    //     if (isEditing.value) {
+    //       return;
+    //     }
 
-        if (e.clipboardData.types.indexOf('text/plain') >= 0) {
-          return;
-        }
+    //     if (e.clipboardData.types.indexOf('text/plain') >= 0) {
+    //       return;
+    //     }
 
-        // check if default clipboard have files or not
-        if (e.clipboardData.files.length > 0) {
-          for (let i = 0; i < e.clipboardData.files.length; i++) {
-            const file = e.clipboardData.files[i];
-            const fileInfo: EventFileInfo = {
-              file,
-              size: file.size,
-              lastModified: file.lastModified,
-            };
-            getImageData(file).then((imageData: string) => {
-              fileInfo.imageData = imageData;
-              onImagePasted(fileInfo);
-            });
-          }
-        } else {
-          // if default clipboard doesn't have file then if act as normal paste
-          const action = editor.value.editorUiRef.actions.get('paste');
-          action.funct();
-        }
-      };
+    //     // check if default clipboard have files or not
+    //     if (e.clipboardData.files.length > 0) {
+    //       for (let i = 0; i < e.clipboardData.files.length; i++) {
+    //         const file = e.clipboardData.files[i];
+    //         const fileInfo: EventFileInfo = {
+    //           file,
+    //           size: file.size,
+    //           lastModified: file.lastModified,
+    //         };
+    //         getImageData(file).then((imageData: string) => {
+    //           fileInfo.imageData = imageData;
+    //           onImagePasted(fileInfo);
+    //         });
+    //       }
+    //     } else {
+    //       // if default clipboard doesn't have file then if act as normal paste
+    //       const action = editor.value.editorUiRef.actions.get('paste');
+    //       action.funct();
+    //     }
+    //   };
 
-      editor.value.pagesToFit.add(editor.value.editorUiRef.getCurrentPage().getId());
+    //   editor.value.pagesToFit.add(editor.value.editorUiRef.getCurrentPage().getId());
+    // }
+
+    function registerApp(appInfo: AppInfo) {
+      apps.value[appInfo.uniqueAppId] = appInfo;
     }
 
-    onMounted(() => {
-      if (getEditorType() === EditorList.Graph) {
-        onGraphMounted();
-      }
-    });
-
-    function setEditorType(et: EditorList) {
-      editorType.value = et;
-      nextTick(() => {
-        switch (getEditorType()) {
-          case EditorList.Graph:
-            onGraphMounted();
-            supportedExtension.value = editor.value.supportedExtension();
-            break;
-
-          case EditorList.Spreadsheet:
-            supportedExtension.value = spreadsheet.value.supportedExtension();
-            break;
-        }
-      });
+    function setActiveApp(appId: string) {
+      activeApp.value = apps.value[appId];
     }
-    function newFile(et: EditorList) {
-      if (getEditorType() === et) {
-        // TODO: Reset editor
-      } else {
-        setEditorType(et);
+
+    function getSupportedExtensions() {
+      const exts = new Set();
+      for (const app of Object.values(apps)) {
+        exts.add(app.supportedExtensions);
       }
+      return exts;
+    }
+
+    function getSupportedExtensionsAsString() {
+      return Array.from(getSupportedExtensions()).join(', ');
+    }
+
+    function init() {
+      registerApp(getGraphEditorAppInfo());
+      registerApp(getSpreadsheetEditorAppInfo());
     }
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
+      document.addEventListener('keydown', onKeydown);
     });
 
     function getDateString(value: number): string {
       return new Date(value).toLocaleString();
     }
 
-    function onPreviewModeChanged() {
-      previewMode.value = !previewMode.value;
+    function onFileOpened(file: File) {
+      console.log(file);
+      // TODO: Loop through the apps and see if we can open the file
+      // TODO: Set the active app
+      // TODO: Load the file
     }
 
     function onShapeLibrariesChanged(libraries: string) {
@@ -452,58 +489,144 @@ export default defineComponent({
     }
 
     watch(
-      () => editorType.value,
-      (val: EditorList) => {
-        if (val === EditorList.Graph) {
-          nextTick(() => {
-            onGraphMounted();
-          });
-        } else {
-          updateAppHeight();
-          window.addEventListener('resize', onResize);
-        }
-      },
-    );
-
-    watch(
       () => theme.value,
       (val: string) => {
-        if (val == 'min') {
+        if (val === 'min') {
           document.getElementById('page').classList.remove('col-md-10');
           document.getElementById('page').classList.add('col-md-12');
         }
       },
     );
 
+    function appMounted() {
+      isLoading.value = false;
+      console.log('appMounted');
+
+      const drag: HTMLElement = document.getElementById('container');
+      // const drag: HTMLElement = document.querySelector('.geEditor');
+
+      drag.addEventListener('dragenter', (e: DragEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      drag.addEventListener('dragleave', (e: DragEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      drag.addEventListener('dragover', (e: DragEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      drag.addEventListener('drop', (e: DragEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        // Don't allow drops unless we're Editing
+        if (!isEditing.value) {
+          return;
+        }
+
+        for (let i = 0; i < e.dataTransfer.items.length; i++) {
+          const file = e.dataTransfer.items[i].getAsFile();
+          // If the dropped item was not an editor file, process as attachment
+          if (e.dataTransfer.items[i].kind === 'file') {
+            canLoadFile(activeApp.value, file).then((canLoad: boolean) => {
+              if (canLoad) {
+                file.text().then((fileData) => {
+                  loadFileData(fileData);
+                });
+              } else {
+                // Process as an attachment
+                const fileInfo: EventFileInfo = {
+                  file,
+                  size: file.size,
+                  lastModified: file.lastModified,
+                };
+
+                // TODO: Do we assume image data here?
+                getImageData(file).then((imageData: string) => {
+                  fileInfo.imageData = imageData;
+                  onFileDropped(fileInfo);
+                });
+              }
+            });
+          }
+        }
+      });
+
+      // Add our own ctrl+v event listener
+      drag.onpaste = (e) => {
+        // Don't allow pasting files in Preview Mode
+        if (isEditing.value) {
+          return;
+        }
+
+        if (e.clipboardData.types.indexOf('text/plain') >= 0) {
+          return;
+        }
+
+        // check if default clipboard have files or not
+        if (e.clipboardData.files.length > 0) {
+          for (let i = 0; i < e.clipboardData.files.length; i++) {
+            const file = e.clipboardData.files[i];
+            const fileInfo: EventFileInfo = {
+              file,
+              size: file.size,
+              lastModified: file.lastModified,
+            };
+            getImageData(file).then((imageData: string) => {
+              fileInfo.imageData = imageData;
+              onImagePasted(fileInfo);
+            });
+          }
+        } else {
+          // TODO: Replace this with something generic from the App API
+          // if default clipboard doesn't have file then if act as normal paste
+          // const action = editor.value.editorUiRef.actions.get('paste');
+          // action.funct();
+        }
+      };
+
+      // TODO: Fix this cleanly with something from App API
+      // editor.value.pagesToFit.add(editor.value.editorUiRef.getCurrentPage().getId());
+    }
+
+    init();
+
     return {
       addLog,
-      editor,
-      editorType,
-      EditorList,
-      insertDummyImage,
+      activeApp,
+      apps,
+      appMounted,
+      contentChanged,
       getDateString,
-      getEditorType,
       getRecentColorFromStorage,
-      loadFileData,
+      getSupportedExtensions,
+      getSupportedExtensionsAsString,
+      isEditing,
+      isLoading,
       logs,
-      newFile,
-      onGraphChanged,
-      onGraphMounted,
-      onPreviewModeChanged,
+      onContentChanged,
+      onFileOpened,
       onRecentColorsChanged,
       onScratchpadDataChanged,
       onShapeLibrariesChanged,
       onThemeChanged,
-      previewMode,
       recentColors,
       refreshLink,
       saveFile,
       scratchpadData,
-      setEditorType,
+      setActiveApp,
       shapeLibraries,
       spreadsheet,
-      supportedExtension,
       theme,
+      userData,
+      userDataChanged,
+      viewer,
     };
   },
 });
@@ -546,34 +669,47 @@ export default defineComponent({
                 | {{ getDateString(log.lastModified) }}
     #page.col-md-10
       .row-btn(v-if='theme != "min"')
-        button.ml-1(@click='newFile(EditorList.Graph)')
-          | New Diagram
-        button.ml-2(@click='newFile(EditorList.Spreadsheet)')
-          | New Spreadsheet
-        button.ml-3(@click='saveFile', :disabled='getEditorType() === EditorList.None')
+        b-dropdown.ml-2(text='Create new...', variant='info')
+          b-dropdown-item(
+            v-for='item in apps',
+            v-bind:title='item.documentName',
+            v-bind:key='item.uniqueAppId',
+            @click='setActiveApp(item.uniqueAppId)'
+          )
+            | {{ item.documentName }}
+        b-button.ml-3(@click='saveFile', :disabled='!contentChanged', variant='info')
           | Save File
         open-file.ml-4(
-          @file-loaded='loadFileData',
-          @set-editor-type='setEditorType',
-          :editorType='editorType',
-          :editorList='EditorList',
-          :supportedExtension='supportedExtension'
+          @file-opened='onFileOpened',
+          :acceptExtensions='getSupportedExtensionsAsString()'
         )
-        input#preview.mt-1.ml-5(
-          type='checkbox',
-          name='preview',
-          value='preview',
-          @change='onPreviewModeChanged'
-        )
-        label.ml-1(for='preview') Preview Mode
+        b-form-checkbox#preview.mt-1.ml-5(v-model='isEditing', switch, :disabled='!activeApp')
+          | Edit Mode
       .row-btn(v-else)
-        input#preview.mt-1.ml-5(
-          type='checkbox',
-          name='preview',
-          value='preview',
-          @change='onPreviewModeChanged'
+        b-form-checkbox#preview.mt-1.ml-5(v-model='isEditing', switch, :disabled='!activeApp')
+          | Edit Mode
+      #container.ge-container
+        #loadingDiv(v-if='isLoading')
+          .loader
+        h5(v-else-if='!activeApp')
+          | Create a new file or open an existing one
+        component(
+          v-else,
+          :is='viewer',
+          :isEditing='isEditing',
+          :refreshLinkHandler='refreshLink',
+          :userData='userData',
+          @hook:mounted='appMounted',
+          @user-data-changed='userDataChanged',
+          @content-changed='onContentChanged'
         )
-        label.ml-1(for='preview') Preview Mode
+</template>
+
+<style lang="scss">
+@import './styles/app.scss';
+</style>
+
+<!--
       #container.ge-container
         graph-editor(
           v-if='getEditorType() === EditorList.Graph',
@@ -594,9 +730,5 @@ export default defineComponent({
         .col-md-12(
           v-if='getEditorType() !== EditorList.Graph && getEditorType() !== EditorList.Spreadsheet'
         )
-          h1 Pick a mode
-</template>
-
-<style lang="scss">
-@import './styles/app.scss';
-</style>
+          h1 Pick a mode */
+-->

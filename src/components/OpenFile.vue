@@ -15,83 +15,33 @@
 -->
 
 <script lang="ts">
-import { EventBus } from '../eventbus';
-import { defineComponent, nextTick, ref } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'OpenFile',
   props: {
-    editorType: {
+    acceptExtensions: {
       required: false,
       type: String,
-      default: null,
-    },
-    editorList: {
-      required: false,
-      type: Object,
-      default: null,
-    },
-    supportedExtension: {
-      required: false,
-      type: String,
-      default: null,
+      default: '',
     },
   },
 
   setup(_props, ctx) {
-    const file = ref(null);
-    const fileAcceptType = ref('');
+    const fileInput = ref<HTMLInputElement>(null);
+
+    function openFile() {
+      ctx.emit('file-opened', fileInput.value.files[0]);
+    }
+
     function chooseFile() {
-      fileAcceptType.value = _props.supportedExtension;
-      nextTick(() => {
-        file.value.click();
-      });
-    }
-
-    function loadDrawIoFile(selectedFile: File) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const fileData = e.target.result;
-        ctx.emit('file-loaded', fileData);
-      };
-      reader.readAsText(selectedFile);
-    }
-
-    function loadFile() {
-      if (file.value.files.length > 0) {
-        const { files } = file.value;
-        const [fileValue] = files;
-        const [selectedFile] = file.value.files;
-        if (_props.editorType == _props.editorList.Spreadsheet) {
-          EventBus.$emit('load-spread-sheet-file', fileValue);
-        } else if (_props.editorType == _props.editorList.Graph) {
-          // Read .draw, drawio,xml file
-          loadDrawIoFile(selectedFile);
-        } else {
-          const { name } = fileValue;
-          const suffixArr = name.split('.'),
-            suffix = suffixArr[suffixArr.length - 1];
-          if (suffix == 'xlsx' || suffix == 'sheet') {
-            ctx.emit('set-editor-type', _props.editorList.Spreadsheet);
-            nextTick(() => {
-              EventBus.$emit('load-spread-sheet-file', fileValue);
-            });
-          } else {
-            ctx.emit('set-editor-type', _props.editorList.Graph);
-            nextTick(() => {
-              loadDrawIoFile(selectedFile);
-            });
-          }
-        }
-      }
+      fileInput.value.click();
     }
 
     return {
       chooseFile,
-      file,
-      fileAcceptType,
-      loadDrawIoFile,
-      loadFile,
+      fileInput,
+      openFile,
     };
   },
 });
@@ -99,14 +49,14 @@ export default defineComponent({
 
 <template lang="pug">
 .btn-left
-  button(@click='chooseFile')
+  b-button(@click='chooseFile', variant='info')
     | Open File
   input(
-    ref='file',
+    ref='fileInput',
     type='file',
     value='Open File',
     style='display: none',
-    :accept='fileAcceptType',
-    @change='loadFile'
+    :accept='acceptExtensions',
+    @change='openFile'
   )
 </template>

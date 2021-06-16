@@ -64,7 +64,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.vue', '.js', '.jsx', '.svg'],
+    extensions: ['.vue', '.ts', '.js', '.jsx', '.svg'],
     symlinks: false,
     alias: {
       '@': path.resolve(ROOT_PATH, 'src'),
@@ -344,9 +344,9 @@ module.exports = {
       jQuery: 'jquery',
     }),
 
-    new ESLintPlugin({
-      extensions: ['js', 'ts', 'vue'],
-    }),
+    // new ESLintPlugin({
+    //   extensions: ['js', 'ts', 'vue'],
+    // }),
 
     new FriendlyErrorsWebpackPlugin({
       compilationSuccessInfo: {
