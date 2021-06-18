@@ -85,8 +85,6 @@ export default defineComponent({
         luckysheet.create({
           ...luckysheetDefaultOptions,
           data: exportJson.sheets,
-          // title: exportJson.info.name,
-          // userInfo: exportJson.info.name.creator,
         });
       });
     }

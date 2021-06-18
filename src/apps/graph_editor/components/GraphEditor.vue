@@ -116,14 +116,6 @@ export default defineComponent<GraphEditorProps>({
 
     const pagesToFit = new Set();
 
-    // const recentColors = ref('');
-
-    // const scratchpadData = ref('');
-
-    // const shapeLibraries = ref('');
-
-    // const theme = ref('');
-
     function loadImage(url: string): Promise<HTMLImageElement> {
       return new Promise((resolve) => {
         const image = new Image();
@@ -463,7 +455,6 @@ export default defineComponent<GraphEditorProps>({
     watch(
       () => props.userData,
       (val: Record<string, unknown>) => {
-        // initUserData();
         editorUiRef.value.loadScratchpadData(val.scratchpadData);
         sidebarRef.value.showEntries(val.shapeLibraries);
       },
