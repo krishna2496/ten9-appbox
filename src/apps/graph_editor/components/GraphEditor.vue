@@ -17,6 +17,7 @@
 <script lang="ts">
 import Modals from './Modals.vue';
 import Window from './Windows.vue';
+import { getAppInfo } from '../index';
 import { CommonAppProps, CommonAppPropsOptions } from '../../app_api';
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
@@ -65,6 +66,7 @@ const MAX_IMAGE_SIZE = 520;
 const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows2;clipart;flowchart';
 const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
 const DEFAULT_THEME = 'kennedy';
+const DEFAULT_RECENT_COLORS = '';
 
 export type GraphEditorCell = typeof mxCell;
 
@@ -95,24 +97,6 @@ export default defineComponent<GraphEditorProps>({
   },
   props: {
     ...CommonAppPropsOptions,
-    // shapeLibraries: {
-    //   required: true,
-    //   type: String,
-    // },
-    // scratchpadData: {
-    //   required: true,
-    //   type: String,
-    // },
-    // theme: {
-    //   required: false,
-    //   type: String,
-    //   default: DEFAULT_THEME,
-    // },
-    // recentColors: {
-    //   required: false,
-    //   type: String,
-    //   default: '',
-    // },
   },
 
   setup(props, ctx) {
@@ -131,6 +115,14 @@ export default defineComponent<GraphEditorProps>({
     const pagesToRefresh = new Set();
 
     const pagesToFit = new Set();
+
+    // const recentColors = ref('');
+
+    // const scratchpadData = ref('');
+
+    // const shapeLibraries = ref('');
+
+    // const theme = ref('');
 
     function loadImage(url: string): Promise<HTMLImageElement> {
       return new Promise((resolve) => {
@@ -163,12 +155,7 @@ export default defineComponent<GraphEditorProps>({
       }
     }
 
-    function updateCellImage(
-      cell: GraphEditorCell,
-      imageUrl: string,
-      width?: number,
-      height?: number,
-    ) {
+    function updateImage(cell: GraphEditorCell, imageUrl: string, width?: number, height?: number) {
       const graph = graphRef.value;
 
       graph.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
@@ -207,7 +194,7 @@ export default defineComponent<GraphEditorProps>({
           style[mxConstants.STYLE_IMAGE],
         );
         if (imageUrl && currentUrl !== imageUrl) {
-          updateCellImage(cell, imageUrl, width, height);
+          updateImage(cell, imageUrl, width, height);
         }
       }
 
@@ -296,16 +283,36 @@ export default defineComponent<GraphEditorProps>({
       ctx.emit('content-changed', event.name);
     }
 
-    function onLibrariesChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      ctx.emit('shape-libraries-changed', event.getProperty('detail'));
+    function onRecentColorsChanged(colors: string) {
+      const newUserData = props.userData;
+      newUserData.recentColors = colors;
+      ctx.emit('user-data-changed', getAppInfo().uniqueAppId, newUserData);
     }
 
     function onScratchpadDataChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      ctx.emit('scratchpad-data-changed', event.getProperty('detail'));
+      const newUserData = props.userData;
+      newUserData.scratchpadData = event.getProperty('detail');
+      ctx.emit('user-data-changed', getAppInfo().uniqueAppId, newUserData);
+    }
+
+    function onShapeLibrariesChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
+      const newUserData = props.userData;
+      newUserData.shapeLibraries = event.getProperty('detail');
+      ctx.emit('user-data-changed', getAppInfo().uniqueAppId, newUserData);
     }
 
     function onThemeChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      ctx.emit('theme-changed', event.getProperty('detail'));
+      const newUserData = props.userData;
+      newUserData.theme = event.getProperty('detail');
+      ctx.emit('user-data-changed', getAppInfo().uniqueAppId, newUserData);
+
+      if (newUserData.theme === 'min') {
+        document.getElementById('page').classList.remove('col-md-10');
+        document.getElementById('page').classList.add('col-md-12');
+      } else {
+        document.getElementById('page').classList.add('col-md-10');
+        document.getElementById('page').classList.remove('col-md-12');
+      }
     }
 
     function onPageSelected(_sender: typeof mxEventSource) {
@@ -328,7 +335,7 @@ export default defineComponent<GraphEditorProps>({
       editorUi.addListener('pageViewChanged', onGraphChanged);
       editorUi.addListener('connectionArrowsChanged', onGraphChanged);
       editorUi.addListener('connectionPointsChanged', onGraphChanged);
-      editorUi.addListener('librariesChanged', onLibrariesChanged);
+      editorUi.addListener('librariesChanged', onShapeLibrariesChanged);
       editorUi.addListener('removePageFromCurrentPageWindow', removePageFromCurrentPageWindow);
       editorUi.addListener('scratchpadDataChanged', onScratchpadDataChanged);
       editorUi.addListener('themeChanged', onThemeChanged);
@@ -344,7 +351,7 @@ export default defineComponent<GraphEditorProps>({
       editor.removeListener(onPageSelected);
       editorUi.removeListener(fitCurrentPageWindow);
       editorUi.removeListener(onGraphChanged);
-      editorUi.removeListener(onLibrariesChanged);
+      editorUi.removeListener(onShapeLibrariesChanged);
       editorUi.removeListener(removePageFromCurrentPageWindow);
       editorUi.removeListener(onScratchpadDataChanged);
       editorUi.removeListener(onThemeChanged);
@@ -378,27 +385,35 @@ export default defineComponent<GraphEditorProps>({
     }
 
     function initUserData() {
-      debugger;
       let changed = false;
-      const { userData } = props;
+      let { userData } = props;
 
-      if (!userData?.scratchpadData) {
+      if (userData === null) {
+        userData = {};
+      }
+
+      if (!('recentColors' in userData)) {
+        userData.recentColors = DEFAULT_RECENT_COLORS;
+        changed = true;
+      }
+
+      if (!('scratchpadData' in userData)) {
         userData.scratchpadData = DEFAULT_SCRATCHPAD_DATA;
         changed = true;
       }
 
-      if (!userData?.shapeLbraries) {
+      if (!('shapeLibraries' in userData)) {
         userData.shapeLibraries = DEFAULT_SHAPE_LIBRARIES;
         changed = true;
       }
 
-      if (!userData?.theme) {
+      if (!('theme' in userData)) {
         userData.theme = DEFAULT_THEME;
         changed = true;
       }
 
       if (changed) {
-        ctx.emit('user-data-changed', userData);
+        ctx.emit('user-data-changed', getAppInfo().uniqueAppId, userData);
       }
     }
 
@@ -419,11 +434,11 @@ export default defineComponent<GraphEditorProps>({
 
       initUserData();
 
-      // // Add scratchpad to the sidebar
-      // editorUiRef.value.loadScratchpadData(props.userData.scratchpadData);
+      // Add scratchpad to the sidebar
+      editorUiRef.value.loadScratchpadData(props.userData.scratchpadData);
 
-      // // Add stencils to the sidebar
-      // sidebarRef.value.showEntries(props.userData.shapeLibraries);
+      // Add stencils to the sidebar
+      sidebarRef.value.showEntries(props.userData.shapeLibraries);
 
       addListeners();
 
@@ -448,7 +463,7 @@ export default defineComponent<GraphEditorProps>({
     watch(
       () => props.userData,
       (val: Record<string, unknown>) => {
-        initUserData();
+        // initUserData();
         editorUiRef.value.loadScratchpadData(val.scratchpadData);
         sidebarRef.value.showEntries(val.shapeLibraries);
       },
@@ -501,6 +516,7 @@ export default defineComponent<GraphEditorProps>({
           pagesToRefresh.add(page.getId());
         }
 
+        debugger;
         refreshCurrentPageLinks();
       });
     }
@@ -729,12 +745,6 @@ export default defineComponent<GraphEditorProps>({
       insertImage(url);
     }
 
-    function onRecentColorsChanged(colors: string) {
-      const newUserData = props.userData;
-      newUserData['recentColors'] = colors;
-      ctx.emit('user-data-changed', newUserData);
-    }
-
     watch(
       () => props.isEditing,
       (val) => {
@@ -745,6 +755,8 @@ export default defineComponent<GraphEditorProps>({
         });
       },
     );
+
+    initUserData();
 
     return {
       appRef,
@@ -772,7 +784,7 @@ export default defineComponent<GraphEditorProps>({
       resize,
       setGraphEnabled,
       showingDialog,
-      updateCellImage,
+      updateImage,
       updateCellLink,
     };
   },

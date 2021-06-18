@@ -25,6 +25,11 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    disabled: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
   },
 
   setup(_props, ctx) {
@@ -49,7 +54,7 @@ export default defineComponent({
 
 <template lang="pug">
 .btn-left
-  b-button(@click='chooseFile', variant='info')
+  b-button(@click='chooseFile', variant='info', :disabled='disabled')
     | Open File
   input(
     ref='fileInput',

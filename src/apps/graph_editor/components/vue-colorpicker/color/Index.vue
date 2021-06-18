@@ -249,9 +249,9 @@ export default {
           }
           else {
             if(this.recentColorsArray.length == 8) {
-            this.recentColorsArray.splice(-1,1);
+              this.recentColorsArray.splice(-1,1);
             }
-            this.recentColorsArray.unshift(`#${this.alphaHexString}`);
+              this.recentColorsArray.unshift(`#${this.alphaHexString}`);
           }
 
           this.$emit('recent-colors-changed', this.recentColorsArray.toString())
@@ -269,6 +269,7 @@ export default {
         const colorWindowWidth = 240;
         colorWindow.style.left = `${containerRect.width -  formatPanelWidth - colorWindowWidth - rightPadding}px`;
         colorWindow.style.top = `${this.editorUi.menubarHeight + this.editorUi.toolbarHeight + topPadding}px`;
+        this.recentColorsArray = this.$props.recentColors.split(",");
     });
   },
   methods: {
@@ -396,7 +397,7 @@ export default {
         this.recentColorsArray = newVal.split(",");
       } else {
         this.recentColorsArray = [];
-    }
+      }
     }
   }
 };

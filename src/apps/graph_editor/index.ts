@@ -14,12 +14,9 @@
  * -----
  */
 
-import { AppInfo } from '../app_api';
-import { v4 as UUIDv4 } from 'uuid';
+import { AppInfo, defaultAsyncComponentOptions } from '../app_api';
 
-import { defineAsyncComponent } from '@vue/composition-api';
-
-const uniqueAppId = UUIDv4();
+const uniqueAppId = 'ten9-graph-editor';
 const documentName = 'Diagram';
 const defaultExtension = '.draw';
 const otherSupportedExtensions = ['.drawio', '.xml'];
@@ -36,8 +33,9 @@ export function getAppInfo(): AppInfo {
     defaultExtension,
     supportedExtensions,
     canLoadContent,
-    asyncComponent: defineAsyncComponent(
-      () => import('@/apps/graph_editor/components/GraphEditor.vue'),
-    ),
+    asyncComponent: () => ({
+      ...defaultAsyncComponentOptions,
+      component: import('@/apps/graph_editor/components/GraphEditor.vue'),
+    }),
   };
 }
