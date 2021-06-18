@@ -36,6 +36,7 @@ export type Ten9AppAsyncComponent = AsyncComponent & {
   // TODO: Convert these to props and events?
   getContent?(): string | Blob;
   loadContent?(content: string | Blob): void;
+  loadContentFromFile?(file: File): void;
 };
 export interface AppInfo {
   uniqueAppId: string;

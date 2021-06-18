@@ -15,9 +15,8 @@
 -->
 
 <script lang="ts">
-import { EventBus } from '../../../eventbus';
 import luckysheet from '../lib/luckysheet';
-import { defineComponent, ref, onMounted, nextTick } from '@vue/composition-api';
+import { defineComponent, onMounted, nextTick } from '@vue/composition-api';
 import LuckyExcel from 'luckyexcel';
 
 interface simpleInt {
@@ -42,16 +41,22 @@ interface jsonSheet {
 
 export default defineComponent({
   name: 'SpreadsheetEditor',
-  setup() {
-    const selected = ref('');
-    const isMaskShow = ref(false);
+  setup(_props, ctx) {
+    const luckysheetDefaultOptions = {
+      container: 'luckysheet',
+      lang: 'en',
+      showinfobar: false,
+      hook: {
+        updated: () => {
+          ctx.emit('content-changed', true);
+        },
+      },
+    };
 
     onMounted(() => {
       nextTick(() => {
         luckysheet.create({
-          container: 'luckysheet',
-          lang: 'en',
-          showinfobar: false,
+          ...luckysheetDefaultOptions,
           data: [
             {
               name: 'Sheet1',
@@ -67,29 +72,10 @@ export default defineComponent({
       });
     });
 
-    const readSpreadsheetNativeFile = (files: File) => {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => {
-          const jsonFile = reader.result as string;
-          const fileView = JSON.parse(jsonFile);
-
-          luckysheet.create({
-            container: 'luckysheet', //luckysheet is the container id
-            showinfobar: false,
-            data: fileView,
-          });
-
-          resolve(fileView);
-        });
-        reader.readAsText(files);
-      });
-    };
-
-    const readExcel = (files: File) => {
-      LuckyExcel.transformExcelToLucky(files, (exportJson: jsonSheet) => {
+    function loadExcelFile(file: File) {
+      LuckyExcel.transformExcelToLucky(file, (exportJson: jsonSheet) => {
         if (exportJson.sheets == null || exportJson.sheets.length == 0) {
-          alert(
+          console.error(
             'Failed to read the content of the excel file, currently does not support xls files!',
           );
           return;
@@ -97,63 +83,80 @@ export default defineComponent({
         luckysheet.destroy();
 
         luckysheet.create({
-          container: 'luckysheet', //luckysheet is the container id
-          showinfobar: false,
+          ...luckysheetDefaultOptions,
           data: exportJson.sheets,
-          title: exportJson.info.name,
-          userInfo: exportJson.info.name.creator,
+          // title: exportJson.info.name,
+          // userInfo: exportJson.info.name.creator,
         });
       });
-    };
+    }
 
-    EventBus.$on('load-spread-sheet-file', (fileValue: File) => {
-      const { name } = fileValue;
-      const suffixArr = name.split('.'),
-        suffix = suffixArr[suffixArr.length - 1];
-
-      if (suffix != 'xlsx' && suffix != 'sheet') {
-        alert('Currently only supports the import of xlsx and Luckysheet (.sheet) native files');
-        return;
+    function loadContent(content: string) {
+      try {
+        const fileData = JSON.parse(content);
+        luckysheet.destroy();
+        luckysheet.create({
+          ...luckysheetDefaultOptions,
+          data: fileData,
+        });
+      } catch (e) {
+        if (e instanceof SyntaxError) {
+          // Create a file and load excel file
+          const file = new File([content], 'file.xlsx', {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+          loadExcelFile(file);
+        } else {
+          throw e;
+        }
       }
+    }
+
+    function loadSpreadsheetNativeFile(file: File) {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        const content = reader.result as string;
+        loadContent(content);
+      });
+      reader.readAsText(file);
+    }
+
+    function loadContentFromFile(file: File) {
+      if (file.name.indexOf('.') < 0) {
+        console.error(`No file extension found in file name (${file.name})`);
+      }
+
+      const ext = `.${file.name.split('.').pop()}`;
 
       // Read native files is (.sheet)
-      if (suffix == 'sheet') {
-        readSpreadsheetNativeFile(fileValue);
-        return;
+      if (ext === '.sheet') {
+        loadSpreadsheetNativeFile(file);
+      } else if (ext === '.xlsx') {
+        loadExcelFile(file);
+      } else {
+        console.error(`Unsupported extension: ${ext}`);
       }
-      // Read excel file if selection is (.xlsx)
-      readExcel(fileValue);
-    });
+    }
 
-    const supportedExtension = () => {
-      return '.xlsx,.sheet';
-    };
-
-    const saveFile = () => {
+    function getContent() {
       const allSheetData = luckysheet.getluckysheetfile();
-      const exportName = 'spredsheet';
-      const dataStr =
-        'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(allSheetData));
-      const downloadAnchorNode = document.createElement('a');
-      downloadAnchorNode.setAttribute('href', dataStr);
-      downloadAnchorNode.setAttribute('download', exportName + '.sheet');
-      document.body.appendChild(downloadAnchorNode); // required for firefox
-      downloadAnchorNode.click();
-      downloadAnchorNode.remove();
-    };
+      return JSON.stringify(allSheetData);
+    }
 
-    const resizeEditor = () => {
+    function getContentType() {
+      return 'application/json';
+    }
+
+    const resize = () => {
       luckysheet.resize();
     };
 
     return {
-      selected,
-      isMaskShow,
-      readExcel,
-      readSpreadsheetNativeFile,
-      resizeEditor,
-      saveFile,
-      supportedExtension,
+      getContent,
+      getContentType,
+      loadContent,
+      loadContentFromFile,
+      resize,
     };
   },
 });

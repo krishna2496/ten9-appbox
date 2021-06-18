@@ -231,7 +231,7 @@ export default defineComponent({
         title: 'Content Changed',
         size,
         lastModified: Date.now(),
-        what: 'TODO',
+        what: 'content',
       };
       addLog(fileLogEvent);
     }
@@ -350,7 +350,7 @@ export default defineComponent({
 
     function getSupportedExtensions() {
       const exts = new Set();
-      for (const app of Object.values(apps)) {
+      for (const app of Object.values(apps.value)) {
         exts.add(app.supportedExtensions);
       }
       return exts;
@@ -358,6 +358,14 @@ export default defineComponent({
 
     function getSupportedExtensionsAsString() {
       return Array.from(getSupportedExtensions()).join(', ');
+    }
+
+    function getActiveAppSupportedExtensionsAsString() {
+      // return '.draw';
+      if (activeAppInfo.value) {
+        return Array.from(activeAppInfo.value.supportedExtensions).join(', ');
+      }
+      return '';
     }
 
     function init() {
@@ -375,7 +383,13 @@ export default defineComponent({
     }
 
     async function onFileOpened(file: File) {
-      activeAppRef.value.loadContent(await file.text());
+      // TODO: Push this into the API instead of hardcoding this check
+      if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        // activeAppRef.value.loadContent(await file.arrayBuffer());
+        activeAppRef.value.loadContentFromFile(file);
+      } else {
+        activeAppRef.value.loadContent(await file.text());
+      }
     }
 
     init();
@@ -387,6 +401,7 @@ export default defineComponent({
       apps,
       appUserData,
       contentChanged,
+      getActiveAppSupportedExtensionsAsString,
       getDateString,
       getSupportedExtensionsAsString,
       isEditing,
@@ -451,7 +466,7 @@ export default defineComponent({
           | Save File
         open-file.ml-3(
           @file-opened='onFileOpened',
-          :acceptExtensions='getSupportedExtensionsAsString()',
+          :acceptExtensions='getActiveAppSupportedExtensionsAsString()',
           :disabled='!activeAppInfo'
         )
         b-form-checkbox#preview.mt-1.ml-3(v-model='isEditing', switch, :disabled='!activeAppInfo')
