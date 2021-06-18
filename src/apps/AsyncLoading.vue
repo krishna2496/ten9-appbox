@@ -18,14 +18,10 @@
 import { defineComponent } from '@vue/composition-api';
 export default defineComponent({
   name: 'AsyncLoading',
-//   components: {
-//     GlLoadingIcon,
-//   },
 });
 </script>
 
 <template lang="pug">
 #loadingDiv
   .loader
-//- gl-loading-icon(size='lg', :style='{ padding: "10px" }')
 </template>
