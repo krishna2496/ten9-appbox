@@ -28,15 +28,14 @@ export const defaultAsyncComponentOptions = {
 
 export type Ten9AppAsyncComponent = AsyncComponent & {
   getContentType?(): string;
-  insertFile?(file: File, url?: string): void;
+  insertFile?(file: File, url?: string, event?: MouseEvent): unknown;
   insertImage?(uri: string, event?: MouseEvent): Promise<unknown>;
   updateImage?(imageResult: unknown, newUrl: string, width?: number, height?: number): void;
   resize?(): void;
 
-  // TODO: Convert these to props and events
+  // TODO: Convert these to props and events?
   getContent?(): string | Blob;
   loadContent?(content: string | Blob): void;
-  loadContentFromFile?(file: File): void;
 };
 export interface AppInfo {
   uniqueAppId: string;

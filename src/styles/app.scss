@@ -25,7 +25,7 @@ $fa-font-path: '~font-awesome/fonts';
 
 @import 'font-awesome/scss/font-awesome';
 
-.ge-container {
+#container {
   // TODO Part 2
   position: relative;
   width: 100%;
@@ -35,7 +35,7 @@ $fa-font-path: '~font-awesome/fonts';
 
 .row-btn {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   margin: 10px;
 }
 

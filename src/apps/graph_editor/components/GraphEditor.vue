@@ -469,20 +469,6 @@ export default defineComponent<GraphEditorProps>({
       },
     );
 
-    // watch(
-    //   () => props.scratchpadData,
-    //   (val: string) => {
-    //     editorUiRef.value.loadScratchpadData(val);
-    //   },
-    // );
-
-    // watch(
-    //   () => props.shapeLibraries,
-    //   (val: string) => {
-    //     sidebarRef.value.showEntries(val);
-    //   },
-    // );
-
     // TODO: Re-enable this watch when theme switching is all worked out
     // watch(
     //   () => props.theme,
@@ -516,7 +502,6 @@ export default defineComponent<GraphEditorProps>({
           pagesToRefresh.add(page.getId());
         }
 
-        debugger;
         refreshCurrentPageLinks();
       });
     }
@@ -536,8 +521,6 @@ export default defineComponent<GraphEditorProps>({
         // skip the first 2 default elements in any graph doc
         if (node.id != '0' && node.id != '1') {
           cells.push(codec.decodeCell(node));
-          // TODO: do we need this?
-          // graph.refresh();
         }
       });
 

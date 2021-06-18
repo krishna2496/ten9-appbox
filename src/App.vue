@@ -16,11 +16,13 @@
 
 <script lang="ts">
 import OpenFile from './components/OpenFile.vue';
-// import { mxCell } from './apps/graph_editor/lib/jgraph/mxClient';
-
-import { AppInfo, canLoadFile } from './apps/app_api';
+import { AppInfo, canLoadFile, RefreshedLinkInfo } from './apps/app_api';
 import { getAppInfo as getGraphEditorAppInfo } from '@/apps/graph_editor/index';
 import { getAppInfo as getSpreadsheetEditorAppInfo } from '@/apps/spreadsheet_editor/index';
+
+// Uncomment the component imports to avoid async component loading
+// import GraphEditor from '@/apps/graph_editor/components/GraphEditor.vue';
+// import SpreadsheetEditor from '@/apps/spreadsheet_editor/components/SpreadsheetEditor.vue';
 
 import {
   computed,
@@ -93,6 +95,17 @@ export default defineComponent({
     const contentChanged = ref(false);
 
     const activeAppComponent = computed(() => {
+      // Uncomment the switch statement below to avoid async component loading
+      // switch (activeAppInfo.value.uniqueAppId) {
+      //   case getGraphEditorAppInfo().uniqueAppId:
+      //     return GraphEditor;
+      //   case getSpreadsheetEditorAppInfo().uniqueAppId:
+      //     return SpreadsheetEditor;
+      //   default:
+      //     return null;
+      // }
+
+      // Comment out the next line to avoid async component loading
       return activeAppInfo.value?.asyncComponent;
     });
 
@@ -134,11 +147,15 @@ export default defineComponent({
       });
     }
 
-    function refreshLink(url: string): Promise<string> {
+    function refreshLink(url: string): Promise<RefreshedLinkInfo> {
       return new Promise((resolve) => {
-        const newUrl = new URL(url);
-        newUrl.hash += 'a';
-        resolve(newUrl.toString());
+        if (url.startsWith('data:')) {
+          resolve({ url: null });
+        } else {
+          const newUrl = new URL(url);
+          newUrl.hash += 'a';
+          resolve({ url: newUrl.toString() });
+        }
       });
     }
 
@@ -186,6 +203,7 @@ export default defineComponent({
       setTimeout(() => {
         URL.revokeObjectURL(a.href);
       }, 0);
+      contentChanged.value = false;
     }
 
     function onKeydown(event: KeyboardEvent) {
@@ -232,20 +250,14 @@ export default defineComponent({
     function initEventListeners() {
       const drag: HTMLElement = document.getElementById('container');
 
-      drag.addEventListener('dragenter', (e: DragEvent) => {
+      const defaultDragHandler = (e: DragEvent) => {
         e.stopPropagation();
         e.preventDefault();
-      });
+      };
 
-      drag.addEventListener('dragleave', (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-      });
-
-      drag.addEventListener('dragover', (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-      });
+      drag.addEventListener('dragenter', defaultDragHandler);
+      drag.addEventListener('dragleave', defaultDragHandler);
+      drag.addEventListener('dragover', defaultDragHandler);
 
       const dropHandler = (e: DragEvent) => {
         e.stopPropagation();
@@ -286,6 +298,7 @@ export default defineComponent({
 
       // Add our own ctrl+v event listener
       drag.onpaste = (e) => {
+        debugger;
         // Don't allow pasting files in Preview Mode
         if (isEditing.value) {
           return;
@@ -310,15 +323,13 @@ export default defineComponent({
             });
           }
         } else {
+          console.log('TODO');
           // TODO: Replace this with something generic from the App API
           // if default clipboard doesn't have file then if act as normal paste
           // const action = editor.value.editorUiRef.actions.get('paste');
           // action.funct();
         }
       };
-
-      // TODO: Fix this cleanly with something from App API
-      // editor.value.pagesToFit.add(editor.value.editorUiRef.getCurrentPage().getId());
     }
 
     onMounted(() => {
@@ -333,7 +344,6 @@ export default defineComponent({
     }
 
     function setActiveApp(appId: string) {
-      debugger;
       appUserData.value = JSON.parse(window.localStorage.getItem(appId)) || {};
       activeAppInfo.value = apps.value[appId];
     }
@@ -349,7 +359,6 @@ export default defineComponent({
     function getSupportedExtensionsAsString() {
       return Array.from(getSupportedExtensions()).join(', ');
     }
-
 
     function init() {
       registerApp(getGraphEditorAppInfo());
@@ -382,7 +391,6 @@ export default defineComponent({
       getSupportedExtensionsAsString,
       isEditing,
       logs,
-      // onAppMounted,
       onAppUserDataChanged,
       onContentChanged,
       onFileOpened,
@@ -431,7 +439,7 @@ export default defineComponent({
                 | {{ getDateString(log.lastModified) }}
     #page.col-md-10
       .row-btn
-        b-dropdown.ml-2(text='Create new...', variant='info')
+        b-dropdown.ml-3(text='Create new...', variant='info')
           b-dropdown-item(
             v-for='item in apps',
             v-bind:title='item.documentName',
@@ -441,14 +449,14 @@ export default defineComponent({
             | {{ item.documentName }}
         b-button.ml-3(@click='saveFile', :disabled='!contentChanged', variant='info')
           | Save File
-        open-file.ml-4(
+        open-file.ml-3(
           @file-opened='onFileOpened',
           :acceptExtensions='getSupportedExtensionsAsString()',
           :disabled='!activeAppInfo'
         )
-        b-form-checkbox#preview.mt-1.ml-5(v-model='isEditing', switch, :disabled='!activeAppInfo')
+        b-form-checkbox#preview.mt-1.ml-3(v-model='isEditing', switch, :disabled='!activeAppInfo')
           | Edit Mode
-      #container.ge-container
+      #container
         div(v-if='!activeAppInfo')
           | Create a new file or open an existing one
         component(
@@ -456,8 +464,8 @@ export default defineComponent({
           ref='activeAppRef',
           :is='activeAppComponent',
           :isEditing='isEditing',
-          :refreshLinkHandler='refreshLink',
           :userData='appUserData',
+          :refreshLinkHandler='refreshLink',
           @user-data-changed='onAppUserDataChanged',
           @content-changed='onContentChanged'
         )
