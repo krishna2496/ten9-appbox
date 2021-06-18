@@ -119,15 +119,6 @@ export default defineComponent({
 
       nextTick(() => {
         activeAppRef.value?.resize();
-
-        // if (getEditorType() === EditorList.Spreadsheet) {
-        //   const isLuckySheetLoaded = document.querySelector<HTMLElement>('.luckysheet');
-        //   if (isLuckySheetLoaded) {
-        //     spreadsheet.value.resizeEditor();
-        //   }
-        // } else if (getEditorType() === EditorList.Graph) {
-        //   editor.value.editorUiRef.refresh();
-        // }
       });
     }
 
@@ -298,7 +289,6 @@ export default defineComponent({
 
       // Add our own ctrl+v event listener
       drag.onpaste = (e) => {
-        debugger;
         // Don't allow pasting files in Preview Mode
         if (isEditing.value) {
           return;
@@ -323,7 +313,7 @@ export default defineComponent({
             });
           }
         } else {
-          console.log('TODO');
+          // TODO: Do we need this?
           // TODO: Replace this with something generic from the App API
           // if default clipboard doesn't have file then if act as normal paste
           // const action = editor.value.editorUiRef.actions.get('paste');
