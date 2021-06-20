@@ -25,7 +25,7 @@ $fa-font-path: '~font-awesome/fonts';
 
 @import 'font-awesome/scss/font-awesome';
 
-.ge-container {
+#container {
   // TODO Part 2
   position: relative;
   width: 100%;
@@ -35,7 +35,7 @@ $fa-font-path: '~font-awesome/fonts';
 
 .row-btn {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   margin: 10px;
 }
 
@@ -79,4 +79,84 @@ $fa-font-path: '~font-awesome/fonts';
 a {
   color: black;
   text-decoration: none !important;
+}
+
+// TODO: Move to loader.scss
+.loader,
+.loader::after {
+  border-radius: 50%;
+  width: 5em;
+  height: 5em;
+}
+
+.loader {
+  position: relative;
+  top: 40%;
+  margin: auto;
+  border-top: 0.5em solid grey;
+  border-right: 0.5em solid grey;
+  border-bottom: 0.5em solid grey;
+  border-left: 0.5em solid #fff;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: load8 0.5s infinite linear;
+  animation: load8 1.1s infinite linear;
+}
+
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+#loadingDiv {
+  position: absolute;
+  top: 40;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: lightgray;
+  z-index: 10000;
+}
+
+// TODO: Move to viewers select?
+// TODO: Why all this for bootstrap vue components?
+.viewers select {
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  padding: 6px 10px;
+  border-color: #979595;
+  color: #2e2e2e;
+  background-image: url("data:image/svg+xml,<svg height='10px' width='10px' viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>");
+  background-repeat: no-repeat;
+  background-color: #fff;
+  background-position: calc(100% - 0.75rem) center !important;
+  appearance: none;
+  width: 150px;
+  height: 34px;
+}
+
+.viewers select:focus-visible {
+  outline: 0 #979595;
+  height: 34px;
 }

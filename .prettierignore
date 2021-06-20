@@ -1,9 +1,9 @@
 dist/
 node_modules/
 **/*.min.js
-src/graph_editor/lib/deflate/
-src/graph_editor/lib/jscolor/
-src/graph_editor/lib/rough/
-src/graph_editor/lib/spin/
-src/graph_editor/components/vue-colorpicker
-src/spreadsheet_editor/lib/luckysheet
+src/apps/graph_editor/lib/deflate/
+src/apps/graph_editor/lib/jscolor/
+src/apps/graph_editor/lib/rough/
+src/apps/graph_editor/lib/spin/
+src/apps/graph_editor/components/vue-colorpicker
+src/apps/spreadsheet_editor/lib/luckysheet

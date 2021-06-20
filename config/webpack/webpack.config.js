@@ -25,7 +25,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const ESLintPlugin = require('eslint-webpack-plugin');
+// const ESLintPlugin = require('eslint-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -64,12 +64,12 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.vue', '.js', '.jsx', '.svg'],
+    extensions: ['.vue', '.ts', '.js', '.jsx', '.svg'],
     symlinks: false,
     alias: {
       '@': path.resolve(ROOT_PATH, 'src'),
       vue$: 'vue/dist/vue.runtime.esm.js',
-      '@graphEditorImages': path.resolve(ROOT_PATH, 'src/graph_editor/assets/images'),
+      '@graphEditorImages': path.resolve(ROOT_PATH, 'src/apps/graph_editor/assets/images'),
     },
     modules: ['node_modules', path.resolve(ROOT_PATH, 'node_modules')],
   },
@@ -344,9 +344,9 @@ module.exports = {
       jQuery: 'jquery',
     }),
 
-    new ESLintPlugin({
-      extensions: ['js', 'ts', 'vue'],
-    }),
+    // new ESLintPlugin({
+    //   extensions: ['js', 'ts', 'vue'],
+    // }),
 
     new FriendlyErrorsWebpackPlugin({
       compilationSuccessInfo: {

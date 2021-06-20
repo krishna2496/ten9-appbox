@@ -50,7 +50,7 @@ const { ChangePageSetup, ChangeGridColor } = require('../jgraph/EditorUi.js');
 
 // TEN9: Consolidate variables
 const IMAGE_PATH = '/images';
-const SHAPES_PATH = '../../../graph_editor/lib/shapes';
+const SHAPES_PATH = '../../../apps/graph_editor/lib/shapes';
 // const STENCIL_PATH = '../../../../public/stencils';
 const urlParams = {};
 const DRAW_MATH_URL = 'math';

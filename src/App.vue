@@ -15,17 +15,22 @@
 -->
 
 <script lang="ts">
-import GraphEditor from './graph_editor/components/GraphEditor.vue';
-import SpreadsheetEditor from './spreadsheet_editor/components/SpreadsheetEditor.vue';
 import OpenFile from './components/OpenFile.vue';
-import { mxCell } from './graph_editor/lib/jgraph/mxClient';
+import { AppInfo, canLoadFile, RefreshedLinkInfo } from './apps/app_api';
+import { getAppInfo as getGraphEditorAppInfo } from '@/apps/graph_editor/index';
+import { getAppInfo as getSpreadsheetEditorAppInfo } from '@/apps/spreadsheet_editor/index';
+
+// Uncomment the component imports to avoid async component loading
+// import GraphEditor from '@/apps/graph_editor/components/GraphEditor.vue';
+// import SpreadsheetEditor from '@/apps/spreadsheet_editor/components/SpreadsheetEditor.vue';
+
 import {
+  computed,
   defineComponent,
   nextTick,
   onBeforeUnmount,
   onMounted,
   ref,
-  watch,
 } from '@vue/composition-api';
 import { debounce } from 'lodash';
 
@@ -34,108 +39,32 @@ interface EventFileInfo {
   size?: number;
   lastModified?: number;
   what?: string;
-  imageData?: string;
+  dataUrl?: string;
 }
 
 interface FileLogEvent extends EventFileInfo {
   title: string;
 }
 
-const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows2;clipart;flowchart';
-const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
-const DEFAULT_THEME = 'kennedy';
-
-enum EditorList {
-  None = 'NONE',
-  Graph = 'GRAPH',
-  Spreadsheet = 'SPREADSHEET',
-}
-
 export default defineComponent({
   name: 'App',
   components: {
-    GraphEditor,
     OpenFile,
-    SpreadsheetEditor,
+    // TODO: Add LoadContentModal
   },
 
   setup() {
     const logs = ref([]);
 
-    const editor = ref(null);
+    const apps = ref<Record<string, AppInfo>>({});
 
-    const previewMode = ref(false);
+    const activeAppInfo = ref<AppInfo | null>(null);
 
-    const shapeLibraries = ref('');
+    const activeAppRef = ref(null);
 
-    const scratchpadData = ref('');
+    const isEditing = ref(true);
 
-    const theme = ref('');
-
-    const recentColors = ref('');
-
-    const editorType = ref(EditorList.None);
-
-    const spreadsheet = ref(null);
-
-    const supportedExtension = ref('.xlsx,.sheet,.draw, .drawio, .xml');
-
-    function getShapeLibrariesFromStorage() {
-      return window.localStorage.getItem('shapeLibraries');
-    }
-
-    function getScratchpadData() {
-      return window.localStorage.getItem('scratchpadData');
-    }
-
-    function getThemeData() {
-      return window.localStorage.getItem('theme');
-    }
-
-    function saveShapeLibrariesToStorage(libraries: string) {
-      window.localStorage.setItem('shapeLibraries', libraries);
-    }
-
-    function saveScratchpadDataToStorage(xml: string) {
-      window.localStorage.setItem('scratchpadData', xml);
-    }
-
-    function getRecentColorFromStorage() {
-      return window.localStorage.getItem('recentColors');
-    }
-
-    function saveRecentColorsToStorage(colors: string) {
-      window.localStorage.setItem('recentColors', colors);
-    }
-
-    function getEditorType() {
-      return editorType.value;
-    }
-
-    function updateAppHeight() {
-      const container = document.getElementById('container');
-      const rect = container.getBoundingClientRect();
-      const contentPadding = 20;
-      const bottomMargin = 5;
-      const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
-      container.style.height = `${newHeight}px`;
-
-      nextTick(() => {
-        if (getEditorType() === EditorList.Spreadsheet) {
-          const isLuckySheetLoaded = document.querySelector<HTMLElement>('.luckysheet');
-          if (isLuckySheetLoaded) {
-            spreadsheet.value.resizeEditor();
-          }
-        } else if (getEditorType() === EditorList.Graph) {
-          editor.value.editorUiRef.refresh();
-        }
-      });
-    }
-
-    const debounceTime = 100;
-    const onResize = debounce(() => {
-      updateAppHeight();
-    }, debounceTime);
+    const appUserData = ref<Record<string, unknown>>({});
 
     function addLog(fileLogEvent: FileLogEvent) {
       if (fileLogEvent.file) {
@@ -152,28 +81,73 @@ export default defineComponent({
       });
     }
 
+    function onAppUserDataChanged(appId: string, newAppUserData: unknown) {
+      const appUserDataAsString = JSON.stringify(newAppUserData);
+      window.localStorage.setItem(appId, appUserDataAsString);
+      const fileLogEvent: FileLogEvent = {
+        title: 'App User Data Changed',
+        size: appUserDataAsString.length,
+        lastModified: Date.now(),
+      };
+      addLog(fileLogEvent);
+    }
+
+    const contentChanged = ref(false);
+
+    const activeAppComponent = computed(() => {
+      // Uncomment the switch statement below to avoid async component loading
+      // switch (activeAppInfo.value.uniqueAppId) {
+      //   case getGraphEditorAppInfo().uniqueAppId:
+      //     return GraphEditor;
+      //   case getSpreadsheetEditorAppInfo().uniqueAppId:
+      //     return SpreadsheetEditor;
+      //   default:
+      //     return null;
+      // }
+
+      // Comment out the next line to avoid async component loading
+      return activeAppInfo.value?.asyncComponent;
+    });
+
+    function updateAppHeight() {
+      const container = document.getElementById('container');
+      const rect = container.getBoundingClientRect();
+      const contentPadding = 20;
+      const bottomMargin = 5;
+      const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
+      container.style.height = `${newHeight}px`;
+
+      nextTick(() => {
+        activeAppRef.value?.resize();
+      });
+    }
+
+    const debounceTime = 100;
+    const onResize = debounce(() => {
+      updateAppHeight();
+    }, debounceTime);
+
     function insertDummyImage(dataUri: string) {
       // add a dummy image to graph to emulate what will happen in production app
-      editor.value.insertImage(dataUri).then((result: typeof mxCell) => {
+      activeAppRef.value.insertImage(dataUri).then((result: unknown) => {
         const waitingTime = 3000;
         setTimeout(() => {
           const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
-          editor.value.updateCellImage(result, newUrl);
+          activeAppRef.value.updateImage(result, newUrl);
         }, waitingTime);
       });
     }
 
-    function refreshLink(url: string): Promise<string> {
+    function refreshLink(url: string): Promise<RefreshedLinkInfo> {
       return new Promise((resolve) => {
-        const newUrl = new URL(url);
-        newUrl.hash += 'a';
-        resolve(newUrl.toString());
+        if (url.startsWith('data:')) {
+          resolve({ url: null });
+        } else {
+          const newUrl = new URL(url);
+          newUrl.hash += 'a';
+          resolve({ url: newUrl.toString() });
+        }
       });
-    }
-
-    function loadFileData(xmlData: string) {
-      editor.value.loadXmlData(xmlData);
-      editor.value.fitCurrentPageWindow();
     }
 
     function onFileDropped(event: EventFileInfo) {
@@ -185,10 +159,10 @@ export default defineComponent({
       addLog(fileLogEvent);
       const fileType = fileLogEvent.file.type.split('/');
       if (fileType[0] === 'image') {
-        insertDummyImage(fileLogEvent.imageData);
+        insertDummyImage(fileLogEvent.dataUrl);
       } else {
         const url = 'https://www.google.com';
-        editor.value.insertFile(fileLogEvent.file, url);
+        activeAppRef.value.insertFile(fileLogEvent.file, url);
       }
     }
 
@@ -198,17 +172,19 @@ export default defineComponent({
         ...event,
       };
       addLog(fileLogEvent);
-      insertDummyImage(fileLogEvent.imageData);
+      insertDummyImage(fileLogEvent.dataUrl);
     }
 
-    function saveXmlFile(xmlData: string) {
-      const filename = 'diagram';
-      const ext = 'draw';
+    function saveFile() {
+      const content = activeAppRef.value.getContent();
+      const contentType = activeAppRef.value.getContentType();
+      const filename = activeAppInfo.value.documentName.toLowerCase();
+      const ext = activeAppInfo.value.defaultExtension;
 
-      const blob = new Blob([xmlData], { type: 'application/xml' });
+      const blob = new Blob([content], { type: contentType });
 
       const a = document.createElement('a');
-      a.download = `${filename}.${ext}`;
+      a.download = `${filename} - ${new Date().toISOString().replaceAll(':', '')}${ext}`;
       a.href = URL.createObjectURL(blob);
       a.dataset.downloadurl = `${ext}:${a.download}:${a.href}`;
       a.style.display = 'none';
@@ -218,18 +194,7 @@ export default defineComponent({
       setTimeout(() => {
         URL.revokeObjectURL(a.href);
       }, 0);
-    }
-
-    function saveFile() {
-      // if (editor.value.graph.isEditing()) {
-      //   editor.valule.graph.stopEditing();
-      // }
-      if (EditorList.Graph == editorType.value) {
-        const xmlData = editor.value.getXmlData();
-        saveXmlFile(xmlData);
-      } else {
-        spreadsheet.value.saveFile();
-      }
+      contentChanged.value = false;
     }
 
     function onKeydown(event: KeyboardEvent) {
@@ -239,26 +204,30 @@ export default defineComponent({
       }
     }
 
-    function onGraphChanged(what: string) {
-      const xmlData = editor.value.getXmlData();
+    function onContentChanged(flag: boolean) {
+      contentChanged.value = flag;
+
+      let size = 0;
+      if (activeAppRef.value?.getContent) {
+        const content = activeAppRef.value.getContent();
+        if (typeof content === 'string') {
+          size = content.length;
+        } else {
+          // Blob
+          ({ size } = content);
+        }
+      }
+
       const fileLogEvent: FileLogEvent = {
-        title: 'Graph Changed',
-        size: xmlData.length,
+        title: 'Content Changed',
+        size,
         lastModified: Date.now(),
-        what: what,
+        what: 'content',
       };
       addLog(fileLogEvent);
     }
 
-    function onRecentColorsChanged(colors: string) {
-      saveRecentColorsToStorage(colors);
-    }
-
-    function onThemeChanged(themeName: string) {
-      window.localStorage.setItem('theme', themeName);
-    }
-
-    function getImageData(file: Blob): Promise<string> {
+    function getFileAsDataURL(file: Blob): Promise<string> {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.addEventListener('load', () => {
@@ -269,59 +238,24 @@ export default defineComponent({
       });
     }
 
-    function onGraphMounted() {
-      updateAppHeight();
-      window.addEventListener('resize', onResize);
-      document.addEventListener('keydown', onKeydown);
+    function initEventListeners() {
+      const drag: HTMLElement = document.getElementById('container');
 
-      shapeLibraries.value = getShapeLibrariesFromStorage();
-      if (!shapeLibraries.value) {
-        shapeLibraries.value = DEFAULT_SHAPE_LIBRARIES;
-        saveShapeLibrariesToStorage(shapeLibraries.value);
-      }
-
-      scratchpadData.value = getScratchpadData();
-      if (!scratchpadData.value) {
-        scratchpadData.value = DEFAULT_SCRATCHPAD_DATA;
-        saveScratchpadDataToStorage(scratchpadData.value);
-      }
-
-      theme.value = getThemeData();
-      if (!theme.value) {
-        theme.value = DEFAULT_THEME;
-        onThemeChanged(theme.value);
-      }
-
-      recentColors.value = getRecentColorFromStorage();
-      if (!recentColors.value) {
-        recentColors.value = '';
-        saveRecentColorsToStorage(recentColors.value);
-      }
-
-      const drag: HTMLElement = document.querySelector('.geEditor');
-
-      drag.addEventListener('dragenter', (e: DragEvent) => {
+      const defaultDragHandler = (e: DragEvent) => {
         e.stopPropagation();
         e.preventDefault();
-      });
+      };
 
-      drag.addEventListener('dragleave', (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-      });
+      drag.addEventListener('dragenter', defaultDragHandler);
+      drag.addEventListener('dragleave', defaultDragHandler);
+      drag.addEventListener('dragover', defaultDragHandler);
 
-      drag.addEventListener('dragover', (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      drag.addEventListener('drop', (e: DragEvent) => {
+      const dropHandler = (e: DragEvent) => {
         e.stopPropagation();
         e.preventDefault();
 
-        // Don't allow drops in Preview Mode
-        if (previewMode.value) {
+        // Don't allow drops unless we're Editing
+        if (!isEditing.value) {
           return;
         }
 
@@ -329,32 +263,34 @@ export default defineComponent({
           const file = e.dataTransfer.items[i].getAsFile();
           // If the dropped item was not an editor file, process as attachment
           if (e.dataTransfer.items[i].kind === 'file') {
-            editor.value.canLoadFile(file).then((canLoad: boolean) => {
+            canLoadFile(activeAppInfo.value, file).then((canLoad: boolean) => {
               if (canLoad) {
-                file.text().then((fileData) => {
-                  loadFileData(fileData);
+                file.text().then((content) => {
+                  activeAppRef.value.loadContent(content);
                 });
               } else {
+                // Process as an attachment
                 const fileInfo: EventFileInfo = {
                   file,
                   size: file.size,
                   lastModified: file.lastModified,
                 };
-                getImageData(file).then((imageData: string) => {
-                  alert('in');
-                  fileInfo.imageData = imageData;
+                getFileAsDataURL(file).then((dataUrl: string) => {
+                  fileInfo.dataUrl = dataUrl;
                   onFileDropped(fileInfo);
                 });
               }
             });
           }
         }
-      });
+      };
+
+      drag.addEventListener('drop', dropHandler);
 
       // Add our own ctrl+v event listener
       drag.onpaste = (e) => {
         // Don't allow pasting files in Preview Mode
-        if (previewMode.value) {
+        if (isEditing.value) {
           return;
         }
 
@@ -371,139 +307,101 @@ export default defineComponent({
               size: file.size,
               lastModified: file.lastModified,
             };
-            getImageData(file).then((imageData: string) => {
-              fileInfo.imageData = imageData;
+            getFileAsDataURL(file).then((dataUrl: string) => {
+              fileInfo.dataUrl = dataUrl;
               onImagePasted(fileInfo);
             });
           }
         } else {
+          // TODO: Do we need this?
+          // TODO: Replace this with something generic from the App API
           // if default clipboard doesn't have file then if act as normal paste
-          const action = editor.value.editorUiRef.actions.get('paste');
-          action.funct();
+          // const action = editor.value.editorUiRef.actions.get('paste');
+          // action.funct();
         }
       };
-
-      editor.value.pagesToFit.add(editor.value.editorUiRef.getCurrentPage().getId());
     }
 
     onMounted(() => {
-      if (getEditorType() === EditorList.Graph) {
-        onGraphMounted();
-      }
+      initEventListeners();
+      window.addEventListener('resize', onResize);
+      document.addEventListener('keydown', onKeydown);
+      updateAppHeight();
     });
 
-    function setEditorType(et: EditorList) {
-      editorType.value = et;
-      nextTick(() => {
-        switch (getEditorType()) {
-          case EditorList.Graph:
-            onGraphMounted();
-            supportedExtension.value = editor.value.supportedExtension();
-            break;
-
-          case EditorList.Spreadsheet:
-            supportedExtension.value = spreadsheet.value.supportedExtension();
-            break;
-        }
-      });
+    function registerApp(appInfo: AppInfo) {
+      apps.value[appInfo.uniqueAppId] = appInfo;
     }
-    function newFile(et: EditorList) {
-      if (getEditorType() === et) {
-        // TODO: Reset editor
-      } else {
-        setEditorType(et);
+
+    function setActiveApp(appId: string) {
+      appUserData.value = JSON.parse(window.localStorage.getItem(appId)) || {};
+      activeAppInfo.value = apps.value[appId];
+    }
+
+    function getSupportedExtensions() {
+      const exts = new Set();
+      for (const app of Object.values(apps.value)) {
+        exts.add(app.supportedExtensions);
       }
+      return exts;
+    }
+
+    function getSupportedExtensionsAsString() {
+      return Array.from(getSupportedExtensions()).join(', ');
+    }
+
+    function getActiveAppSupportedExtensionsAsString() {
+      // return '.draw';
+      if (activeAppInfo.value) {
+        return Array.from(activeAppInfo.value.supportedExtensions).join(', ');
+      }
+      return '';
+    }
+
+    function init() {
+      registerApp(getGraphEditorAppInfo());
+      registerApp(getSpreadsheetEditorAppInfo());
     }
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
+      document.addEventListener('keydown', onKeydown);
     });
 
     function getDateString(value: number): string {
       return new Date(value).toLocaleString();
     }
 
-    function onPreviewModeChanged() {
-      previewMode.value = !previewMode.value;
+    async function onFileOpened(file: File) {
+      // TODO: Push this into the API instead of hardcoding this check
+      if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        // activeAppRef.value.loadContent(await file.arrayBuffer());
+        activeAppRef.value.loadContentFromFile(file);
+      } else {
+        activeAppRef.value.loadContent(await file.text());
+      }
     }
 
-    function onShapeLibrariesChanged(libraries: string) {
-      saveShapeLibrariesToStorage(libraries);
-      shapeLibraries.value = libraries;
-
-      const fileLogEvent: FileLogEvent = {
-        title: 'Shape Libraries Changed',
-        size: libraries.length,
-        lastModified: Date.now(),
-      };
-      addLog(fileLogEvent);
-    }
-
-    function onScratchpadDataChanged(xml: string) {
-      saveScratchpadDataToStorage(xml);
-      scratchpadData.value = xml;
-
-      const fileLogEvent: FileLogEvent = {
-        title: 'Scratchpad Data Changed',
-        size: xml.length,
-        lastModified: Date.now(),
-      };
-      addLog(fileLogEvent);
-    }
-
-    watch(
-      () => editorType.value,
-      (val: EditorList) => {
-        if (val === EditorList.Graph) {
-          nextTick(() => {
-            onGraphMounted();
-          });
-        } else {
-          updateAppHeight();
-          window.addEventListener('resize', onResize);
-        }
-      },
-    );
-
-    watch(
-      () => theme.value,
-      (val: string) => {
-        if (val == 'min') {
-          document.getElementById('page').classList.remove('col-md-10');
-          document.getElementById('page').classList.add('col-md-12');
-        }
-      },
-    );
+    init();
 
     return {
-      addLog,
-      editor,
-      editorType,
-      EditorList,
-      insertDummyImage,
+      activeAppComponent,
+      activeAppInfo,
+      activeAppRef,
+      apps,
+      appUserData,
+      contentChanged,
+      getActiveAppSupportedExtensionsAsString,
       getDateString,
-      getEditorType,
-      getRecentColorFromStorage,
-      loadFileData,
+      getSupportedExtensionsAsString,
+      isEditing,
       logs,
-      newFile,
-      onGraphChanged,
-      onGraphMounted,
-      onPreviewModeChanged,
-      onRecentColorsChanged,
-      onScratchpadDataChanged,
-      onShapeLibrariesChanged,
-      onThemeChanged,
-      previewMode,
-      recentColors,
+      onAppUserDataChanged,
+      onContentChanged,
+      onFileOpened,
       refreshLink,
       saveFile,
-      scratchpadData,
-      setEditorType,
-      shapeLibraries,
-      spreadsheet,
-      supportedExtension,
-      theme,
+      setActiveApp,
     };
   },
 });
@@ -512,7 +410,7 @@ export default defineComponent({
 <template lang="pug">
 #app
   .row
-    .col-md-2(v-if='theme != "min"')
+    .col-md-2
       b-list-group#logs-list.custom-list-group
         template(v-for='(log, index) in logs')
           table.custom-table(:key='index')
@@ -545,56 +443,37 @@ export default defineComponent({
               td.table-details
                 | {{ getDateString(log.lastModified) }}
     #page.col-md-10
-      .row-btn(v-if='theme != "min"')
-        button.ml-1(@click='newFile(EditorList.Graph)')
-          | New Diagram
-        button.ml-2(@click='newFile(EditorList.Spreadsheet)')
-          | New Spreadsheet
-        button.ml-3(@click='saveFile', :disabled='getEditorType() === EditorList.None')
+      .row-btn
+        b-dropdown.ml-3(text='Create new...', variant='info')
+          b-dropdown-item(
+            v-for='item in apps',
+            v-bind:title='item.documentName',
+            v-bind:key='item.uniqueAppId',
+            @click='setActiveApp(item.uniqueAppId)'
+          )
+            | {{ item.documentName }}
+        b-button.ml-3(@click='saveFile', :disabled='!contentChanged', variant='info')
           | Save File
-        open-file.ml-4(
-          @file-loaded='loadFileData',
-          @set-editor-type='setEditorType',
-          :editorType='editorType',
-          :editorList='EditorList',
-          :supportedExtension='supportedExtension'
+        open-file.ml-3(
+          @file-opened='onFileOpened',
+          :acceptExtensions='getActiveAppSupportedExtensionsAsString()',
+          :disabled='!activeAppInfo'
         )
-        input#preview.mt-1.ml-5(
-          type='checkbox',
-          name='preview',
-          value='preview',
-          @change='onPreviewModeChanged'
-        )
-        label.ml-1(for='preview') Preview Mode
-      .row-btn(v-else)
-        input#preview.mt-1.ml-5(
-          type='checkbox',
-          name='preview',
-          value='preview',
-          @change='onPreviewModeChanged'
-        )
-        label.ml-1(for='preview') Preview Mode
-      #container.ge-container
-        graph-editor(
-          v-if='getEditorType() === EditorList.Graph',
-          ref='editor',
-          :enabled='!previewMode',
-          :shapeLibraries='shapeLibraries',
-          :scratchpadData='scratchpadData',
-          :theme='theme',
+        b-form-checkbox#preview.mt-1.ml-3(v-model='isEditing', switch, :disabled='!activeAppInfo')
+          | Edit Mode
+      #container
+        div(v-if='!activeAppInfo')
+          | Create a new file or open an existing one
+        component(
+          v-else,
+          ref='activeAppRef',
+          :is='activeAppComponent',
+          :isEditing='isEditing',
+          :userData='appUserData',
           :refreshLinkHandler='refreshLink',
-          :recentColors='recentColors',
-          @graph-changed='onGraphChanged',
-          @recent-colors-changed='onRecentColorsChanged',
-          @scratchpad-data-changed='onScratchpadDataChanged',
-          @shape-libraries-changed='onShapeLibrariesChanged',
-          @theme-changed='onThemeChanged'
+          @user-data-changed='onAppUserDataChanged',
+          @content-changed='onContentChanged'
         )
-        spreadsheet-editor(v-if='getEditorType() === EditorList.Spreadsheet', ref='spreadsheet')
-        .col-md-12(
-          v-if='getEditorType() !== EditorList.Graph && getEditorType() !== EditorList.Spreadsheet'
-        )
-          h1 Pick a mode
 </template>
 
 <style lang="scss">

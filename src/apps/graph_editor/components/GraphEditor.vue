@@ -17,6 +17,8 @@
 <script lang="ts">
 import Modals from './Modals.vue';
 import Window from './Windows.vue';
+import { getAppInfo } from '../index';
+import { CommonAppProps, CommonAppPropsOptions } from '../../app_api';
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
@@ -40,7 +42,6 @@ import {
   onMounted,
   ref,
   watch,
-  PropType,
 } from '@vue/composition-api';
 
 const {
@@ -60,8 +61,12 @@ const {
 
 const defaultStyleXml = require('../styles/default.xml');
 const resourcesFile = require('../locale/en.txt');
-const DEFAULT_THEME = 'kennedy';
 const MAX_IMAGE_SIZE = 520;
+
+const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows2;clipart;flowchart';
+const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
+const DEFAULT_THEME = 'kennedy';
+const DEFAULT_RECENT_COLORS = '';
 
 export type GraphEditorCell = typeof mxCell;
 
@@ -73,12 +78,6 @@ interface InsertLinkInfo {
   noTruncateTitle?: boolean;
 }
 
-export interface RefreshedLinkInfo {
-  url?: string;
-  width?: number;
-  height?: number;
-}
-
 interface GraphBounds {
   x?: number;
   y?: number;
@@ -88,37 +87,16 @@ interface GraphBounds {
 
 import '../styles/main.scss';
 
-export default defineComponent({
+interface GraphEditorProps extends CommonAppProps {}
+
+export default defineComponent<GraphEditorProps>({
   name: 'GraphEditor',
   components: {
     Modals,
     Window,
   },
   props: {
-    shapeLibraries: {
-      required: true,
-      type: String,
-    },
-    scratchpadData: {
-      required: true,
-      type: String,
-    },
-    enabled: Boolean,
-    theme: {
-      required: false,
-      type: String,
-      default: DEFAULT_THEME,
-    },
-    refreshLinkHandler: {
-      type: Function as PropType<(url: string) => Promise<RefreshedLinkInfo>> | null,
-      required: false,
-      default: null,
-    },
-    recentColors: {
-      require: false,
-      type: String,
-      default: '',
-    },
+    ...CommonAppPropsOptions,
   },
 
   setup(props, ctx) {
@@ -169,12 +147,7 @@ export default defineComponent({
       }
     }
 
-    function updateCellImage(
-      cell: GraphEditorCell,
-      imageUrl: string,
-      width?: number,
-      height?: number,
-    ) {
+    function updateImage(cell: GraphEditorCell, imageUrl: string, width?: number, height?: number) {
       const graph = graphRef.value;
 
       graph.setCellStyles(mxConstants.STYLE_IMAGE, imageUrl, [cell]);
@@ -213,7 +186,7 @@ export default defineComponent({
           style[mxConstants.STYLE_IMAGE],
         );
         if (imageUrl && currentUrl !== imageUrl) {
-          updateCellImage(cell, imageUrl, width, height);
+          updateImage(cell, imageUrl, width, height);
         }
       }
 
@@ -235,7 +208,7 @@ export default defineComponent({
       const graph = graphRef.value;
       const editorUi = editorUiRef.value;
 
-      if (!props.refreshLinkHandler || !props.enabled) {
+      if (!props.refreshLinkHandler || !props.isEditing) {
         return;
       }
 
@@ -299,19 +272,39 @@ export default defineComponent({
     }
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      ctx.emit('graph-changed', event.name);
+      ctx.emit('content-changed', event.name);
     }
 
-    function onLibrariesChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      ctx.emit('shape-libraries-changed', event.getProperty('detail'));
+    function onRecentColorsChanged(colors: string) {
+      const newUserData = props.userData;
+      newUserData.recentColors = colors;
+      ctx.emit('user-data-changed', getAppInfo().uniqueAppId, newUserData);
     }
 
     function onScratchpadDataChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      ctx.emit('scratchpad-data-changed', event.getProperty('detail'));
+      const newUserData = props.userData;
+      newUserData.scratchpadData = event.getProperty('detail');
+      ctx.emit('user-data-changed', getAppInfo().uniqueAppId, newUserData);
+    }
+
+    function onShapeLibrariesChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
+      const newUserData = props.userData;
+      newUserData.shapeLibraries = event.getProperty('detail');
+      ctx.emit('user-data-changed', getAppInfo().uniqueAppId, newUserData);
     }
 
     function onThemeChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
-      ctx.emit('theme-changed', event.getProperty('detail'));
+      const newUserData = props.userData;
+      newUserData.theme = event.getProperty('detail');
+      ctx.emit('user-data-changed', getAppInfo().uniqueAppId, newUserData);
+
+      if (newUserData.theme === 'min') {
+        document.getElementById('page').classList.remove('col-md-10');
+        document.getElementById('page').classList.add('col-md-12');
+      } else {
+        document.getElementById('page').classList.add('col-md-10');
+        document.getElementById('page').classList.remove('col-md-12');
+      }
     }
 
     function onPageSelected(_sender: typeof mxEventSource) {
@@ -334,7 +327,7 @@ export default defineComponent({
       editorUi.addListener('pageViewChanged', onGraphChanged);
       editorUi.addListener('connectionArrowsChanged', onGraphChanged);
       editorUi.addListener('connectionPointsChanged', onGraphChanged);
-      editorUi.addListener('librariesChanged', onLibrariesChanged);
+      editorUi.addListener('librariesChanged', onShapeLibrariesChanged);
       editorUi.addListener('removePageFromCurrentPageWindow', removePageFromCurrentPageWindow);
       editorUi.addListener('scratchpadDataChanged', onScratchpadDataChanged);
       editorUi.addListener('themeChanged', onThemeChanged);
@@ -350,13 +343,13 @@ export default defineComponent({
       editor.removeListener(onPageSelected);
       editorUi.removeListener(fitCurrentPageWindow);
       editorUi.removeListener(onGraphChanged);
-      editorUi.removeListener(onLibrariesChanged);
+      editorUi.removeListener(onShapeLibrariesChanged);
       editorUi.removeListener(removePageFromCurrentPageWindow);
       editorUi.removeListener(onScratchpadDataChanged);
       editorUi.removeListener(onThemeChanged);
     }
 
-    function getXmlData(): string {
+    function getContent(): string {
       const app = appRef.value;
 
       app.currentFile.updateFileData();
@@ -364,19 +357,56 @@ export default defineComponent({
       return xmlData;
     }
 
+    function getContentType(): string {
+      return 'application/xml';
+    }
+
     function registerUndoListeners() {
       const debounceDelay = 200;
       const undoListener = debounce(() => {
-        ctx.emit('on-undo', getXmlData());
+        ctx.emit('on-undo', getContent());
       }, debounceDelay);
 
       const redoListener = debounce(() => {
-        ctx.emit('on-redo', getXmlData());
+        ctx.emit('on-redo', getContent());
       }, debounceDelay);
 
       const editor = editorRef.value;
       editor.undoManager.addListener(mxEvent.UNDO, undoListener);
       editor.undoManager.addListener(mxEvent.REDO, redoListener);
+    }
+
+    function initUserData() {
+      let changed = false;
+      let { userData } = props;
+
+      if (userData === null) {
+        userData = {};
+      }
+
+      if (!('recentColors' in userData)) {
+        userData.recentColors = DEFAULT_RECENT_COLORS;
+        changed = true;
+      }
+
+      if (!('scratchpadData' in userData)) {
+        userData.scratchpadData = DEFAULT_SCRATCHPAD_DATA;
+        changed = true;
+      }
+
+      if (!('shapeLibraries' in userData)) {
+        userData.shapeLibraries = DEFAULT_SHAPE_LIBRARIES;
+        changed = true;
+      }
+
+      if (!('theme' in userData)) {
+        userData.theme = DEFAULT_THEME;
+        changed = true;
+      }
+
+      if (changed) {
+        ctx.emit('user-data-changed', getAppInfo().uniqueAppId, userData);
+      }
     }
 
     onMounted(() => {
@@ -394,16 +424,18 @@ export default defineComponent({
       sidebarRef.value = editorUiRef.value.sidebar;
       appRef.value = createApp(editorUiRef.value, editorRef.value, containerRef.value);
 
+      initUserData();
+
       // Add scratchpad to the sidebar
-      editorUiRef.value.loadScratchpadData(props.scratchpadData);
+      editorUiRef.value.loadScratchpadData(props.userData.scratchpadData);
 
       // Add stencils to the sidebar
-      sidebarRef.value.showEntries(props.shapeLibraries);
+      sidebarRef.value.showEntries(props.userData.shapeLibraries);
 
       addListeners();
 
       nextTick(() => {
-        setGraphEnabled(props.enabled);
+        setGraphEnabled(props.isEditing);
         editorUiRef.value.resetViewToShowFullGraph();
         // TODO: Re-enable this when theme switching is all worked out
         // editorUiRef.value.theme = props.theme;
@@ -421,16 +453,10 @@ export default defineComponent({
     });
 
     watch(
-      () => props.scratchpadData,
-      (val: string) => {
-        editorUiRef.value.loadScratchpadData(val);
-      },
-    );
-
-    watch(
-      () => props.shapeLibraries,
-      (val: string) => {
-        sidebarRef.value.showEntries(val);
+      () => props.userData,
+      (val: Record<string, unknown>) => {
+        editorUiRef.value.loadScratchpadData(val.scratchpadData);
+        sidebarRef.value.showEntries(val.shapeLibraries);
       },
     );
 
@@ -453,25 +479,13 @@ export default defineComponent({
     //   },
     // );
 
-    async function canLoadFile(file: File): Promise<boolean> {
-      const ext = file.name.split('.').pop();
-      if (ext === 'draw' || ext === 'drawio' || ext === 'xml' || file.type.startsWith('text/')) {
-        // Read start of file and see if it matches either <mxGraphModel or <
-        const fileData = await file.text();
-        if (fileData.startsWith('<mxfile ') || fileData.startsWith('<mxGraphModel ')) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    function loadXmlData(data: string) {
+    function loadContent(content: string) {
       const editorUi = editorUiRef.value;
 
-      editorUi.openLocalFile(data, null, null, null, null);
+      editorUi.openLocalFile(content, null, null, null, null);
       // Reset the view after loading a file
       nextTick(() => {
-        setGraphEnabled(props.enabled);
+        setGraphEnabled(props.isEditing);
         editorUi.resetViewToShowFullGraph();
 
         for (let i = 0; i < editorUi.pages.length; i++) {
@@ -498,8 +512,6 @@ export default defineComponent({
         // skip the first 2 default elements in any graph doc
         if (node.id != '0' && node.id != '1') {
           cells.push(codec.decodeCell(node));
-          // TODO: do we need this?
-          // graph.refresh();
         }
       });
 
@@ -695,7 +707,7 @@ export default defineComponent({
       return fileAttachmentCell;
     }
 
-    function refreshUi() {
+    function resize() {
       editorUiRef.value?.refresh();
     }
 
@@ -707,16 +719,8 @@ export default defineComponent({
       insertImage(url);
     }
 
-    function onRecentColorsChanged(colors: string) {
-      ctx.emit('recent-colors-changed', colors);
-    }
-
-    const supportedExtension = () => {
-      return '.draw, .drawio, .xml';
-    };
-
     watch(
-      () => props.enabled,
+      () => props.isEditing,
       (val) => {
         nextTick(() => {
           setGraphEnabled(val);
@@ -726,34 +730,35 @@ export default defineComponent({
       },
     );
 
+    initUserData();
+
     return {
       appRef,
-      canLoadFile,
       containerRef,
       editorRef,
       editorUiRef,
       fitCurrentPageWindow,
+      getContent,
+      getContentType,
       getImageData,
       getStyleForFile,
-      getXmlData,
       graphRef,
       insertImage,
       insertLink,
       insertFile,
       imageInsert,
-      loadXmlData,
+      loadContent,
       loadImage,
       onRecentColorsChanged,
       pagesToFit,
       paste,
       pasteShapes,
       refreshCurrentPageLinks,
-      refreshUi,
       removePageFromCurrentPageWindow,
+      resize,
       setGraphEnabled,
       showingDialog,
-      supportedExtension,
-      updateCellImage,
+      updateImage,
       updateCellLink,
     };
   },
@@ -763,10 +768,14 @@ export default defineComponent({
 <template lang="pug">
 .div
   .geEditor(ref='containerRef')
-  modals(:editorUi='editorUiRef', :shape-libraries='shapeLibraries', @insert-image='imageInsert')
+  modals(
+    :editorUi='editorUiRef',
+    :shape-libraries='userData.shapeLibraries',
+    @insert-image='imageInsert'
+  )
   window(
     :editorUi='editorUiRef',
-    :recentColors='recentColors',
+    :recentColors='userData.recentColors',
     @recent-colors-changed='onRecentColorsChanged'
   )
 </template>
