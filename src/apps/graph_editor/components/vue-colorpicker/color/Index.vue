@@ -26,6 +26,7 @@ import Colors from './Colors.vue';
 
 // TEN9: imports
 import WindowHeader from '../../windows/Header.vue';
+import { mxEventObject } from '@/apps/graph_editor/lib/jgraph/mxClient';
 const { dragElement, bringWindowToFront } = require('../../windows/utils.ts');
 const graphUtils = require('../../../lib/jgraph/graph_utils.js');
 
@@ -234,6 +235,7 @@ export default {
     });
 
     this.editorUi.addListener('inactiveColorButton', () => {
+      console.log('jere');
       this.buttonInactive();
       if(this.colorPickerType != '') {
         this.colorPickerType = '';
@@ -373,6 +375,7 @@ export default {
     },
     // TEN9: add function to close the window
     close() {
+      this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
       this.buttonInactive();
       this.colorPickerType = '';
       this.show = false;
