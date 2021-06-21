@@ -894,6 +894,11 @@ const imageCtrl = {
     },
     pasteImgItem: function() {
         let _this = this;
+        
+        // latest commit 6a474dc
+        if(_this.images == null){	
+            _this.images = {};	
+        }
 
         let rowIndex = Store.luckysheet_select_save[0].row_focus || 0;
         let colIndex = Store.luckysheet_select_save[0].column_focus || 0;
