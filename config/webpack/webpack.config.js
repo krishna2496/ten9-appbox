@@ -25,7 +25,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-// const ESLintPlugin = require('eslint-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -344,9 +344,9 @@ module.exports = {
       jQuery: 'jquery',
     }),
 
-    // new ESLintPlugin({
-    //   extensions: ['js', 'ts', 'vue'],
-    // }),
+    new ESLintPlugin({
+      extensions: ['js', 'ts', 'vue'],
+    }),
 
     new FriendlyErrorsWebpackPlugin({
       compilationSuccessInfo: {
