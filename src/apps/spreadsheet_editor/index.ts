@@ -14,7 +14,7 @@
  * -----
  */
 
-import { AppInfo, defaultAsyncComponentOptions } from '../app_api';
+import { AppInfo, defaultAsyncComponentOptions } from '@appsSupport/app_api';
 
 const uniqueAppId = 'ten9-spreadsheet-editor-luckysheet';
 const documentName = 'Spreadsheet';

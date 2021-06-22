@@ -70,6 +70,7 @@ module.exports = {
       '@': path.resolve(ROOT_PATH, 'src'),
       vue$: 'vue/dist/vue.runtime.esm.js',
       '@graphEditorImages': path.resolve(ROOT_PATH, 'src/apps/graph_editor/assets/images'),
+      '@appsSupport': path.resolve(ROOT_PATH, 'src/apps/support'),
     },
     modules: ['node_modules', path.resolve(ROOT_PATH, 'node_modules')],
   },
