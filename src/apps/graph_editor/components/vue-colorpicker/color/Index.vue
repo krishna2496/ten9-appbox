@@ -235,7 +235,6 @@ export default {
     });
 
     this.editorUi.addListener('inactiveColorButton', () => {
-      console.log('jere');
       this.buttonInactive();
       if(this.colorPickerType != '') {
         this.colorPickerType = '';
