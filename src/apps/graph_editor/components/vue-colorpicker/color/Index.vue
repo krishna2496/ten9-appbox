@@ -235,7 +235,6 @@ export default {
     });
 
     this.editorUi.addListener('inactiveColorButton', () => {
-      console.log('jere');
       this.buttonInactive();
       if(this.colorPickerType != '') {
         this.colorPickerType = '';
@@ -371,6 +370,7 @@ export default {
       var element = document.getElementsByClassName('geColorBtn');
       for (var i = 0; i < element.length; i++) {
         element[i].classList.remove('active_button');
+        element[i].blur();
       }
     },
     // TEN9: add function to close the window
@@ -381,6 +381,7 @@ export default {
       this.show = false;
       this.applyFn = null;
       this.editorUi.colorPicker = false;
+      this.editorUi.selectedColorPicker = '';
     },
     // TEN9: add function to apply the color when we select form the color picker
     apply() {
