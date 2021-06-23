@@ -18,12 +18,12 @@
 import Modals from './Modals.vue';
 import Window from './Windows.vue';
 import { getAppInfo } from '../index';
-import { CommonAppProps, CommonAppPropsOptions } from '../../app_api';
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
 import { createEditor } from '../lib/jgraph/Editor';
 import { Graph } from '../lib/jgraph/Graph';
 import { getImageData } from '../lib/shapes/fileIcons.js';
+import { CommonAppProps, CommonAppPropsOptions } from '@appsSupport/app_api';
 import { debounce } from 'lodash';
 require('../lib/diagramly/DrawioFile.js');
 require('../lib/diagramly/LocalFile.js');

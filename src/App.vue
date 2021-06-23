@@ -16,9 +16,9 @@
 
 <script lang="ts">
 import OpenFile from './components/OpenFile.vue';
-import { AppInfo, canLoadFile, RefreshedLinkInfo } from './apps/app_api';
 import { getAppInfo as getGraphEditorAppInfo } from '@/apps/graph_editor/index';
 import { getAppInfo as getSpreadsheetEditorAppInfo } from '@/apps/spreadsheet_editor/index';
+import { AppInfo, canLoadFile, RefreshedLinkInfo } from '@appsSupport/app_api';
 
 // Uncomment the component imports to avoid async component loading
 // import GraphEditor from '@/apps/graph_editor/components/GraphEditor.vue';
