@@ -73,8 +73,8 @@ const imageCtrl = {
             }
 
             _this.addImgItem(img);
-        } */
-        /*image.src = src; */
+        } 
+        image.src = src; */
     },
     generateRandomId: function(prefix) {
         if(prefix == null){

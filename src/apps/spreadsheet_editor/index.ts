@@ -21,6 +21,7 @@ const documentName = 'Spreadsheet';
 const defaultExtension = '.sheet';
 const otherSupportedExtensions = ['.xlsx'];
 const supportedExtensions = [defaultExtension, ...otherSupportedExtensions];
+// const dropContainer = 'luckysheet-cell-main';
 const dropContainer = 'luckysheet-cell-main';
 
 function canLoadContent(content: string): boolean {

@@ -132,7 +132,6 @@ export default defineComponent({
       activeAppRef.value.insertImage(dataUri).then((result: unknown) => {
         const waitingTime = 3000;
         setTimeout(() => {
-          alert('in update');
           const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
           activeAppRef.value.updateImage(result, newUrl);
         }, waitingTime);
@@ -241,7 +240,6 @@ export default defineComponent({
 
     function initEventListeners(dropContainer: string) {
       const drag: HTMLElement = document.getElementById(dropContainer);
-      console.log(drag);
       if (drag != null) {
         const defaultDragHandler = (e: DragEvent) => {
           e.stopPropagation();
@@ -288,17 +286,15 @@ export default defineComponent({
           }
         };
 
-        drag.addEventListener('drop', dropHandler);
-
-        // Add our own ctrl+v event listener
-        drag.onpaste = (e) => {
-          alert('paste');
+        const handlePaste = (e: any) => {
+          debugger;
           // Don't allow pasting files in Preview Mode
-          if (isEditing.value) {
+          if (!isEditing.value) {
             return;
           }
+          const { files } = e.clipboardData;
 
-          if (e.clipboardData.types.indexOf('text/plain') >= 0) {
+          if (files.length <= 0) {
             return;
           }
 
@@ -323,6 +319,13 @@ export default defineComponent({
             // const action = editor.value.editorUiRef.actions.get('paste');
             // action.funct();
           }
+        };
+
+        drag.addEventListener('drop', dropHandler);
+        window.addEventListener('paste', handlePaste, false);
+        // Add our own ctrl+v event listener
+        drag.onpaste = (e) => {
+          handlePaste(e);
         };
       }
     }
