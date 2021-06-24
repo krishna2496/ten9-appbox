@@ -36,7 +36,8 @@ const Store = {
     jfautoscrollTimeout: null,
 
     luckysheet_select_status: false,
-    luckysheet_select_save: [{ "row": [0, 0], "column": [0, 0] }],
+    //TEN9 row_focus and column_focus added to resolve typescript error
+    luckysheet_select_save: [{ "row": [0, 0], "column": [0, 0], "row_focus" :0, "column_focus": 0 }],
     luckysheet_selection_range: [],
 
     luckysheet_copy_save: {}, //复制粘贴

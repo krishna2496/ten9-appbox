@@ -50,7 +50,8 @@ const imageCtrl = {
     cropChangeObj: null,
     copyImgItemObj: null,
     inserImg: function(src){
-        let _this = this;
+       /* TEN9 : Insert image code added to spreadsheet editor */
+       /*let _this = this;
         
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
         let rowIndex = last.row_focus || 0;
@@ -72,8 +73,8 @@ const imageCtrl = {
             }
 
             _this.addImgItem(img);
-        }
-        image.src = src;
+        } */
+        /*image.src = src; */
     },
     generateRandomId: function(prefix) {
         if(prefix == null){
@@ -667,8 +668,8 @@ const imageCtrl = {
 
         _this.images[id] = imgItem;
         _this.ref();
-
         _this.init();
+        return id;
     },
     moveImgItem: function() {
         let _this = this;
@@ -857,7 +858,6 @@ const imageCtrl = {
         $("#luckysheet-modal-dialog-cropping").hide();
         $("#luckysheet-modal-dialog-slider-imageCtrl").hide();
         $("#" + _this.currentImgId).remove();
-
         delete _this.images[_this.currentImgId];
         _this.currentImgId = null;
 

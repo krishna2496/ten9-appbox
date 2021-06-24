@@ -132,6 +132,7 @@ export default defineComponent({
       activeAppRef.value.insertImage(dataUri).then((result: unknown) => {
         const waitingTime = 3000;
         setTimeout(() => {
+          alert('in update');
           const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
           activeAppRef.value.updateImage(result, newUrl);
         }, waitingTime);
@@ -238,92 +239,95 @@ export default defineComponent({
       });
     }
 
-    function initEventListeners() {
-      const drag: HTMLElement = document.getElementById('container');
+    function initEventListeners(dropContainer: string) {
+      const drag: HTMLElement = document.getElementById(dropContainer);
+      console.log(drag);
+      if (drag != null) {
+        const defaultDragHandler = (e: DragEvent) => {
+          e.stopPropagation();
+          e.preventDefault();
+        };
 
-      const defaultDragHandler = (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-      };
+        drag.addEventListener('dragenter', defaultDragHandler);
+        drag.addEventListener('dragleave', defaultDragHandler);
+        drag.addEventListener('dragover', defaultDragHandler);
 
-      drag.addEventListener('dragenter', defaultDragHandler);
-      drag.addEventListener('dragleave', defaultDragHandler);
-      drag.addEventListener('dragover', defaultDragHandler);
+        const dropHandler = (e: DragEvent) => {
+          alert('drop');
+          e.stopPropagation();
+          e.preventDefault();
 
-      const dropHandler = (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-
-        // Don't allow drops unless we're Editing
-        if (!isEditing.value) {
-          return;
-        }
-
-        for (let i = 0; i < e.dataTransfer.items.length; i++) {
-          const file = e.dataTransfer.items[i].getAsFile();
-          // If the dropped item was not an editor file, process as attachment
-          if (e.dataTransfer.items[i].kind === 'file') {
-            canLoadFile(activeAppInfo.value, file).then((canLoad: boolean) => {
-              if (canLoad) {
-                file.text().then((content) => {
-                  activeAppRef.value.loadContent(content);
-                });
-              } else {
-                // Process as an attachment
-                const fileInfo: EventFileInfo = {
-                  file,
-                  size: file.size,
-                  lastModified: file.lastModified,
-                };
-                getFileAsDataURL(file).then((dataUrl: string) => {
-                  fileInfo.dataUrl = dataUrl;
-                  onFileDropped(fileInfo);
-                });
-              }
-            });
+          // Don't allow drops unless we're Editing
+          if (!isEditing.value) {
+            return;
           }
-        }
-      };
 
-      drag.addEventListener('drop', dropHandler);
-
-      // Add our own ctrl+v event listener
-      drag.onpaste = (e) => {
-        // Don't allow pasting files in Preview Mode
-        if (isEditing.value) {
-          return;
-        }
-
-        if (e.clipboardData.types.indexOf('text/plain') >= 0) {
-          return;
-        }
-
-        // check if default clipboard have files or not
-        if (e.clipboardData.files.length > 0) {
-          for (let i = 0; i < e.clipboardData.files.length; i++) {
-            const file = e.clipboardData.files[i];
-            const fileInfo: EventFileInfo = {
-              file,
-              size: file.size,
-              lastModified: file.lastModified,
-            };
-            getFileAsDataURL(file).then((dataUrl: string) => {
-              fileInfo.dataUrl = dataUrl;
-              onImagePasted(fileInfo);
-            });
+          for (let i = 0; i < e.dataTransfer.items.length; i++) {
+            const file = e.dataTransfer.items[i].getAsFile();
+            // If the dropped item was not an editor file, process as attachment
+            if (e.dataTransfer.items[i].kind === 'file') {
+              canLoadFile(activeAppInfo.value, file).then((canLoad: boolean) => {
+                if (canLoad) {
+                  file.text().then((content) => {
+                    activeAppRef.value.loadContent(content);
+                  });
+                } else {
+                  // Process as an attachment
+                  const fileInfo: EventFileInfo = {
+                    file,
+                    size: file.size,
+                    lastModified: file.lastModified,
+                  };
+                  getFileAsDataURL(file).then((dataUrl: string) => {
+                    fileInfo.dataUrl = dataUrl;
+                    onFileDropped(fileInfo);
+                  });
+                }
+              });
+            }
           }
-        } else {
-          // TODO: Do we need this?
-          // TODO: Replace this with something generic from the App API
-          // if default clipboard doesn't have file then if act as normal paste
-          // const action = editor.value.editorUiRef.actions.get('paste');
-          // action.funct();
-        }
-      };
+        };
+
+        drag.addEventListener('drop', dropHandler);
+
+        // Add our own ctrl+v event listener
+        drag.onpaste = (e) => {
+          alert('paste');
+          // Don't allow pasting files in Preview Mode
+          if (isEditing.value) {
+            return;
+          }
+
+          if (e.clipboardData.types.indexOf('text/plain') >= 0) {
+            return;
+          }
+
+          // check if default clipboard have files or not
+          if (e.clipboardData.files.length > 0) {
+            for (let i = 0; i < e.clipboardData.files.length; i++) {
+              const file = e.clipboardData.files[i];
+              const fileInfo: EventFileInfo = {
+                file,
+                size: file.size,
+                lastModified: file.lastModified,
+              };
+              getFileAsDataURL(file).then((dataUrl: string) => {
+                fileInfo.dataUrl = dataUrl;
+                onImagePasted(fileInfo);
+              });
+            }
+          } else {
+            // TODO: Do we need this?
+            // TODO: Replace this with something generic from the App API
+            // if default clipboard doesn't have file then if act as normal paste
+            // const action = editor.value.editorUiRef.actions.get('paste');
+            // action.funct();
+          }
+        };
+      }
     }
 
     onMounted(() => {
-      initEventListeners();
       window.addEventListener('resize', onResize);
       document.addEventListener('keydown', onKeydown);
       updateAppHeight();
@@ -382,6 +386,12 @@ export default defineComponent({
       }
     }
 
+    function isComponentFullyLoaded() {
+      nextTick(() => {
+        initEventListeners(activeAppInfo.value.dropContainer);
+      });
+    }
+
     init();
 
     return {
@@ -402,6 +412,7 @@ export default defineComponent({
       refreshLink,
       saveFile,
       setActiveApp,
+      isComponentFullyLoaded,
     };
   },
 });
@@ -472,7 +483,8 @@ export default defineComponent({
           :userData='appUserData',
           :refreshLinkHandler='refreshLink',
           @user-data-changed='onAppUserDataChanged',
-          @content-changed='onContentChanged'
+          @content-changed='onContentChanged',
+          @hook:mounted='isComponentFullyLoaded'
         )
 </template>
 

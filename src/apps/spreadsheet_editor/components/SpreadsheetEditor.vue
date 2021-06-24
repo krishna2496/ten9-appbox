@@ -16,6 +16,9 @@
 
 <script lang="ts">
 import luckysheet from '../lib/luckysheet';
+import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
+import Store from '../lib/luckysheet/store/index';
+// import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
 import { defineComponent, onMounted, nextTick } from '@vue/composition-api';
 import LuckyExcel from 'luckyexcel';
 
@@ -52,6 +55,7 @@ export default defineComponent({
         },
       },
     };
+    // const imageArray = ref([]);
 
     onMounted(() => {
       nextTick(() => {
@@ -144,6 +148,49 @@ export default defineComponent({
       return 'application/json';
     }
 
+    function loadImage(url: string): Promise<string> {
+      const last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+      const rowIndex = last.row_focus || 0;
+      const colIndex = last.column_focus || 0;
+      const left = colIndex == 0 ? 0 : Store.visibledatacolumn[colIndex - 1];
+      const top = rowIndex == 0 ? 0 : Store.visibledatarow[rowIndex - 1];
+
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.addEventListener('load', () => {
+          const { width } = image,
+            { height } = image;
+
+          const img = {
+            src: url,
+            left: left,
+            top: top,
+            originWidth: width,
+            originHeight: height,
+          };
+          const imageId = imageCtrl.addImgItem(img);
+
+          resolve(imageId);
+        });
+
+        image.onerror = () => {
+          if (!url.startsWith('data:')) {
+            ctx.emit('paste-text', url);
+          }
+        };
+        image.src = url;
+      });
+    }
+
+    async function insertImage(dataUri: string) {
+      return await loadImage(dataUri);
+    }
+
+    function updateImage(imageId: string, dataUri: string) {
+      imageCtrl.images[imageId].src = dataUri;
+      document.querySelector(`#${imageId} img`).setAttribute('src', dataUri);
+    }
+
     const resize = () => {
       luckysheet.resize();
     };
@@ -154,6 +201,8 @@ export default defineComponent({
       loadContent,
       loadContentFromFile,
       resize,
+      insertImage,
+      updateImage,
     };
   },
 });
