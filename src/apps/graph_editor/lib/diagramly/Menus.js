@@ -1131,6 +1131,10 @@ DriveFile = function () {};
           //   this.findWindow.window.setVisible(!this.findWindow.window.isVisible());
         }
       }),
+      // TEN9: add find window shortcut
+      null,
+      null,
+      Editor.ctrlKey + '+F',
     );
     // TEN9: add custom action to close the event by close button
     editorUi.actions.addAction(

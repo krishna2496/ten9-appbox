@@ -26,6 +26,7 @@ import Colors from './Colors.vue';
 
 // TEN9: imports
 import WindowHeader from '../../windows/Header.vue';
+import { mxEventObject } from '../../../lib/jgraph/mxClient';
 const { dragElement, bringWindowToFront } = require('../../windows/utils.ts');
 const graphUtils = require('../../../lib/jgraph/graph_utils.js');
 
@@ -92,7 +93,7 @@ export default {
     },
     // TEN9: to get recent colors from app
     recentColors: {
-      require: false,
+      required: false,
       type: String,
       default: '',
     },
@@ -269,7 +270,11 @@ export default {
         const colorWindowWidth = 240;
         colorWindow.style.left = `${containerRect.width -  formatPanelWidth - colorWindowWidth - rightPadding}px`;
         colorWindow.style.top = `${this.editorUi.menubarHeight + this.editorUi.toolbarHeight + topPadding}px`;
-        this.recentColorsArray = this.$props.recentColors.split(",");
+        if (!this.$props.recentColors) {
+          this.recentColorsArray = [];
+        } else {
+          this.recentColorsArray = this.$props.recentColors.split(",");
+        }
     });
   },
   methods: {
@@ -369,15 +374,18 @@ export default {
       var element = document.getElementsByClassName('geColorBtn');
       for (var i = 0; i < element.length; i++) {
         element[i].classList.remove('active_button');
+        element[i].blur();
       }
     },
     // TEN9: add function to close the window
     close() {
+      this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
       this.buttonInactive();
       this.colorPickerType = '';
       this.show = false;
       this.applyFn = null;
       this.editorUi.colorPicker = false;
+      this.editorUi.selectedColorPicker = '';
     },
     // TEN9: add function to apply the color when we select form the color picker
     apply() {
