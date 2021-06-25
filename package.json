@@ -23,7 +23,7 @@
     "dayjs": "^1.10.4",
     "flatpickr": "^4.6.9",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.6.0",
+    "jquery": "^2.2.4",
     "jquery-mousewheel": "^3.1.13",
     "luckyexcel": "^1.0.1",
     "numeral": "^2.0.6",

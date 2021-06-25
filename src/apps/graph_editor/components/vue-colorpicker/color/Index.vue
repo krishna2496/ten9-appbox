@@ -26,7 +26,7 @@ import Colors from './Colors.vue';
 
 // TEN9: imports
 import WindowHeader from '../../windows/Header.vue';
-import { mxEventObject } from '@/apps/graph_editor/lib/jgraph/mxClient';
+import { mxEventObject } from '../../../lib/jgraph/mxClient';
 const { dragElement, bringWindowToFront } = require('../../windows/utils.ts');
 const graphUtils = require('../../../lib/jgraph/graph_utils.js');
 
@@ -93,7 +93,7 @@ export default {
     },
     // TEN9: to get recent colors from app
     recentColors: {
-      require: false,
+      required: false,
       type: String,
       default: '',
     },
@@ -270,7 +270,11 @@ export default {
         const colorWindowWidth = 240;
         colorWindow.style.left = `${containerRect.width -  formatPanelWidth - colorWindowWidth - rightPadding}px`;
         colorWindow.style.top = `${this.editorUi.menubarHeight + this.editorUi.toolbarHeight + topPadding}px`;
-        this.recentColorsArray = this.$props.recentColors.split(",");
+        if (!this.$props.recentColors) {
+          this.recentColorsArray = [];
+        } else {
+          this.recentColorsArray = this.$props.recentColors.split(",");
+        }
     });
   },
   methods: {
