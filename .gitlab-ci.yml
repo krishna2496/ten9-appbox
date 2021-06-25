@@ -44,6 +44,8 @@ before_script:
   - ln -sf /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg
   - rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
   - yarn --version
+  - echo "@fortawesome:registry=https://npm.fontawesome.com/" > .npmrc
+  - echo "//npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_TOKEN}" >> .npmrc
 
 lint:
   stage: test
