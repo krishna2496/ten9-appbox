@@ -70,6 +70,7 @@ module.exports = {
         map: [
           ['@', './src/'],
           ['@graphEditorImages', './src/apps/graph_editor/assets/images'],
+          ['@appsSupport', './src/apps/support'],
         ],
         extensions: allExtensions,
       },
