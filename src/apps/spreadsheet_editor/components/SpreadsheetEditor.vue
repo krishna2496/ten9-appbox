@@ -18,6 +18,7 @@
 import luckysheet from '../lib/luckysheet';
 import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
 import Store from '../lib/luckysheet/store/index';
+import { CommonAppPropsOptions } from '@appsSupport/app_api';
 // import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
 import { defineComponent, onMounted, nextTick } from '@vue/composition-api';
 import LuckyExcel from 'luckyexcel';
@@ -44,6 +45,10 @@ interface jsonSheet {
 
 export default defineComponent({
   name: 'SpreadsheetEditor',
+  props: {
+    ...CommonAppPropsOptions,
+  },
+
   setup(_props, ctx) {
     const luckysheetDefaultOptions = {
       container: 'luckysheet',

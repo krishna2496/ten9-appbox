@@ -286,8 +286,7 @@ export default defineComponent({
           }
         };
 
-        const handlePaste = (e: any) => {
-          debugger;
+        const handlePaste = (e: ClipboardEvent) => {
           // Don't allow pasting files in Preview Mode
           if (!isEditing.value) {
             return;
@@ -322,7 +321,10 @@ export default defineComponent({
         };
 
         drag.addEventListener('drop', dropHandler);
-        window.addEventListener('paste', handlePaste, false);
+        document.addEventListener('paste', (event) => {
+          handlePaste(event);
+        });
+
         // Add our own ctrl+v event listener
         drag.onpaste = (e) => {
           handlePaste(e);

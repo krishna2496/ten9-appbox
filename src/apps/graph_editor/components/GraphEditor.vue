@@ -177,6 +177,7 @@ export default defineComponent<GraphEditorProps>({
 
     async function refreshCellLinks(cell: typeof mxCell) {
       const graph = graphRef.value;
+      debugger;
       const style = graph.getCurrentCellStyle(cell);
 
       // Refresh the image links
@@ -214,9 +215,9 @@ export default defineComponent<GraphEditorProps>({
 
       const pageId = editorUi.getCurrentPage().getId();
 
-      if (!pagesToRefresh.has(pageId)) {
-        return;
-      }
+      // if (!pagesToRefresh.has(pageId)) {
+      //   return;
+      // }
 
       pagesToRefresh.delete(pageId);
 
