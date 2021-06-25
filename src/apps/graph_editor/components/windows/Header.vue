@@ -22,12 +22,12 @@ export default defineComponent({
   props: {
     title: {
       type: String,
-      require: true,
+      required: true,
       default: '',
     },
     isMin: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false,
     },
   },

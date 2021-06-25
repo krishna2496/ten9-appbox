@@ -91,6 +91,7 @@ export default defineComponent({
 
     function loadContent(content: string) {
       try {
+        if (!content) return;
         const fileData = JSON.parse(content);
         luckysheet.destroy();
         luckysheet.create({
