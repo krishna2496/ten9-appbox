@@ -5742,6 +5742,8 @@ EditorUi.prototype.createKeyHandler = function (editor) {
     keyHandler.bindAction(190, true, 'superscript'); // Ctrl+.
     keyHandler.bindAction(188, true, 'subscript'); // Ctrl+,
     keyHandler.bindAction(9, false, 'indent', true); // Shift+Tab,
+    // TEN9: Add find window shortcut
+    keyHandler.bindAction(70, true, 'find'); //Ctrl+F
     keyHandler.bindKey(13, function () {
       if (graph.isEnabled()) {
         graph.startEditingAtCell();

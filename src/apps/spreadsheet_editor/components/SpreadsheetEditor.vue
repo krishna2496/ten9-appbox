@@ -75,9 +75,10 @@ export default defineComponent({
     function loadExcelFile(file: File) {
       LuckyExcel.transformExcelToLucky(file, (exportJson: jsonSheet) => {
         if (exportJson.sheets == null || exportJson.sheets.length == 0) {
-          throw Error(
+          console.error(
             'Failed to read the content of the excel file, currently does not support xls files!',
           );
+          return;
         }
         luckysheet.destroy();
 
@@ -90,6 +91,7 @@ export default defineComponent({
 
     function loadContent(content: string) {
       try {
+        if (!content) return;
         const fileData = JSON.parse(content);
         luckysheet.destroy();
         luckysheet.create({
@@ -120,7 +122,7 @@ export default defineComponent({
 
     function loadContentFromFile(file: File) {
       if (file.name.indexOf('.') < 0) {
-        throw Error(`No file extension found in file name (${file.name})`);
+        console.error(`No file extension found in file name (${file.name})`);
       }
 
       const ext = `.${file.name.split('.').pop()}`;
@@ -131,7 +133,7 @@ export default defineComponent({
       } else if (ext === '.xlsx') {
         loadExcelFile(file);
       } else {
-        throw Error(`Unsupported extension: ${ext}`);
+        console.error(`Unsupported extension: ${ext}`);
       }
     }
 

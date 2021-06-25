@@ -41,7 +41,7 @@ export default defineComponent({
       type: Boolean,
     },
     recentColors: {
-      require: false,
+      required: false,
       type: String,
       default: '',
     },
