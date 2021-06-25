@@ -15,6 +15,7 @@ import { getSheetIndex } from '../methods/get';
 import { replaceHtml, getObjType, luckysheetfontformat } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
+import imageCtrl from './imageCtrl';
 
 const selection = {
     clearcopy: function (e) {
@@ -596,6 +597,9 @@ const selection = {
                     _this.pasteHandlerOfCopyPaste(Store.luckysheet_copy_save);
                 }
             }
+            else if(data.indexOf("luckysheet_copy_action_image") > - 1){
+                imageCtrl.pasteImgItem();
+            }
             else if (triggerType != "btn") {
                 _this.pasteHandler(data);
             }
@@ -819,7 +823,7 @@ const selection = {
                             value = String(value);
                         } else {
                             value = parseFloat(value);
-                        } 
+                        }
                     }
                     if(originCell instanceof Object){
                         originCell.v = value;
@@ -1779,7 +1783,7 @@ const selection = {
                             }
 
                             x[c] = $.extend(true, x[c], value);
-                            if(x[c].ct && x[c].ct.t === "inlineStr"){  
+                            if(x[c].ct && x[c].ct.t === "inlineStr"){
                                 x[c].ct.s.forEach(item=> item = $.extend(true, item, value))
                             }
 
