@@ -598,7 +598,7 @@ const selection = {
                 }
             }
             else if(data.indexOf("luckysheet_copy_action_image") > - 1){
-              imageCtrl.pasteImgItem();
+                imageCtrl.pasteImgItem();
             }
             else if (triggerType != "btn") {
                 _this.pasteHandler(data);

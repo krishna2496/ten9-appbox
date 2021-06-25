@@ -894,6 +894,11 @@ const imageCtrl = {
     },
     pasteImgItem: function() {
         let _this = this;
+        
+        // latest commit 6a474dc
+        if(_this.images == null){	
+            _this.images = {};	
+        }
 
         // latest commit 6a474dc
         if(_this.images == null){
