@@ -17,6 +17,7 @@
 <script lang="ts">
 import luckysheet from '../lib/luckysheet';
 import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
+// import sheetmanage from '../lib/luckysheet/controllers/sheetmanage';
 import Store from '../lib/luckysheet/store/index';
 import { CommonAppPropsOptions } from '@appsSupport/app_api';
 // import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
@@ -61,6 +62,12 @@ export default defineComponent({
       },
     };
     // const imageArray = ref([]);
+    function updateImage(imageId: string, dataUri: string) {
+      debugger;
+      imageCtrl.images[imageId].src = dataUri;
+      document.querySelector(`#${imageId} img`).setAttribute('src', dataUri);
+      // console.log('luckysheetfile', Store.luckysheetfile[sheetmanage.getSheetIndex(index)]);
+    }
 
     onMounted(() => {
       nextTick(() => {
@@ -79,6 +86,28 @@ export default defineComponent({
           ],
         });
       });
+
+      document.addEventListener(
+        'changeSheet',
+        () => {
+          const allSheetData = luckysheet.getluckysheetfile();
+
+          nextTick(() => {
+            allSheetData.forEach((element: any) => {
+              if (element.index == Store.currentSheetIndex) {
+                if ('images' in element) {
+                  const allImages = element.images;
+                  console.log('all image', allImages);
+                  for (const [key] of Object.entries(allImages)) {
+                    updateImage(key, imageCtrl.images[key].src);
+                  }
+                }
+              }
+            });
+          });
+        },
+        false,
+      );
     });
 
     function loadExcelFile(file: File) {
@@ -190,11 +219,6 @@ export default defineComponent({
 
     async function insertImage(dataUri: string) {
       return await loadImage(dataUri);
-    }
-
-    function updateImage(imageId: string, dataUri: string) {
-      imageCtrl.images[imageId].src = dataUri;
-      document.querySelector(`#${imageId} img`).setAttribute('src', dataUri);
     }
 
     const resize = () => {

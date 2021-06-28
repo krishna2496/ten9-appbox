@@ -175,6 +175,7 @@ export default defineComponent({
     function insertDummyImage(dataUri: string) {
       // add a dummy image to graph to emulate what will happen in production app
       activeAppRef.value.insertImage(dataUri).then((result: unknown) => {
+        alert(dataUri);
         const waitingTime = 3000;
         setTimeout(() => {
           const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
@@ -285,6 +286,7 @@ export default defineComponent({
 
     function initEventListeners(dropContainer: string) {
       const drag: HTMLElement = document.getElementById(dropContainer);
+      console.log('drag', drag);
       if (drag != null) {
         const defaultDragHandler = (e: DragEvent) => {
           e.stopPropagation();
@@ -296,7 +298,6 @@ export default defineComponent({
         drag.addEventListener('dragover', defaultDragHandler);
 
         const dropHandler = (e: DragEvent) => {
-          alert('drop');
           e.stopPropagation();
           e.preventDefault();
 
@@ -546,7 +547,8 @@ export default defineComponent({
           @recent-colors-changed='saveRecentColors',
           @scratchpad-data-changed='saveScratchpadData',
           @shape-libraries-changed='saveShapeLibraries',
-          @theme-changed='saveTheme'
+          @theme-changed='saveTheme',
+          @hook:mounted='isComponentFullyLoaded'
         )
         component(
           v-else-if='activeAppInfo.uniqueAppId === getSpreadsheetEditorAppInfo().uniqueAppId',
@@ -554,10 +556,8 @@ export default defineComponent({
           :is='activeAppComponent',
           :isEditing='isEditing',
           :refreshLinkHandler='refreshLink',
-          @user-data-changed='onAppUserDataChanged',
           @content-changed='onContentChanged',
-          @hook:mounted='isComponentFullyLoaded',
-          @content-changed='onContentChanged'
+          @hook:mounted='isComponentFullyLoaded'
         )
 </template>
 

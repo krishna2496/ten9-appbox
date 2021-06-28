@@ -202,6 +202,7 @@ export default defineComponent<GraphEditorProps>({
     }
 
     async function refreshCellLinks(cell: typeof mxCell) {
+      debugger;
       const graph = graphRef.value;
 
       const style = graph.getCurrentCellStyle(cell);
@@ -209,6 +210,7 @@ export default defineComponent<GraphEditorProps>({
       // Refresh the image links
       if (style[mxConstants.STYLE_SHAPE] === 'image') {
         const currentUrl = style[mxConstants.STYLE_IMAGE];
+        debugger;
         const { url: imageUrl, width, height } = await props.refreshLinkHandler(
           style[mxConstants.STYLE_IMAGE],
         );
@@ -234,7 +236,7 @@ export default defineComponent<GraphEditorProps>({
     function refreshCurrentPageLinks() {
       const graph = graphRef.value;
       const editorUi = editorUiRef.value;
-
+      debugger;
       if (!props.refreshLinkHandler || !props.isEditing) {
         return;
       }

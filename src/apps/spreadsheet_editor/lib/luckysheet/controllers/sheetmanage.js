@@ -1131,17 +1131,18 @@ const sheetmanage = {
             }
         }
     },
-    changeSheet: function(index, isPivotInitial, isNewSheet) {
+    changeSheet: function(index, isPivotInitial, isNewSheet) {debugger;
         if(isEditMode()){
             // alert("非编辑模式下不允许该操作！");
             return;
         }
 
         let _this = this;        
-        
+       
         if(index==Store.currentSheetIndex){
             return;
         }
+       
 
         if(server.allowUpdate){
             $("#luckysheet-cell-main #luckysheet-multipleRange-show").empty();
@@ -1286,6 +1287,8 @@ const sheetmanage = {
         
         luckysheetFreezen.initialFreezen(index);
         _this.restoreselect();
+        const event = new Event('changeSheet');
+        document.dispatchEvent(event);
     },
     checkLoadSheetIndexToDataIndex:{},
     checkLoadSheetIndex: function(file) {
