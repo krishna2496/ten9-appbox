@@ -569,7 +569,7 @@ const selection = {
     },
     isPasteAction: false,
     paste: function (e, triggerType) {//paste事件
-        debugger;
+
         let _this = this;
 
         if(Store.allowEdit===false){

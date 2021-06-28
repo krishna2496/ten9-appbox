@@ -177,7 +177,7 @@ export default defineComponent<GraphEditorProps>({
 
     async function refreshCellLinks(cell: typeof mxCell) {
       const graph = graphRef.value;
-      debugger;
+
       const style = graph.getCurrentCellStyle(cell);
 
       // Refresh the image links
