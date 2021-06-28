@@ -56,7 +56,6 @@ export interface RefreshedLinkInfo {
 export interface CommonAppProps {
   isEditing?: boolean; // this is the Preview Mode boolean.  isEditing === !isEditing
   refreshLinkHandler?(url: string): Promise<RefreshedLinkInfo> | null;
-  userData?: Record<string, unknown>;
 }
 
 export const CommonAppPropsOptions = {
@@ -69,11 +68,6 @@ export const CommonAppPropsOptions = {
     type: Function as PropType<(url: string) => Promise<RefreshedLinkInfo>>,
     required: false,
     default: () => ({}),
-  },
-  userData: {
-    type: Object,
-    required: false,
-    default: {},
   },
 };
 

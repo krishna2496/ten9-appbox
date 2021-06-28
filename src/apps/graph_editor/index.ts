@@ -16,6 +16,11 @@
 
 import { AppInfo, defaultAsyncComponentOptions } from '@appsSupport/app_api';
 
+export const DEFAULT_SHAPE_LIBRARIES = 'general;basic;arrows2;clipart;flowchart';
+export const DEFAULT_SCRATCHPAD_DATA = '<mxlibrary>[]</mxlibrary>';
+export const DEFAULT_THEME = 'kennedy';
+export const DEFAULT_RECENT_COLORS = '';
+
 const uniqueAppId = 'ten9-graph-editor';
 const documentName = 'Diagram';
 const defaultExtension = '.draw';
@@ -37,7 +42,7 @@ export function getAppInfo(): AppInfo {
     canLoadContent,
     asyncComponent: () => ({
       ...defaultAsyncComponentOptions,
-      component: import('@/apps/graph_editor/components/GraphEditor.vue'),
+      component: import('./components/GraphEditor.vue'),
     }),
   };
 }

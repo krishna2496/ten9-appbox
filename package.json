@@ -16,14 +16,14 @@
     "update-package:all": "./node_modules/.bin/ncu -u"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-pro": "^6.0.0-beta1",
     "@vue/composition-api": "^1.0.0-rc.7",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.10.2",
     "dayjs": "^1.10.4",
     "flatpickr": "^4.6.9",
-    "font-awesome": "^4.7.0",
-    "jquery": "^3.6.0",
+    "jquery": "^2.2.4",
     "jquery-mousewheel": "^3.1.13",
     "luckyexcel": "^1.0.1",
     "numeral": "^2.0.6",

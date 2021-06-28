@@ -21,9 +21,16 @@
 
 // Font icons
 
-$fa-font-path: '~font-awesome/fonts';
+$fa-font-path: '~@fortawesome/fontawesome-pro/webfonts';
 
-@import 'font-awesome/scss/font-awesome';
+@import '@fortawesome/fontawesome-pro/scss/fontawesome';
+@import '@fortawesome/fontawesome-pro/scss/brands';
+@import '@fortawesome/fontawesome-pro/scss/duotone';
+@import '@fortawesome/fontawesome-pro/scss/light';
+@import '@fortawesome/fontawesome-pro/scss/regular';
+@import '@fortawesome/fontawesome-pro/scss/solid';
+@import '@fortawesome/fontawesome-pro/scss/thin';
+@import '@fortawesome/fontawesome-pro/scss/v4-shims';
 
 #container {
   // TODO Part 2

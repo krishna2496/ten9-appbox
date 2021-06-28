@@ -16,7 +16,13 @@
 
 <script lang="ts">
 import OpenFile from './components/OpenFile.vue';
-import { getAppInfo as getGraphEditorAppInfo } from '@/apps/graph_editor/index';
+import {
+  getAppInfo as getGraphEditorAppInfo,
+  DEFAULT_RECENT_COLORS,
+  DEFAULT_SCRATCHPAD_DATA,
+  DEFAULT_SHAPE_LIBRARIES,
+  DEFAULT_THEME,
+} from '@/apps/graph_editor/index';
 import { getAppInfo as getSpreadsheetEditorAppInfo } from '@/apps/spreadsheet_editor/index';
 import { AppInfo, canLoadFile, RefreshedLinkInfo } from '@appsSupport/app_api';
 
@@ -64,7 +70,57 @@ export default defineComponent({
 
     const isEditing = ref(true);
 
-    const appUserData = ref<Record<string, unknown>>({});
+    const saveScratchpadData = (scratchpadData: string) => {
+      window.localStorage.setItem('scratchpadData', scratchpadData);
+    };
+
+    const scratchpadData = computed(() => {
+      let value = window.localStorage.getItem('scratchpadData');
+      if (value === null) {
+        saveScratchpadData(DEFAULT_SCRATCHPAD_DATA);
+        value = DEFAULT_SCRATCHPAD_DATA;
+      }
+      return value;
+    });
+
+    const saveShapeLibraries = (shapeLibraries: string) => {
+      window.localStorage.setItem('shapeLibraries', shapeLibraries);
+    };
+
+    const shapeLibraries = computed(() => {
+      let value = window.localStorage.getItem('shapeLibraries');
+      if (value === null) {
+        saveShapeLibraries(DEFAULT_SHAPE_LIBRARIES);
+        value = DEFAULT_SHAPE_LIBRARIES;
+      }
+      return value;
+    });
+
+    const saveTheme = (theme: string) => {
+      window.localStorage.setItem('theme', theme);
+    };
+
+    const theme = computed(() => {
+      let value = window.localStorage.getItem('theme');
+      if (value === null) {
+        saveTheme(DEFAULT_THEME);
+        value = DEFAULT_THEME;
+      }
+      return value;
+    });
+
+    const saveRecentColors = (recentColors: string) => {
+      window.localStorage.setItem('recentColors', recentColors);
+    };
+
+    const recentColors = computed(() => {
+      let value = window.localStorage.getItem('recentColors');
+      if (value === null) {
+        saveRecentColors(DEFAULT_RECENT_COLORS);
+        value = DEFAULT_RECENT_COLORS;
+      }
+      return value;
+    });
 
     function addLog(fileLogEvent: FileLogEvent) {
       if (fileLogEvent.file) {
@@ -79,17 +135,6 @@ export default defineComponent({
           logsList.scrollTop = logsList.scrollHeight;
         }
       });
-    }
-
-    function onAppUserDataChanged(appId: string, newAppUserData: unknown) {
-      const appUserDataAsString = JSON.stringify(newAppUserData);
-      window.localStorage.setItem(appId, appUserDataAsString);
-      const fileLogEvent: FileLogEvent = {
-        title: 'App User Data Changed',
-        size: appUserDataAsString.length,
-        lastModified: Date.now(),
-      };
-      addLog(fileLogEvent);
     }
 
     const contentChanged = ref(false);
@@ -343,7 +388,6 @@ export default defineComponent({
     }
 
     function setActiveApp(appId: string) {
-      appUserData.value = JSON.parse(window.localStorage.getItem(appId)) || {};
       activeAppInfo.value = apps.value[appId];
     }
 
@@ -404,20 +448,28 @@ export default defineComponent({
       activeAppInfo,
       activeAppRef,
       apps,
-      appUserData,
       contentChanged,
       getActiveAppSupportedExtensionsAsString,
+      getGraphEditorAppInfo,
       getDateString,
+      getSpreadsheetEditorAppInfo,
       getSupportedExtensionsAsString,
       isEditing,
       logs,
-      onAppUserDataChanged,
       onContentChanged,
       onFileOpened,
+      recentColors,
       refreshLink,
       saveFile,
+      scratchpadData,
       setActiveApp,
       isComponentFullyLoaded,
+      shapeLibraries,
+      theme,
+      saveScratchpadData,
+      saveShapeLibraries,
+      saveTheme,
+      saveRecentColors,
     };
   },
 });
@@ -481,15 +533,31 @@ export default defineComponent({
         div(v-if='!activeAppInfo')
           | Create a new file or open an existing one
         component(
-          v-else,
+          v-else-if='activeAppInfo.uniqueAppId === getGraphEditorAppInfo().uniqueAppId',
           ref='activeAppRef',
           :is='activeAppComponent',
           :isEditing='isEditing',
-          :userData='appUserData',
+          :refreshLinkHandler='refreshLink',
+          @content-changed='onContentChanged',
+          :recentColors='recentColors',
+          :scratchpadData='scratchpadData',
+          :shapeLibraries='shapeLibraries',
+          :theme='theme',
+          @recent-colors-changed='saveRecentColors',
+          @scratchpad-data-changed='saveScratchpadData',
+          @shape-libraries-changed='saveShapeLibraries',
+          @theme-changed='saveTheme'
+        )
+        component(
+          v-else-if='activeAppInfo.uniqueAppId === getSpreadsheetEditorAppInfo().uniqueAppId',
+          ref='activeAppRef',
+          :is='activeAppComponent',
+          :isEditing='isEditing',
           :refreshLinkHandler='refreshLink',
           @user-data-changed='onAppUserDataChanged',
           @content-changed='onContentChanged',
-          @hook:mounted='isComponentFullyLoaded'
+          @hook:mounted='isComponentFullyLoaded',
+          @content-changed='onContentChanged'
         )
 </template>
 
