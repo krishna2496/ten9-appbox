@@ -175,7 +175,6 @@ export default defineComponent({
     function insertDummyImage(dataUri: string) {
       // add a dummy image to graph to emulate what will happen in production app
       activeAppRef.value.insertImage(dataUri).then((result: unknown) => {
-        alert(dataUri);
         const waitingTime = 3000;
         setTimeout(() => {
           const newUrl = 'https://www.gettyimages.in/gi-resources/images/500px/983794168.jpg';
