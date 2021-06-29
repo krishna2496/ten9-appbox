@@ -50,7 +50,7 @@ const imageCtrl = {
     cropChangeObj: null,
     copyImgItemObj: null,
     inserImg: function(src){
-       /* TEN9 : Insert image code added to spreadsheet editor */
+       // TEN9: Insert image code added to spreadsheet editor
        /*let _this = this;
         
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];

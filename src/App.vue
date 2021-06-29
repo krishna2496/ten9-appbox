@@ -436,7 +436,7 @@ export default defineComponent({
       }
     }
 
-    function isComponentFullyLoaded() {
+    function onActiveAppMounted() {
       nextTick(() => {
         initEventListeners(activeAppInfo.value.dropContainer);
       });
@@ -464,7 +464,7 @@ export default defineComponent({
       saveFile,
       scratchpadData,
       setActiveApp,
-      isComponentFullyLoaded,
+      onActiveAppMounted,
       shapeLibraries,
       theme,
       saveScratchpadData,
@@ -548,7 +548,7 @@ export default defineComponent({
           @scratchpad-data-changed='saveScratchpadData',
           @shape-libraries-changed='saveShapeLibraries',
           @theme-changed='saveTheme',
-          @hook:mounted='isComponentFullyLoaded'
+          @hook:mounted='onActiveAppMounted'
         )
         component(
           v-else-if='activeAppInfo.uniqueAppId === getSpreadsheetEditorAppInfo().uniqueAppId',
@@ -557,7 +557,7 @@ export default defineComponent({
           :isEditing='isEditing',
           :refreshLinkHandler='refreshLink',
           @content-changed='onContentChanged',
-          @hook:mounted='isComponentFullyLoaded'
+          @hook:mounted='onActiveAppMounted'
         )
 </template>
 

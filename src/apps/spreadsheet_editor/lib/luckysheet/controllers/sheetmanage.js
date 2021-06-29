@@ -1131,12 +1131,12 @@ const sheetmanage = {
             }
         }
     },
-    changeSheet: function(index, isPivotInitial, isNewSheet) {debugger;
+    changeSheet: function(index, isPivotInitial, isNewSheet) {
         if(isEditMode()){
             // alert("非编辑模式下不允许该操作！");
             return;
         }
-
+      
         let _this = this;        
        
         if(index==Store.currentSheetIndex){
@@ -1287,8 +1287,6 @@ const sheetmanage = {
         
         luckysheetFreezen.initialFreezen(index);
         _this.restoreselect();
-        const event = new Event('changeSheet');
-        document.dispatchEvent(event);
     },
     checkLoadSheetIndexToDataIndex:{},
     checkLoadSheetIndex: function(file) {

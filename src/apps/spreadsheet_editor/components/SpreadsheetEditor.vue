@@ -17,7 +17,7 @@
 <script lang="ts">
 import luckysheet from '../lib/luckysheet';
 import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
-// import sheetmanage from '../lib/luckysheet/controllers/sheetmanage';
+import sheetmanage from '../lib/luckysheet/controllers/sheetmanage';
 import Store from '../lib/luckysheet/store/index';
 import { CommonAppPropsOptions } from '@appsSupport/app_api';
 // import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
@@ -51,23 +51,38 @@ export default defineComponent({
   },
 
   setup(_props, ctx) {
+    function updateImage(imageId: string, dataUri: string) {
+      const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+      Store.luckysheetfile[index].images = imageCtrl.images;
+      imageCtrl.images[imageId].src = dataUri;
+      document.querySelector(`#${imageId} img`).setAttribute('src', dataUri);
+    }
+
+    async function refreshCellLinks(imageId: string, dataUrl: string) {
+      const { url: imageUrl } = await _props.refreshLinkHandler(dataUrl);
+
+      if (imageUrl && dataUrl !== imageUrl) {
+        updateImage(imageId, imageUrl);
+      }
+    }
     const luckysheetDefaultOptions = {
       container: 'luckysheet',
       lang: 'en',
       showinfobar: false,
       hook: {
         updated: () => {
+          const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+          if (Store.luckysheetfile[index].images) {
+            const allImages = Store.luckysheetfile[index].images;
+            console.log('allImages', allImages);
+            for (const [key] of Object.entries(allImages)) {
+              refreshCellLinks(key, imageCtrl.images[key].src);
+            }
+          }
           ctx.emit('content-changed', true);
         },
       },
     };
-    // const imageArray = ref([]);
-    function updateImage(imageId: string, dataUri: string) {
-      debugger;
-      imageCtrl.images[imageId].src = dataUri;
-      document.querySelector(`#${imageId} img`).setAttribute('src', dataUri);
-      // console.log('luckysheetfile', Store.luckysheetfile[sheetmanage.getSheetIndex(index)]);
-    }
 
     onMounted(() => {
       nextTick(() => {
@@ -86,28 +101,6 @@ export default defineComponent({
           ],
         });
       });
-
-      document.addEventListener(
-        'changeSheet',
-        () => {
-          const allSheetData = luckysheet.getluckysheetfile();
-
-          nextTick(() => {
-            allSheetData.forEach((element: any) => {
-              if (element.index == Store.currentSheetIndex) {
-                if ('images' in element) {
-                  const allImages = element.images;
-                  console.log('all image', allImages);
-                  for (const [key] of Object.entries(allImages)) {
-                    updateImage(key, imageCtrl.images[key].src);
-                  }
-                }
-              }
-            });
-          });
-        },
-        false,
-      );
     });
 
     function loadExcelFile(file: File) {
