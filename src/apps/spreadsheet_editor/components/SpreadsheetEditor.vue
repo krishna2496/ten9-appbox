@@ -74,7 +74,6 @@ export default defineComponent({
           const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
           if (Store.luckysheetfile[index].images) {
             const allImages = Store.luckysheetfile[index].images;
-            console.log('allImages', allImages);
             for (const [key] of Object.entries(allImages)) {
               refreshCellLinks(key, imageCtrl.images[key].src);
             }
