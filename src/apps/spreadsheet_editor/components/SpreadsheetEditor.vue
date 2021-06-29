@@ -51,18 +51,18 @@ export default defineComponent({
   },
 
   setup(_props, ctx) {
-    function updateImage(imageId: string, dataUri: string) {
+    function updateImage(imageId: string, imageSrc: string) {
       const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
       Store.luckysheetfile[index].images = imageCtrl.images;
-      imageCtrl.images[imageId].src = dataUri;
-      document.querySelector(`#${imageId} img`).setAttribute('src', dataUri);
+      imageCtrl.images[imageId].src = imageSrc;
+      document.querySelector(`#${imageId} img`).setAttribute('src', imageSrc);
     }
 
-    async function refreshCellLinks(imageId: string, dataUrl: string) {
-      const { url: imageUrl } = await _props.refreshLinkHandler(dataUrl);
+    async function refreshCellLinks(imageId: string, currentImageSrc: string) {
+      const { url: newImageSrc } = await _props.refreshLinkHandler(currentImageSrc);
 
-      if (imageUrl && dataUrl !== imageUrl) {
-        updateImage(imageId, imageUrl);
+      if (newImageSrc && currentImageSrc !== newImageSrc) {
+        updateImage(imageId, newImageSrc);
       }
     }
     const luckysheetDefaultOptions = {
@@ -72,9 +72,11 @@ export default defineComponent({
       hook: {
         updated: () => {
           const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+          console.log(`sheet index: ${index}`);
           if (Store.luckysheetfile[index].images) {
             const allImages = Store.luckysheetfile[index].images;
             for (const [key] of Object.entries(allImages)) {
+              console.log(`Refreshing link for: ${key}`);
               refreshCellLinks(key, imageCtrl.images[key].src);
             }
           }
@@ -220,10 +222,10 @@ export default defineComponent({
     return {
       getContent,
       getContentType,
+      insertImage,
       loadContent,
       loadContentFromFile,
       resize,
-      insertImage,
       updateImage,
     };
   },
