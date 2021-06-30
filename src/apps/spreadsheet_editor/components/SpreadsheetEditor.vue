@@ -16,7 +16,9 @@
 
 <script lang="ts">
 import luckysheet from '../lib/luckysheet';
-import { defineComponent, onMounted, nextTick } from '@vue/composition-api';
+// import Store from '../lib/luckysheet/store';
+import { CommonAppPropsOptions } from '@appsSupport/app_api';
+import { defineComponent, onMounted, nextTick, watch } from '@vue/composition-api';
 import LuckyExcel from 'luckyexcel';
 
 interface simpleInt {
@@ -41,11 +43,15 @@ interface jsonSheet {
 
 export default defineComponent({
   name: 'SpreadsheetEditor',
+  props: {
+    ...CommonAppPropsOptions,
+  },
   setup(_props, ctx) {
     const luckysheetDefaultOptions = {
       container: 'luckysheet',
       lang: 'en',
       showinfobar: false,
+      editMode: !_props.isEditing,
       hook: {
         updated: () => {
           ctx.emit('content-changed', true);
@@ -148,6 +154,18 @@ export default defineComponent({
     const resize = () => {
       luckysheet.resize();
     };
+
+    watch(
+      () => _props.isEditing,
+      () => {
+        const allSheetData = luckysheet.getluckysheetfile();
+        luckysheetDefaultOptions.editMode = !_props.isEditing;
+        luckysheet.create({
+          ...luckysheetDefaultOptions,
+          data: allSheetData,
+        });
+      },
+    );
 
     return {
       getContent,
