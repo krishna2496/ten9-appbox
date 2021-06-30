@@ -44,6 +44,10 @@ interface jsonSheet {
   info: typeOfSheetsJson;
 }
 
+/* interface sheet {
+  src: string;
+} */
+
 export default defineComponent({
   name: 'SpreadsheetEditor',
   props: {
@@ -51,37 +55,56 @@ export default defineComponent({
   },
 
   setup(_props, ctx) {
+    const sheetsToRefresh = new Set();
+
     function updateImage(imageId: string, imageSrc: string) {
       const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
-      Store.luckysheetfile[index].images = imageCtrl.images;
+
       imageCtrl.images[imageId].src = imageSrc;
+      Store.luckysheetfile[index].images = imageCtrl.images;
       document.querySelector(`#${imageId} img`).setAttribute('src', imageSrc);
     }
 
-    async function refreshCellLinks(imageId: string, currentImageSrc: string) {
-      const { url: newImageSrc } = await _props.refreshLinkHandler(currentImageSrc);
+    async function refreshCellLinks(imageId: string, dataSrc: string) {
+      const { url: newImageSrc } = await _props.refreshLinkHandler(dataSrc);
 
-      if (newImageSrc && currentImageSrc !== newImageSrc) {
+      if (newImageSrc && dataSrc !== newImageSrc) {
         updateImage(imageId, newImageSrc);
       }
     }
+
+    function onWorkbookCreateAfter() {
+      sheetsToRefresh.clear();
+
+      for (const [key] of Object.entries(Store.luckysheetfile)) {
+        sheetsToRefresh.add(Store.luckysheetfile[key].index);
+      }
+    }
+
+    function onWorksheetActivateAfter(sheetIndex: number) {
+      if (sheetsToRefresh.has(sheetIndex)) {
+        const index = sheetmanage.getSheetIndex(sheetIndex);
+        if (Store.luckysheetfile[index].images) {
+          const allImages = Store.luckysheetfile[index].images;
+
+          for (const [key] of Object.entries(allImages)) {
+            refreshCellLinks(key, allImages[key].src);
+          }
+        }
+        sheetsToRefresh.delete(sheetIndex);
+      }
+    }
+
     const luckysheetDefaultOptions = {
       container: 'luckysheet',
       lang: 'en',
       showinfobar: false,
       hook: {
         updated: () => {
-          const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
-          console.log(`sheet index: ${index}`);
-          if (Store.luckysheetfile[index].images) {
-            const allImages = Store.luckysheetfile[index].images;
-            for (const [key] of Object.entries(allImages)) {
-              console.log(`Refreshing link for: ${key}`);
-              refreshCellLinks(key, imageCtrl.images[key].src);
-            }
-          }
           ctx.emit('content-changed', true);
         },
+        workbookCreateAfter: onWorkbookCreateAfter,
+        sheetActivate: onWorksheetActivateAfter,
       },
     };
 

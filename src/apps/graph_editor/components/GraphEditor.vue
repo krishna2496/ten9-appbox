@@ -240,9 +240,9 @@ export default defineComponent<GraphEditorProps>({
 
       const pageId = editorUi.getCurrentPage().getId();
 
-      // if (!pagesToRefresh.has(pageId)) {
-      //   return;
-      // }
+      if (!pagesToRefresh.has(pageId)) {
+        return;
+      }
 
       pagesToRefresh.delete(pageId);
 
