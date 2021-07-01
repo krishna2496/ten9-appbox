@@ -285,7 +285,6 @@ export default defineComponent({
 
     function initEventListeners(dropContainer: string) {
       const drag: HTMLElement = document.getElementById(dropContainer);
-      console.log('drag', drag);
       if (drag != null) {
         const defaultDragHandler = (e: DragEvent) => {
           e.stopPropagation();

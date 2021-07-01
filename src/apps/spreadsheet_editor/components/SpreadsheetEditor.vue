@@ -20,7 +20,6 @@ import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
 import sheetmanage from '../lib/luckysheet/controllers/sheetmanage';
 import Store from '../lib/luckysheet/store/index';
 import { CommonAppPropsOptions } from '@appsSupport/app_api';
-// import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
 import { defineComponent, onMounted, nextTick } from '@vue/composition-api';
 import LuckyExcel from 'luckyexcel';
 
@@ -44,17 +43,13 @@ interface jsonSheet {
   info: typeOfSheetsJson;
 }
 
-/* interface sheet {
-  src: string;
-} */
-
 export default defineComponent({
   name: 'SpreadsheetEditor',
   props: {
     ...CommonAppPropsOptions,
   },
 
-  setup(_props, ctx) {
+  setup(props, ctx) {
     const sheetsToRefresh = new Set();
 
     function updateImage(imageId: string, imageSrc: string) {
@@ -66,7 +61,7 @@ export default defineComponent({
     }
 
     async function refreshCellLinks(imageId: string, dataSrc: string) {
-      const { url: newImageSrc } = await _props.refreshLinkHandler(dataSrc);
+      const { url: newImageSrc } = await props.refreshLinkHandler(dataSrc);
 
       if (newImageSrc && dataSrc !== newImageSrc) {
         updateImage(imageId, newImageSrc);
