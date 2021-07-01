@@ -60,11 +60,30 @@ export default defineComponent({
       document.querySelector(`#${imageId} img`).setAttribute('src', imageSrc);
     }
 
+    function onUpdated() {
+      ctx.emit('content-changed', true);
+    }
+
     async function refreshCellLinks(imageId: string, dataSrc: string) {
       const { url: newImageSrc } = await props.refreshLinkHandler(dataSrc);
 
       if (newImageSrc && dataSrc !== newImageSrc) {
         updateImage(imageId, newImageSrc);
+        // Luckysheet doesn't fire an updated hook on image update so we'll call it ourselves
+        onUpdated();
+      }
+    }
+
+    function onWorksheetActivateAfter(sheetIndex: number) {
+      if (sheetsToRefresh.has(sheetIndex)) {
+        const index = sheetmanage.getSheetIndex(sheetIndex);
+        if (Store.luckysheetfile[index].images) {
+          const allImages = Store.luckysheetfile[index].images;
+          for (const [key] of Object.entries(allImages)) {
+            refreshCellLinks(key, allImages[key].src);
+          }
+        }
+        sheetsToRefresh.delete(sheetIndex);
       }
     }
 
@@ -74,20 +93,9 @@ export default defineComponent({
       for (const [key] of Object.entries(Store.luckysheetfile)) {
         sheetsToRefresh.add(Store.luckysheetfile[key].index);
       }
-    }
 
-    function onWorksheetActivateAfter(sheetIndex: number) {
-      if (sheetsToRefresh.has(sheetIndex)) {
-        const index = sheetmanage.getSheetIndex(sheetIndex);
-        if (Store.luckysheetfile[index].images) {
-          const allImages = Store.luckysheetfile[index].images;
-
-          for (const [key] of Object.entries(allImages)) {
-            refreshCellLinks(key, allImages[key].src);
-          }
-        }
-        sheetsToRefresh.delete(sheetIndex);
-      }
+      // The initial worksheet is not activated so we'll call the hook ourselves
+      onWorksheetActivateAfter(Store.currentSheetIndex);
     }
 
     const luckysheetDefaultOptions = {
@@ -95,9 +103,7 @@ export default defineComponent({
       lang: 'en',
       showinfobar: false,
       hook: {
-        updated: () => {
-          ctx.emit('content-changed', true);
-        },
+        updated: onUpdated,
         workbookCreateAfter: onWorkbookCreateAfter,
         sheetActivate: onWorksheetActivateAfter,
       },
