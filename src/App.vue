@@ -26,9 +26,9 @@ import {
 import { getAppInfo as getSpreadsheetEditorAppInfo } from '@/apps/spreadsheet_editor/index';
 import { AppInfo, canLoadFile, RefreshedLinkInfo } from '@appsSupport/app_api';
 
-// Uncomment the component imports to avoid async component loading
-// import GraphEditor from '@/apps/graph_editor/components/GraphEditor.vue';
-// import SpreadsheetEditor from '@/apps/spreadsheet_editor/components/SpreadsheetEditor.vue';
+// Comment the component imports to avoid async component loading
+import GraphEditor from '@/apps/graph_editor/components/GraphEditor.vue';
+import SpreadsheetEditor from '@/apps/spreadsheet_editor/components/SpreadsheetEditor.vue';
 
 import {
   computed,
@@ -143,17 +143,17 @@ export default defineComponent({
 
     const activeAppComponent = computed(() => {
       // Uncomment the switch statement below to avoid async component loading
-      // switch (activeAppInfo.value.uniqueAppId) {
-      //   case getGraphEditorAppInfo().uniqueAppId:
-      //     return GraphEditor;
-      //   case getSpreadsheetEditorAppInfo().uniqueAppId:
-      //     return SpreadsheetEditor;
-      //   default:
-      //     return null;
-      // }
+      switch (activeAppInfo.value.uniqueAppId) {
+        case getGraphEditorAppInfo().uniqueAppId:
+          return GraphEditor;
+        case getSpreadsheetEditorAppInfo().uniqueAppId:
+          return SpreadsheetEditor;
+        default:
+          return null;
+      }
 
       // Comment out the next line to avoid async component loading
-      return activeAppInfo.value?.asyncComponent;
+      // return activeAppInfo.value?.asyncComponent;
     });
 
     function updateAppHeight() {
@@ -343,30 +343,6 @@ export default defineComponent({
           if (files.length <= 0) {
             return;
           }
-
-          // for (let i = 0; i < e.dataTransfer.items.length; i++) {
-          //   const file = e.dataTransfer.items[i].getAsFile();
-          //   // If the dropped item was not an editor file, process as attachment
-          //   if (e.dataTransfer.items[i].kind === 'file') {
-          //     canLoadFile(activeAppInfo.value, file).then((canLoad: boolean) => {
-          //       if (canLoad) {
-          //         file.text().then((fileContent) => {
-          //           content.value = fileContent;
-          //         });
-          //       } else {
-          //         // Process as an attachment
-          //         const fileInfo: EventFileInfo = {
-          //           file,
-          //           size: file.size,
-          //           lastModified: file.lastModified,
-          //         };
-          //         getFileAsDataURL(file).then((dataUrl: string) => {
-          //           fileInfo.dataUrl = dataUrl;
-          //           onFileDropped(fileInfo);
-          //         });
-          //       }
-          //     });
-          //   }
 
           // check if default clipboard have files or not
           if (e.clipboardData.files.length > 0) {
