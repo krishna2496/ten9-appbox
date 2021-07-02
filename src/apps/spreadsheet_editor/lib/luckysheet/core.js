@@ -147,7 +147,7 @@ luckysheet.create = function (setting) {
 
     // Store the currently used plugins for monitoring asynchronous loading
     Store.asyncLoad.push(...luckysheetConfigsetting.plugins);
-    
+
     // Register plugins
     initPlugins(extendsetting.plugins , extendsetting.data);
 
@@ -248,6 +248,17 @@ luckysheet.destroy = method.destroy;
 
 /* TEN9: resize spreadsheet editor */
 luckysheet.resize = luckysheetsizeauto;
+
+// TEN9: editMode = true means non-editing mode
+// The comment on validate.js:isEditMode translates to:
+// "Whether it is in non-editing mode" :-/
+luckysheet.setReadOnlyMode = function (readOnly) {
+    luckysheetConfigsetting.editMode = readOnly;
+}
+
+luckysheet.isReadOnlyMode = function () {
+    return luckysheetConfigsetting.editMode;
+}
 
 export {
     luckysheet
