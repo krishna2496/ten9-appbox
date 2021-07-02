@@ -53,11 +53,17 @@ export interface RefreshedLinkInfo {
   height?: number;
 }
 export interface CommonAppProps {
+  content: string | Blob;
   isEditing?: boolean; // this is the Preview Mode boolean.  isEditing === !isEditing
   refreshLinkHandler?(url: string): Promise<RefreshedLinkInfo> | null;
 }
 
 export const CommonAppPropsOptions = {
+  content: {
+    type: [String, Blob] as PropType<string | Blob>,
+    required: false,
+    default: null as string,
+  },
   isEditing: {
     type: Boolean,
     required: false,

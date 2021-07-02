@@ -16,7 +16,9 @@
 
 <script lang="ts">
 import luckysheet from '../lib/luckysheet';
-import { defineComponent, onMounted, nextTick } from '@vue/composition-api';
+import { CommonAppProps, CommonAppPropsOptions } from '@appsSupport/app_api';
+import { defineComponent, onMounted, nextTick, watch } from '@vue/composition-api';
+import { isString } from 'lodash';
 import LuckyExcel from 'luckyexcel';
 
 interface simpleInt {
@@ -39,9 +41,37 @@ interface jsonSheet {
   info: typeOfSheetsJson;
 }
 
-export default defineComponent({
+interface SpreadsheetEditorProps extends CommonAppProps {}
+
+export default defineComponent<SpreadsheetEditorProps>({
   name: 'SpreadsheetEditor',
-  setup(_props, ctx) {
+
+  props: {
+    ...CommonAppPropsOptions,
+  },
+
+  setup(props, ctx) {
+    function getContentType() {
+      return 'application/json';
+    }
+
+    function getContent() {
+      const allSheetData = luckysheet.getluckysheetfile();
+      return JSON.stringify(allSheetData);
+    }
+
+    const luckysheetDefaultData = [
+      {
+        name: 'Sheet1',
+        color: '',
+        index: 1,
+        status: 0,
+        order: 1,
+        celldata: [] as unknown,
+        config: {},
+      },
+    ];
+
     const luckysheetDefaultOptions = {
       container: 'luckysheet',
       lang: 'en',
@@ -53,49 +83,32 @@ export default defineComponent({
       },
     };
 
-    onMounted(() => {
-      nextTick(() => {
-        luckysheet.create({
-          ...luckysheetDefaultOptions,
-          data: [
-            {
-              name: 'Sheet1',
-              color: '',
-              index: 1,
-              status: 0,
-              order: 1,
-              celldata: [],
-              config: {},
-            },
-          ],
-        });
-      });
-    });
-
     function loadExcelFile(file: File) {
-      LuckyExcel.transformExcelToLucky(file, (exportJson: jsonSheet) => {
-        if (exportJson.sheets == null || exportJson.sheets.length == 0) {
-          throw Error(
-            'Failed to read the content of the excel file, currently does not support xls files!',
-          );
-        }
-        luckysheet.destroy();
-
-        luckysheet.create({
-          ...luckysheetDefaultOptions,
-          data: exportJson.sheets,
+      nextTick(() => {
+        LuckyExcel.transformExcelToLucky(file, (exportJson: jsonSheet) => {
+          if (exportJson.sheets == null || exportJson.sheets.length == 0) {
+            throw Error(
+              'Failed to read the content of the excel file, currently does not support xls files!',
+            );
+          }
+          luckysheet.create({
+            ...luckysheetDefaultOptions,
+            data: exportJson.sheets,
+          });
+          luckysheet.setReadOnlyMode(!props.isEditing);
         });
       });
     }
 
     function loadContent(content: string) {
       try {
-        if (!content) return;
-        const fileData = JSON.parse(content);
-        luckysheet.destroy();
+        let fileData;
+        if (content) {
+          fileData = JSON.parse(content);
+        }
         luckysheet.create({
           ...luckysheetDefaultOptions,
-          data: fileData,
+          data: content ? fileData : luckysheetDefaultData,
         });
       } catch (e) {
         if (e instanceof SyntaxError) {
@@ -108,52 +121,80 @@ export default defineComponent({
           throw e;
         }
       }
+      luckysheet.setReadOnlyMode(!props.isEditing);
     }
 
-    function loadSpreadsheetNativeFile(file: File) {
-      const reader = new FileReader();
-      reader.addEventListener('load', () => {
-        const content = reader.result as string;
-        loadContent(content);
+    // TODO: Support loading from file?
+    // function loadSpreadsheetNativeFile(file: File) {
+    //   const reader = new FileReader();
+    //   reader.addEventListener('load', () => {
+    //     const content = reader.result as string;
+    //     loadContent(content);
+    //   });
+    //   reader.readAsText(file);
+    // }
+
+    // TODO: Support loading from file?
+    // function loadContentFromFile(file: File) {
+    //   if (file.name.indexOf('.') < 0) {
+    //     throw Error(`No file extension found in file name (${file.name})`);
+    //   }
+
+    //   const ext = `.${file.name.split('.').pop()}`;
+
+    //   // Read native files is (.sheet)
+    //   if (ext === '.sheet') {
+    //     loadSpreadsheetNativeFile(file);
+    //   } else if (ext === '.xlsx') {
+    //     loadExcelFile(file);
+    //   } else {
+    //     throw Error(`Unsupported extension: ${ext}`);
+    //   }
+    // }
+
+    onMounted(() => {
+      nextTick(() => {
+        // TODO: Support loading from file?
+        // if (props.file) {
+        //   loadContentFromFile(props.file);
+        // } else {
+        loadContent(props.content as string);
+        // }
       });
-      reader.readAsText(file);
-    }
-
-    function loadContentFromFile(file: File) {
-      if (file.name.indexOf('.') < 0) {
-        throw Error(`No file extension found in file name (${file.name})`);
-      }
-
-      const ext = `.${file.name.split('.').pop()}`;
-
-      // Read native files is (.sheet)
-      if (ext === '.sheet') {
-        loadSpreadsheetNativeFile(file);
-      } else if (ext === '.xlsx') {
-        loadExcelFile(file);
-      } else {
-        throw Error(`Unsupported extension: ${ext}`);
-      }
-    }
-
-    function getContent() {
-      const allSheetData = luckysheet.getluckysheetfile();
-      return JSON.stringify(allSheetData);
-    }
-
-    function getContentType() {
-      return 'application/json';
-    }
+    });
 
     const resize = () => {
-      luckysheet.resize();
+      try {
+        luckysheet.resize();
+      } catch (e) {
+        // eat errors during resize
+      }
     };
+
+    /**
+     * Content is not set immediately, we will watch it and set
+     * the value when it is.
+     */
+    watch(
+      () => props.content,
+      (val) => {
+        if (!isString(val)) return;
+        if (getContent() !== val) {
+          loadContent(val);
+        }
+      },
+    );
+
+    watch(
+      () => props.isEditing,
+      (val) => {
+        luckysheet.setReadOnlyMode(!val);
+      },
+    );
 
     return {
       getContent,
       getContentType,
-      loadContent,
-      loadContentFromFile,
       resize,
     };
   },
@@ -164,6 +205,7 @@ export default defineComponent({
 div
   #luckysheet
 </template>
+
 <style scoped>
 #luckysheet {
   margin: 0;
