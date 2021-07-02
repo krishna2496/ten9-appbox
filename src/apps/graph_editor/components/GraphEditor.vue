@@ -28,7 +28,7 @@ import {
   CommonAppProps,
   CommonAppPropsOptions,
 } from '@appsSupport/app_api';
-import { debounce } from 'lodash';
+import { debounce, isString } from 'lodash';
 require('../lib/diagramly/DrawioFile.js');
 require('../lib/diagramly/LocalFile.js');
 require('../lib/diagramly/EditorUi.js');
@@ -709,6 +709,16 @@ export default defineComponent<GraphEditorProps>({
     function imageInsert(url: string) {
       insertImage(url);
     }
+
+    watch(
+      () => props.content,
+      (val) => {
+        if (!isString(val)) return;
+        if (getContent() !== val) {
+          loadContent(val);
+        }
+      },
+    );
 
     watch(
       () => props.isEditing,

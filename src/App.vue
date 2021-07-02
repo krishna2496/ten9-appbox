@@ -70,6 +70,8 @@ export default defineComponent({
 
     const isEditing = ref(true);
 
+    const content = ref<string>(null);
+
     const saveScratchpadData = (scratchpadData: string) => {
       window.localStorage.setItem('scratchpadData', scratchpadData);
     };
@@ -221,12 +223,12 @@ export default defineComponent({
     }
 
     function saveFile() {
-      const content = activeAppRef.value.getContent();
+      const fileContent = activeAppRef.value.getContent();
       const contentType = activeAppRef.value.getContentType();
       const filename = activeAppInfo.value.documentName.toLowerCase();
       const ext = activeAppInfo.value.defaultExtension;
 
-      const blob = new Blob([content], { type: contentType });
+      const blob = new Blob([fileContent], { type: contentType });
 
       const a = document.createElement('a');
       a.download = `${filename} - ${new Date().toISOString().replaceAll(':', '')}${ext}`;
@@ -254,12 +256,12 @@ export default defineComponent({
 
       let size = 0;
       if (activeAppRef.value?.getContent) {
-        const content = activeAppRef.value.getContent();
-        if (typeof content === 'string') {
-          size = content.length;
+        const fileContent = activeAppRef.value.getContent();
+        if (typeof fileContent === 'string') {
+          size = fileContent.length;
         } else {
           // Blob
-          ({ size } = content);
+          ({ size } = fileContent);
         }
       }
 
@@ -310,8 +312,8 @@ export default defineComponent({
             if (e.dataTransfer.items[i].kind === 'file') {
               canLoadFile(activeAppInfo.value, file).then((canLoad: boolean) => {
                 if (canLoad) {
-                  file.text().then((content) => {
-                    activeAppRef.value.loadContent(content);
+                  file.text().then((fileContent) => {
+                    activeAppRef.value.loadContent(fileContent);
                   });
                 } else {
                   // Process as an attachment
@@ -335,11 +337,36 @@ export default defineComponent({
           if (!isEditing.value) {
             return;
           }
+
           const { files } = e.clipboardData;
 
           if (files.length <= 0) {
             return;
           }
+
+          // for (let i = 0; i < e.dataTransfer.items.length; i++) {
+          //   const file = e.dataTransfer.items[i].getAsFile();
+          //   // If the dropped item was not an editor file, process as attachment
+          //   if (e.dataTransfer.items[i].kind === 'file') {
+          //     canLoadFile(activeAppInfo.value, file).then((canLoad: boolean) => {
+          //       if (canLoad) {
+          //         file.text().then((fileContent) => {
+          //           content.value = fileContent;
+          //         });
+          //       } else {
+          //         // Process as an attachment
+          //         const fileInfo: EventFileInfo = {
+          //           file,
+          //           size: file.size,
+          //           lastModified: file.lastModified,
+          //         };
+          //         getFileAsDataURL(file).then((dataUrl: string) => {
+          //           fileInfo.dataUrl = dataUrl;
+          //           onFileDropped(fileInfo);
+          //         });
+          //       }
+          //     });
+          //   }
 
           // check if default clipboard have files or not
           if (e.clipboardData.files.length > 0) {
@@ -427,10 +454,9 @@ export default defineComponent({
     async function onFileOpened(file: File) {
       // TODO: Push this into the API instead of hardcoding this check
       if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        // activeAppRef.value.loadContent(await file.arrayBuffer());
         activeAppRef.value.loadContentFromFile(file);
       } else {
-        activeAppRef.value.loadContent(await file.text());
+        content.value = await file.text();
       }
     }
 
@@ -447,6 +473,7 @@ export default defineComponent({
       activeAppInfo,
       activeAppRef,
       apps,
+      content,
       contentChanged,
       getActiveAppSupportedExtensionsAsString,
       getGraphEditorAppInfo,
@@ -537,6 +564,7 @@ export default defineComponent({
           :is='activeAppComponent',
           :isEditing='isEditing',
           :refreshLinkHandler='refreshLink',
+          :content='content',
           @content-changed='onContentChanged',
           :recentColors='recentColors',
           :scratchpadData='scratchpadData',
@@ -554,6 +582,7 @@ export default defineComponent({
           :is='activeAppComponent',
           :isEditing='isEditing',
           :refreshLinkHandler='refreshLink',
+          :content='content',
           @content-changed='onContentChanged',
           @hook:mounted='onActiveAppMounted'
         )
