@@ -21,6 +21,7 @@ const documentName = 'Spreadsheet';
 const defaultExtension = '.sheet';
 const otherSupportedExtensions = ['.xlsx'];
 const supportedExtensions = [defaultExtension, ...otherSupportedExtensions];
+const dropContainer = 'luckysheet-cell-main';
 
 function canLoadContent(content: string): boolean {
   return content.startsWith('[{"name":');
@@ -32,6 +33,7 @@ export function getAppInfo(): AppInfo {
     documentName,
     defaultExtension,
     supportedExtensions,
+    dropContainer,
     canLoadContent,
     asyncComponent: () => ({
       ...defaultAsyncComponentOptions,

@@ -1145,6 +1145,7 @@ const sheetmanage = {
         if(index==Store.currentSheetIndex){
             return;
         }
+       
 
         if(server.allowUpdate){
             $("#luckysheet-cell-main #luckysheet-multipleRange-show").empty();

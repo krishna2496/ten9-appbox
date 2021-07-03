@@ -16,6 +16,9 @@
 
 <script lang="ts">
 import luckysheet from '../lib/luckysheet';
+import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
+import sheetmanage from '../lib/luckysheet/controllers/sheetmanage';
+import Store from '../lib/luckysheet/store/index';
 import { CommonAppProps, CommonAppPropsOptions } from '@appsSupport/app_api';
 import { defineComponent, onMounted, nextTick, watch } from '@vue/composition-api';
 import { isString } from 'lodash';
@@ -51,6 +54,55 @@ export default defineComponent<SpreadsheetEditorProps>({
   },
 
   setup(props, ctx) {
+    const sheetsToRefresh = new Set();
+
+    function updateImage(imageId: string, imageSrc: string) {
+      const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+
+      imageCtrl.images[imageId].src = imageSrc;
+      Store.luckysheetfile[index].images = imageCtrl.images;
+      document.querySelector(`#${imageId} img`).setAttribute('src', imageSrc);
+    }
+
+    function onUpdated() {
+      ctx.emit('content-changed', true);
+    }
+
+    async function refreshCellLinks(imageId: string, dataSrc: string) {
+      const { url: newImageSrc } = await props.refreshLinkHandler(dataSrc);
+
+      if (newImageSrc && dataSrc !== newImageSrc) {
+        updateImage(imageId, newImageSrc);
+        // Luckysheet doesn't fire an updated hook on image update so we'll call it ourselves
+        onUpdated();
+      }
+    }
+
+    function onWorksheetActivateAfter(sheetIndex: number) {
+      if (sheetsToRefresh.has(sheetIndex)) {
+        const index = sheetmanage.getSheetIndex(sheetIndex);
+        if (Store.luckysheetfile[index].images) {
+          const allImages = Store.luckysheetfile[index].images;
+
+          for (const [key] of Object.entries(allImages)) {
+            refreshCellLinks(key, allImages[key].src);
+          }
+        }
+        sheetsToRefresh.delete(sheetIndex);
+      }
+    }
+
+    function onWorkbookCreateAfter() {
+      sheetsToRefresh.clear();
+
+      for (const [key] of Object.entries(Store.luckysheetfile)) {
+        sheetsToRefresh.add(Store.luckysheetfile[key].index);
+      }
+
+      // The initial worksheet is not activated so we'll call the hook ourselves
+      onWorksheetActivateAfter(Store.currentSheetIndex);
+    }
+
     function getContentType() {
       return 'application/json';
     }
@@ -77,9 +129,9 @@ export default defineComponent<SpreadsheetEditorProps>({
       lang: 'en',
       showinfobar: false,
       hook: {
-        updated: () => {
-          ctx.emit('content-changed', true);
-        },
+        updated: onUpdated,
+        workbookCreateAfter: onWorkbookCreateAfter,
+        sheetActivate: onWorksheetActivateAfter,
       },
     };
 
@@ -185,6 +237,44 @@ export default defineComponent<SpreadsheetEditorProps>({
       },
     );
 
+    function loadImage(url: string): Promise<string> {
+      const last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+      const rowIndex = last.row_focus || 0;
+      const colIndex = last.column_focus || 0;
+      const left = colIndex == 0 ? 0 : Store.visibledatacolumn[colIndex - 1];
+      const top = rowIndex == 0 ? 0 : Store.visibledatarow[rowIndex - 1];
+
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.addEventListener('load', () => {
+          const { width } = image,
+            { height } = image;
+
+          const img = {
+            src: url,
+            left: left,
+            top: top,
+            originWidth: width,
+            originHeight: height,
+          };
+          const imageId = imageCtrl.addImgItem(img);
+
+          resolve(imageId);
+        });
+
+        image.onerror = () => {
+          if (!url.startsWith('data:')) {
+            ctx.emit('paste-text', url);
+          }
+        };
+        image.src = url;
+      });
+    }
+
+    async function insertImage(dataUri: string) {
+      return await loadImage(dataUri);
+    }
+
     watch(
       () => props.isEditing,
       (val) => {
@@ -195,7 +285,9 @@ export default defineComponent<SpreadsheetEditorProps>({
     return {
       getContent,
       getContentType,
+      insertImage,
       resize,
+      updateImage,
     };
   },
 });

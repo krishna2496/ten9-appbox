@@ -264,9 +264,6 @@ export default defineComponent({
       }
 
       return searchStr.length == 0 || firstMatch != null;
-      // } catch {
-      //   alert(123);
-      // }
     }
 
     function replace(find = false) {

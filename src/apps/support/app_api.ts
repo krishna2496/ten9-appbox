@@ -42,6 +42,7 @@ export interface AppInfo {
   uniqueAppId: string;
   documentName: string;
   defaultExtension: string;
+  dropContainer: string;
   supportedExtensions: string[];
   canLoadContent(content: string): boolean;
   // TODO: Use a better type here

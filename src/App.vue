@@ -26,9 +26,9 @@ import {
 import { getAppInfo as getSpreadsheetEditorAppInfo } from '@/apps/spreadsheet_editor/index';
 import { AppInfo, canLoadFile, RefreshedLinkInfo } from '@appsSupport/app_api';
 
-// Uncomment the component imports to avoid async component loading
-// import GraphEditor from '@/apps/graph_editor/components/GraphEditor.vue';
-// import SpreadsheetEditor from '@/apps/spreadsheet_editor/components/SpreadsheetEditor.vue';
+// Comment the component imports to avoid async component loading
+import GraphEditor from '@/apps/graph_editor/components/GraphEditor.vue';
+import SpreadsheetEditor from '@/apps/spreadsheet_editor/components/SpreadsheetEditor.vue';
 
 import {
   computed,
@@ -143,17 +143,17 @@ export default defineComponent({
 
     const activeAppComponent = computed(() => {
       // Uncomment the switch statement below to avoid async component loading
-      // switch (activeAppInfo.value.uniqueAppId) {
-      //   case getGraphEditorAppInfo().uniqueAppId:
-      //     return GraphEditor;
-      //   case getSpreadsheetEditorAppInfo().uniqueAppId:
-      //     return SpreadsheetEditor;
-      //   default:
-      //     return null;
-      // }
+      switch (activeAppInfo.value.uniqueAppId) {
+        case getGraphEditorAppInfo().uniqueAppId:
+          return GraphEditor;
+        case getSpreadsheetEditorAppInfo().uniqueAppId:
+          return SpreadsheetEditor;
+        default:
+          return null;
+      }
 
       // Comment out the next line to avoid async component loading
-      return activeAppInfo.value?.asyncComponent;
+      // return activeAppInfo.value?.asyncComponent;
     });
 
     function updateAppHeight() {
@@ -285,92 +285,101 @@ export default defineComponent({
       });
     }
 
-    function initEventListeners() {
-      const drag: HTMLElement = document.getElementById('container');
+    function initEventListeners(dropContainer: string) {
+      const drag: HTMLElement = document.getElementById(dropContainer);
+      if (drag != null) {
+        const defaultDragHandler = (e: DragEvent) => {
+          e.stopPropagation();
+          e.preventDefault();
+        };
 
-      const defaultDragHandler = (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-      };
+        drag.addEventListener('dragenter', defaultDragHandler);
+        drag.addEventListener('dragleave', defaultDragHandler);
+        drag.addEventListener('dragover', defaultDragHandler);
 
-      drag.addEventListener('dragenter', defaultDragHandler);
-      drag.addEventListener('dragleave', defaultDragHandler);
-      drag.addEventListener('dragover', defaultDragHandler);
+        const dropHandler = (e: DragEvent) => {
+          e.stopPropagation();
+          e.preventDefault();
 
-      const dropHandler = (e: DragEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-
-        // Don't allow drops unless we're Editing
-        if (!isEditing.value) {
-          return;
-        }
-
-        for (let i = 0; i < e.dataTransfer.items.length; i++) {
-          const file = e.dataTransfer.items[i].getAsFile();
-          // If the dropped item was not an editor file, process as attachment
-          if (e.dataTransfer.items[i].kind === 'file') {
-            canLoadFile(activeAppInfo.value, file).then((canLoad: boolean) => {
-              if (canLoad) {
-                file.text().then((fileContent) => {
-                  content.value = fileContent;
-                });
-              } else {
-                // Process as an attachment
-                const fileInfo: EventFileInfo = {
-                  file,
-                  size: file.size,
-                  lastModified: file.lastModified,
-                };
-                getFileAsDataURL(file).then((dataUrl: string) => {
-                  fileInfo.dataUrl = dataUrl;
-                  onFileDropped(fileInfo);
-                });
-              }
-            });
+          // Don't allow drops unless we're Editing
+          if (!isEditing.value) {
+            return;
           }
-        }
-      };
 
-      drag.addEventListener('drop', dropHandler);
-
-      // Add our own ctrl+v event listener
-      drag.onpaste = (e) => {
-        // Don't allow pasting files in Preview Mode
-        if (isEditing.value) {
-          return;
-        }
-
-        if (e.clipboardData.types.indexOf('text/plain') >= 0) {
-          return;
-        }
-
-        // check if default clipboard have files or not
-        if (e.clipboardData.files.length > 0) {
-          for (let i = 0; i < e.clipboardData.files.length; i++) {
-            const file = e.clipboardData.files[i];
-            const fileInfo: EventFileInfo = {
-              file,
-              size: file.size,
-              lastModified: file.lastModified,
-            };
-            getFileAsDataURL(file).then((dataUrl: string) => {
-              fileInfo.dataUrl = dataUrl;
-              onImagePasted(fileInfo);
-            });
+          for (let i = 0; i < e.dataTransfer.items.length; i++) {
+            const file = e.dataTransfer.items[i].getAsFile();
+            // If the dropped item was not an editor file, process as attachment
+            if (e.dataTransfer.items[i].kind === 'file') {
+              canLoadFile(activeAppInfo.value, file).then((canLoad: boolean) => {
+                if (canLoad) {
+                  file.text().then((fileContent) => {
+                    activeAppRef.value.loadContent(fileContent);
+                  });
+                } else {
+                  // Process as an attachment
+                  const fileInfo: EventFileInfo = {
+                    file,
+                    size: file.size,
+                    lastModified: file.lastModified,
+                  };
+                  getFileAsDataURL(file).then((dataUrl: string) => {
+                    fileInfo.dataUrl = dataUrl;
+                    onFileDropped(fileInfo);
+                  });
+                }
+              });
+            }
           }
-        } else {
-          // TODO: Do we need this?
-          // TODO: Replace this with something generic from the App API
-          // if default clipboard doesn't have file then if act as normal paste
-          // const action = editor.value.editorUiRef.actions.get('paste');
-          // action.funct();
-        }
-      };
+        };
+
+        const handlePaste = (e: ClipboardEvent) => {
+          // Don't allow pasting files in Preview Mode
+          if (!isEditing.value) {
+            return;
+          }
+
+          const { files } = e.clipboardData;
+
+          if (files.length <= 0) {
+            return;
+          }
+
+          // check if default clipboard have files or not
+          if (e.clipboardData.files.length > 0) {
+            for (let i = 0; i < e.clipboardData.files.length; i++) {
+              const file = e.clipboardData.files[i];
+              const fileInfo: EventFileInfo = {
+                file,
+                size: file.size,
+                lastModified: file.lastModified,
+              };
+              getFileAsDataURL(file).then((dataUrl: string) => {
+                fileInfo.dataUrl = dataUrl;
+                onImagePasted(fileInfo);
+              });
+            }
+          } else {
+            // TODO: Do we need this?
+            // TODO: Replace this with something generic from the App API
+            // if default clipboard doesn't have file then if act as normal paste
+            // const action = editor.value.editorUiRef.actions.get('paste');
+            // action.funct();
+          }
+        };
+
+        drag.addEventListener('drop', dropHandler);
+        document.addEventListener('paste', (event) => {
+          handlePaste(event);
+        });
+
+        // Add our own ctrl+v event listener
+        drag.onpaste = (e) => {
+          handlePaste(e);
+        };
+      }
     }
 
     onMounted(() => {
-      initEventListeners();
       window.addEventListener('resize', onResize);
       document.addEventListener('keydown', onKeydown);
       updateAppHeight();
@@ -427,6 +436,12 @@ export default defineComponent({
       }
     }
 
+    function onActiveAppMounted() {
+      nextTick(() => {
+        initEventListeners(activeAppInfo.value.dropContainer);
+      });
+    }
+
     init();
 
     return {
@@ -450,6 +465,7 @@ export default defineComponent({
       saveFile,
       scratchpadData,
       setActiveApp,
+      onActiveAppMounted,
       shapeLibraries,
       theme,
       saveScratchpadData,
@@ -533,7 +549,8 @@ export default defineComponent({
           @recent-colors-changed='saveRecentColors',
           @scratchpad-data-changed='saveScratchpadData',
           @shape-libraries-changed='saveShapeLibraries',
-          @theme-changed='saveTheme'
+          @theme-changed='saveTheme',
+          @hook:mounted='onActiveAppMounted'
         )
         component(
           v-else-if='activeAppInfo.uniqueAppId === getSpreadsheetEditorAppInfo().uniqueAppId',
@@ -542,7 +559,8 @@ export default defineComponent({
           :isEditing='isEditing',
           :refreshLinkHandler='refreshLink',
           :content='content',
-          @content-changed='onContentChanged'
+          @content-changed='onContentChanged',
+          @hook:mounted='onActiveAppMounted'
         )
 </template>
 
