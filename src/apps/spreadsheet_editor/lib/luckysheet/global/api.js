@@ -5047,7 +5047,6 @@ export function setSheetShow(options = {}) {
  * @param {Function} options.success 操作结束的回调函数
  */
 export function setSheetActive(order, options = {}) {
-    debugger;
     if(order == null || !isRealNum(order) || Store.luckysheetfile[order] == null){
         return tooltip.info("The order parameter is invalid.", "");
     }
