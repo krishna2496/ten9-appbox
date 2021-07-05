@@ -16,9 +16,12 @@
 
 <script lang="ts">
 import luckysheet from '../lib/luckysheet';
-// import Store from '../lib/luckysheet/store';
-import { CommonAppPropsOptions } from '@appsSupport/app_api';
+import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
+import sheetmanage from '../lib/luckysheet/controllers/sheetmanage';
+import Store from '../lib/luckysheet/store/index';
+import { CommonAppProps, CommonAppPropsOptions } from '@appsSupport/app_api';
 import { defineComponent, onMounted, nextTick, watch } from '@vue/composition-api';
+import { isString } from 'lodash';
 import LuckyExcel from 'luckyexcel';
 
 interface simpleInt {
@@ -41,67 +44,123 @@ interface jsonSheet {
   info: typeOfSheetsJson;
 }
 
-export default defineComponent({
+interface SpreadsheetEditorProps extends CommonAppProps {}
+
+export default defineComponent<SpreadsheetEditorProps>({
   name: 'SpreadsheetEditor',
+
   props: {
     ...CommonAppPropsOptions,
   },
-  setup(_props, ctx) {
+
+  setup(props, ctx) {
+    const sheetsToRefresh = new Set();
+
+    function updateImage(imageId: string, imageSrc: string) {
+      const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+
+      imageCtrl.images[imageId].src = imageSrc;
+      Store.luckysheetfile[index].images = imageCtrl.images;
+      document.querySelector(`#${imageId} img`).setAttribute('src', imageSrc);
+    }
+
+    function onUpdated() {
+      ctx.emit('content-changed', true);
+    }
+
+    async function refreshCellLinks(imageId: string, dataSrc: string) {
+      const { url: newImageSrc } = await props.refreshLinkHandler(dataSrc);
+
+      if (newImageSrc && dataSrc !== newImageSrc) {
+        updateImage(imageId, newImageSrc);
+        // Luckysheet doesn't fire an updated hook on image update so we'll call it ourselves
+        onUpdated();
+      }
+    }
+
+    function onWorksheetActivateAfter(sheetIndex: number) {
+      if (sheetsToRefresh.has(sheetIndex)) {
+        const index = sheetmanage.getSheetIndex(sheetIndex);
+        if (Store.luckysheetfile[index].images) {
+          const allImages = Store.luckysheetfile[index].images;
+
+          for (const [key] of Object.entries(allImages)) {
+            refreshCellLinks(key, allImages[key].src);
+          }
+        }
+        sheetsToRefresh.delete(sheetIndex);
+      }
+    }
+
+    function onWorkbookCreateAfter() {
+      sheetsToRefresh.clear();
+
+      for (const [key] of Object.entries(Store.luckysheetfile)) {
+        sheetsToRefresh.add(Store.luckysheetfile[key].index);
+      }
+
+      // The initial worksheet is not activated so we'll call the hook ourselves
+      onWorksheetActivateAfter(Store.currentSheetIndex);
+    }
+
+    function getContentType() {
+      return 'application/json';
+    }
+
+    function getContent() {
+      const allSheetData = luckysheet.getluckysheetfile();
+      return JSON.stringify(allSheetData);
+    }
+
+    const luckysheetDefaultData = [
+      {
+        name: 'Sheet1',
+        color: '',
+        index: 1,
+        status: 0,
+        order: 1,
+        celldata: [] as unknown,
+        config: {},
+      },
+    ];
+
     const luckysheetDefaultOptions = {
       container: 'luckysheet',
       lang: 'en',
       showinfobar: false,
-      editMode: !_props.isEditing,
       hook: {
-        updated: () => {
-          ctx.emit('content-changed', true);
-        },
+        updated: onUpdated,
+        workbookCreateAfter: onWorkbookCreateAfter,
+        sheetActivate: onWorksheetActivateAfter,
       },
     };
 
-    onMounted(() => {
-      nextTick(() => {
-        luckysheet.create({
-          ...luckysheetDefaultOptions,
-          data: [
-            {
-              name: 'Sheet1',
-              color: '',
-              index: 1,
-              status: 0,
-              order: 1,
-              celldata: [],
-              config: {},
-            },
-          ],
-        });
-      });
-    });
-
     function loadExcelFile(file: File) {
-      LuckyExcel.transformExcelToLucky(file, (exportJson: jsonSheet) => {
-        if (exportJson.sheets == null || exportJson.sheets.length == 0) {
-          throw Error(
-            'Failed to read the content of the excel file, currently does not support xls files!',
-          );
-        }
-        luckysheet.destroy();
-
-        luckysheet.create({
-          ...luckysheetDefaultOptions,
-          data: exportJson.sheets,
+      nextTick(() => {
+        LuckyExcel.transformExcelToLucky(file, (exportJson: jsonSheet) => {
+          if (exportJson.sheets == null || exportJson.sheets.length == 0) {
+            throw Error(
+              'Failed to read the content of the excel file, currently does not support xls files!',
+            );
+          }
+          luckysheet.create({
+            ...luckysheetDefaultOptions,
+            data: exportJson.sheets,
+          });
+          luckysheet.setReadOnlyMode(!props.isEditing);
         });
       });
     }
 
     function loadContent(content: string) {
       try {
-        if (!content) return;
-        const fileData = JSON.parse(content);
-        luckysheet.destroy();
+        let fileData;
+        if (content) {
+          fileData = JSON.parse(content);
+        }
         luckysheet.create({
           ...luckysheetDefaultOptions,
-          data: fileData,
+          data: content ? fileData : luckysheetDefaultData,
         });
       } catch (e) {
         if (e instanceof SyntaxError) {
@@ -114,65 +173,121 @@ export default defineComponent({
           throw e;
         }
       }
+      luckysheet.setReadOnlyMode(!props.isEditing);
     }
 
-    function loadSpreadsheetNativeFile(file: File) {
-      const reader = new FileReader();
-      reader.addEventListener('load', () => {
-        const content = reader.result as string;
-        loadContent(content);
+    // TODO: Support loading from file?
+    // function loadSpreadsheetNativeFile(file: File) {
+    //   const reader = new FileReader();
+    //   reader.addEventListener('load', () => {
+    //     const content = reader.result as string;
+    //     loadContent(content);
+    //   });
+    //   reader.readAsText(file);
+    // }
+
+    // TODO: Support loading from file?
+    // function loadContentFromFile(file: File) {
+    //   if (file.name.indexOf('.') < 0) {
+    //     throw Error(`No file extension found in file name (${file.name})`);
+    //   }
+
+    //   const ext = `.${file.name.split('.').pop()}`;
+
+    //   // Read native files is (.sheet)
+    //   if (ext === '.sheet') {
+    //     loadSpreadsheetNativeFile(file);
+    //   } else if (ext === '.xlsx') {
+    //     loadExcelFile(file);
+    //   } else {
+    //     throw Error(`Unsupported extension: ${ext}`);
+    //   }
+    // }
+
+    onMounted(() => {
+      nextTick(() => {
+        // TODO: Support loading from file?
+        // if (props.file) {
+        //   loadContentFromFile(props.file);
+        // } else {
+        loadContent(props.content as string);
+        // }
       });
-      reader.readAsText(file);
-    }
-
-    function loadContentFromFile(file: File) {
-      if (file.name.indexOf('.') < 0) {
-        throw Error(`No file extension found in file name (${file.name})`);
-      }
-
-      const ext = `.${file.name.split('.').pop()}`;
-
-      // Read native files is (.sheet)
-      if (ext === '.sheet') {
-        loadSpreadsheetNativeFile(file);
-      } else if (ext === '.xlsx') {
-        loadExcelFile(file);
-      } else {
-        throw Error(`Unsupported extension: ${ext}`);
-      }
-    }
-
-    function getContent() {
-      const allSheetData = luckysheet.getluckysheetfile();
-      return JSON.stringify(allSheetData);
-    }
-
-    function getContentType() {
-      return 'application/json';
-    }
+    });
 
     const resize = () => {
-      luckysheet.resize();
+      try {
+        luckysheet.resize();
+      } catch (e) {
+        // eat errors during resize
+      }
     };
 
+    /**
+     * Content is not set immediately, we will watch it and set
+     * the value when it is.
+     */
     watch(
-      () => _props.isEditing,
-      () => {
-        const allSheetData = luckysheet.getluckysheetfile();
-        luckysheetDefaultOptions.editMode = !_props.isEditing;
-        luckysheet.create({
-          ...luckysheetDefaultOptions,
-          data: allSheetData,
+      () => props.content,
+      (val) => {
+        if (!isString(val)) return;
+        if (getContent() !== val) {
+          loadContent(val);
+        }
+      },
+    );
+
+    function loadImage(url: string): Promise<string> {
+      const last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+      const rowIndex = last.row_focus || 0;
+      const colIndex = last.column_focus || 0;
+      const left = colIndex == 0 ? 0 : Store.visibledatacolumn[colIndex - 1];
+      const top = rowIndex == 0 ? 0 : Store.visibledatarow[rowIndex - 1];
+
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.addEventListener('load', () => {
+          const { width } = image,
+            { height } = image;
+
+          const img = {
+            src: url,
+            left: left,
+            top: top,
+            originWidth: width,
+            originHeight: height,
+          };
+          const imageId = imageCtrl.addImgItem(img);
+
+          resolve(imageId);
         });
+
+        image.onerror = () => {
+          if (!url.startsWith('data:')) {
+            ctx.emit('paste-text', url);
+          }
+        };
+        image.src = url;
+      });
+    }
+
+    async function insertImage(dataUri: string) {
+      return await loadImage(dataUri);
+    }
+
+    watch(
+      () => props.isEditing,
+      (val) => {
+        luckysheet.setReadOnlyMode(!val);
       },
     );
 
     return {
       getContent,
       getContentType,
-      loadContent,
-      loadContentFromFile,
+      insertImage,
       resize,
+      updateImage,
     };
   },
 });
@@ -182,6 +297,7 @@ export default defineComponent({
 div
   #luckysheet
 </template>
+
 <style scoped>
 #luckysheet {
   margin: 0;

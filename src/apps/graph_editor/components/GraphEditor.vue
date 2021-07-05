@@ -28,7 +28,7 @@ import {
   CommonAppProps,
   CommonAppPropsOptions,
 } from '@appsSupport/app_api';
-import { debounce } from 'lodash';
+import { debounce, isString } from 'lodash';
 require('../lib/diagramly/DrawioFile.js');
 require('../lib/diagramly/LocalFile.js');
 require('../lib/diagramly/EditorUi.js');
@@ -203,6 +203,7 @@ export default defineComponent<GraphEditorProps>({
 
     async function refreshCellLinks(cell: typeof mxCell) {
       const graph = graphRef.value;
+
       const style = graph.getCurrentCellStyle(cell);
 
       // Refresh the image links
@@ -233,7 +234,6 @@ export default defineComponent<GraphEditorProps>({
     function refreshCurrentPageLinks() {
       const graph = graphRef.value;
       const editorUi = editorUiRef.value;
-
       if (!props.refreshLinkHandler || !props.isEditing) {
         return;
       }
@@ -709,6 +709,16 @@ export default defineComponent<GraphEditorProps>({
     function imageInsert(url: string) {
       insertImage(url);
     }
+
+    watch(
+      () => props.content,
+      (val) => {
+        if (!isString(val)) return;
+        if (getContent() !== val) {
+          loadContent(val);
+        }
+      },
+    );
 
     watch(
       () => props.isEditing,

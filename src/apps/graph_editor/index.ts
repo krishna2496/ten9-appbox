@@ -26,6 +26,7 @@ const documentName = 'Diagram';
 const defaultExtension = '.draw';
 const otherSupportedExtensions = ['.drawio', '.xml'];
 const supportedExtensions = [defaultExtension, ...otherSupportedExtensions];
+const dropContainer = 'container';
 
 function canLoadContent(content: string): boolean {
   return content.startsWith('<mxfile ') || content.startsWith('<mxGraphModel ');
@@ -37,6 +38,7 @@ export function getAppInfo(): AppInfo {
     documentName,
     defaultExtension,
     supportedExtensions,
+    dropContainer,
     canLoadContent,
     asyncComponent: () => ({
       ...defaultAsyncComponentOptions,
