@@ -7360,3 +7360,8 @@ fieldset[disabled] .btn-danger.focus {
 .ctBox input.formulaInputFocus {
     height: 25px;
 }
+
+.fas, .fa-solid {
+    font-weight: 600 !important;
+    color: rgb(102, 102, 102) !important;
+}

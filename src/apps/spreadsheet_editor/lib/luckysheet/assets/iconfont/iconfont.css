@@ -15,9 +15,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.luckysheet-iconfont-lianjie:before {
+/* .luckysheet-iconfont-lianjie:before {
   content: "\e7f8";
-}
+} */
 
 .luckysheet-iconfont-dayinquyu:before {
   content: "\e7f5";
@@ -43,9 +43,9 @@
   content: "\e7f4";
 }
 
-.luckysheet-iconfont-biaogesuoding:before {
+/* .luckysheet-iconfont-biaogesuoding:before {
   content: "\e7ee";
-}
+} */
 
 .luckysheet-iconfont-zhuandao1:before {
   content: "\e7f1";
@@ -65,6 +65,9 @@
 
 .luckysheet-iconfont-dongjie1:before {
   content: "\e7e1";
+  font-size: 19px;
+  font-weight: 600;
+  color: rgb(102, 102, 102) !important;
 }
 
 .luckysheet-iconfont-jian1:before {
@@ -119,17 +122,17 @@
   content: "\e7e0";
 }
 
-.luckysheet-iconfont-wenbenqingxie1:before {
+/* .luckysheet-iconfont-wenbenqingxie1:before {
   content: "\e7de";
-}
+} */
 
-.luckysheet-iconfont-jiacu:before {
+/* .luckysheet-iconfont-jiacu:before {
   content: "\e7d9";
-}
-
+} */
+/* 
 .luckysheet-iconfont-sousuo:before {
   content: "\e78a";
-}
+} */
 
 .luckysheet-iconfont-guanbi:before {
   content: "\e78b";
@@ -151,13 +154,13 @@
   content: "\e78f";
 }
 
-.luckysheet-iconfont-shujutoushi:before {
+/* .luckysheet-iconfont-shujutoushi:before {
   content: "\e790";
-}
+} */
 
-.luckysheet-iconfont-tianchong:before {
+/* .luckysheet-iconfont-tianchong:before {
   content: "\e791";
-}
+} */
 
 .luckysheet-iconfont-zengjiaxiaoshuwei:before {
   content: "\e792";
@@ -167,9 +170,9 @@
   content: "\e793";
 }
 
-.luckysheet-iconfont-jieping:before {
+/* .luckysheet-iconfont-jieping:before {
   content: "\e794";
-}
+} */
 
 .luckysheet-iconfont-jianxiaoxiaoshuwei:before {
   content: "\e796";
@@ -203,13 +206,13 @@
   content: "\e79d";
 }
 
-.luckysheet-iconfont-dayin:before {
+/* .luckysheet-iconfont-dayin:before {
   content: "\e79e";
-}
+} */
 
-.luckysheet-iconfont-wenbenfenge:before {
+/* .luckysheet-iconfont-wenbenfenge:before {
   content: "\e79f";
-}
+} */
 
 .luckysheet-iconfont-hanshu:before {
   content: "\e7a0";
@@ -223,9 +226,9 @@
   content: "\e7a2";
 }
 
-.luckysheet-iconfont-tupian:before {
+/* .luckysheet-iconfont-tupian:before {
   content: "\e7a3";
-}
+} */
 
 .luckysheet-iconfont-xiangxia90:before {
   content: "\e7a4";
@@ -235,9 +238,9 @@
   content: "\e7a5";
 }
 
-.luckysheet-iconfont-quanjiabiankuang:before {
+/* .luckysheet-iconfont-quanjiabiankuang:before {
   content: "\e7a6";
-}
+} */
 
 .luckysheet-iconfont-shengxu:before {
   content: "\e7a7";
@@ -247,9 +250,9 @@
   content: "\e7a8";
 }
 
-.luckysheet-iconfont-jine:before {
+/* .luckysheet-iconfont-jine:before {
   content: "\e7a9";
-}
+} */
 
 .luckysheet-iconfont-caidan1:before {
   content: "\e7aa";
@@ -259,9 +262,9 @@
   content: "\e7ab";
 }
 
-.luckysheet-iconfont-wenbenxiahuaxian:before {
+/* .luckysheet-iconfont-wenbenxiahuaxian:before {
   content: "\e7ac";
-}
+} */
 
 .luckysheet-iconfont-shangbiankuang:before {
   content: "\e7ad";
@@ -291,33 +294,33 @@
   content: "\e7b3";
 }
 
-.luckysheet-iconfont-wenbenshanchuxian:before {
+/* .luckysheet-iconfont-wenbenshanchuxian:before {
   content: "\e7b4";
-}
+} */
 
 .luckysheet-iconfont-wenbenyouduiqi:before {
   content: "\e7b5";
 }
 
-.luckysheet-iconfont-qianjin:before {
+/* .luckysheet-iconfont-qianjin:before {
   content: "\e7b6";
-}
+} */
 
-.luckysheet-iconfont-tubiao:before {
+/* .luckysheet-iconfont-tubiao:before {
   content: "\e7b7";
-}
+} */
 
 .luckysheet-iconfont-youbiankuang:before {
   content: "\e7b8";
 }
 
-.luckysheet-iconfont-baifenhao:before {
+/* .luckysheet-iconfont-baifenhao:before {
   content: "\e7b9";
-}
+} */
 
-.luckysheet-iconfont-geshishua:before {
+/* .luckysheet-iconfont-geshishua:before {
   content: "\e7ba";
-}
+} */
 
 .luckysheet-iconfont-baocun:before {
   content: "\e7bb";
@@ -333,6 +336,9 @@
 
 .luckysheet-iconfont-geshitiaojian:before {
   content: "\e7be";
+  font-size: 19px;
+  font-weight: 600;
+  color: rgb(102, 102, 102) !important;
 }
 
 .luckysheet-iconfont-zidonghuanhang:before {
@@ -383,9 +389,9 @@
   content: "\e7ca";
 }
 
-.luckysheet-iconfont-shaixuan:before {
+/* .luckysheet-iconfont-shaixuan:before {
   content: "\e7cb";
-}
+} */
 
 .luckysheet-iconfont-gengxin:before {
   content: "\e7cc";
@@ -399,17 +405,17 @@
   content: "\e7ce";
 }
 
-.luckysheet-iconfont-zhushi:before {
+/* .luckysheet-iconfont-zhushi:before {
   content: "\e7cf";
-}
+} */
 
 .luckysheet-iconfont-jian:before {
   content: "\e7d0";
 }
 
-.luckysheet-iconfont-jisuan:before {
+/* .luckysheet-iconfont-jisuan:before {
   content: "\e7d1";
-}
+} */
 
 .luckysheet-iconfont-jia:before {
   content: "\e7d2";
@@ -435,13 +441,13 @@
   content: "\e7d7";
 }
 
-.luckysheet-iconfont-wenbenzuoduiqi:before {
+/* .luckysheet-iconfont-wenbenzuoduiqi:before {
   content: "\e7d8";
-}
+} */
 
-.luckysheet-iconfont-houtui:before {
+/* .luckysheet-iconfont-houtui:before {
   content: "\e7da";
-}
+} */
 
 .luckysheet-iconfont-shuipinghebing:before {
   content: "\e7db";
