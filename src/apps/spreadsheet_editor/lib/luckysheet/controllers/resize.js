@@ -440,6 +440,7 @@ export function menuToolBarWidth() {
             return -1;
         }
     }
+    $('#luckysheet-wa-editor').find('br').remove();
     toobarElements.forEach((curr,index,arr)=>{
         arr[index] = curr.ele;
 

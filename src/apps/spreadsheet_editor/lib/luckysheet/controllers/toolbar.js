@@ -301,7 +301,9 @@ export function createToolbarHtml() {
                     </div>
                 </div>
             </div>
-        </div>`, //'Italic (Ctrl+I)'
+        </div>
+        ${ /* TEN9: line break added to resolve flicker issue */'' }
+        <br/>`, //'Italic (Ctrl+I)'
         strikethrough: `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.strikethrough}"
         id="luckysheet-icon-strikethrough" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
@@ -631,6 +633,23 @@ export function createToolbarHtml() {
                 </div>
             </div>
         </div>`, //'chart' (the icon is hidden, but if the chart plugin is configured, you can still create a new chart by right click)
+        postil: `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.postil}"
+        id="luckysheet-icon-postil" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-icon-img-container luckysheet-toolbar-menu-button-caption luckysheet-inline-block iconfont luckysheet-iconfont-zhushi"
+                    style="user-select: none;">
+                    </div>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
+                    style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        ${ /* TEN9: line break added to resolve flicker issue */'' }
+        <br/>`, //'comment'
         pivotTable: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
         data-tips="${toolbar.pivotTable}" id="luckysheet-pivot-btn-title" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
