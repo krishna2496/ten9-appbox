@@ -23,8 +23,11 @@ export const DEFAULT_RECENT_COLORS = '';
 
 const uniqueAppId = 'ten9-graph-editor';
 const documentName = 'Diagram';
-const defaultExtension = '.draw';
-const otherSupportedExtensions = ['.drawio', '.xml'];
+const defaultExtension = { ext: '.draw', binary: false };
+const otherSupportedExtensions = [
+  { ext: '.drawio', binary: false },
+  { ext: '.xml', binary: false },
+];
 const supportedExtensions = [defaultExtension, ...otherSupportedExtensions];
 const dropContainer = 'container';
 
