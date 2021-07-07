@@ -7,6 +7,7 @@ import { getObjType, camel2split } from '../utils/util';
 export const defaultToolbar = [
     'undo',
     'redo',
+    'print',
     'paintFormat',
     '|',
 
@@ -55,8 +56,7 @@ export const defaultToolbar = [
     'splitColumn',
     'screenshot',
     'findAndReplace',
-    'protection',
-    'print'
+    'protection'
 ];
 
 // 工具栏按钮 id 关系
@@ -204,6 +204,11 @@ export function createToolbarHtml() {
                     style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-decrease iconfont luckysheet-iconfont-jianxiaoxiaoshuwei"
                         style="user-select: none;">
+                        <span class="fa-layers fa-fw decimal-place">
+                            <i class="fas fa-period"></i>
+                            <i class="fas fa-0"></i>
+                            <i class="fas fa-left"></i>
+                        </span>
                         </div>
                     </div>
                 </div>
@@ -219,6 +224,11 @@ export function createToolbarHtml() {
                     style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-increase iconfont luckysheet-iconfont-zengjiaxiaoshuwei"
                         style="user-select: none;">
+                            <span class="fa-layers fa-fw decimal-place">
+                                <i class="fas fa-period" data-fa-transform="shrink-8 up-6"></i>
+                                <i class="fas fa-0" data-fa-transform="shrink-8 up-6"></i>
+                                <i class="fas fa-right" data-fa-transform="shrink-8 left-6"></i>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -229,11 +239,8 @@ export function createToolbarHtml() {
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                style="user-select: none;">
-                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                    style="user-select: none;">
-                        ${defaultFmtArray[0].text}
-                    </div>
+                style="user-select: none;">123
+                   
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
                     style="user-select: none;">
                     </div>
@@ -338,6 +345,9 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
+                        <span class="fa-layers fa-fw">
+                            <i class="fas fa-font fa-stack-1x fa-dash"></i>
+                        </span>
                         <div class="luckysheet-color-menu-button-indicator" style="border-bottom-color: rgb(0, 0, 0); user-select: none;">
                             <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                                 <div class="text-color-bar" style="background-color:${luckysheetConfigsetting.defaultTextColor}"></div>

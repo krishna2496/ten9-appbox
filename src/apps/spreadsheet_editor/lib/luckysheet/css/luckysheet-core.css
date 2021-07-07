@@ -7362,6 +7362,42 @@ fieldset[disabled] .btn-danger.focus {
 }
 
 .fas, .fa-solid {
+    font-size: 12px;
     font-weight: 600 !important;
-    color: rgb(102, 102, 102) !important;
+    color: rgba(0,0,0,.7) !important;
+}
+
+.luckysheet-work-area {
+    font-family: roboto !important; 
+    font-size: 12px !important; 
+    white-space: nowrap !important; 
+    background: #fff !important; 
+    box-shadow: none !important; 
+    font-size: 13px !important;
+    font-weight: normal;
+
+    /* font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif; */
+}
+.luckysheet-wa-editor {
+    background: #fff !important; 
+}
+.icon {
+    min-width: 24px;
+    vertical-align: middle;
+}
+
+.luckysheet-inline-block {
+    font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+    font-size: 12px;
+    font-weight: 550 !important;
+    color: rgba(0,0,0,.7) !important;
+}
+/* .fa-stack { font-size: 10px; }
+.fa-stack-2x {
+    font-size: 12px;
+} */
+.fa-stack-1x {font-size: 12px; }
+
+.decimal-place .fas {
+    font-size: 10px;
 }
