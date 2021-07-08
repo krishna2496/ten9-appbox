@@ -179,33 +179,31 @@ export default defineComponent<SpreadsheetEditorProps>({
       luckysheet.setReadOnlyMode(!props.isEditing);
     }
 
-    // TODO: Support loading from file?
-    // function loadSpreadsheetNativeFile(file: File) {
-    //   const reader = new FileReader();
-    //   reader.addEventListener('load', () => {
-    //     const content = reader.result as string;
-    //     loadContent(content);
-    //   });
-    //   reader.readAsText(file);
-    // }
+    function loadSpreadsheetNativeFile(file: File) {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        const content = reader.result as string;
+        loadContent(content);
+      });
+      reader.readAsText(file);
+    }
 
-    // TODO: Support loading from file?
-    // function loadContentFromFile(file: File) {
-    //   if (file.name.indexOf('.') < 0) {
-    //     throw Error(`No file extension found in file name (${file.name})`);
-    //   }
+    function loadContentFromFile(file: File) {
+      if (file.name.indexOf('.') < 0) {
+        throw Error(`No file extension found in file name (${file.name})`);
+      }
 
-    //   const ext = `.${file.name.split('.').pop()}`;
+      const ext = `.${file.name.split('.').pop()}`;
 
-    //   // Read native files is (.sheet)
-    //   if (ext === '.sheet') {
-    //     loadSpreadsheetNativeFile(file);
-    //   } else if (ext === '.xlsx') {
-    //     loadExcelFile(file);
-    //   } else {
-    //     throw Error(`Unsupported extension: ${ext}`);
-    //   }
-    // }
+      // Read native files is (.sheet)
+      if (ext === '.sheet') {
+        loadSpreadsheetNativeFile(file);
+      } else if (ext === '.xlsx') {
+        loadExcelFile(file);
+      } else {
+        throw Error(`Unsupported extension: ${ext}`);
+      }
+    }
 
     onMounted(() => {
       nextTick(() => {
@@ -290,6 +288,7 @@ export default defineComponent<SpreadsheetEditorProps>({
       getContentType,
       insertImage,
       loadContent,
+      loadContentFromFile,
       loadExcelFile,
       resize,
       updateImage,

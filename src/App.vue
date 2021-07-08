@@ -312,9 +312,7 @@ export default defineComponent({
             if (e.dataTransfer.items[i].kind === 'file') {
               canLoadFile(activeAppInfo.value, file).then((canLoad: boolean) => {
                 if (canLoad) {
-                  file.text().then((fileContent) => {
-                    activeAppRef.value.loadContent(fileContent);
-                  });
+                  activeAppRef.value.loadContentFromFile(file);
                 } else {
                   // Process as an attachment
                   const fileInfo: EventFileInfo = {
@@ -429,12 +427,7 @@ export default defineComponent({
     }
 
     async function onFileOpened(file: File) {
-      // TODO: Push this into the API instead of hardcoding this check
-      if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        activeAppRef.value.loadContentFromFile(file);
-      } else {
-        content.value = await file.text();
-      }
+      await activeAppRef.value.loadContentFromFile(file);
     }
 
     function onActiveAppMounted() {
