@@ -906,13 +906,20 @@ const luckysheetlodingHTML = function (target, coverConfig) {
     // TEN9: Update for missing import
     // const id = "luckysheet-loading-" + uuid.v4();
     const id = "luckysheet-loading-" + UUIDv4();
+    // TEN9: Use our own loading spinner
+    // const loadingHtml = `
+    //     <div class="luckysheet-loading-content">
+    //         <div class="${config.imageClass} luckysheet-loading-image">
+    //             ${imageHtml}
+    //         </div>
+    //         <div class="${config.textClass} luckysheet-loading-text">
+    //         <span>${config.text}</span>
+    //         </div>
+    //     </div>`;
     const loadingHtml = `
         <div class="luckysheet-loading-content">
-            <div class="${config.imageClass} luckysheet-loading-image">
-                ${imageHtml}
-            </div>
-            <div class="${config.textClass} luckysheet-loading-text">
-            <span>${config.text}</span>
+            <div class="gl-spinner-container" style="padding: 10px;">
+                <span aria-label="Loading" class="align-text-bottom gl-spinner gl-spinner-dark gl-spinner-lg"></span>
             </div>
         </div>`;
     const loading = document.createElement("div");

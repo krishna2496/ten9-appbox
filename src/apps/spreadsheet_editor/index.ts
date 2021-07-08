@@ -18,13 +18,16 @@ import { AppInfo, defaultAsyncComponentOptions } from '@appsSupport/app_api';
 
 const uniqueAppId = 'ten9-spreadsheet-editor-luckysheet';
 const documentName = 'Spreadsheet';
-const defaultExtension = '.sheet';
-const otherSupportedExtensions = ['.xlsx'];
+const defaultExtension = { ext: '.sheet', binary: false };
+const otherSupportedExtensions = [{ ext: '.xlsx', binary: true }];
 const supportedExtensions = [defaultExtension, ...otherSupportedExtensions];
 const dropContainer = 'luckysheet-cell-main';
 
-function canLoadContent(content: string): boolean {
-  return content.startsWith('[{"name":');
+function canLoadContent(content: string | ArrayBuffer): boolean {
+  if (typeof content === 'string') {
+    return content.startsWith('[{"name":');
+  }
+  return false;
 }
 
 export function getAppInfo(): AppInfo {
@@ -37,7 +40,7 @@ export function getAppInfo(): AppInfo {
     canLoadContent,
     asyncComponent: () => ({
       ...defaultAsyncComponentOptions,
-      component: import('@/apps/spreadsheet_editor/components/SpreadsheetEditor.vue'),
+      component: import('./components/SpreadsheetEditor.vue'),
     }),
   };
 }

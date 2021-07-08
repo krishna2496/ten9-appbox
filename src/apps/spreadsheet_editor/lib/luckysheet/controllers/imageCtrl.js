@@ -52,7 +52,7 @@ const imageCtrl = {
     inserImg: function(src){
        // TEN9: Insert image code added to spreadsheet editor
        /*let _this = this;
-        
+
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
         let rowIndex = last.row_focus || 0;
         let colIndex = last.column_focus || 0;
@@ -73,7 +73,7 @@ const imageCtrl = {
             }
 
             _this.addImgItem(img);
-        } 
+        }
         image.src = src; */
     },
     generateRandomId: function(prefix) {
@@ -669,6 +669,7 @@ const imageCtrl = {
         _this.images[id] = imgItem;
         _this.ref();
         _this.init();
+        // TEN9: Return image ID so we can update it later if needed
         return id;
     },
     moveImgItem: function() {
@@ -894,10 +895,10 @@ const imageCtrl = {
     },
     pasteImgItem: function() {
         let _this = this;
-        
+
         // latest commit 6a474dc
-        if(_this.images == null){	
-            _this.images = {};	
+        if(_this.images == null){
+            _this.images = {};
         }
 
         // latest commit 6a474dc

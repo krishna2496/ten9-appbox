@@ -440,6 +440,8 @@ export function menuToolBarWidth() {
             return -1;
         }
     }
+    // TEN9: Added BR remove to avoid flicker when opening new spreadsheet
+    //       https://gitlab.com/ten9external/grapheditor/01/grapheditor_01/-/issues/119
     $('#luckysheet-wa-editor').find('br').remove();
     toobarElements.forEach((curr,index,arr)=>{
         arr[index] = curr.ele;
