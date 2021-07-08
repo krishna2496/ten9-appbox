@@ -226,7 +226,7 @@ export default defineComponent({
       const fileContent = activeAppRef.value.getContent();
       const contentType = activeAppRef.value.getContentType();
       const filename = activeAppInfo.value.documentName.toLowerCase();
-      const ext = activeAppInfo.value.defaultExtension;
+      const { ext } = activeAppInfo.value.defaultExtension;
 
       const blob = new Blob([fileContent], { type: contentType });
 
@@ -312,9 +312,7 @@ export default defineComponent({
             if (e.dataTransfer.items[i].kind === 'file') {
               canLoadFile(activeAppInfo.value, file).then((canLoad: boolean) => {
                 if (canLoad) {
-                  file.text().then((fileContent) => {
-                    activeAppRef.value.loadContent(fileContent);
-                  });
+                  activeAppRef.value.loadContentFromFile(file);
                 } else {
                   // Process as an attachment
                   const fileInfo: EventFileInfo = {
@@ -396,7 +394,7 @@ export default defineComponent({
     function getSupportedExtensions() {
       const exts = new Set();
       for (const app of Object.values(apps.value)) {
-        exts.add(app.supportedExtensions);
+        exts.add(app.supportedExtensions.map((item) => item.ext));
       }
       return exts;
     }
@@ -406,9 +404,10 @@ export default defineComponent({
     }
 
     function getActiveAppSupportedExtensionsAsString() {
-      // return '.draw';
       if (activeAppInfo.value) {
-        return Array.from(activeAppInfo.value.supportedExtensions).join(', ');
+        return Array.from(activeAppInfo.value.supportedExtensions.map((item) => item.ext)).join(
+          ', ',
+        );
       }
       return '';
     }
@@ -428,12 +427,7 @@ export default defineComponent({
     }
 
     async function onFileOpened(file: File) {
-      // TODO: Push this into the API instead of hardcoding this check
-      if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        activeAppRef.value.loadContentFromFile(file);
-      } else {
-        content.value = await file.text();
-      }
+      await activeAppRef.value.loadContentFromFile(file);
     }
 
     function onActiveAppMounted() {

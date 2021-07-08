@@ -15,11 +15,16 @@
 -->
 
 <script lang="ts">
+import { getAppInfo } from '../index';
 import luckysheet from '../lib/luckysheet';
 import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
 import sheetmanage from '../lib/luckysheet/controllers/sheetmanage';
 import Store from '../lib/luckysheet/store/index';
-import { CommonAppProps, CommonAppPropsOptions } from '@appsSupport/app_api';
+import {
+  canLoadFile as canLoadFileHelper,
+  CommonAppProps,
+  CommonAppPropsOptions,
+} from '@appsSupport/app_api';
 import { defineComponent, onMounted, nextTick, watch } from '@vue/composition-api';
 import { isString } from 'lodash';
 import LuckyExcel from 'luckyexcel';
@@ -136,19 +141,17 @@ export default defineComponent<SpreadsheetEditorProps>({
     };
 
     function loadExcelFile(file: File) {
-      nextTick(() => {
-        LuckyExcel.transformExcelToLucky(file, (exportJson: jsonSheet) => {
-          if (exportJson.sheets == null || exportJson.sheets.length == 0) {
-            throw Error(
-              'Failed to read the content of the excel file, currently does not support xls files!',
-            );
-          }
-          luckysheet.create({
-            ...luckysheetDefaultOptions,
-            data: exportJson.sheets,
-          });
-          luckysheet.setReadOnlyMode(!props.isEditing);
+      LuckyExcel.transformExcelToLucky(file, (exportJson: jsonSheet) => {
+        if (exportJson.sheets == null || exportJson.sheets.length == 0) {
+          throw Error(
+            'Failed to read the content of the excel file, currently does not support xls files!',
+          );
+        }
+        luckysheet.create({
+          ...luckysheetDefaultOptions,
+          data: exportJson.sheets,
         });
+        luckysheet.setReadOnlyMode(!props.isEditing);
       });
     }
 
@@ -176,42 +179,35 @@ export default defineComponent<SpreadsheetEditorProps>({
       luckysheet.setReadOnlyMode(!props.isEditing);
     }
 
-    // TODO: Support loading from file?
-    // function loadSpreadsheetNativeFile(file: File) {
-    //   const reader = new FileReader();
-    //   reader.addEventListener('load', () => {
-    //     const content = reader.result as string;
-    //     loadContent(content);
-    //   });
-    //   reader.readAsText(file);
-    // }
+    function loadSpreadsheetNativeFile(file: File) {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        const content = reader.result as string;
+        loadContent(content);
+      });
+      reader.readAsText(file);
+    }
 
-    // TODO: Support loading from file?
-    // function loadContentFromFile(file: File) {
-    //   if (file.name.indexOf('.') < 0) {
-    //     throw Error(`No file extension found in file name (${file.name})`);
-    //   }
+    function loadContentFromFile(file: File) {
+      if (file.name.indexOf('.') < 0) {
+        throw Error(`No file extension found in file name (${file.name})`);
+      }
 
-    //   const ext = `.${file.name.split('.').pop()}`;
+      const ext = `.${file.name.split('.').pop()}`;
 
-    //   // Read native files is (.sheet)
-    //   if (ext === '.sheet') {
-    //     loadSpreadsheetNativeFile(file);
-    //   } else if (ext === '.xlsx') {
-    //     loadExcelFile(file);
-    //   } else {
-    //     throw Error(`Unsupported extension: ${ext}`);
-    //   }
-    // }
+      // Read native files is (.sheet)
+      if (ext === '.sheet') {
+        loadSpreadsheetNativeFile(file);
+      } else if (ext === '.xlsx') {
+        loadExcelFile(file);
+      } else {
+        throw Error(`Unsupported extension: ${ext}`);
+      }
+    }
 
     onMounted(() => {
       nextTick(() => {
-        // TODO: Support loading from file?
-        // if (props.file) {
-        //   loadContentFromFile(props.file);
-        // } else {
         loadContent(props.content as string);
-        // }
       });
     });
 
@@ -236,6 +232,10 @@ export default defineComponent<SpreadsheetEditorProps>({
         }
       },
     );
+
+    async function canLoadFile(file: File): Promise<boolean> {
+      return await canLoadFileHelper(getAppInfo(), file);
+    }
 
     function loadImage(url: string): Promise<string> {
       const last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
@@ -283,9 +283,13 @@ export default defineComponent<SpreadsheetEditorProps>({
     );
 
     return {
+      canLoadFile,
       getContent,
       getContentType,
       insertImage,
+      loadContent,
+      loadContentFromFile,
+      loadExcelFile,
       resize,
       updateImage,
     };
