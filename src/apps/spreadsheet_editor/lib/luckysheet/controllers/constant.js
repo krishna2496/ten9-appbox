@@ -218,8 +218,8 @@ const gridHTML = function(){
                             </div>
                             <div class="luckysheet-sheet-area luckysheet-noselected-text" id="luckysheet-sheet-area">
                                 <div id="luckysheet-sheet-content">
-                                    <div id="luckysheet-sheets-add" class="luckysheet-sheets-add lucky-button-custom"><i class="iconfont luckysheet-iconfont-jia1"></i></div>
-                                    <div id="luckysheet-sheets-m" class="luckysheet-sheets-m lucky-button-custom"><i class="iconfont luckysheet-iconfont-caidan2"></i></div>
+                                    <div id="luckysheet-sheets-add" class="luckysheet-sheets-add lucky-button-custom"><i class="fa-solid fa-plus" style="margin-right:10px"></i></div>
+                                    <div id="luckysheet-sheets-m" class="luckysheet-sheets-m lucky-button-custom"><i class="fa-solid fa-bars" style="margin-right:10px"></i></div>
                                     <div class="luckysheet-sheet-container" id="luckysheet-sheet-container">
                                         <div class="docs-sheet-fade docs-sheet-fade-left" style="display: none;">
                                             <div class="docs-sheet-fade3"></div>

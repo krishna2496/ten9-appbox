@@ -8832,6 +8832,7 @@ export default {
         undo: 'Undo',
         redo: 'Redo',
         paintFormat: 'Paint format',
+        zoom: 'Zoom',
         currencyFormat: 'Format as currency',
         percentageFormat: 'Format as percent',
         numberDecrease: 'Decrease decimal places',
@@ -9194,6 +9195,8 @@ export default {
     fontFamily:{
         MicrosoftYaHei:"YaHei",
     },
+    zoomarray: ["50%","75%","90%","100%","125%","150%","200%"],
+    zoomjson: {"50":0,"75%":1,"90%":2,"100%":3,"125%":4,"150%":5,"200%":6},
     fontarray: ["Times New Roman","Arial","Tahoma","Verdana"],
     fontjson: {"times new roman":0,"arial":1,"tahoma":2,"verdana":3},
     border:{

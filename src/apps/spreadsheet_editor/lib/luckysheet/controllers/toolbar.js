@@ -10,7 +10,8 @@ export const defaultToolbar = [
     'print',
     'paintFormat',
     '|',
-
+    'zoom',
+    '|',
     'currencyFormat',
     'percentageFormat',
     'numberDecrease',
@@ -64,6 +65,7 @@ export const toolbarIdMap = {
     undo: '#luckysheet-icon-undo', //Undo redo
     redo: '#luckysheet-icon-redo',
     paintFormat: ['#luckysheet-icon-paintformat'], //Format brush
+    zoom: '#luckysheet-icon-zoom',
     currencyFormat: '#luckysheet-icon-currency', //currency format
     percentageFormat: '#luckysheet-icon-percent', //Percentage format
     numberDecrease: '#luckysheet-icon-fmt-decimal-decrease', //'Decrease the number of decimal places'
@@ -104,6 +106,7 @@ export const toolbarIdMap = {
 export function createToolbarHtml() {
     const toolbar = locale().toolbar;
     const fontarray = locale().fontarray;
+    const zoomarray = locale().zoomarray;
     const defaultFmtArray = locale().defaultFmt;
     const htmlMap = {
         undo: `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.undo}"
@@ -162,6 +165,22 @@ export function createToolbarHtml() {
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont luckysheet-iconfont-geshishua"
                         style="user-select: none;"><i class="fa-solid fa-paint-roller"></i>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>`,
+        zoom:`<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.zoom}" id="luckysheet-icon-zoom" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;width:40px;font-size:10px">
+                        ${zoomarray[3]}
+                    </div>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
+                    style="user-select: none;">
                     </div>
                 </div>
             </div>

@@ -8832,6 +8832,7 @@ export default {
         undo: 'Deshacer',
         redo: 'Rehacer',
         paintFormat: 'Clonar formato',
+        zoom: 'Zoom',
         currencyFormat: 'Formato de moneda',
         percentageFormat: 'Formato de porcentaje',
         numberDecrease: 'Menos decimales',
@@ -9193,8 +9194,10 @@ export default {
     fontFamily:{
         MicrosoftYaHei:"YaHei",
     },
-    fontarray: ["Times New Roman","Arial","Tahoma","Verdana"],
-    fontjson: {"times new roman":0,"arial":1,"tahoma":2,"verdana":3},
+    zoomarray: ["50%","75%","90%","100%","125%","150%","200%"],
+    zoomjson: {"50":0,"75%":1,"90%":2,"100%":3,"125%":4,"150%":5,"200%":6},
+    fontarray: ['Roboto','RobotoDraft','Helvetica','Arial','sans-serif'],
+    fontjson: {"Roboto":0,"RobotoDraft":1,"Helvetica":2,"Arial":3,"sans-serif":4},
     border:{
         borderTop:'borderTop',
         borderBottom:'borderBottom',
