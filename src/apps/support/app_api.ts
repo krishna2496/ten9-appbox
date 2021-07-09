@@ -26,6 +26,11 @@ export const defaultAsyncComponentOptions = {
   timeout: 10000,
 };
 
+export interface ExtensionInfo {
+  ext: string;
+  binary: boolean;
+}
+
 export type Ten9AppAsyncComponent = AsyncComponent & {
   getContentType?(): string;
   insertFile?(file: File, url?: string, event?: MouseEvent): unknown;
@@ -41,10 +46,10 @@ export type Ten9AppAsyncComponent = AsyncComponent & {
 export interface AppInfo {
   uniqueAppId: string;
   documentName: string;
-  defaultExtension: string;
+  defaultExtension: ExtensionInfo;
   dropContainer: string;
-  supportedExtensions: string[];
-  canLoadContent(content: string): boolean;
+  supportedExtensions: ExtensionInfo[];
+  canLoadContent(content: string | ArrayBuffer): boolean;
   // TODO: Use a better type here
   asyncComponent(): Record<string, unknown>;
 }
@@ -84,9 +89,18 @@ export async function canLoadFile(appInfo: AppInfo, file: File): Promise<boolean
 
   const ext = `.${file.name.split('.').pop()}`;
 
-  if (!appInfo.supportedExtensions.includes(ext)) {
-    return false;
+  for (let i = 0; i < appInfo.supportedExtensions.length; i++) {
+    const extInfo = appInfo.supportedExtensions[i];
+    if (extInfo.ext === ext) {
+      if (extInfo.binary) {
+        // Extension check is good enough here for binary formats
+        return true;
+      } else {
+        // eslint-disable-next-line no-await-in-loop
+        return appInfo.canLoadContent(await file.text());
+      }
+    }
   }
 
-  return appInfo.canLoadContent(await file.text());
+  return false;
 }

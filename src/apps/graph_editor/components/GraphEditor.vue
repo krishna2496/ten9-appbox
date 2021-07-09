@@ -488,6 +488,19 @@ export default defineComponent<GraphEditorProps>({
       });
     }
 
+    async function loadContentFromFile(file: File) {
+      if (!(await canLoadFile(file))) {
+        throw new Error(`File cannot be loaded by this editor: (${file.name})`);
+      }
+
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        const content = reader.result as string;
+        loadContent(content);
+      });
+      reader.readAsText(file);
+    }
+
     function pasteShapes(doc: XMLDocument) {
       const codec = new mxCodec(doc);
       const model = new mxGraphModel();
@@ -748,6 +761,7 @@ export default defineComponent<GraphEditorProps>({
       insertFile,
       imageInsert,
       loadContent,
+      loadContentFromFile,
       loadImage,
       onRecentColorsChanged,
       pagesToFit,
