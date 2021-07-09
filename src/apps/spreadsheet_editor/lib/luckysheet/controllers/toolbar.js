@@ -176,7 +176,7 @@ export function createToolbarHtml() {
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                    style="user-select: none;width:40px;font-size:10px">
+                    style="user-select: none;width:40px;font-size:14px">
                         ${zoomarray[3]}
                     </div>
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"

@@ -12,6 +12,7 @@ import imageCtrl from './imageCtrl';
 
 let luckysheetZoomTimeout = null;
 
+
 export function zoomChange(ratio){
     if(Store.flowdata==null || Store.flowdata.length==0){
         return;

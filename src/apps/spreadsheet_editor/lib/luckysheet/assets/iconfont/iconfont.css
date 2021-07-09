@@ -65,9 +65,9 @@
 
 .luckysheet-iconfont-dongjie1:before {
   content: "\e7e1";
-  font-size: 19px;
+  /* font-size: 19px;
   font-weight: 600;
-  color: rgb(102, 102, 102) !important;
+  color: rgb(102, 102, 102) !important; */
 }
 
 .luckysheet-iconfont-jian1:before {
@@ -336,9 +336,9 @@
 
 .luckysheet-iconfont-geshitiaojian:before {
   content: "\e7be";
-  font-size: 19px;
+  /* font-size: 19px;
   font-weight: 600;
-  color: rgb(102, 102, 102) !important;
+  color: rgb(102, 102, 102) !important; */
 }
 
 .luckysheet-iconfont-zidonghuanhang:before {

@@ -881,6 +881,78 @@ function arrayRemoveItem(array, item) {
         return '-' + group.toLowerCase();
     });
 }
+
+function luckysheetzoomformat(format) {
+    let fontarray = locale().zoomarray;
+    if (getObjType(format) == "object") {
+        let font = "";
+
+        //font-style
+        if (format.it == "0" || format.it == null) {
+            font += "normal ";
+        }
+        else {
+            font += "italic ";
+        }
+
+        //font-variant
+        font += "normal ";
+
+        //font-weight
+        if (format.bl == "0" || format.bl == null) {
+            font += "normal ";
+        }
+        else {
+            font += "bold ";
+        }
+
+        //font-size/line-height
+        if (!format.fs) {
+            font += Store.defaultFontSize + "pt ";
+        }
+        else {
+            font += Math.ceil(format.fs) + "pt ";
+        }
+
+        if (!format.ff) {
+            
+            font += fontarray[0] + ', "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif';
+        }
+        else {
+            let fontfamily = null;
+            let fontjson = locale().fontjson;
+            if (isdatatypemulti(format.ff)["num"]) {
+                fontfamily = fontarray[parseInt(format.ff)];
+            }
+            else {
+
+                // fontfamily = fontarray[fontjson[format.ff]];
+                fontfamily = format.ff;
+
+                fontfamily = fontfamily.replace(/"/g, "").replace(/'/g, "");
+
+                if(fontfamily.indexOf(" ")>-1){
+                    fontfamily = '"' + fontfamily + '"';
+                }
+
+                if(fontfamily!=null && document.fonts && !document.fonts.check("12px "+fontfamily)){
+                    menuButton.addFontTolist(fontfamily);
+                }
+            }
+
+            if (fontfamily == null) {
+                fontfamily = fontarray[0];
+            }
+
+            font += fontfamily + ', "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif';
+        }
+
+        return font;
+    }
+    else {
+        return luckysheetdefaultFont();
+    }
+}
   
 export {
     isJsonString,
@@ -911,5 +983,6 @@ export {
     openSelfModel,
     createProxy,
     arrayRemoveItem,
-    camel2split
+    camel2split,
+    luckysheetzoomformat
 }

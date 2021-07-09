@@ -7365,7 +7365,7 @@ fieldset[disabled] .btn-danger.focus {
 }
 
 .fas, .fa-solid {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600 !important;
     color: rgba(0,0,0,.7) !important;
 }
@@ -7417,7 +7417,7 @@ fieldset[disabled] .btn-danger.focus {
     color :  #333333;
     background-color: #F5F5F5;
     font-size : 11px;
-    font-family: "Google Sans",Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+    font-family: "Roboto";
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
@@ -7438,7 +7438,6 @@ fieldset[disabled] .btn-danger.focus {
     -moz-border-radius: 2px;
     border-radius: 2px;
     cursor: default;
-    font-weight: bold;
     text-align: center;
     white-space: nowrap;
     height: 20px;
@@ -7453,7 +7452,7 @@ fieldset[disabled] .btn-danger.focus {
     color :  #333333;
     background-color: #F5F5F5;
     font-size : 11px;
-    font-family: "Google Sans",Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+    font-family: "Roboto";
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
@@ -7495,7 +7494,4 @@ fieldset[disabled] .btn-danger.focus {
 
 .luckysheet-sheets-item-active .fa-sort-desc {
     color: #188038 !important;
-}
-.luckysheet-sheet-area {
-    /* background-color: #F1F3F4 !important; */
 }

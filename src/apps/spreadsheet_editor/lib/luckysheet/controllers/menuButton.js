@@ -38,6 +38,7 @@ import {openProtectionModal,checkProtectionFormatCells,checkProtectionNotEnable}
 import Store from '../store';
 import locale from '../locale/locale';
 import {checkTheStatusOfTheSelectedCells} from '../global/api';
+import { zoomChange } from './zoom';
 
 const menuButton = {
     "menu": '<div class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-menuButton ${subclass} luckysheet-mousedown-cancel" id="luckysheet-icon-${id}-menuButton">${item}</div>',
@@ -60,6 +61,7 @@ const menuButton = {
                 }
             }
         }
+      
         $obj.find(".luckysheet-cols-menuitem").find("span.icon").html("");
         if(value == null){
             $obj.find(".luckysheet-cols-menuitem").eq(0).find("span.icon").html('<i class="fa fa-check luckysheet-mousedown-cancel"></i>');
@@ -479,6 +481,64 @@ const menuButton = {
             }
             mouseclickposition($menuButton, menuleft, $(this).offset().top+25, "lefttop");
         });
+
+        /* TEN9 : zoom */
+        $("#luckysheet-icon-zoom").mousedown(function(e){ 
+           /*  hideMenuByCancel(e); */
+            e.stopPropagation();
+        }).click(function(){
+            let menuButtonId = $(this).attr("id")+"-menuButton";
+            let $menuButton = $("#"+menuButtonId);
+            if($menuButton.length == 0){
+                let itemdata = [];
+                const locale_zoomarray = locale().zoomarray;
+                for(let a=0;a<locale_zoomarray.length;a++){
+                    let fItem = locale_zoomarray[a];
+                    let ret = {};
+                    ret.value = fItem;
+                    ret.index = a;
+                    ret.type = "inner";
+                    ret.text = "<span class='luckysheet-mousedown-cancel' style='font-size:11px;font-family:"+fItem+"'>"+fItem+"</span>";
+                    ret.example = "";
+                    itemdata.push(ret);
+                }
+
+                let itemset = _this.createButtonMenu(itemdata);
+
+                let menu = replaceHtml(_this.menu, {"id": "zoom", "item": itemset, "subclass": "", "sub": ""});
+               
+                $("body").append(menu);
+                $menuButton = $("#"+menuButtonId).width(200);
+                _this.focus($menuButton, '100%');
+
+                $menuButton.on("click", ".luckysheet-cols-menuitem", function(){
+                    $menuButton.hide();
+                    luckysheetContainerFocus();
+
+                    let $t = $(this), itemvalue = $t.attr("itemvalue"), itemname = $t.attr("itemname");
+                    let ratio = parseInt(itemvalue);
+                    ratio = ratio/100;
+                    zoomChange(ratio)
+                    _this.focus($menuButton, itemvalue);
+                    $("#luckysheet-icon-zoom").find(".luckysheet-toolbar-menu-button-caption").html(" "+ itemname +" ");
+
+                    let d = editor.deepCopyFlowData(Store.flowdata);
+
+                    _this.updateFormat(d, "z", itemvalue);
+                });
+            }
+
+            let userlen = $(this).outerWidth();
+            let tlen = $menuButton.outerWidth();
+
+            let menuleft = $(this).offset().left;
+            if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
+                menuleft = menuleft - tlen + userlen;
+            }
+            mouseclickposition($menuButton, menuleft, $(this).offset().top+25, "lefttop");
+        });
+
+        /* TEN9 : zoom end */
 
         //字体设置
         $("#luckysheet-icon-font-family").mousedown(function(e){
@@ -4445,7 +4505,9 @@ const menuButton = {
         return style;
     },
     fontSelectList:[],
+    zoomSelectList:locale().zoomarray,
     defualtFont:[ 'Roboto','RobotoDraft','Helvetica','Arial','sans-serif'],
+    defualtZoom:[ "50%","75%","90%","100%","125%","150%","200%"],
     addFontTolist:function(fontName) {
         fontName = fontName.replace(/"/g, "").replace(/'/g, "");
         let isNone = true;
