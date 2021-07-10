@@ -396,6 +396,24 @@ export default defineComponent<GraphEditorProps>({
       editor.undoManager.addListener(mxEvent.REDO, redoListener);
     }
 
+    function loadContent(content: string) {
+      const editorUi = editorUiRef.value;
+
+      editorUi.openLocalFile(content, null, null, null, null);
+      // Reset the view after loading a file
+      nextTick(() => {
+        setGraphEnabled(props.isEditing);
+        editorUi.resetViewToShowFullGraph();
+
+        for (let i = 0; i < editorUi.pages.length; i++) {
+          const page = editorUi.pages[i];
+          pagesToRefresh.add(page.getId());
+        }
+
+        refreshCurrentPageLinks();
+      });
+    }
+
     onMounted(() => {
       mxResources.loadDefaultBundle = false;
       mxResources.parse(resourcesFile);
@@ -427,6 +445,10 @@ export default defineComponent<GraphEditorProps>({
       });
 
       registerUndoListeners();
+
+      if (props.content) {
+        loadContent(props.content as string);
+      }
     });
 
     onBeforeUnmount(() => {
@@ -469,24 +491,6 @@ export default defineComponent<GraphEditorProps>({
     //     }
     //   },
     // );
-
-    function loadContent(content: string) {
-      const editorUi = editorUiRef.value;
-
-      editorUi.openLocalFile(content, null, null, null, null);
-      // Reset the view after loading a file
-      nextTick(() => {
-        setGraphEnabled(props.isEditing);
-        editorUi.resetViewToShowFullGraph();
-
-        for (let i = 0; i < editorUi.pages.length; i++) {
-          const page = editorUi.pages[i];
-          pagesToRefresh.add(page.getId());
-        }
-
-        refreshCurrentPageLinks();
-      });
-    }
 
     async function loadContentFromFile(file: File) {
       if (!(await canLoadFile(file))) {
