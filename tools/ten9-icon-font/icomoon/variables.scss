@@ -1,7 +1,30 @@
+/*
+* ten9, Inc
+* Copyright (c) 2015 - 2021 ten9, Inc
+* -----
+* NOTICE:  All information contained herein is, and remains
+* the property of ten9 Incorporated and its suppliers,
+* if any.  The intellectual and technical concepts contained
+* herein are proprietary to ten9 Incorporated
+* and its suppliers and may be covered by U.S. and Foreign Patents,
+* patents in process, and are protected by trade secret or copyright law.
+* Dissemination of this information or reproduction of this material
+* is strictly forbidden unless prior written permission is obtained
+* from ten9 Incorporated.
+* -----
+*/
+
 $icomoon-font-family: "ten9-icon" !default;
 $icomoon-font-path: "fonts" !default;
-
-$ten9-icon-decimal-decrease: "\e900";
+$ten9-icon-decimal-decrease: "\e90c";
+$ten9-icon-undo: "\e900";
+$ten9-icon-undo1: "\e905";
+$ten9-icon-paint-format: "\e906";
+$ten9-icon-fill-color: "\e907";
+$ten9-icon-text-color: "\e908";
+$ten9-icon-insert-comment: "\e909";
+$ten9-icon-icon-chart: "\e90a";
+$ten9-icon-auto-filter: "\e90b";
 $ten9-icon-decimal-increase: "\e901";
 $ten9-icon-wrap-overflow: "\e902";
 $ten9-icon-wrap-clip: "\e903";

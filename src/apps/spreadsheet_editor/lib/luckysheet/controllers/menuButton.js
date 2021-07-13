@@ -38,6 +38,7 @@ import {openProtectionModal,checkProtectionFormatCells,checkProtectionNotEnable}
 import Store from '../store';
 import locale from '../locale/locale';
 import {checkTheStatusOfTheSelectedCells} from '../global/api';
+// TEN9: zoom imported for zoom dropdown
 import { zoomChange } from './zoom';
 
 const menuButton = {
@@ -518,6 +519,7 @@ const menuButton = {
                     let $t = $(this), itemvalue = $t.attr("itemvalue"), itemname = $t.attr("itemname");
                     let ratio = parseInt(itemvalue);
                     ratio = ratio/100;
+                    // TEN9: zoom imported for zoom dropdown
                     zoomChange(ratio)
                     _this.focus($menuButton, itemvalue);
                     $("#luckysheet-icon-zoom").find(".luckysheet-toolbar-menu-button-caption").html(" "+ itemname +" ");
@@ -1108,6 +1110,9 @@ const menuButton = {
                 let colormenu = replaceHtml(_this.color, { "id": subcolormenuid, "coloritem": "", "colorself": "", "sub": "luckysheet-menuButton-sub",resetColor:locale_toolbar.resetColor });
 
                 $("body").append(menu + colormenu + submenu);
+                /* TEN9:  Width changes to improve layout 
+                    $menuButton = $("#" + menuButtonId).width(170);
+                */
                 $menuButton = $("#" + menuButtonId).width(190);
                 _this.focus($menuButton, "border-all");
 

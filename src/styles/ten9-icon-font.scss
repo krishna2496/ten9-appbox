@@ -1,3 +1,19 @@
+/*
+* ten9, Inc
+* Copyright (c) 2015 - 2021 ten9, Inc
+* -----
+* NOTICE:  All information contained herein is, and remains
+* the property of ten9 Incorporated and its suppliers,
+* if any.  The intellectual and technical concepts contained
+* herein are proprietary to ten9 Incorporated
+* and its suppliers and may be covered by U.S. and Foreign Patents,
+* patents in process, and are protected by trade secret or copyright law.
+* Dissemination of this information or reproduction of this material
+* is strictly forbidden unless prior written permission is obtained
+* from ten9 Incorporated.
+* -----
+*/
+
 @import 'ten9-icon-variables';
 
 @font-face {
@@ -24,12 +40,14 @@
 }
 
 .ten9-icon-decimal-increase {
+  line-height: 1.5;
   &::before {
     content: $ten9-icon-decimal-increase;
   }
 }
 
 .ten9-icon-decimal-decrease {
+  line-height: 1.5;
   &::before {
     content: $ten9-icon-decimal-decrease;
   }
@@ -50,5 +68,46 @@
 .ten9-icon-wrap-wrap {
   &::before {
     content: $ten9-icon-wrap-wrap;
+  }
+}
+.ten9-font {
+  font-size: 18px;
+}
+
+.ten9-icon-auto-filter {
+  line-height: 1.2;
+  &::before {
+    content: $ten9-icon-auto-filter;
+  }
+}
+
+.ten9-icon-icon-chart {
+  &::before {
+    content: $ten9-icon-icon-chart;
+  }
+}
+.ten9-icon-insert-comment {
+  &::before {
+    content: $ten9-icon-insert-comment;
+  }
+}
+.ten9-icon-paint-format {
+  &::before {
+    content: $ten9-icon-paint-format;
+  }
+}
+.ten9-icon-undo1 {
+  &::before {
+    content: $ten9-icon-redo;
+  }
+}
+.ten9-icon-undo {
+  &::before {
+    content: $ten9-icon-undo;
+  }
+}
+.ten9-icon-wrap-overflow {
+  &::before {
+    content: $ten9-icon-wrap-overflow;
   }
 }

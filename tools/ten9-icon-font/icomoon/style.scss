@@ -1,12 +1,28 @@
+/*
+* ten9, Inc
+* Copyright (c) 2015 - 2021 ten9, Inc
+* -----
+* NOTICE:  All information contained herein is, and remains
+* the property of ten9 Incorporated and its suppliers,
+* if any.  The intellectual and technical concepts contained
+* herein are proprietary to ten9 Incorporated
+* and its suppliers and may be covered by U.S. and Foreign Patents,
+* patents in process, and are protected by trade secret or copyright law.
+* Dissemination of this information or reproduction of this material
+* is strictly forbidden unless prior written permission is obtained
+* from ten9 Incorporated.
+* -----
+*/
+
 @import "variables";
 
 @font-face {
   font-family: '#{$icomoon-font-family}';
-  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?br2ixj');
-  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?br2ixj#iefix') format('embedded-opentype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?br2ixj') format('truetype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?br2ixj') format('woff'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?br2ixj##{$icomoon-font-family}') format('svg');
+  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?jsdhsg');
+  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?jsdhsg#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?jsdhsg') format('truetype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?jsdhsg') format('woff'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?jsdhsg##{$icomoon-font-family}') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -30,6 +46,46 @@
 .ten9-icon-decimal-decrease {
   &:before {
     content: $ten9-icon-decimal-decrease; 
+  }
+}
+.ten9-icon-undo {
+  &:before {
+    content: $ten9-icon-undo; 
+  }
+}
+.ten9-icon-undo1 {
+  &:before {
+    content: $ten9-icon-undo1; 
+  }
+}
+.ten9-icon-paint-format {
+  &:before {
+    content: $ten9-icon-paint-format; 
+  }
+}
+.ten9-icon-fill-color {
+  &:before {
+    content: $ten9-icon-fill-color; 
+  }
+}
+.ten9-icon-text-color {
+  &:before {
+    content: $ten9-icon-text-color; 
+  }
+}
+.ten9-icon-insert-comment {
+  &:before {
+    content: $ten9-icon-insert-comment; 
+  }
+}
+.ten9-icon-icon-chart {
+  &:before {
+    content: $ten9-icon-icon-chart; 
+  }
+}
+.ten9-icon-auto-filter {
+  &:before {
+    content: $ten9-icon-auto-filter; 
   }
 }
 .ten9-icon-decimal-increase {
