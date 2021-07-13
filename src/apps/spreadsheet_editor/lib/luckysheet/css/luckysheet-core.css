@@ -7407,7 +7407,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 .fa-stack-1x {font-size: 12px; }
 
 .decimal-place .fas {
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .luckysheet-cols-menuitem-content {
@@ -7498,4 +7498,28 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 
 .luckysheet-sheets-item-active .fa-sort-desc {
     color: #188038 !important;
+}
+
+.toolbar .luckysheet-toolbar-button {
+    width: 30px;
+}
+
+#luckysheet-icon-fmt-decimal-increase {
+    margin-right: 7px;
+    margin-left: 7px;
+}
+#luckysheet-icon-currency {
+    margin-right:-5px;
+}
+#luckysheet-icon-font-family {
+    margin-left:-11px;
+}
+#luckysheet-icon-fmt-decimal-decrease {
+    margin-left: 4px;
+}
+.luckysheet-icon-text-color {
+    top: -2px;
+}
+#luckysheet-icon-rotation-menu {
+    margin-right: 10px;
 }

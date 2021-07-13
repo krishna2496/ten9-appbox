@@ -170,7 +170,7 @@ export function createToolbarHtml() {
             </div>
         </div>`,
         zoom:`<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block"
-        data-tips="${toolbar.zoom}" id="luckysheet-icon-zoom" role="button" style="user-select: none;">
+        data-tips="${toolbar.zoom}" id="luckysheet-icon-zoom" role="button" style="user-select: none;margin-left:3px">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
