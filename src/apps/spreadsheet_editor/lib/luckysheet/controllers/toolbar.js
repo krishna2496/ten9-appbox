@@ -222,12 +222,8 @@ export function createToolbarHtml() {
                     <div class="luckysheet-icon luckysheet-inline-block toolbar-decimal-icon"
                     style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-decrease iconfont luckysheet-iconfont-jianxiaoxiaoshuwei"
-                        style="user-select: none;">
-                        <span class="fa-layers fa-fw decimal-place">
-                            <i class="fas fa-period"></i>
-                            <i class="fas fa-0"></i>
-                            <i class="fas fa-left"></i>
-                        </span>
+                        style="user-select: none;font-size:20px">
+                            <i class="ten9-icon-decimal-decrease"></i>
                         </div>
                     </div>
                 </div>
@@ -242,12 +238,8 @@ export function createToolbarHtml() {
                     <div class="luckysheet-icon luckysheet-inline-block toolbar-decimal-icon"
                     style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-increase iconfont luckysheet-iconfont-zengjiaxiaoshuwei"
-                        style="user-select: none;">
-                            <span class="fa-layers fa-fw decimal-place">
-                                <i class="fas fa-period" data-fa-transform="shrink-8 up-6"></i>
-                                <i class="fas fa-0" data-fa-transform="shrink-8 up-6"></i>
-                                <i class="fas fa-right" data-fa-transform="shrink-8 left-6"></i>
-                            </span>
+                        style="user-select: none;font-size:20px">
+                            <i class="ten9-icon-decimal-increase"></i>
                         </div>
                     </div>
                 </div>

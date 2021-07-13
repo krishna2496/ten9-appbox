@@ -7,3 +7,4 @@ src/apps/graph_editor/lib/rough/
 src/apps/graph_editor/lib/spin/
 src/apps/graph_editor/components/vue-colorpicker
 src/apps/spreadsheet_editor/lib/luckysheet
+tools/

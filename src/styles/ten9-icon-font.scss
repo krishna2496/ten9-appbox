@@ -1,0 +1,54 @@
+@import 'ten9-icon-variables';
+
+@font-face {
+  font-family: '#{$icomoon-font-family}';
+  src: url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^='ten9-icon-'],
+[class*=' ten9-icon-'] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: '#{$icomoon-font-family}' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ten9-icon-decimal-increase {
+  &::before {
+    content: $ten9-icon-decimal-increase;
+  }
+}
+
+.ten9-icon-decimal-decrease {
+  &::before {
+    content: $ten9-icon-decimal-decrease;
+  }
+}
+
+.ten9-icon-wrap-overflow {
+  &::before {
+    content: $ten9-icon-wrap-overflow;
+  }
+}
+
+.ten9-icon-wrap-clip {
+  &::before {
+    content: $ten9-icon-wrap-clip;
+  }
+}
+
+.ten9-icon-wrap-wrap {
+  &::before {
+    content: $ten9-icon-wrap-wrap;
+  }
+}
