@@ -15,7 +15,6 @@
 -->
 
 <script lang="ts">
-import Menubar from './Menubar.vue';
 import Modals from './Modals.vue';
 import Window from './Windows.vue';
 import { getAppInfo, DEFAULT_RECENT_COLORS, DEFAULT_THEME } from '../index';
@@ -94,15 +93,23 @@ interface GraphEditorProps extends CommonAppProps {
   theme?: string;
 }
 
+interface CustomEvent {
+  getProperty?(propName: string): string;
+}
+
 export default defineComponent<GraphEditorProps>({
   name: 'GraphEditor',
   components: {
-    Menubar,
     Modals,
     Window,
   },
   props: {
     ...CommonAppPropsOptions,
+    containerHeight: {
+      required: false,
+      type: Number,
+      default: null,
+    },
     recentColors: {
       required: false,
       type: String,
@@ -139,6 +146,22 @@ export default defineComponent<GraphEditorProps>({
     const pagesToRefresh = new Set();
 
     const pagesToFit = new Set();
+
+    const checkboxes = ref({
+      formatPanel: true,
+      outline: false,
+      layers: false,
+      color: false,
+      scratchpad: true,
+      pageView: true,
+      scrollbars: true,
+      tooltips: true,
+      ruler: false,
+      grid: true,
+      guides: true,
+      connectionArrow: true,
+      connectionPoints: true,
+    });
 
     async function canLoadFile(file: File): Promise<boolean> {
       return canLoadFileHelper(getAppInfo(), file);
@@ -333,6 +356,37 @@ export default defineComponent<GraphEditorProps>({
       refreshCurrentPageLinks();
     }
 
+    function changeMenuStatus(_sender: typeof mxEventSource, event: CustomEvent) {
+      const type = event.getProperty('type');
+      if (type === 'formatPanel') {
+        checkboxes.value.formatPanel = !checkboxes.value.formatPanel;
+      } else if (type === 'outline') {
+        checkboxes.value.outline = !checkboxes.value.outline;
+      } else if (type === 'layers') {
+        checkboxes.value.layers = !checkboxes.value.layers;
+      } else if (type === 'color') {
+        checkboxes.value.color = !checkboxes.value.color;
+      } else if (type === 'scratchpad') {
+        checkboxes.value.scratchpad = !checkboxes.value.scratchpad;
+      } else if (type === 'pageView') {
+        checkboxes.value.pageView = !checkboxes.value.pageView;
+      } else if (type === 'scrollbars') {
+        checkboxes.value.scrollbars = !checkboxes.value.scrollbars;
+      } else if (type === 'tooltips') {
+        checkboxes.value.tooltips = !checkboxes.value.tooltips;
+      } else if (type === 'ruler') {
+        checkboxes.value.ruler = !checkboxes.value.ruler;
+      } else if (type === 'grid') {
+        checkboxes.value.grid = !checkboxes.value.grid;
+      } else if (type === 'guides') {
+        checkboxes.value.guides = !checkboxes.value.guides;
+      } else if (type === 'connectionArrow') {
+        checkboxes.value.connectionArrow = !checkboxes.value.connectionArrow;
+      } else if (type === 'connectionPoints') {
+        checkboxes.value.connectionPoints = !checkboxes.value.connectionPoints;
+      }
+    }
+
     function addListeners() {
       const editorUi = editorUiRef.value;
       const editor = editorRef.value;
@@ -353,6 +407,7 @@ export default defineComponent<GraphEditorProps>({
       editorUi.addListener('removePageFromCurrentPageWindow', removePageFromCurrentPageWindow);
       editorUi.addListener('scratchpadDataChanged', onScratchpadDataChanged);
       editorUi.addListener('themeChanged', onThemeChanged);
+      editorUi.addListener('changeMenuStatus', changeMenuStatus);
     }
 
     function removeListeners() {
@@ -369,6 +424,7 @@ export default defineComponent<GraphEditorProps>({
       editorUi.removeListener(removePageFromCurrentPageWindow);
       editorUi.removeListener(onScratchpadDataChanged);
       editorUi.removeListener(onThemeChanged);
+      editorUi.removeListener(changeMenuStatus);
     }
 
     function getContent(): string {
@@ -754,6 +810,8 @@ export default defineComponent<GraphEditorProps>({
       appRef,
       canLoadFile,
       containerRef,
+      changeMenuStatus,
+      checkboxes,
       editorRef,
       editorUiRef,
       fitCurrentPageWindow,
@@ -788,7 +846,7 @@ export default defineComponent<GraphEditorProps>({
 <template lang="pug">
 .div
   .geEditor(ref='containerRef')
-  menubar(:editorUi='editorRef')
+  div(v-if='editorUiRef')
   modals(:editorUi='editorUiRef', :shape-libraries='shapeLibraries', @insert-image='imageInsert')
   window(
     :editorUi='editorUiRef',
