@@ -15,6 +15,7 @@
 -->
 
 <script lang="ts">
+import Menubar from './Menubar.vue';
 import Modals from './Modals.vue';
 import Window from './Windows.vue';
 import { getAppInfo, DEFAULT_RECENT_COLORS, DEFAULT_THEME } from '../index';
@@ -96,6 +97,7 @@ interface GraphEditorProps extends CommonAppProps {
 export default defineComponent<GraphEditorProps>({
   name: 'GraphEditor',
   components: {
+    Menubar,
     Modals,
     Window,
   },
@@ -786,6 +788,7 @@ export default defineComponent<GraphEditorProps>({
 <template lang="pug">
 .div
   .geEditor(ref='containerRef')
+  menubar(:editorUi='editorRef')
   modals(:editorUi='editorUiRef', :shape-libraries='shapeLibraries', @insert-image='imageInsert')
   window(
     :editorUi='editorUiRef',

@@ -69,7 +69,9 @@ Menus.prototype.defaultFontSize = '12';
  * Sets the default menu items.
  */
 // TEN9: Removed help from the menu
-Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange', 'extras'];
+//Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange', 'extras'];
+// TEN9: add custom menu bar
+Menus.prototype.defaultMenuItems = [];
 // Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange', 'extras', 'help'];
 
 /**
@@ -90,6 +92,8 @@ Menus.prototype.defaultFonts = [
 /**
  * Adds the label menu items to the given menu and parent.
  */
+//  Menus.prototype.init = function () {
+//  }
 Menus.prototype.init = function () {
   var graph = this.editorUi.editor.graph;
   var isGraphEnabled = mxUtils.bind(graph, graph.isEnabled);
@@ -1944,3 +1948,4 @@ module.exports = {
   Menu,
   Menubar,
 };
+
