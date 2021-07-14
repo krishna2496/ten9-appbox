@@ -17,6 +17,7 @@
 <script lang="ts">
 import Modals from './Modals.vue';
 import Window from './Windows.vue';
+import Menubar from './Menubar.vue';
 import { getAppInfo, DEFAULT_RECENT_COLORS, DEFAULT_THEME } from '../index';
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
@@ -100,6 +101,7 @@ interface CustomEvent {
 export default defineComponent<GraphEditorProps>({
   name: 'GraphEditor',
   components: {
+    Menubar,
     Modals,
     Window,
   },
@@ -847,6 +849,7 @@ export default defineComponent<GraphEditorProps>({
 .div
   .geEditor(ref='containerRef')
   div(v-if='editorUiRef')
+    menubar(:editorUi='editorUiRef', :checkboxes='checkboxes')
   modals(:editorUi='editorUiRef', :shape-libraries='shapeLibraries', @insert-image='imageInsert')
   window(
     :editorUi='editorUiRef',

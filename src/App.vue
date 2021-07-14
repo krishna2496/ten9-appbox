@@ -508,7 +508,7 @@ export default defineComponent({
                 | {{ getDateString(log.lastModified) }}
     #page.col-md-10
       .row-btn
-        b-dropdown.ml-3(text='Create new...', variant='info')
+        b-dropdown.ml-3.app-options(text='Create new...', variant='info')
           b-dropdown-item(
             v-for='item in apps',
             v-bind:title='item.documentName',
