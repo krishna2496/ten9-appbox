@@ -524,6 +524,9 @@ export default defineComponent({
     function close() {
       show.value = false;
       setLayerWindowCoordinates();
+      props.editorUi.fireEvent(
+        new mxEventObject('changeMenuStatus', 'type', 'layers', 'value', false),
+      );
     }
 
     return {

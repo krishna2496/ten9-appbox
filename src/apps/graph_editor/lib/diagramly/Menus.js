@@ -240,6 +240,10 @@ DriveFile = function () {};
         editorUi.ruler = new mxDualRuler(editorUi, editorUi.editor.graph.view.unit);
         editorUi.refresh();
       }
+      // TEN9: change menubar and toolbar check icon value
+      editorUi.fireEvent(
+        new mxEventObject('changeMenuStatus', 'type', 'ruler', 'value', editorUi.ruler !== null),
+      );
     });
     rulerAction.setEnabled(editorUi.canvasSupported && document.documentMode != 9);
     rulerAction.setToggleAction(true);

@@ -6,6 +6,10 @@
   color: #000 !important;
 }
 
+.nav-link.dropdown-toggle:focus {
+  color: #000 !important;
+}
+
 .nav-link span:hover {
   background: #e5e5e5;
 }
@@ -68,14 +72,18 @@
 }
 
 .dropdown-item {
-  font-family: Roboto;
+  font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
   font-size: 14px;
   color: #212529;
+  line-height: 20px;
+  letter-spacing: 0.2px;
 }
 
 .dropdown button {
-  font-family: Roboto;
+  font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
   font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.2px;
 }
 
 a table tr td:hover {
@@ -111,5 +119,25 @@ a table tr td:hover {
 }
 
 .pl-35 .dropdown-toggle span {
-  padding: 3px;
+  padding: 3px 0 3px 3px;
+}
+
+#insert-dropright button {
+  padding-left: 2.3rem;
+}
+
+#direction-dropright button {
+  padding-left: 2.3rem;
+}
+
+#align-dropright button {
+  padding-left: 2.3rem;
+}
+
+#navigation-dropright button {
+  padding-left: 2.3rem;
+}
+
+#layout-dropright button {
+  padding-left: 2.3rem;
 }

@@ -135,6 +135,7 @@ module.exports = {
       {
         ignoreRestSiblings: true,
         argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
       },
     ],
     curly: ['error', 'multi-line'],

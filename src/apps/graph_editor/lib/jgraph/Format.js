@@ -1238,6 +1238,7 @@ BaseFormatPanel.prototype.createColorOption = function (
       }
 
       this.editorUi.fireEvent(new mxEventObject('inactiveColorButton'));
+
       if (this.editorUi.selectedColorPicker != type) {
         this.editorUi.fireEvent(
           new mxEventObject('openColorPicker', 'options', { type, color, applyFn }),
@@ -1246,6 +1247,17 @@ BaseFormatPanel.prototype.createColorOption = function (
       } else {
         this.editorUi.selectedColorPicker = '';
       }
+
+      // TEN9: change menubar and toolbar check icon value
+      this.editorUi.fireEvent(
+        new mxEventObject(
+          'changeMenuStatus',
+          'type',
+          'color',
+          'value',
+          !!this.editorUi.selectedColorPicker,
+        ),
+      );
     }),
   );
 

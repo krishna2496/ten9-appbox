@@ -2898,14 +2898,17 @@ var SelectedFile;
       if (!this.scratchpad) {
         this.loadScratchpadData(this.scratchpadData || this.emptyLibraryXml);
       }
+      this.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'scratchpad', 'value', true));
     }
   };
 
   /**
    * Shows or hides the scratchpad library.
    */
+  // TEN9: Updates below for firing an event to update the menu
   EditorUi.prototype.toggleScratchpad = function () {
     if (this.isScratchpadEnabled()) {
+      let opened = false;
       if (this.scratchpad == null) {
         // StorageFile.getFileContent(this, '.scratchpad', mxUtils.bind(this, function(xml)
         // {
@@ -2920,9 +2923,12 @@ var SelectedFile;
         // }));
         // TEN9: reload the scratchpadData with localStorage
         this.openScratchpad();
+        opened = true;
       } else {
         this.closeLibrary(this.scratchpad);
+        opened = false;
       }
+      this.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'scratchpad', 'value', opened));
     }
   };
 
