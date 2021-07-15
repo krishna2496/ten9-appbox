@@ -149,13 +149,17 @@ export function createToolbarHtml() {
                 <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        ${ /* TEN9: font-size:15px added for better layout */'' }
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont luckysheet-iconfont-geshishua"
-                        style="user-select: none;font-size:15px"><i class="ten9-icon-paint-format"></i>
+                        style="user-select: none;font-size:15px">
+                        ${ /* TEN9: font awesome icon added for paint */'' }
+                        <i class="ten9-icon-paint-format"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>`,
+        /* TEN9: zoom dropdown added */
         zoom:`<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block"
         data-tips="${toolbar.zoom}" id="luckysheet-icon-zoom" role="button" style="user-select: none;margin-left:3px">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
@@ -177,7 +181,9 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont luckysheet-iconfont-jine"
-                        style="user-select: none;"><i class="fa-solid fa-dollar-sign"></i>
+                        style="user-select: none;">
+                        ${/* TEN9: font awesome icon added for currency */'' }
+                        <i class="fa-solid fa-dollar-sign"></i>
                         </div>
                     </div>
                 </div>
@@ -191,7 +197,9 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont luckysheet-iconfont-baifenhao"
-                        style="user-select: none;"><i class="fa-solid fa-percent"></i>
+                        style="user-select: none;">
+                        ${ /* TEN9: Font awesome icon added for percentage */'' }
+                        <i class="fa-solid fa-percent"></i>
                         </div>
                     </div>
                 </div>
@@ -207,7 +215,8 @@ export function createToolbarHtml() {
                     style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-decrease iconfont luckysheet-iconfont-jianxiaoxiaoshuwei"
                         style="user-select: none;">
-                            <i class="ten9-font ten9-icon-decimal-decrease"></i>
+                        ${ /* TEN9: Font awesome icon added for decimal decrease */'' }
+                        <i class="ten9-font ten9-icon-decimal-decrease"></i>
                         </div>
                     </div>
                 </div>
@@ -223,7 +232,8 @@ export function createToolbarHtml() {
                     style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-increase iconfont luckysheet-iconfont-zengjiaxiaoshuwei"
                         style="user-select: none;">
-                            <i class="ten9-font ten9-icon-decimal-increase"></i>
+                        ${ /* TEN9: Font awesome icon added for decimal increase */'' }
+                        <i class="ten9-font ten9-icon-decimal-increase"></i>
                         </div>
                     </div>
                 </div>
@@ -234,8 +244,13 @@ export function createToolbarHtml() {
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                style="user-select: none;">123
-                   
+                style="user-select: none;">
+                    ${ /* TEN9: Replaced with 123 as default text
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
+                    style="user-select: none;">
+                        ${ /*defaultFmtArray[0].text }
+                    </div>
+                    */'' } 123
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
                     style="user-select: none;">
                     </div>
@@ -284,7 +299,9 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-bold iconfont luckysheet-iconfont-jiacu"
-                        style="user-select: none;"><i class="fa-solid fa-bold"></i>
+                        style="user-select: none;">
+                        ${ /* TEN9: Font awesome bold icon added */'' }
+                        <i class="fa-solid fa-bold"></i>
                         </div>
                     </div>
                 </div>
@@ -298,7 +315,9 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-italic iconfont luckysheet-iconfont-wenbenqingxie1"
-                        style="user-select: none;"><i class="fa-solid fa-italic"></i>
+                        style="user-select: none;">
+                        ${ /* TEN9: Font awesome italic icon added */'' }
+                        <i class="fa-solid fa-italic"></i>
                         </div>
                     </div>
                 </div>
@@ -314,7 +333,9 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-strikethrough iconfont luckysheet-iconfont-wenbenshanchuxian"
-                        style="user-select: none;"><i class="fa-solid fa-strikethrough"></i>
+                        style="user-select: none;">
+                        ${ /* TEN9: Font awesome strikethrough icon added */'' }
+                        <i class="fa-solid fa-strikethrough"></i>
                         </div>
                     </div>
                 </div>
@@ -328,7 +349,9 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-underline iconfont luckysheet-iconfont-wenbenxiahuaxian"
-                        style="user-select: none;"><i class="fa-solid fa-underline"></i>
+                        style="user-select: none;">
+                        ${ /* TEN9: Font awesome underline icon added */'' }
+                        <i class="fa-solid fa-underline"></i>
                         </div>
                     </div>
                 </div>
@@ -342,11 +365,15 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
+                        ${ /* TEN9: Font awesome text color icon added */'' }
                         <span class="fa-layers fa-fw">
                             <i class="fas fa-font fa-stack-1x fa-dash"></i>
                         </span>
                         <div class="luckysheet-color-menu-button-indicator" style="border-bottom-color: rgb(0, 0, 0); user-select: none;">
                             <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                                ${ /* TEN9: Style added left: 4px;width: 19px;
+                                    <div class="text-color-bar" style="background-color:${luckysheetConfigsetting.defaultTextColor};"></div>
+                                    */'' }
                                 <div class="text-color-bar" style="background-color:${luckysheetConfigsetting.defaultTextColor};left: 4px;width: 19px;"></div>
                                 <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-text-color iconfont luckysheet-iconfont-wenbenyanse"
                                 style="user-select: none;">
@@ -357,6 +384,11 @@ export function createToolbarHtml() {
                 </div>
             </div>
         </div>
+        ${ /* TEN9: top: -2px; added for better layout
+            <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
+            data-tips="${toolbar.chooseColor}..." id="luckysheet-icon-text-color-menu" role="button"
+            style="user-select: none;">
+        */'' }
         <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
         data-tips="${toolbar.chooseColor}..." id="luckysheet-icon-text-color-menu" role="button"
         style="user-select: none;top: -2px;">
@@ -382,7 +414,9 @@ export function createToolbarHtml() {
                             <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                                 <div class="text-color-bar" style="background-color:${luckysheetConfigsetting.defaultCellColor}"></div>
                                 <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-cell-color iconfont luckysheet-iconfont-tianchong"
-                                style="user-select: none;"><i class="fa-solid fa-fill-drip"></i>
+                                style="user-select: none;">
+                                ${ /* TEN9: Font awesome fill color icon added */'' }
+                                <i class="fa-solid fa-fill-drip"></i>
                                 </div>
                             </div>
                         </div>
@@ -411,7 +445,9 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-all iconfont luckysheet-iconfont-quanjiabiankuang"
-                        style="user-select: none;"><i class="fa-solid fa-border-all"></i>
+                        style="user-select: none;">
+                        ${ /* TEN9: Font awesome border all icon added */'' }
+                        <i class="fa-solid fa-border-all"></i>
                         </div>
                     </div>
                 </div>
@@ -437,7 +473,9 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-merge iconfont luckysheet-iconfont-hebing"
-                        style="user-select: none;font-size:17px;line-height:1.8"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M5 10H3V4h8v2H5v4m14 8h-6v2h8v-6h-2v4M5 18v-4H3v6h8v-2H5M21 4h-8v2h6v4h2V4M8 13v2l3-3l-3-3v2H3v2h5m8-2V9l-3 3l3 3v-2h5v-2h-5z" fill="rgba(0,0,0,.9)"/><rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" /></svg>
+                        style="user-select: none;font-size:17px;line-height:1.8">
+                        ${ /* TEN9: icon added for merge cell */'' }
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M5 10H3V4h8v2H5v4m14 8h-6v2h8v-6h-2v4M5 18v-4H3v6h8v-2H5M21 4h-8v2h6v4h2V4M8 13v2l3-3l-3-3v2H3v2h5m8-2V9l-3 3l3 3v-2h5v-2h-5z" fill="rgba(0,0,0,.9)"/><rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" /></svg>
                         </div>
                     </div>
                 </div>
@@ -465,7 +503,9 @@ export function createToolbarHtml() {
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                             <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont luckysheet-iconfont-wenbenzuoduiqi"
-                            style="user-select: none;"><i class="fa-solid fa-align-left"></i>
+                            style="user-select: none;">
+                            ${ /* TEN9: icon added for align left */'' }
+                            <i class="fa-solid fa-align-left"></i>
                             </div>
                         </div>
                     </div>
@@ -494,7 +534,9 @@ export function createToolbarHtml() {
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                             <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-bottom iconfont luckysheet-iconfont-dibuduiqi"
-                            style="user-select: none;font-size:20px;line-height:1.8"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1024 1024"><path d="M859.9 780H164.1c-4.5 0-8.1 3.6-8.1 8v60c0 4.4 3.6 8 8.1 8h695.8c4.5 0 8.1-3.6 8.1-8v-60c0-4.4-3.6-8-8.1-8zM505.7 669a8 8 0 0 0 12.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V176c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8z" fill="rgba(0,0,0,.7)"/><rect x="0" y="0" width="1024" height="1024" fill="rgba(0, 0, 0, 0)" /></svg>
+                            style="user-select: none;font-size:20px;line-height:1.8">
+                            ${ /* TEN9: icon added for vertical alignMode */'' }
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1024 1024"><path d="M859.9 780H164.1c-4.5 0-8.1 3.6-8.1 8v60c0 4.4 3.6 8 8.1 8h695.8c4.5 0 8.1-3.6 8.1-8v-60c0-4.4-3.6-8-8.1-8zM505.7 669a8 8 0 0 0 12.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V176c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8z" fill="rgba(0,0,0,.7)"/><rect x="0" y="0" width="1024" height="1024" fill="rgba(0, 0, 0, 0)" /></svg>
                             </div>
                         </div>
                     </div>
@@ -522,8 +564,13 @@ export function createToolbarHtml() {
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan"
+                        ${ /* TEN9: font-size:14px;line-height:2.1 style added
+                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan"
+                            style="user-select: none;">
+                        */'' }     
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan"
                             style="user-select: none;font-size:14px;line-height:2.1">
+                                ${/* TEN9: Font awesome wrap-overflow icon added */''}
                                 <i class="ten9-icon-wrap-overflow"></i>
                             </div>
                         </div>
@@ -553,7 +600,9 @@ export function createToolbarHtml() {
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                             <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont luckysheet-iconfont-wuxuanzhuang"
-                            style="user-select: none;font-size:19px;line-height:1.8"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M20.5 18l-3 3v-2H5v-2h12.5v-2l3 3m-10.37-8h3.75L12 4.97L10.13 10m2.62-7l4.75 11h-2.08l-.92-2.19h-5L8.58 14H6.5l4.75-11h1.5z" fill="rgba(0,0,0,.9)"/><rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" /></svg>
+                            style="user-select: none;font-size:19px;line-height:1.8">
+                            ${ /* TEN9: icon added for textRotateMode */'' }
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M20.5 18l-3 3v-2H5v-2h12.5v-2l3 3m-10.37-8h3.75L12 4.97L10.13 10m2.62-7l4.75 11h-2.08l-.92-2.19h-5L8.58 14H6.5l4.75-11h1.5z" fill="rgba(0,0,0,.9)"/><rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" /></svg>
                             </div>
                         </div>
                     </div>
@@ -582,7 +631,7 @@ export function createToolbarHtml() {
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                             <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont luckysheet-iconfont-tupian"
-                            style="user-select: none;"><i class="fa-solid fa-image"></i>
+                            style="user-select: none;">
                                 <input id="luckysheet-imgUpload" type="file" accept="image/*" style="display:none;"></input>
                             </div>
                         </div>
@@ -600,7 +649,9 @@ export function createToolbarHtml() {
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                             <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont luckysheet-iconfont-lianjie"
-                            style="user-select: none;"><i class="fa-solid fa-link-simple"></i>
+                            style="user-select: none;">
+                            ${/* TEN9: Font awesome link icon added */''}
+                            <i class="fa-solid fa-link-simple"></i>
                             </div>
                         </div>
                     </div>
@@ -646,7 +697,9 @@ export function createToolbarHtml() {
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
                     <div class="luckysheet-icon-img-container luckysheet-toolbar-menu-button-caption luckysheet-inline-block iconfont luckysheet-iconfont-zhushi"
-                    style="user-select: none;margin-right: 5px;margin-left: 5px;;line-height:2.5"><i class="ten9-font ten9-icon-insert-comment"></i>
+                    style="user-select: none;margin-right: 5px;margin-left: 5px;;line-height:2.5">
+                    ${/* TEN9: Font awesome comment icon added */''}
+                    <i class="ten9-font ten9-icon-insert-comment"></i>
                     </div>
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
                     style="user-select: none;">

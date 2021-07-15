@@ -189,7 +189,7 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
             }else{
                 $$('#luckysheet-icon-morebtn-div').style.visibility = 'hidden';
             }
-            /* 
+            /* TEN9: 
             Remove more text and replaced with up and down arrow
             let $txt = $(this).find(".luckysheet-toolbar-menu-button-caption");
             if($txt.text().indexOf(locale_toolbar.toolMore) > -1)
@@ -198,10 +198,11 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
             if($txt){
 
                 const toolCloseHTML = `
+                ${ /* TEN9: angle-down class added */'' }
                 <div class="luckysheet-toolbar-menu-button-caption angle-down luckysheet-inline-block" style="user-select: none;">
                     <i class="fas fa-angle-down"></i>
                 </div>
-                ${ /* Removed fixed down arrow
+                ${ /*  TEN9: Removed fixed down arrow
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-shangyige" style="user-select: none;font-size:12px;">
                     </div> */'' }
                 `
@@ -210,10 +211,10 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
             else{
 
                 const toolMoreHTML = `
-                <div class="luckysheet-toolbar-menu-button-caption angle-up luckysheet-inline-block" style="user-select: none;" data-tips="Hide the menus">
+                <div class="luckysheet-toolbar-menu-button-caption angle-up luckysheet-inline-block" style="user-select: none;">
                     <i class="fas fa-angle-up"></i>
                 </div>
-                ${ /* Removed fixed down arrow
+                ${ /* TEN9: Removed fixed down arrow
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige" style="user-select: none;font-size:12px;">
                     </div> */'' }
                 `
