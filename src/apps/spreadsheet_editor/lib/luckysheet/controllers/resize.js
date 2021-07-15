@@ -93,11 +93,11 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block" style="user-select: none;">
                 <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block" style="user-select: none;">
 
-                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block" style="user-select: none;">
-                        ${locale_toolbar.toolMore}
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block" style="user-select: none;" data-tips="Show the menus">
+                        ${ /* locale_toolbar.toolMore */'' } <i class="fas fa-angle-down"></i>
                     </div>
-                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige" style="user-select: none;font-size:12px;">
-                    </div>
+                    ${ /*<div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont" style="user-select: none;font-size:12px;">
+                    </div> */'' }
 
                 </div>
             </div>
@@ -188,26 +188,27 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
                 $$('#luckysheet-icon-morebtn-div').style.visibility = 'hidden';
             }
 
-            let $txt = $(this).find(".luckysheet-toolbar-menu-button-caption");
-            if($txt.text().indexOf(locale_toolbar.toolMore) > -1){
+            let $txt = $(".luckysheet-toolbar-menu-button-caption").hasClass('angle-up');
+
+            if($txt){
 
                 const toolCloseHTML = `
-                <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block" style="user-select: none;">
-                    ${locale_toolbar.toolClose}
+                <div class="luckysheet-toolbar-menu-button-caption angle-down luckysheet-inline-block" style="user-select: none;" data-tips="Show the menus">
+                    <i class="fas fa-angle-down"></i>
                 </div>
-                <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-shangyige" style="user-select: none;font-size:12px;">
-                </div>
+                ${ /* <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-shangyige" style="user-select: none;font-size:12px;">
+                </div> */'' }
                 `
                 $(this).find(".luckysheet-toolbar-button-inner-box").html(toolCloseHTML);
             }
             else{
 
                 const toolMoreHTML = `
-                <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block" style="user-select: none;">
-                    ${locale_toolbar.toolMore}
+                <div class="luckysheet-toolbar-menu-button-caption angle-up luckysheet-inline-block" style="user-select: none;" data-tips="Hide the menus">
+                    <i class="fas fa-angle-up"></i>
                 </div>
-                <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige" style="user-select: none;font-size:12px;">
-                </div>
+                ${ /* <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige" style="user-select: none;font-size:12px;">
+                </div> */'' }
                 `
 
                 $(this).find(".luckysheet-toolbar-button-inner-box").html(toolMoreHTML);

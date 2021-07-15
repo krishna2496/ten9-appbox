@@ -483,11 +483,25 @@ const menuButton = {
             mouseclickposition($menuButton, menuleft, $(this).offset().top+25, "lefttop");
         });
 
+        $("#zoom-dropdown").keydown(function(e){
+            if(e.keyCode == 13){
+                const itemvalue = $("#zoom-dropdown").val();
+                let ratio = parseInt(itemvalue);
+                ratio = ratio/100;
+                alert(ratio);
+                zoomChange(ratio)
+            }
+        });
+
         /* TEN9 : zoom */
         $("#luckysheet-icon-zoom").mousedown(function(e){ 
+            $("#zoom-dropdown").focus();
+            $("#" + Store.container).attr("tabindex", 0).blur();
            /*  hideMenuByCancel(e); */
             e.stopPropagation();
         }).click(function(){
+            $("#zoom-dropdown").focus();
+            $("#" + Store.container).attr("tabindex", 0).blur();
             let menuButtonId = $(this).attr("id")+"-menuButton";
             let $menuButton = $("#"+menuButtonId);
             if($menuButton.length == 0){
@@ -514,7 +528,7 @@ const menuButton = {
 
                 $menuButton.on("click", ".luckysheet-cols-menuitem", function(){
                     $menuButton.hide();
-                    luckysheetContainerFocus();
+                    /* luckysheetContainerFocus(); */
 
                     let $t = $(this), itemvalue = $t.attr("itemvalue"), itemname = $t.attr("itemname");
                     let ratio = parseInt(itemvalue);
@@ -523,7 +537,7 @@ const menuButton = {
                     zoomChange(ratio)
                     _this.focus($menuButton, itemvalue);
                     $("#luckysheet-icon-zoom").find(".luckysheet-toolbar-menu-button-caption").html(" "+ itemname +" ");
-
+                    $("#zoom-dropdown").val(itemvalue);
                     let d = editor.deepCopyFlowData(Store.flowdata);
 
                     _this.updateFormat(d, "z", itemvalue);

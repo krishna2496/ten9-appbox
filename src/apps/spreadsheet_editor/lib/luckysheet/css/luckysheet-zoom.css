@@ -119,3 +119,16 @@
 .luckysheet-zoom-content .luckysheet-zoom-ratioText:hover{
     background-color: #E1E4E8;
 }
+
+#zoom-dropdown {
+    font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif !important;
+    font-size: 12px;
+    font-weight: 550 !important;
+    color: rgba(0,0,0,.7) !important;
+}
+
+#zoom-dropdown:focus {
+    border: 2px solid #1a73e8!important;
+    border-radius: 4px;
+    padding: 0 7px;
+}

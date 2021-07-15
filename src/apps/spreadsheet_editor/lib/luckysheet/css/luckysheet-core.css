@@ -7422,7 +7422,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     color :  #333333;
     background-color: #F5F5F5;
     font-size : 11px;
-    font-family: "Roboto";
+    font-family: 'Google Sans',Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
@@ -7443,7 +7443,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     -moz-border-radius: 2px;
     border-radius: 2px;
     cursor: default;
-    text-align: center;
+    text-align: left;
     white-space: nowrap;
     height: 20px;
     min-width: 65px;
@@ -7457,7 +7457,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     color :  #333333;
     background-color: #F5F5F5;
     font-size : 11px;
-    font-family: "Roboto";
+    font-family: 'Google Sans',Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
