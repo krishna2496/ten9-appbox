@@ -483,6 +483,7 @@ const menuButton = {
             mouseclickposition($menuButton, menuleft, $(this).offset().top+25, "lefttop");
         });
 
+        /* TEN9 : added zoom functionality */
         $("#zoom-dropdown").keydown(function(e){
             if(e.keyCode == 13){
                 const itemvalue = $("#zoom-dropdown").val();
@@ -493,7 +494,6 @@ const menuButton = {
             }
         });
 
-        /* TEN9 : zoom */
         $("#luckysheet-icon-zoom").mousedown(function(e){ 
             $("#zoom-dropdown").focus();
             $("#" + Store.container).attr("tabindex", 0).blur();
@@ -553,8 +553,6 @@ const menuButton = {
             }
             mouseclickposition($menuButton, menuleft, $(this).offset().top+25, "lefttop");
         });
-
-        /* TEN9 : zoom end */
 
         //字体设置
         $("#luckysheet-icon-font-family").mousedown(function(e){
@@ -1369,6 +1367,9 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "merge-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
+
+                /*  TEN9: width changes for better layout 
+                 $menuButton = $("#"+menuButtonId).width(110); */
                 $menuButton = $("#"+menuButtonId).width(150);
                 _this.focus($menuButton);
 
@@ -1450,8 +1451,14 @@ const menuButton = {
                 const _locale = locale();
                 const locale_align = _locale.align;
                 let itemdata = [
-                    {"text": locale_align.left, "value": "left", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont luckysheet-iconfont-wenbenzuoduiqi" style="user-select: none;"> <i class="fas fa-align-left"></i></div> </div>'},
+                    /*  TEN9: <i class="fas fa-align-left"></i> added for better layout
+                    {"text": locale_align.left, "value": "left", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont luckysheet-iconfont-wenbenzuoduiqi" style="user-select: none;"></div> </div>'} */
+                    {"text": locale_align.left, "value": "left", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont luckysheet-iconfont-wenbenzuoduiqi" style="user-select: none;"><i class="fas fa-align-left"></i></div> </div>'},
+                    /*  TEN9: <i class="far fa-align-center"></i>  added for better layout
+                    {"text": locale_align.center, "value": "center", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-center iconfont luckysheet-iconfont-wenbenjuzhongduiqi" style="user-select: none;"></div> </div>'} */
                     {"text": locale_align.center, "value": "center", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-center iconfont luckysheet-iconfont-wenbenjuzhongduiqi" style="user-select: none;"> <i class="far fa-align-center"></i> </div> </div>'},
+                    /*  TEN9: <i class="fad fa-align-right"></i>   added for better layout
+                    {"text": locale_align.right, "value": "right", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-right iconfont luckysheet-iconfont-wenbenyouduiqi" style="user-select: none;"></div> </div>'} */
                     {"text": locale_align.right, "value": "right", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-right iconfont luckysheet-iconfont-wenbenyouduiqi" style="user-select: none;"><i class="fad fa-align-right"></i> </div> </div>'}
                 ];
 
@@ -1463,6 +1470,9 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "align-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
+
+                /*  TEN9: width changes for better layout 
+                 $menuButton = $("#"+menuButtonId).width(120); */
                 $menuButton = $("#" + menuButtonId).width(150);
                 _this.focus($menuButton);
 
@@ -1576,6 +1586,9 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "textwrap-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
+
+                /*  TEN9: width changes for better layout 
+                 $menuButton = $("#"+menuButtonId).width(120); */
                 $menuButton = $("#" + menuButtonId).width(140);
                 _this.focus($menuButton, "clip");
 
@@ -1633,6 +1646,8 @@ const menuButton = {
                 $("body").append(menu);
 
                 // 文字旋转总 Stack Vertically 太长了，拉宽到160
+                /*  TEN9: width changes for better layout 
+                 $menuButton = $("#"+menuButtonId).width(160); */
                 $menuButton = $("#" + menuButtonId).width(200);
                 _this.focus($menuButton);
 
@@ -1688,6 +1703,9 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "freezen-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
+
+                /*  TEN9: width changes for better layout 
+                 $menuButton = $("#"+menuButtonId).width(170); */
                 $menuButton = $("#" + menuButtonId).width(200);
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
@@ -1955,6 +1973,9 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, {"id":"autofilter", "item": itemset, "subclass":"", "sub":""});
 
                 $("body").append(menu);
+
+                /*  TEN9: width changes for better layout 
+                 $menuButton = $("#"+menuButtonId).width(150); */
                 $menuButton = $("#" + menuButtonId).width(190);
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
@@ -2152,6 +2173,9 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "function-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
+
+                /*  TEN9: width changes for better layout 
+                 $menuButton = $("#"+menuButtonId).width(180); */
                 $menuButton = $("#" + menuButtonId).width(220);
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
@@ -2896,6 +2920,9 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "print", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
+
+                /*  TEN9: width changes for better layout 
+                 $menuButton = $("#"+menuButtonId).width(180); */
                 $menuButton = $("#" + menuButtonId).width(195);
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
@@ -4524,8 +4551,12 @@ const menuButton = {
         return style;
     },
     fontSelectList:[],
-    zoomSelectList:locale().zoomarray,
+    /*  TEN9: Changing defualtFont  
+        defualtFont:["Times New Roman","Arial","Tahoma","Verdana","微软雅黑","宋体","黑体","楷体","仿宋","新宋体","华文新魏","华文行楷","华文隶书"]
+    */
     defualtFont:[ 'Roboto','RobotoDraft','Helvetica','Arial','sans-serif'],
+    /*  TEN9: Added for zoom dropdown */
+    zoomSelectList:locale().zoomarray,
     defualtZoom:[ "50%","75%","90%","100%","125%","150%","200%"],
     addFontTolist:function(fontName) {
         fontName = fontName.replace(/"/g, "").replace(/'/g, "");

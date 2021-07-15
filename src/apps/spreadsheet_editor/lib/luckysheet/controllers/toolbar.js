@@ -7,6 +7,7 @@ import { getObjType, camel2split } from '../utils/util';
 export const defaultToolbar = [
     'undo',
     'redo',
+    /* TEN9: Print icon reordered */
     'print',
     'paintFormat',
     '|',
@@ -42,21 +43,24 @@ export const defaultToolbar = [
     'textRotateMode',
     '|',
 
-    //'image',
+    /* TEN9: Image removed from toolbar
+    'image', */
     'link',
     'postil',
     'chart',
-    //'pivotTable',
+    /* TEN9: pivotTable removed from toolbar
+    'pivotTable', */
     '|',
     'sortAndFilter',
     'function',
-    //'frozenMode',
-    // 'conditionalFormat',
-    //'dataVerification',
-    //'splitColumn',
-    //'screenshot',
-    //'findAndReplace',
-    //'protection'
+    /* TEN9: All below toolbar menu removed from toolbar
+     'frozenMode',
+      'conditionalFormat',
+     'dataVerification',
+     'splitColumn',
+     'screenshot',
+     'findAndReplace',
+     'protection' */
 ];
 
 // 工具栏按钮 id 关系
@@ -64,6 +68,7 @@ export const toolbarIdMap = {
     undo: '#luckysheet-icon-undo', //Undo redo
     redo: '#luckysheet-icon-redo',
     paintFormat: ['#luckysheet-icon-paintformat'], //Format brush
+    /*  TEN9: Added for zoom dropdown */
     zoom: '#luckysheet-icon-zoom',
     currencyFormat: '#luckysheet-icon-currency', //currency format
     percentageFormat: '#luckysheet-icon-percent', //Percentage format
@@ -105,6 +110,7 @@ export const toolbarIdMap = {
 export function createToolbarHtml() {
     const toolbar = locale().toolbar;
     const fontarray = locale().fontarray;
+    /*  TEN9: Added for zoom dropdown */
     const zoomarray = locale().zoomarray;
     const defaultFmtArray = locale().defaultFmt;
     const htmlMap = {
@@ -116,7 +122,7 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-undo iconfont luckysheet-iconfont-qianjin"
-                        style="user-select: none;"><i class="ten9-font ten9-icon-undo"></i>
+                        style="user-select: none;">${ /* Font awesome undo icon added */'' }<i class="ten9-font ten9-icon-undo"></i>
                         </div>
                     </div>
                 </div>
@@ -130,26 +136,8 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-redo iconfont luckysheet-iconfont-houtui"
-                        style="user-select: none;"><i class="ten9-font ten9-icon-undo1"></i>
+                        style="user-select: none;">${ /* Font awesome redo icon added */'' }<i class="ten9-font ten9-icon-undo1"></i>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>`,
-        print: `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.print}"
-        id="luckysheet-icon-print" role="button" style="user-select: none;">
-            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-            style="user-select: none;">
-                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                style="user-select: none;">
-
-                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-autofilter iconfont luckysheet-iconfont-dayin"
-                        style="user-select: none;"><i class="fa-solid fa-print"></i>
-                        </div>
-                    </div>
-                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
-                    style="user-select: none;margin-left: 0px;margin-right: 4px;">
                     </div>
                 </div>
             </div>
@@ -867,6 +855,24 @@ export function createToolbarHtml() {
                 </div>
             </div>
         </div>`, // 'Worksheet protection'
+        print: `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block" data-tips="${toolbar.print}"
+        id="luckysheet-icon-print" role="button" style="user-select: none;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-autofilter iconfont luckysheet-iconfont-dayin"
+                        style="user-select: none;"><i class="fa-solid fa-print"></i>
+                        </div>
+                    </div>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
+                    style="user-select: none;margin-left: 0px;margin-right: 4px;">
+                    </div>
+                </div>
+            </div>
+        </div>`
     };
 
     const showtoolbar = luckysheetConfigsetting.showtoolbar;
