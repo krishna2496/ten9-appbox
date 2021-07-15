@@ -361,7 +361,7 @@ module.exports = {
     }),
 
     new HtmlWebpackPlugin({
-      title: 'diagram-editor',
+      title: 'appbox',
       minify: IS_PRODUCTION
         ? {
             collapseWhitespace: true,
