@@ -376,8 +376,10 @@
     background: transparent;
     border: 1px solid transparent !important;
     color: #333;
-    font-family: Arial !important;
-    font-size: 11px !important;
+    font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+    /* font-family: Arial !important; */
+    font-size: 11px;
+    /* font-size: 11px !important; */
     font-weight: bold !important;
     height: 20px !important;
     overflow: hidden !important;
@@ -7522,4 +7524,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 }
 #luckysheet-icon-rotation-menu {
     margin-right: 10px;
+}
+.luckysheet-toolbar-textinput {
+    font-size: 12px;
 }
