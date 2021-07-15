@@ -1249,7 +1249,15 @@ BaseFormatPanel.prototype.createColorOption = function (
       }
 
       // TEN9: change menubar and toolbar check icon value
-      this.editorUi.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'color', 'value', !!this.editorUi.selectedColorPicker));
+      this.editorUi.fireEvent(
+        new mxEventObject(
+          'changeMenuStatus',
+          'type',
+          'color',
+          'value',
+          !!this.editorUi.selectedColorPicker,
+        ),
+      );
     }),
   );
 

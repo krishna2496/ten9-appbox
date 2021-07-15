@@ -241,7 +241,9 @@ DriveFile = function () {};
         editorUi.refresh();
       }
       // TEN9: change menubar and toolbar check icon value
-      editorUi.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'ruler', 'value', editorUi.ruler !== null));
+      editorUi.fireEvent(
+        new mxEventObject('changeMenuStatus', 'type', 'ruler', 'value', editorUi.ruler !== null),
+      );
     });
     rulerAction.setEnabled(editorUi.canvasSupported && document.documentMode != 9);
     rulerAction.setToggleAction(true);
