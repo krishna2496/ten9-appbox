@@ -1,12 +1,16 @@
-# Vue GraphEditor
+# ten9-appbox
 
 ## Summary
 
-Vue GraphEditor is a diagramming component for VueJS.
+ten9-appbox is a test application used for development of ten9 Apps like GraphEditor and SpreadsheetEditor
+
+GraphEditor is a diagramming component for VueJS.
+
+SpreadsheetEditor is a spreadsheet component for VueJS
 
 ---
 
-## Yarn Scripts
+## yarn Scripts
 
 ### Development
 
@@ -17,11 +21,12 @@ yarn start
 
 ### Build
 
-To build an NPM for production:
+To build for production:
 
 ```sh
 yarn
 yarn build
+yarn serve
 ```
 
 ### Lint and Prettier
@@ -31,10 +36,17 @@ To run lint and prettier over the entire project:
 ```sh
 yarn lint
 yarn prettier
+yarn stylelint
 ```
 
 To fix prettier issues automatically:
 
 ```sh
 yarn prettier --write
+```
+
+To fix stylelint issues automatically:
+
+```sh
+yarn stylelint --fix
 ```

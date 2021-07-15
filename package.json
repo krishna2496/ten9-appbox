@@ -1,10 +1,10 @@
 {
-  "name": "vue-graph-editor",
+  "name": "ten9-appbox",
   "license": "https://git.ten9.xyz/ten9-hq/ten9-Software-Requirements/-/blob/master/LICENSE",
   "private": true,
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.js",
-    "clean-webpack": "./node_modules/.bin/rimraf \"./node_modules/.cache/webpack/graph-editor-development/*.pack*\"",
+    "clean-webpack": "./node_modules/.bin/rimraf \"./node_modules/.cache/webpack/ten9-appbox-development/*.pack*\"",
     "lint": "./node_modules/.bin/eslint --color --max-warnings 0 \"**/*.{vue,js,ts}\" --cache --cache-location ./.lintcache/eslintcache/",
     "lint:all": "yarn prettier && yarn stylelint && yarn lint",
     "prettier": "./node_modules/.bin/prettier --check \"**/*.{vue,js,ts}\"",
