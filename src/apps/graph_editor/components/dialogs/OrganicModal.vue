@@ -19,7 +19,7 @@ import { mxFastOrganicLayout } from '../../lib/jgraph/mxClient.js';
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'OrganicModel',
+  name: 'OrganicModal',
   props: {
     editorUi: {
       type: Object,
@@ -29,8 +29,9 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    const spacingValue = ref<number>(50);
+    const defaultSpacingValue = 50;
+
+    const spacingValue = ref<number>(defaultSpacingValue);
 
     const spacingInput = ref<HTMLInputElement>(null);
 
@@ -81,6 +82,7 @@ export default defineComponent({
 
     onUnmounted(() => {
       props.editorUi.removeListener(OrganicLayout);
+      document.removeEventListener('keydown', onKeydown);
     });
 
     return {

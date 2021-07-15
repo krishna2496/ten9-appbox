@@ -32,7 +32,7 @@ const { Graph } = require('../../lib/jgraph/Graph.js');
 const { PrintDialog } = require('../../lib/jgraph/Editor.js');
 
 export default defineComponent({
-  name: 'PrintModel',
+  name: 'PrintModal',
   props: {
     editorUi: {
       type: Object,
