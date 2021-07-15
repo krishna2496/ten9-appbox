@@ -17,11 +17,12 @@ yarn start
 
 ### Build
 
-To build an NPM for production:
+To build and run a production version:
 
 ```sh
 yarn
 yarn build
+yarn serve
 ```
 
 ### Lint and Prettier
@@ -31,6 +32,7 @@ To run lint and prettier over the entire project:
 ```sh
 yarn lint
 yarn prettier
+yarn stylelint
 ```
 
 To fix prettier issues automatically:
@@ -38,3 +40,10 @@ To fix prettier issues automatically:
 ```sh
 yarn prettier --write
 ```
+
+To fix stylelint issues automatically:
+
+```sh
+yarn stylelint --fix
+```
+
