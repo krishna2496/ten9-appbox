@@ -386,6 +386,8 @@ export default {
       this.applyFn = null;
       this.editorUi.colorPicker = false;
       this.editorUi.selectedColorPicker = '';
+      // TEN9: change menubar and toolbar check icon value
+      this.editorUi.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'color', 'value', false));
     },
     // TEN9: add function to apply the color when we select form the color picker
     apply() {

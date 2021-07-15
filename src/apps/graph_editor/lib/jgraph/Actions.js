@@ -1203,6 +1203,8 @@ Actions.prototype.init = function () {
     function () {
       graph.setGridEnabled(!graph.isGridEnabled());
       ui.fireEvent(new mxEventObject('gridEnabledChanged'));
+      // TEN9: change menubar and toolbar check icon value
+      ui.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'grid', 'value', graph.isGridEnabled()));
     },
     null,
     null,
@@ -1218,6 +1220,8 @@ Actions.prototype.init = function () {
   action = this.addAction('guides', function () {
     graph.graphHandler.guidesEnabled = !graph.graphHandler.guidesEnabled;
     ui.fireEvent(new mxEventObject('guidesEnabledChanged'));
+    // TEN9: change menubar and toolbar check icon value
+    ui.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'guides', 'value', graph.graphHandler.guidesEnabled));
   });
   action.setToggleAction(true);
   action.setSelectedCallback(function () {
@@ -1251,6 +1255,8 @@ Actions.prototype.init = function () {
   action.isEnabled = isGraphEnabled;
   action = this.addAction('scrollbars', function () {
     ui.setScrollbars(!ui.hasScrollbars());
+    // TEN9: change menubar and toolbar check icon value
+    ui.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'scrollbars', 'value', ui.hasScrollbars()));
   });
   action.setToggleAction(true);
   action.setSelectedCallback(function () {
@@ -1261,6 +1267,8 @@ Actions.prototype.init = function () {
     mxUtils.bind(this, function () {
       ui.setPageVisible(!graph.pageVisible);
       ui.fireEvent(new mxEventObject('pageViewChanged'));
+      // TEN9: change menubar and toolbar check icon value
+      ui.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'pageView', 'value', graph.pageVisible));
     }),
   );
   action.isEnabled = isGraphEnabled;
@@ -1273,6 +1281,8 @@ Actions.prototype.init = function () {
     function () {
       graph.connectionArrowsEnabled = !graph.connectionArrowsEnabled;
       ui.fireEvent(new mxEventObject('connectionArrowsChanged'));
+      // TEN9: change menubar and toolbar check icon value
+      ui.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'connectionArrow', 'value', graph.connectionArrowsEnabled));
     },
     null,
     null,
@@ -1289,6 +1299,8 @@ Actions.prototype.init = function () {
     function () {
       graph.setConnectable(!graph.connectionHandler.isEnabled());
       ui.fireEvent(new mxEventObject('connectionPointsChanged'));
+      // TEN9: change menubar and toolbar check icon value
+      ui.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'connectionPoints', 'value', graph.connectionHandler.isEnabled()));
     },
     null,
     null,
@@ -1892,15 +1904,20 @@ Actions.prototype.init = function () {
         return;
       }
       let isLayerWindowShow = layersWindow.classList.contains('show-window');
+      let opened = false;
       if (!isLayerWindowShow) {
         layersWindow.style.removeProperty('display');
         ui.fireEvent(new mxEventObject('openLayerWindow'));
         layersWindow.classList.add('show-window');
+        opened = true;
       } else {
         layersWindow.classList.remove('show-window');
         layersWindow.style.display = 'none';
         ui.fireEvent(new mxEventObject('setLayerWindowCoordinates'));
+        opened = false;
       }
+      // TEN9: change menubar and toolbar check icon value
+      ui.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'layers', 'value', opened));
 
       // if (this.layersWindow == null) {
       //   // LATER: Check outline window for initial placement
@@ -1949,6 +1966,8 @@ Actions.prototype.init = function () {
       } else {
         ui.fireEvent(new mxEventObject('closeColorWindow'));
       }
+      // TEN9: change menubar and toolbar check icon value
+      this.editorUi.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'color', 'value', !!ui.colorPicker));
     }),
     null,
     null,
@@ -1964,6 +1983,8 @@ Actions.prototype.init = function () {
     'formatPanel',
     mxUtils.bind(this, function (val) {
       ui.toggleFormatPanel(val);
+      // TEN9: change menubar and toolbar check icon value
+      ui.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'formatPanel', 'value', ui.formatWidth > 0));
     }),
     null,
     null,
@@ -2002,6 +2023,8 @@ Actions.prototype.init = function () {
         ui.fireEvent(new mxEventObject('hideOutline'));
         // this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
       }
+      // TEN9: change menubar and toolbar check icon value
+      ui.fireEvent(new mxEventObject('changeMenuStatus', 'type', 'outline', 'value', !!this.outlineWindow));
     }),
     null,
     null,
