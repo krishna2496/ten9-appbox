@@ -423,7 +423,7 @@ export default defineComponent({
           :disabled='!isSomethingSelected'
         )
           b-dropdown-item(href='#', @click='direction("horizontal")')
-            span Flip Horizonta
+            span Flip Horizontal
           b-dropdown-item(href='#', @click='direction("vertical")')
             span Flip Vertical
           b-dropdown-item(href='#', @click='doAction("rotation")')
