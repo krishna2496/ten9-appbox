@@ -519,10 +519,7 @@ export default defineComponent<GraphEditorProps>({
       const editorUi = editorUiRef.value;
 
       const rootElt = doc.documentElement.querySelector('root');
-      // TODO: FIX!
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const cells = [];
+      const cells: typeof mxCell[] = [];
       rootElt.querySelectorAll('mxCell').forEach((node) => {
         // skip the first 2 default elements in any graph doc
         if (node.id != '0' && node.id != '1') {
@@ -530,9 +527,6 @@ export default defineComponent<GraphEditorProps>({
         }
       });
 
-      // TODO: FIX!
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       let result = cells;
 
       result = result || graph.getSelectionCells();
