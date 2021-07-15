@@ -75,7 +75,7 @@ export default defineComponent({
       guides: true,
       connectionArrow: true,
       connectionPoints: true,
-      copyOnConnect: true,
+      copyOnConnect: false,
       collapseExpand: true,
     });
 

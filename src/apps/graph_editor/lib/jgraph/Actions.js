@@ -1263,6 +1263,7 @@ Actions.prototype.init = function () {
     change.ignoreColor = true;
     change.ignoreImage = true;
     change.foldingEnabled = !graph.foldingEnabled;
+    graph.model.execute(change);
     // TEN9: change menubar and toolbar check icon value
     ui.fireEvent(
       new mxEventObject(
@@ -1270,10 +1271,9 @@ Actions.prototype.init = function () {
         'type',
         'collapseExpand',
         'value',
-        !graph.foldingEnabled,
+        change.foldingEnabled,
       ),
     );
-    graph.model.execute(change);
   });
   action.setToggleAction(true);
   action.setSelectedCallback(function () {
@@ -1369,7 +1369,7 @@ Actions.prototype.init = function () {
         'type',
         'copyOnConnect',
         'value',
-        !graph.connectionHandler.isCreateTarget(),
+        graph.connectionHandler.isCreateTarget(),
       ),
     );
   });
