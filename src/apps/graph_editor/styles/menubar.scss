@@ -54,7 +54,7 @@
 }
 
 .dropdown-divider {
-  margin: 0 0 0 32px;
+  margin: 0 0 0 0;
 }
 
 .show .dropdown .dropdown-toggle {
@@ -98,6 +98,7 @@
   color: #212529;
   line-height: 20px;
   letter-spacing: 0.2px;
+  align-items: center;
 }
 
 .dropdown button {
@@ -116,7 +117,7 @@ a table tr td:hover {
 }
 
 .file ul {
-  min-width: 100px;
+  min-width: 180px;
 }
 
 .extra ul {
@@ -173,4 +174,21 @@ a table tr td:hover {
   line-height: 20px;
   letter-spacing: 0.2px;
   margin: 2px 0 0;
+}
+
+#menu-padding a {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.icon-color {
+  color: #7f7777;
+}
+
+.icon-color span {
+  color: #7f7777;
+}
+
+.disabled .pl-5 .icon-color {
+  color: #b3b3b3;
 }

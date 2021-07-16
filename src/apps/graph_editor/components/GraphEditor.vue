@@ -18,6 +18,7 @@
 import Modals from './Modals.vue';
 import Window from './Windows.vue';
 import Menubar from './Menubar.vue';
+import Menus from './Menus.vue';
 import { getAppInfo, DEFAULT_RECENT_COLORS, DEFAULT_THEME } from '../index';
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
@@ -97,6 +98,7 @@ interface GraphEditorProps extends CommonAppProps {
 export default defineComponent<GraphEditorProps>({
   name: 'GraphEditor',
   components: {
+    Menus,
     Menubar,
     Modals,
     Window,
@@ -795,4 +797,5 @@ export default defineComponent<GraphEditorProps>({
     :recentColors='recentColors',
     @recent-colors-changed='onRecentColorsChanged'
   )
+  menus(:editorUi='editorUiRef')
 </template>
