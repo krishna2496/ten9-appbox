@@ -1,0 +1,167 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+.menubar {
+  height: 30px;
+}
+
+.nav-link.dropdown-toggle:hover {
+  color: #000 !important;
+}
+
+.nav-link.dropdown-toggle:focus {
+  color: #000 !important;
+}
+
+.nav-link span:hover {
+  background: #e5e5e5;
+}
+
+.nav-link span:focus {
+  background: #e5e5e5;
+}
+
+.show.dropdown .dropdown-menu,
+.show.dropdown .dropdown-menu-nav {
+  max-height: fit-content;
+  overflow-y: inherit;
+  padding: 0;
+  margin: -4px 0;
+  width: auto;
+}
+
+.submenu {
+  position: relative;
+  top: 150px;
+  left: 150px;
+}
+
+.dropdown-divider {
+  margin: 0 0 0 32px;
+}
+
+.show .dropdown .dropdown-toggle {
+  border-color: white !important;
+  text-align: left;
+  padding-left: 4px;
+  background: transparent;
+  margin-bottom: 0;
+}
+
+.btn.disabled,
+.btn.disabled:hover {
+  background-color: white !important;
+}
+
+.dropright .dropdown-menu-toggle::after,
+.dropdown-toggle::after {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.f-12 {
+  font-size: 11px;
+}
+
+.navbar-nav > li > a {
+  font-weight: unset;
+}
+
+.menu-checkbox {
+  position: absolute;
+  left: 13px;
+}
+
+.dropdown-item {
+  font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #212529;
+  line-height: 20px;
+  letter-spacing: 0.2px;
+}
+
+.dropdown button {
+  font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.2px;
+}
+
+a table tr td:hover {
+  background: black;
+}
+
+.black-bg {
+  background: black;
+}
+
+.file ul {
+  min-width: 100px;
+}
+
+.extra ul {
+  min-width: 200px;
+}
+
+.large-dropdown ul {
+  min-width: 300px;
+}
+
+.pl-35 ul li a {
+  padding-left: 35px;
+}
+
+.navbar-dark .navbar-nav .show > .nav-link {
+  color: #000;
+}
+
+.sub-menu:hover {
+  background-color: #e5e5e5;
+}
+
+.pl-35 .dropdown-toggle span {
+  padding: 0;
+}
+
+#insert-dropright button {
+  padding-left: 2.3rem;
+}
+
+#direction-dropright button {
+  padding-left: 2.3rem;
+}
+
+#align-dropright button {
+  padding-left: 2.3rem;
+}
+
+#navigation-dropright button {
+  padding-left: 2.3rem;
+}
+
+#layout-dropright button {
+  padding-left: 2.3rem;
+}
+
+.dropdown-toggle {
+  font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+  font-size: 14px !important;
+  line-height: 20px;
+  letter-spacing: 0.2px;
+  margin: 2px 0 0;
+}

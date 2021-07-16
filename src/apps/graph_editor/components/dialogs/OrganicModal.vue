@@ -15,10 +15,11 @@
 -->
 
 <script lang="ts">
+import { mxFastOrganicLayout } from '../../lib/jgraph/mxClient.js';
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'PageScaleModal',
+  name: 'OrganicModal',
   props: {
     editorUi: {
       type: Object,
@@ -28,55 +29,69 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const pageScaleValue = ref<number>(null);
+    const defaultSpacingValue = 50;
 
-    const scaleValue = 100;
+    const spacingValue = ref<number>(defaultSpacingValue);
 
-    const pageScaleInput = ref<HTMLInputElement>(null);
+    const spacingInput = ref<HTMLInputElement>(null);
+
+    const { graph } = props.editorUi.editor;
 
     function closeModal() {
       show.value = false;
     }
 
-    function setPageScale() {
-      if (pageScaleValue.value != 0 && pageScaleValue.value != null) {
-        props.editorUi.setPageScale(pageScaleValue.value / scaleValue);
+    function setSpacing() {
+      if (spacingValue.value != 0 && spacingValue.value != null) {
+        const layout = new mxFastOrganicLayout(graph);
+        layout.forceConstant = spacingValue.value;
+        let tmp = graph.getSelectionCell();
+
+        if (tmp == null || graph.getModel().getChildCount(tmp) == 0) {
+          tmp = graph.getDefaultParent();
+        }
+
+        layout.execute(tmp);
+
+        if (graph.getModel().isVertex(tmp)) {
+          graph.updateGroupBounds([tmp], graph.gridSize * 2, true);
+        }
       }
       closeModal();
     }
 
-    function openPageScale() {
+    function OrganicLayout() {
       show.value = true;
-      pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
     }
 
     function onKeydown(event: KeyboardEvent) {
       if (event.key == 'Enter') {
-        setPageScale();
+        setSpacing();
       }
     }
 
     function focusOnInput() {
-      pageScaleInput.value?.select();
-      pageScaleInput.value?.focus();
+      spacingInput.value?.select();
+      spacingInput.value?.focus();
     }
 
     onMounted(() => {
-      props.editorUi.addListener('openPageScale', openPageScale);
+      props.editorUi.addListener('OrganicLayout', OrganicLayout);
       document.addEventListener('keydown', onKeydown);
     });
 
     onUnmounted(() => {
-      props.editorUi.removeListener(openPageScale);
+      props.editorUi.removeListener(OrganicLayout);
+      document.removeEventListener('keydown', onKeydown);
     });
 
     return {
       closeModal,
       focusOnInput,
       onKeydown,
-      pageScaleInput,
-      pageScaleValue,
-      setPageScale,
+      spacingInput,
+      spacingValue,
+      setSpacing,
       show,
     };
   },
@@ -93,15 +108,15 @@ b-modal#modal(
   @shown='focusOnInput'
 )
   template(v-slot:modal-header)
-    h6 Set Page Scale
+    h6 Set Spacing
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-3.mt-2
-    label.mt-1 Percentage (%)
-    input.txt-input.ml-2(ref='pageScaleInput', type='number', v-model='pageScaleValue')
+    label.mt-1 Spacing
+    input.txt-input.ml-2(ref='spacingInput', type='number', v-model='spacingValue')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setPageScale')
+    button.btn.btn-primary(type='button', @click='setSpacing')
       | Apply
 </template>

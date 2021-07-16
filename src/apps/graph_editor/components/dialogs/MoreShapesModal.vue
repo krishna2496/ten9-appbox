@@ -22,7 +22,7 @@ const { mxEventObject } = require('../../lib/jgraph/mxClient.js');
 const sidebarGeneralImage = getImage('general');
 
 export default defineComponent({
-  name: 'MoreShapesModel',
+  name: 'MoreShapesModal',
   props: {
     editorUi: {
       type: Object,

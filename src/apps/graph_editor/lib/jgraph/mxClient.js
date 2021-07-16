@@ -54698,20 +54698,32 @@ mxGraph.prototype.getImageFromBundles = function (key) {
  * cells - Array of <mxCells> to move to the background. If null is
  * specified then the selection cells are used.
  */
-mxGraph.prototype.orderCells = function (back, cells) {
+mxGraph.prototype.orderCells = function (back, cells, c) {
   if (cells == null) {
     cells = mxUtils.sortCells(this.getSelectionCells(), true);
   }
 
+  null == cells && (cells = mxUtils.sortCells(this.getEditableCells(this.getSelectionCells()), !0));
   this.model.beginUpdate();
   try {
-    this.cellsOrdered(cells, back);
-    this.fireEvent(new mxEventObject(mxEvent.ORDER_CELLS, 'back', back, 'cells', cells));
+    this.cellsOrdered(cells, back, c),
+      this.fireEvent(
+        new mxEventObject(mxEvent.ORDER_CELLS, 'back', back, 'cells', cells, 'increment', c),
+      );
   } finally {
     this.model.endUpdate();
   }
-
   return cells;
+  // TEN9: add new forward and backward functionality
+  // this.model.beginUpdate();
+  // try {
+  //   this.cellsOrdered(cells, back);
+  //   this.fireEvent(new mxEventObject(mxEvent.ORDER_CELLS, 'back', back, 'cells', cells));
+  // } finally {
+  //   this.model.endUpdate();
+  // }
+
+  // return cells;
 };
 
 /**
@@ -54725,25 +54737,50 @@ mxGraph.prototype.orderCells = function (back, cells) {
  * cells - Array of <mxCells> whose order should be changed.
  * back - Boolean that specifies if the cells should be moved to back.
  */
-mxGraph.prototype.cellsOrdered = function (cells, back) {
-  if (cells != null) {
+mxGraph.prototype.cellsOrdered = function (cells, back, c) {
+  if (null != cells) {
     this.model.beginUpdate();
     try {
-      for (var i = 0; i < cells.length; i++) {
-        var parent = this.model.getParent(cells[i]);
-
-        if (back) {
-          this.model.add(parent, cells[i], i);
-        } else {
-          this.model.add(parent, cells[i], this.model.getChildCount(parent) - 1);
-        }
+      for (var d = 0; d < cells.length; d++) {
+        var e = this.model.getParent(cells[d]);
+        back
+          ? c
+            ? this.model.add(e, cells[d], Math.max(0, e.getIndex(cells[d]) - 1))
+            : this.model.add(e, cells[d], d)
+          : c
+          ? this.model.add(
+              e,
+              cells[d],
+              Math.min(this.model.getChildCount(e) - 1, e.getIndex(cells[d]) + 1),
+            )
+          : this.model.add(e, cells[d], this.model.getChildCount(e) - 1);
       }
-
-      this.fireEvent(new mxEventObject(mxEvent.CELLS_ORDERED, 'back', back, 'cells', cells));
+      this.fireEvent(
+        new mxEventObject(mxEvent.CELLS_ORDERED, 'back', back, 'cells', cells, 'increment', c),
+      );
     } finally {
       this.model.endUpdate();
     }
   }
+  // TEN9: add new forward and backward functionality
+  // if (cells != null) {
+  //   this.model.beginUpdate();
+  //   try {
+  //     for (var i = 0; i < cells.length; i++) {
+  //       var parent = this.model.getParent(cells[i]);
+
+  //       if (back) {
+  //         this.model.add(parent, cells[i], i);
+  //       } else {
+  //         this.model.add(parent, cells[i], this.model.getChildCount(parent) - 1);
+  //       }
+  //     }
+
+  //     this.fireEvent(new mxEventObject(mxEvent.CELLS_ORDERED, 'back', back, 'cells', cells));
+  //   } finally {
+  //     this.model.endUpdate();
+  //   }
+  // }
 };
 
 /**

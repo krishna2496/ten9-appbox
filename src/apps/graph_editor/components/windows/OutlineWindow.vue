@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import WindowHeader from './Header.vue';
-import { mxConstants, mxEvent, mxRectangle } from '../../lib/jgraph/mxClient.js';
+import { mxConstants, mxEvent, mxEventObject, mxRectangle } from '../../lib/jgraph/mxClient.js';
 import { Graph } from '../../lib/jgraph/Graph.js';
 import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
@@ -58,6 +58,9 @@ export default defineComponent({
       show.value = false;
       const outlineWindow = props.editorUi.actions.get('hideOutlineWindows');
       outlineWindow.funct();
+      props.editorUi.fireEvent(
+        new mxEventObject('changeMenuStatus', 'type', 'outline', 'value', false),
+      );
     }
 
     function resizeWindow() {

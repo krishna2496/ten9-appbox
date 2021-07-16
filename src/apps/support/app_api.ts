@@ -83,7 +83,7 @@ export const CommonAppPropsOptions = {
 };
 
 export async function canLoadFile(appInfo: AppInfo, file: File): Promise<boolean> {
-  if (file.name.indexOf('.') < 0) {
+  if (!file || !file.name || file.name.indexOf('.') < 0) {
     return false;
   }
 

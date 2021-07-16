@@ -377,12 +377,6 @@ export default defineComponent({
       }
     }
 
-    onMounted(() => {
-      window.addEventListener('resize', onResize);
-      document.addEventListener('keydown', onKeydown);
-      updateAppHeight();
-    });
-
     function registerApp(appInfo: AppInfo) {
       apps.value[appInfo.uniqueAppId] = appInfo;
     }
@@ -390,6 +384,12 @@ export default defineComponent({
     function setActiveApp(appId: string) {
       activeAppInfo.value = apps.value[appId];
     }
+
+    onMounted(() => {
+      window.addEventListener('resize', onResize);
+      document.addEventListener('keydown', onKeydown);
+      updateAppHeight();
+    });
 
     function getSupportedExtensions() {
       const exts = new Set();
@@ -508,7 +508,7 @@ export default defineComponent({
                 | {{ getDateString(log.lastModified) }}
     #page.col-md-10
       .row-btn
-        b-dropdown.ml-3(text='Create new...', variant='info')
+        b-dropdown.ml-3.app-options(text='Create new...', variant='info')
           b-dropdown-item(
             v-for='item in apps',
             v-bind:title='item.documentName',

@@ -17,6 +17,7 @@
 <script lang="ts">
 import Modals from './Modals.vue';
 import Window from './Windows.vue';
+import Menubar from './Menubar.vue';
 import { getAppInfo, DEFAULT_RECENT_COLORS, DEFAULT_THEME } from '../index';
 import { createEditorUi } from '../lib/jgraph/EditorUi';
 import { createApp } from '../lib/diagramly/App';
@@ -96,11 +97,17 @@ interface GraphEditorProps extends CommonAppProps {
 export default defineComponent<GraphEditorProps>({
   name: 'GraphEditor',
   components: {
+    Menubar,
     Modals,
     Window,
   },
   props: {
     ...CommonAppPropsOptions,
+    containerHeight: {
+      required: false,
+      type: Number,
+      default: null,
+    },
     recentColors: {
       required: false,
       type: String,
@@ -396,6 +403,24 @@ export default defineComponent<GraphEditorProps>({
       editor.undoManager.addListener(mxEvent.REDO, redoListener);
     }
 
+    function loadContent(content: string) {
+      const editorUi = editorUiRef.value;
+
+      editorUi.openLocalFile(content, null, null, null, null);
+      // Reset the view after loading a file
+      nextTick(() => {
+        setGraphEnabled(props.isEditing);
+        editorUi.resetViewToShowFullGraph();
+
+        for (let i = 0; i < editorUi.pages.length; i++) {
+          const page = editorUi.pages[i];
+          pagesToRefresh.add(page.getId());
+        }
+
+        refreshCurrentPageLinks();
+      });
+    }
+
     onMounted(() => {
       mxResources.loadDefaultBundle = false;
       mxResources.parse(resourcesFile);
@@ -427,6 +452,10 @@ export default defineComponent<GraphEditorProps>({
       });
 
       registerUndoListeners();
+
+      if (props.content) {
+        loadContent(props.content as string);
+      }
     });
 
     onBeforeUnmount(() => {
@@ -470,24 +499,6 @@ export default defineComponent<GraphEditorProps>({
     //   },
     // );
 
-    function loadContent(content: string) {
-      const editorUi = editorUiRef.value;
-
-      editorUi.openLocalFile(content, null, null, null, null);
-      // Reset the view after loading a file
-      nextTick(() => {
-        setGraphEnabled(props.isEditing);
-        editorUi.resetViewToShowFullGraph();
-
-        for (let i = 0; i < editorUi.pages.length; i++) {
-          const page = editorUi.pages[i];
-          pagesToRefresh.add(page.getId());
-        }
-
-        refreshCurrentPageLinks();
-      });
-    }
-
     async function loadContentFromFile(file: File) {
       if (!(await canLoadFile(file))) {
         throw new Error(`File cannot be loaded by this editor: (${file.name})`);
@@ -508,10 +519,7 @@ export default defineComponent<GraphEditorProps>({
       const editorUi = editorUiRef.value;
 
       const rootElt = doc.documentElement.querySelector('root');
-      // TODO: FIX!
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const cells = [];
+      const cells: typeof mxCell[] = [];
       rootElt.querySelectorAll('mxCell').forEach((node) => {
         // skip the first 2 default elements in any graph doc
         if (node.id != '0' && node.id != '1') {
@@ -519,9 +527,6 @@ export default defineComponent<GraphEditorProps>({
         }
       });
 
-      // TODO: FIX!
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       let result = cells;
 
       result = result || graph.getSelectionCells();
@@ -782,6 +787,8 @@ export default defineComponent<GraphEditorProps>({
 <template lang="pug">
 .div
   .geEditor(ref='containerRef')
+  div(v-if='editorUiRef')
+    menubar(:editorUi='editorUiRef')
   modals(:editorUi='editorUiRef', :shape-libraries='shapeLibraries', @insert-image='imageInsert')
   window(
     :editorUi='editorUiRef',

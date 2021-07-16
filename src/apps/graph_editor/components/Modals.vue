@@ -24,9 +24,11 @@ import InsertImageModal from './dialogs/InsertImageModal.vue';
 import InsertLinkModal from './dialogs/InserLinkModal.vue';
 import MoreShapesModal from './dialogs/MoreShapesModal.vue';
 import LayerRenameModal from './dialogs/RenameLayerModal.vue';
+import OrganicModal from './dialogs/OrganicModal.vue';
 import PageRenameModal from './dialogs/PageRenameModal.vue';
 import PageScaleModal from './dialogs/PageScaleModal.vue';
 import PrintModal from './dialogs/PrintModal.vue';
+import RotationModal from './dialogs/RotationModal.vue';
 import ScratchpadModal from './dialogs/ScratchpadModal.vue';
 import { defineComponent } from '@vue/composition-api';
 
@@ -43,10 +45,12 @@ export default defineComponent({
     InsertImageModal,
     InsertLinkModal,
     LayerRenameModal,
+    OrganicModal,
     MoreShapesModal,
     PageRenameModal,
     PageScaleModal,
     PrintModal,
+    RotationModal,
     ScratchpadModal,
   },
   props: {
@@ -83,8 +87,10 @@ export default defineComponent({
   insert-link-modal(:editorUi='editorUi')
   more-shapes-modal(:editorUi='editorUi', :shape-libraries='shapeLibraries')
   layer-rename-modal(:editorUi='editorUi')
+  organic-modal(:editorUi='editorUi')
   page-rename-modal(:editorUi='editorUi')
   page-scale-modal(:editorUi='editorUi')
   print-modal(:editorUi='editorUi')
+  rotation-modal(:editorUi='editorUi')
   scratchpad-modal(:editorUi='editorUi')
 </template>

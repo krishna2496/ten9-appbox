@@ -15,10 +15,11 @@
 -->
 
 <script lang="ts">
+import { mxConstants } from '../../lib/jgraph/mxClient.js';
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'PageScaleModal',
+  name: 'RotationModal',
   props: {
     editorUi: {
       type: Object,
@@ -28,55 +29,57 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const pageScaleValue = ref<number>(null);
+    const rotationValue = ref<number>(null);
 
-    const scaleValue = 100;
+    const rotationInput = ref<HTMLInputElement>(null);
 
-    const pageScaleInput = ref<HTMLInputElement>(null);
+    const { graph } = props.editorUi.editor;
 
     function closeModal() {
       show.value = false;
     }
 
-    function setPageScale() {
-      if (pageScaleValue.value != 0 && pageScaleValue.value != null) {
-        props.editorUi.setPageScale(pageScaleValue.value / scaleValue);
+    function setRotationValue() {
+      if (rotationValue.value != 0 && rotationValue.value != null) {
+        graph.setCellStyles(mxConstants.STYLE_ROTATION, rotationValue.value);
       }
       closeModal();
     }
 
-    function openPageScale() {
+    function openRotation() {
+      const state = graph.getView().getState(graph.getSelectionCell());
+      rotationValue.value = state.style[mxConstants.STYLE_ROTATION] || 0;
       show.value = true;
-      pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
     }
 
     function onKeydown(event: KeyboardEvent) {
       if (event.key == 'Enter') {
-        setPageScale();
+        setRotationValue();
       }
     }
 
     function focusOnInput() {
-      pageScaleInput.value?.select();
-      pageScaleInput.value?.focus();
+      rotationInput.value?.select();
+      rotationInput.value?.focus();
     }
 
     onMounted(() => {
-      props.editorUi.addListener('openPageScale', openPageScale);
+      props.editorUi.addListener('openRotation', openRotation);
       document.addEventListener('keydown', onKeydown);
     });
 
     onUnmounted(() => {
-      props.editorUi.removeListener(openPageScale);
+      props.editorUi.removeListener(openRotation);
+      document.removeEventListener('keydown', onKeydown);
     });
 
     return {
       closeModal,
       focusOnInput,
       onKeydown,
-      pageScaleInput,
-      pageScaleValue,
-      setPageScale,
+      rotationInput,
+      rotationValue,
+      setRotationValue,
       show,
     };
   },
@@ -93,15 +96,15 @@ b-modal#modal(
   @shown='focusOnInput'
 )
   template(v-slot:modal-header)
-    h6 Set Page Scale
+    h6 Rotation
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-3.mt-2
-    label.mt-1 Percentage (%)
-    input.txt-input.ml-2(ref='pageScaleInput', type='number', v-model='pageScaleValue')
+    label.mt-1 Rotation (0-360):
+    input.txt-input.ml-2(ref='rotationInput', type='number', v-model='rotationValue')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setPageScale')
+    button.btn.btn-primary(type='button', @click='setRotationValue')
       | Apply
 </template>
