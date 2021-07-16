@@ -308,6 +308,7 @@ export default defineComponent<GraphEditorProps>({
 
     function onGraphChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {
       ctx.emit('content-changed', event.name);
+      editorUiRef.value.fireEvent(new mxEventObject('closePopupMenu'));
     }
 
     function onShapeLibrariesChanged(_sender: typeof mxEventSource, event: typeof mxEventObject) {

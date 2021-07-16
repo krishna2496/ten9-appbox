@@ -21,7 +21,7 @@ import { defineComponent } from '@vue/composition-api';
 import '../styles/modals.scss';
 
 export default defineComponent({
-  name: 'Modals',
+  name: 'Menus',
   components: {
     PopupMenu,
   },

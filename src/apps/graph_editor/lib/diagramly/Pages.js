@@ -1646,19 +1646,19 @@ EditorUi.prototype.addTabListeners = function (page, tab) {
             menu.destroy();
           });
 
-         // TEN9: correct popup position
-         var offset = mxUtils.getOffset(this.container);
-         // var x = mxEvent.getClientX(evt);
-         // var y = mxEvent.getClientY(evt);
-         var x = mxEvent.getClientX(evt) - offset.x;
-         var y = mxEvent.getClientY(evt) - offset.y;
-         // TEN9: create bootstrapVue component
-         //menu.popup(x, y, null, evt);
-         const pointer = { x, y };
-         this.fireEvent(new mxEventObject('openPagePopupMenu', 'pointer', pointer));
-         graphUtils.fit(menu.div, this.container);
+          // TEN9: correct popup position
+          var offset = mxUtils.getOffset(this.container);
+          // var x = mxEvent.getClientX(evt);
+          // var y = mxEvent.getClientY(evt);
+          var x = mxEvent.getClientX(evt) - offset.x;
+          var y = mxEvent.getClientY(evt) - offset.y;
+          // TEN9: create bootstrapVue component
+          //menu.popup(x, y, null, evt);
+          const pointer = { x, y };
+          this.fireEvent(new mxEventObject('openPagePopupMenu', 'pointer', pointer));
+          graphUtils.fit(menu.div, this.container);
 
-         this.setCurrentMenu(menu, tab);
+          this.setCurrentMenu(menu, tab);
         }
 
         mxEvent.consume(evt);

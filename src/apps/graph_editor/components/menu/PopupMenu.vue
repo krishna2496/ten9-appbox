@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { mxResources, mxUtils } from '../../lib/jgraph/mxClient.js';
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
 // interface CustomEvent {
 //   getProperty: FunctionStringCallback;
@@ -44,6 +44,10 @@ export default defineComponent({
     const pagePopupVisible = ref<boolean>(false);
 
     const { graph } = props.editorUi.editor;
+
+    const redoDisabled = ref<boolean>(true);
+
+    const undoDisabled = ref<boolean>(true);
 
     function setPopupPosition(pagePopup: boolean) {
       const coordinates = graphUtils.getDocumentContainerRect();
@@ -128,6 +132,13 @@ export default defineComponent({
       close();
     }
 
+    watch(
+      () => props.editorUi.editor.undoManager.indexOfNextAdd,
+      (val) => {
+        undoDisabled.value = val > 0;
+      },
+    );
+
     return {
       cellSelectedVisible,
       close,
@@ -142,8 +153,10 @@ export default defineComponent({
       openPopupMenu,
       pagePopupVisible,
       renamePage,
+      redoDisabled,
       setPopupPosition,
       top,
+      undoDisabled,
       visible,
     };
   },
@@ -156,9 +169,9 @@ div
     v-show='visible',
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
-    b-list-group-item(@click='doAction("undo")') Undo
+    b-list-group-item(@click='doAction("undo")', v-show='!undoDisabled') Undo
       span.shortcuts Ctrl + Z
-    b-list-group-item(@click='doAction("redo")') Redo
+    b-list-group-item(@click='doAction("redo")', v-show='!redoDisabled') Redo
       span.shortcuts Ctrl + Shift + Z
     b-list-group-item(@click='doAction("pasteHere")') Paste Here
     b-list-group-item(@click='doAction("clearDefaultStyle")') Clear Default Style

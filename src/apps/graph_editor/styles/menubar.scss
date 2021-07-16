@@ -54,7 +54,7 @@
 }
 
 .dropdown-divider {
-  margin: 0 0 0 0;
+  margin: 0;
 }
 
 .show .dropdown .dropdown-toggle {
@@ -187,4 +187,8 @@ a table tr td:hover {
 
 .disabled .pl-5 .icon-color {
   color: #b3b3b3;
+}
+
+.dropdown-menu {
+  z-index: 10000;
 }
