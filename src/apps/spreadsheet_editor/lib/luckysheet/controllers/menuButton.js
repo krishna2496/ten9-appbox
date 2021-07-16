@@ -524,7 +524,6 @@ const menuButton = {
                 _this.focus($menuButton, '100%');
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
-                    debugger;
                     $menuButton.hide();
                     luckysheetContainerFocus();
 
