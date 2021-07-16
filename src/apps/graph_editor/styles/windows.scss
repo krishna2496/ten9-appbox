@@ -14,7 +14,7 @@
  * -----
  */
 
-.card-header {
+ .card-header {
   display: inline-flex;
   height: 44px;
   cursor: move;
@@ -126,7 +126,7 @@
 }
 
 .layer-window-card-body-main {
-  padding: 0;
+  padding: 0 !important;
   background-color: #dcdcdc !important;
   overflow-y: scroll;
 }
@@ -200,6 +200,7 @@
 
 .layer-window-body-container {
   margin: 0;
+  width: 100%;
 
   .layer-window-item {
     padding: 5px;
@@ -267,6 +268,11 @@
 
 .window-card {
   resize: both;
+}
+
+.shortcuts {
+  float: right;
+  color: #8c8c8c;
 }
 
 .find {
