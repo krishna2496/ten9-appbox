@@ -63,10 +63,6 @@ module.exports = {
     'max-nesting-depth': [
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
       5,
-      // Exclusions are (TODO)
-      // src/styles/gitlab/pages/alert_management/details.scss
-      // src/styles/gitlab/pages/alert_management/list.scss
-      // src/styles/gitlab/pages/alert_management/details.scss
       {
         ignoreAtRules: ['each', 'media', 'supports', 'include'],
       },

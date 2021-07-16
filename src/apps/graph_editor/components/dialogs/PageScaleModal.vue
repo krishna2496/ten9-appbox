@@ -18,7 +18,7 @@
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'PageScaleModel',
+  name: 'PageScaleModal',
   props: {
     editorUi: {
       type: Object,

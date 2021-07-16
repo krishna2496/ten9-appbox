@@ -75,7 +75,7 @@ export default defineComponent({
       guides: true,
       connectionArrow: true,
       connectionPoints: true,
-      copyOnConnect: true,
+      copyOnConnect: false,
       collapseExpand: true,
     });
 
@@ -495,8 +495,9 @@ export default defineComponent({
             span Flip Horizontal
           b-dropdown-item(href='#', @click='direction("vertical")')
             span Flip Vertical
+          b-dropdown-divider
           b-dropdown-item(href='#', @click='fireEvent("openRotation")')
-            span Rotate
+            span Rotation
         b-dropdown-item(href='#', @click='doAction("turn")', :disabled='!isSomethingSelected')
           span Rotate shape only by 90/ Reverse
           span.float-right.shortcut.f-12

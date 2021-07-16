@@ -315,7 +315,7 @@ Editor.themes = null;
 /**
  * Specifies the image URL to be used for the transparent background.
  */
-Editor.ctrlKey = mxClient.IS_MAC ? 'Cmd' : 'Ctrl';
+Editor.ctrlKey = mxClient.IS_MAC ? '⌘' : 'Ctrl';
 
 /**
  * Specifies the image URL to be used for the transparent background.

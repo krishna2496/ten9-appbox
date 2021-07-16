@@ -45,7 +45,7 @@ const devtool = IS_PRODUCTION ? false : 'source-map';
 const TEMP_PATH = path.join(ROOT_PATH, './node_modules/.tmp');
 
 module.exports = {
-  name: 'graph-editor',
+  name: 'ten9-appbox',
 
   mode: IS_PRODUCTION ? 'production' : 'development',
 
@@ -361,7 +361,7 @@ module.exports = {
     }),
 
     new HtmlWebpackPlugin({
-      title: 'diagram-editor',
+      title: 'ten9-appbox',
       minify: IS_PRODUCTION
         ? {
             collapseWhitespace: true,

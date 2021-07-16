@@ -19,7 +19,7 @@ import { mxConstants } from '../../lib/jgraph/mxClient.js';
 import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'RotationModel',
+  name: 'RotationModal',
   props: {
     editorUi: {
       type: Object,
@@ -47,7 +47,6 @@ export default defineComponent({
     }
 
     function openRotation() {
-      debugger;
       const state = graph.getView().getState(graph.getSelectionCell());
       rotationValue.value = state.style[mxConstants.STYLE_ROTATION] || 0;
       show.value = true;
@@ -71,6 +70,7 @@ export default defineComponent({
 
     onUnmounted(() => {
       props.editorUi.removeListener(openRotation);
+      document.removeEventListener('keydown', onKeydown);
     });
 
     return {
@@ -96,11 +96,11 @@ b-modal#modal(
   @shown='focusOnInput'
 )
   template(v-slot:modal-header)
-    h6 Set Page Scale
+    h6 Rotation
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-3.mt-2
-    label.mt-1 Enter Value (Rotation 0-360):
+    label.mt-1 Rotation (0-360):
     input.txt-input.ml-2(ref='rotationInput', type='number', v-model='rotationValue')
   template(#modal-footer='')
     button.btn.btn-grey(type='button', @click='closeModal')
