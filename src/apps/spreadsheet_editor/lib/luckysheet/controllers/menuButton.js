@@ -524,6 +524,7 @@ const menuButton = {
                 _this.focus($menuButton, '100%');
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
+                    debugger;
                     $menuButton.hide();
                     luckysheetContainerFocus();
 
@@ -535,12 +536,8 @@ const menuButton = {
                     // TEN9: zoom imported for zoom dropdown
                     zoomChange(ratio)
                     _this.focus($menuButton, itemvalue);
-                    
-                    _this.focus($menuButton, itemvalue);
-                    $input.val(itemvalue);
 
                     let d = editor.deepCopyFlowData(Store.flowdata);
-                    _this.updateFormat(d, "fs", itemvalue);
                     
                     clearTimeout(luckysheet_fs_setTimeout);
                 });
@@ -590,69 +587,6 @@ const menuButton = {
             }, 200);
         });
 
-        /*zoom end */
-       
-
-        $("#luckysheet-icon-zoom1").mousedown(function(e){ 
-            $("#zoom-dropdown").focus();
-            $("#" + Store.container).attr("tabindex", 0).blur();
-           /*  hideMenuByCancel(e); */
-            e.stopPropagation();
-        }).click(function(){
-            $("#zoom-dropdown").focus();
-            $("#" + Store.container).attr("tabindex", 0).blur();
-            let menuButtonId = $(this).attr("id")+"-menuButton";
-            let $menuButton = $("#"+menuButtonId);
-            if($menuButton.length == 0){
-                let itemdata = [];
-                const locale_zoomarray = locale().zoomarray;
-                for(let a=0;a<locale_zoomarray.length;a++){
-                    let fItem = locale_zoomarray[a];
-                    let ret = {};
-                    ret.value = fItem;
-                    ret.index = a;
-                    ret.type = "inner";
-                    ret.text = "<span class='luckysheet-mousedown-cancel' style='font-size:11px;font-family:"+fItem+"'>"+fItem+"</span>";
-                    ret.example = "";
-                    itemdata.push(ret);
-                }
-
-                let itemset = _this.createButtonMenu(itemdata);
-
-                let menu = replaceHtml(_this.menu, {"id": "zoom", "item": itemset, "subclass": "", "sub": ""});
-               
-                $("body").append(menu);
-                $menuButton = $("#"+menuButtonId).width(200);
-                _this.focus($menuButton, '100%');
-
-                $menuButton.on("click", ".luckysheet-cols-menuitem", function(){
-                    $menuButton.hide();
-                    /* luckysheetContainerFocus(); */
-
-                    let $t = $(this), itemvalue = $t.attr("itemvalue"), itemname = $t.attr("itemname");
-                    let ratio = parseInt(itemvalue);
-                    ratio = ratio/100;
-                    // TEN9: zoom imported for zoom dropdown
-                    zoomChange(ratio)
-                    _this.focus($menuButton, itemvalue);
-                    $("#luckysheet-icon-zoom").find(".luckysheet-toolbar-menu-button-caption").html(" "+ itemname +" ");
-                    $("#zoom-dropdown").val(itemvalue);
-                    let d = editor.deepCopyFlowData(Store.flowdata);
-
-                    _this.updateFormat(d, "z", itemvalue);
-                });
-            }
-
-            let userlen = $(this).outerWidth();
-            let tlen = $menuButton.outerWidth();
-
-            let menuleft = $(this).offset().left;
-            if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
-                menuleft = menuleft - tlen + userlen;
-            }
-            mouseclickposition($menuButton, menuleft, $(this).offset().top+25, "lefttop");
-        });
-
         //字体设置
         $("#luckysheet-icon-font-family").mousedown(function(e){
             hideMenuByCancel(e);
@@ -691,7 +625,7 @@ const menuButton = {
 
                     let d = editor.deepCopyFlowData(Store.flowdata);
 
-                    _this.updateFormat(d, "ff", itemvalue);
+                 
                 });
             }
 
@@ -997,7 +931,7 @@ const menuButton = {
 
         //字体大小
         let luckysheet_fs_setTimeout = null;
-        $("#luckysheet-icon-luckysheet-icon-zoom1-size").mousedown(function(e){
+        $("#luckysheet-icon-font-size").mousedown(function(e){
             if (parseInt($("#luckysheet-input-box").css("top")) > 0){
                 let w = window.getSelection();
                 if(w.type!="None"){
@@ -1010,6 +944,7 @@ const menuButton = {
             hideMenuByCancel(e);
             e.stopPropagation();
         }).click(function(){
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             
