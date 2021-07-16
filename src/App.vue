@@ -158,10 +158,10 @@ export default defineComponent({
 
     function updateAppHeight() {
       const container = document.getElementById('container');
-      const rect = container.getBoundingClientRect();
       const contentPadding = 20;
       const bottomMargin = 5;
-      const newHeight = window.innerHeight - rect.top - contentPadding - bottomMargin;
+      const top = 64;
+      const newHeight = window.innerHeight - top - contentPadding - bottomMargin;
       container.style.height = `${newHeight}px`;
 
       nextTick(() => {
@@ -377,12 +377,6 @@ export default defineComponent({
       }
     }
 
-    onMounted(() => {
-      window.addEventListener('resize', onResize);
-      document.addEventListener('keydown', onKeydown);
-      updateAppHeight();
-    });
-
     function registerApp(appInfo: AppInfo) {
       apps.value[appInfo.uniqueAppId] = appInfo;
     }
@@ -390,6 +384,12 @@ export default defineComponent({
     function setActiveApp(appId: string) {
       activeAppInfo.value = apps.value[appId];
     }
+
+    onMounted(() => {
+      window.addEventListener('resize', onResize);
+      document.addEventListener('keydown', onKeydown);
+      updateAppHeight();
+    });
 
     function getSupportedExtensions() {
       const exts = new Set();

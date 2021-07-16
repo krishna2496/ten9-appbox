@@ -50,7 +50,7 @@
 }
 
 .dropdown-divider {
-  margin: 1px;
+  margin: 0 0 0 32px;
 }
 
 .show .dropdown .dropdown-toggle {
@@ -135,7 +135,7 @@ a table tr td:hover {
 }
 
 .pl-35 .dropdown-toggle span {
-  padding: 3px 0 3px 3px;
+  padding: 0;
 }
 
 #insert-dropright button {
@@ -156,4 +156,12 @@ a table tr td:hover {
 
 #layout-dropright button {
   padding-left: 2.3rem;
+}
+
+.dropdown-toggle {
+  font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+  font-size: 14px !important;
+  line-height: 20px;
+  letter-spacing: 0.2px;
+  margin: 2px 0 0;
 }
