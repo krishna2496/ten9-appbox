@@ -287,7 +287,7 @@ export default defineComponent({
         b-dropdown-item(@click='doAction("print")')
           i.fa-solid.fa-print.float-left.shortcut.f-12
           span.pl-5 Print
-          span.float-right.shortcut.f-12.pl-5
+          span.float-right.shortcut.pl-5
             i.fa-solid.fa-command.f-12 +P
       b-nav-item-dropdown(text='Edit')
         b-dropdown-item(href='#', @click='handleClick("undo")', :disabled='undoDisabled')
@@ -454,7 +454,7 @@ export default defineComponent({
           span.float-right.shortcut.f-12 Enter/Home
         b-dropdown-item(href='#', @click='doAction("zoomIn")')
           span Zoom In
-          span.float-right.shortcut.f-12
+          span.float-right.shortcut
             i.fa-solid.fa-command.f-12 +(Numpad) / Alt+MouseWheel
         b-dropdown-item(href='#', @click='doAction("zoomOut")')
           span Zoom Out
