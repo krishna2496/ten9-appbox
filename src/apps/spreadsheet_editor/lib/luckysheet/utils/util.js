@@ -882,6 +882,7 @@ function arrayRemoveItem(array, item) {
     });
 }
 
+/* TEN9 : Added for zoom dropdown  */
 function luckysheetzoomformat(format) {
     let fontarray = locale().zoomarray;
     if (getObjType(format) == "object") {
@@ -984,5 +985,6 @@ export {
     createProxy,
     arrayRemoveItem,
     camel2split,
+    /* TEN9 : Added for zoom dropdown  */
     luckysheetzoomformat
 }

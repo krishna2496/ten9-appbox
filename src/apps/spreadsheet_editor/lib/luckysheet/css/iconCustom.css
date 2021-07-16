@@ -1,6 +1,9 @@
 .luckysheet-icon-img-container.iconfont,
 .luckysheet-submenu-arrow .iconfont
 {
+    /* TEN9: font size changed to 13px 
+     font-size: 24px;
+    */
     font-size: 13px;
 }
 
@@ -43,6 +46,9 @@
 }
 
 #luckysheet-icon-morebtn{
+    /* TEN9: padding changed for better layout
+      padding: 2px 13px 0 5px;
+    */
     padding: 2px 2px 0 5px;
 }
 #luckysheet-icon-morebtn .iconfont{
@@ -58,9 +64,11 @@
     align-items: center;
     justify-content: center;
 }
+/* TEN9: CSS commented for better layout
 .lucky-button-custom:hover{
-    /* background-color: #E1E4E8; */
+    background-color: #E1E4E8;
 }
+*/
 
 /* more button border */
 #luckysheet-icon-morebtn-div{

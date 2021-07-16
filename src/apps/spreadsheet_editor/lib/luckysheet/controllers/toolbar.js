@@ -159,20 +159,40 @@ export function createToolbarHtml() {
                 </div>
             </div>
         </div>`,
-        /* TEN9: zoom dropdown added */
+        /* TEN9: zoom dropdown added 
         zoom:`<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block"
         data-tips="${toolbar.zoom}" id="luckysheet-icon-zoom" role="button" style="user-select: none;margin-left:3px">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
-                    <input type="text" value="${zoomarray[3]}" style="width:30px;border:0px" id="zoom-dropdown"></input>
+                    <input type="text" value="${zoomarray[3]}" style="width:30px;border:0px;" id="zoom-dropdown"></input>
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
                     style="user-select: none;">
                     </div>
                 </div>
             </div>
-        </div>`,
+        </div>`,*/
+
+        zoom: `<div class="luckysheet-toolbar-select luckysheet-toolbar-zoom-combobox luckysheet-toolbar-combo-button luckysheet-inline-block"
+        data-tips="${toolbar.zoom}" id="luckysheet-icon-zoom" style="user-select: none;">
+            <div class="luckysheet-toolbar-combo-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-combo-button-inner-box luckysheet-inline-block"
+                style="user-select: none;">
+                    <div aria-posinset="4" aria-setsize="7" class="luckysheet-inline-block luckysheet-toolbar-combo-button-caption"
+                    style="user-select: none;">
+                        <input aria-label="${zoomarray[3]}" class="luckysheet-toolbar-combo-button-input luckysheet-toolbar-textinput"
+                        role="combobox" id="dropdown-zoom" style="user-select: none;width:30px" tabindex="-1" type="text" value="100%"
+                        />
+                    </div>
+                    ${/* TEN9: margin-left: 8px added */'' }
+                    <div class="luckysheet-toolbar-combo-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
+                    style="user-select: none;margin-left: 8px;">
+                    </div>
+                </div>
+            </div>
+        </div>`, //'Font size'
         currencyFormat: `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.currencyFormat}"
         id="luckysheet-icon-currency" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"

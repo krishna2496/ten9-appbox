@@ -8832,6 +8832,7 @@ export default {
         undo: 'Undo',
         redo: 'Redo',
         paintFormat: 'Paint format',
+        // TEN9:  added for zoom dropdown
         zoom: 'Zoom',
         currencyFormat: 'Format as currency',
         percentageFormat: 'Format as percent',
@@ -9195,7 +9196,9 @@ export default {
     fontFamily:{
         MicrosoftYaHei:"YaHei",
     },
+    // TEN9:  added for zoom dropdown
     zoomarray: ["50%","75%","90%","100%","125%","150%","200%"],
+    // TEN9:  added for zoom dropdown
     zoomjson: {"50":0,"75%":1,"90%":2,"100%":3,"125%":4,"150%":5,"200%":6},
     fontarray: ["Arial","Times New Roman","Tahoma","Verdana"],
     fontjson: {"arial":0,"times new roman":1,"tahoma":2,"verdana":3},

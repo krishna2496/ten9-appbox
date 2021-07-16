@@ -9057,6 +9057,7 @@ export default {
         undo: '撤销',
         redo: '重做',
         paintFormat: '格式刷',
+        // TEN9:  added for zoom dropdown
         zoom       : '缩放',
         currencyFormat: '货币格式',
         percentageFormat: '百分比格式',
@@ -9437,7 +9438,9 @@ export default {
     fontFamily:{
         MicrosoftYaHei:"Microsoft YaHei",
     },
+    // TEN9:  added for zoom dropdown
     zoomarray: ["50%","75%","90%","100%","125%","150%","200%"],
+    // TEN9:  added for zoom dropdown
     zoomjson: {"50":0,"75%":1,"90%":2,"100%":3,"125%":4,"150%":5,"200%":6},
     fontarray: ["Arial","Times New Roman","Tahoma","Verdana","微软雅黑","宋体","黑体","楷体","仿宋","新宋体","华文新魏","华文行楷","华文隶书"],
     fontjson: {"arial":0,"times new roman":1,"tahoma":2,"verdana":3,"微软雅黑":4,"microsoft yahei":4,"宋体":5,"simsun":5,"黑体":6,"simhei":6,"楷体":7,"kaiti":7,"仿宋":8,"fangsong":8,"新宋体":9,"nsimsun":9,"华文新魏":10,"stxinwei":10,"华文行楷":11,"stxingkai":11,"华文隶书":12,"stliti":12,},

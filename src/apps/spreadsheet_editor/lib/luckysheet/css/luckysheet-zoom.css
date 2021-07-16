@@ -120,6 +120,7 @@
     background-color: #E1E4E8;
 }
 
+/* TEN9 : CSS added for zoom dropdown */
 #zoom-dropdown {
     font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif !important;
     font-size: 12px;
@@ -127,8 +128,13 @@
     color: rgba(0,0,0,.7) !important;
 }
 
-#zoom-dropdown:focus {
-    border: 2px solid #1a73e8!important;
-    border-radius: 4px;
-    padding: 0 7px;
+#zoom-dropdown:hover {
+    background-color: rgba(0, 0, 0, 0.01);
+}
+
+#zoom-dropdown {
+    font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif !important;
+    font-size: 12px;
+    font-weight: 550 !important;
+    color: rgba(0,0,0,.7) !important;
 }
