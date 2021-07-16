@@ -9266,16 +9266,17 @@ export default {
         "hasTitle":"Data has a header row",
         "sortBy":"Sort by",
         "addOthers":"Add another sort column",
-        "close":"close",
-        "confirm":"sort",
+        "close":"Close",    // TEN9: Title case
+        "confirm":"Sort",   // TEN9: Title case
 
         "columnOperation":"Column",
         "secondaryTitle":"then by",
 
         "sortTitle":"Sort range",
 
-        "sortRangeTitle":"Sort range from",
-        "sortRangeTitleTo":"to",
+        // TEN9: Add spacing
+        "sortRangeTitle":"Sort range from ",
+        "sortRangeTitleTo":" to ",
 
 
         "noRangeError":"Cannot perform this operation on multiple selection areas, please select a single range and try again",
@@ -9283,7 +9284,7 @@ export default {
 
     },
     filter:{
-       filter:"create filter",
+       filter:"Create filter",  // TEN9: Title case
 
        sortByAsc:"Sort A-Z",
        sortByDesc:"Sort Z-A",
