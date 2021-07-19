@@ -2,11 +2,11 @@
 
 @font-face {
   font-family: '#{$icomoon-font-family}';
-  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?oea2do');
-  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?oea2do#iefix') format('embedded-opentype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?oea2do') format('truetype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?oea2do') format('woff'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?oea2do##{$icomoon-font-family}') format('svg');
+  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?ovuxu5');
+  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?ovuxu5#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?ovuxu5') format('truetype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?ovuxu5') format('woff'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?ovuxu5##{$icomoon-font-family}') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -27,16 +27,21 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-// .ten9-icon-merge-cell {
-//   &:before {
-//     content: $ten9-icon-merge-cell; 
-//   }
-// }
-
-.ten9-icon-merge-cell:before {
-  content:  $ten9-icon-merge-cell; 
+.ten9-icon-clip {
+  &:before {
+    content: $ten9-icon-clip; 
+  }
 }
-
+.ten9-icon-vertical-align-middle {
+  &:before {
+    content: $ten9-icon-vertical-align-middle; 
+  }
+}
+.ten9-icon-merge-cell {
+  &:before {
+    content: $ten9-icon-merge-cell; 
+  }
+}
 .ten9-icon-decimal-decrease {
   &:before {
     content: $ten9-icon-decimal-decrease; 
@@ -102,3 +107,4 @@
     content: $ten9-icon-wrap-wrap; 
   }
 }
+

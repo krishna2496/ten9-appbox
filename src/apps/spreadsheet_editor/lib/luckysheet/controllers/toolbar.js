@@ -464,7 +464,8 @@ export function createToolbarHtml() {
                 <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-all iconfont luckysheet-iconfont-quanjiabiankuang"
+                    ${ /* TEN9: luckysheet-iconfont-quanjiabiankuang class removed for better layout */'' }
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-all iconfont"
                         style="user-select: none;">
                         ${ /* TEN9: Font awesome border all icon added */'' }
                         <i class="fa-solid fa-border-all"></i>
@@ -553,10 +554,11 @@ export function createToolbarHtml() {
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                            ${ /* TEN9: line-height removed for better layout */'' }
                             <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-bottom iconfont luckysheet-iconfont-dibuduiqi"
-                            style="user-select: none;font-size:20px;line-height:1.8">
+                            style="user-select: none;font-size:20px;">
                             ${ /* TEN9: icon added for vertical alignMode */'' }
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1024 1024"><path d="M859.9 780H164.1c-4.5 0-8.1 3.6-8.1 8v60c0 4.4 3.6 8 8.1 8h695.8c4.5 0 8.1-3.6 8.1-8v-60c0-4.4-3.6-8-8.1-8zM505.7 669a8 8 0 0 0 12.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V176c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8z" fill="rgba(0,0,0,.7)"/><rect x="0" y="0" width="1024" height="1024" fill="rgba(0, 0, 0, 0)" /></svg>
+                            <div style="line-height:1.6"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet;" viewBox="0 0 1024 1024"><path d="M859.9 780H164.1c-4.5 0-8.1 3.6-8.1 8v60c0 4.4 3.6 8 8.1 8h695.8c4.5 0 8.1-3.6 8.1-8v-60c0-4.4-3.6-8-8.1-8zM505.7 669a8 8 0 0 0 12.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V176c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8z" fill="rgba(0,0,0,.7)"/><rect x="0" y="0" width="1024" height="1024" fill="rgba(0, 0, 0, 0)" /></svg></div>
                             </div>
                         </div>
                     </div>
@@ -584,14 +586,14 @@ export function createToolbarHtml() {
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                        ${ /* TEN9: font-size:14px;line-height:2.1 style added
+                        ${ /* TEN9: font-size:14px;style added
                          <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan"
                             style="user-select: none;">
                         */'' }     
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan"
-                            style="user-select: none;font-size:14px;line-height:2.1">
+                            style="user-select: none;font-size:14px;">
                                 ${/* TEN9: Font awesome wrap-overflow icon added */''}
-                                <i class="ten9-icon-wrap-overflow"></i>
+                                <i class="ten9-icon-wrap-overflow" style="line-height:2.1"></i>
                             </div>
                         </div>
                     </div>
@@ -619,10 +621,11 @@ export function createToolbarHtml() {
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont luckysheet-iconfont-wuxuanzhuang"
-                            style="user-select: none;font-size:19px;line-height:1.8">
+                        ${ /* TEN9: line-height : 1.8 removed for better layout */'' }    
+                        <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-none iconfont luckysheet-iconfont-wuxuanzhuang"
+                            style="user-select: none;font-size:19px;">
                             ${ /* TEN9: icon added for textRotateMode */'' }
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M20.5 18l-3 3v-2H5v-2h12.5v-2l3 3m-10.37-8h3.75L12 4.97L10.13 10m2.62-7l4.75 11h-2.08l-.92-2.19h-5L8.58 14H6.5l4.75-11h1.5z" fill="rgba(0,0,0,.9)"/><rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" /></svg>
+                            <div style="line-height:1.8"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M20.5 18l-3 3v-2H5v-2h12.5v-2l3 3m-10.37-8h3.75L12 4.97L10.13 10m2.62-7l4.75 11h-2.08l-.92-2.19h-5L8.58 14H6.5l4.75-11h1.5z" fill="rgba(0,0,0,.9)"/><rect x="0" y="0" width="24" height="24" fill="rgba(0, 0, 0, 0)" /></svg></div>
                             </div>
                         </div>
                     </div>
