@@ -8846,9 +8846,9 @@ export default {
         strikethrough: 'Strikethrough (Alt+Shift+5)',
         underline: 'Underline',
         textColor: 'Text color',
-        chooseColor: 'choose color',
+        chooseColor: 'Choose color',    // TEN9: Change to Title case
         resetColor: 'Reset',
-        customColor: 'CUSTOM',
+        customColor: 'Custom',          // TEN9: Change to Title case
         alternatingColors: 'Alternating colors',
         confirmColor: 'OK',
         cancelColor: 'Cancel',
@@ -9136,11 +9136,9 @@ export default {
         { "text": 'Percent', "value": "#0.00%", "example": "12.21%" },
         { "text": 'Scientific', "value": "0.00E+00", "example": "1.01E+5" },
         { "text": "", "value": "split", "example": "" },
-        { "text": 'Accounting', "value": "¥(0.00)", "example": "¥(1200.09)" },
-
-
-        { "text": 'Currency', "value": "¥0.00", "example": "¥1200.09" },
-
+        // TEN9: Change from RMB to USD
+        { "text": 'Accounting', "value": "$(0.00)", "example": "$(1200.09)" },
+        { "text": 'Currency', "value": "$0.00", "example": "$1200.09" },
 
         { "text": "", "value": "split", "example": "" },
         { "text": 'Date', "value": "yyyy-MM-dd", "example": "2017-11-29" },
@@ -9203,18 +9201,19 @@ export default {
     fontarray: ["Arial","Times New Roman","Tahoma","Verdana"],
     fontjson: {"arial":0,"times new roman":1,"tahoma":2,"verdana":3},
     border:{
-        borderTop:'borderTop',
-        borderBottom:'borderBottom',
-        borderLeft:'borderLeft',
-        borderRight:'borderRight',
-        borderNone:'borderNone',
-        borderAll:'borderAll',
-        borderOutside:'borderOutside',
-        borderInside:'borderInside',
-        borderHorizontal:'borderHorizontal',
-        borderVertical:'borderVertical',
-        borderColor:'borderColor',
-        borderSize:'borderSize',
+        // TEN9: Label improvements
+        borderTop:'Top border',
+        borderBottom:'Bottom border',
+        borderLeft:'Left border',
+        borderRight:'Right border',
+        borderNone:'Clear borders',
+        borderAll:'All borders',
+        borderOutside:'Outer borders',
+        borderInside:'Inner borders',
+        borderHorizontal:'Horizontal borders',
+        borderVertical:'Vertical borders',
+        borderColor:'Border color',
+        borderSize:'Border style',
     },
     merge:{
         mergeAll:"Merge all",
@@ -9225,9 +9224,10 @@ export default {
         partiallyError:"Cannot perform this operation on partially merged cells",
     },
     align:{
-        left:"left",
-        center:"center",
-        right:"right",
+        // TEN9: Title case
+        left:"Left",
+        center:"Center",
+        right:"Right",
 
         top:"Top",
         middle:"Middle",
