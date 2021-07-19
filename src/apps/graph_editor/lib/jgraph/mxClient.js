@@ -54952,8 +54952,20 @@ mxGraph.prototype.createGroupCell = function (cells) {
 mxGraph.prototype.ungroupCells = function (cells) {
   var result = [];
 
+  // TEN9: add new code from draw.io
   if (cells == null) {
-    cells = this.getCellsForUngroup();
+    cells = this.getSelectionCells();
+
+    // Finds the cells with children
+    var tmp = [];
+
+    for (var i = 0; i < cells.length; i++) {
+      if (this.model.getChildCount(cells[i]) > 0) {
+        tmp.push(cells[i]);
+      }
+    }
+
+    cells = tmp;
   }
 
   if (cells != null && cells.length > 0) {

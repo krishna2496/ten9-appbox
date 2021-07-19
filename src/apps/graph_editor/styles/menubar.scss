@@ -79,7 +79,7 @@
 }
 
 .f-12 {
-  font-size: 11px;
+  font-size: 14px;
   // color: #80868b;
 }
 
@@ -125,7 +125,11 @@ a table tr td:hover {
 }
 
 .large-dropdown ul {
-  min-width: 305px;
+  min-width: 310px;
+}
+
+.xl-large-dropdown ul {
+  min-width: 335px;
 }
 
 .pl-35 ul li a {
@@ -145,23 +149,23 @@ a table tr td:hover {
 }
 
 #insert-dropright button {
-  padding-left: 2.3rem;
+  padding-left: 2rem;
 }
 
 #direction-dropright button {
-  padding-left: 2.3rem;
+  padding-left: 2rem;
 }
 
 #align-dropright button {
-  padding-left: 2.3rem;
+  padding-left: 2rem;
 }
 
 #navigation-dropright button {
-  padding-left: 2.3rem;
+  padding-left: 2rem;
 }
 
 #layout-dropright button {
-  padding-left: 2.3rem;
+  padding-left: 2rem;
 }
 
 .dropdown-toggle {
@@ -191,4 +195,14 @@ a table tr td:hover {
 
 .dropdown-menu {
   z-index: 10000;
+}
+
+.f-12 .fa-solid {
+  font-weight: unset;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  height: 15px;
 }

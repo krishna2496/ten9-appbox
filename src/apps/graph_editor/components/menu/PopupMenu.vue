@@ -15,12 +15,12 @@
 -->
 
 <script lang="ts">
-import { mxResources, mxUtils } from '../../lib/jgraph/mxClient.js';
+import { mxEventSource, mxPoint, mxResources, mxUtils } from '../../lib/jgraph/mxClient.js';
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
-// interface CustomEvent {
-//   getProperty: FunctionStringCallback;
-// }
+interface CustomEvent {
+  getProperty?(propName: string): mxPoint | mxPoint;
+}
 
 export default defineComponent({
   name: 'PopupMenu',
@@ -48,6 +48,10 @@ export default defineComponent({
     const redoDisabled = ref<boolean>(true);
 
     const undoDisabled = ref<boolean>(true);
+
+    const pageMenu = ref<boolean>(false);
+
+    const pages = ref(['page-1']);
 
     function setPopupPosition(pagePopup: boolean) {
       const coordinates = graphUtils.getDocumentContainerRect();
@@ -83,16 +87,31 @@ export default defineComponent({
       cellSelectedVisible.value = false;
       isMultiplCellSelected.value = false;
       pagePopupVisible.value = false;
+      pageMenu.value = false;
+    }
+
+    function openPageMenuPopup(_sender: typeof mxEventSource, event: CustomEvent) {
+      const pageCount = pages.value.length;
+      const popupMenuHeight = 100;
+      const pageMenuHeight = 30;
+      const pagesMenuHeight = pageCount * pageMenuHeight;
+      const pointer = event.getProperty('pointer');
+      top.value = pointer.y - popupMenuHeight - pagesMenuHeight;
+      left.value = pointer.x;
+      pageMenu.value = true;
     }
 
     onMounted(() => {
       props.editorUi.addListener('openPopupMenu', openPopupMenu);
       props.editorUi.addListener('closePopupMenu', close);
       props.editorUi.addListener('openPagePopupMenu', openPagePopupMenu);
+      props.editorUi.addListener('openPageMenuPopup', openPageMenuPopup);
     });
 
     onUnmounted(() => {
       props.editorUi.removeListener(openPopupMenu);
+      props.editorUi.removeListener(openPagePopupMenu);
+      props.editorUi.removeListener(openPageMenuPopup);
       props.editorUi.removeListener(close);
     });
 
@@ -132,10 +151,65 @@ export default defineComponent({
       close();
     }
 
+    function updatePages() {
+      pages.value = [];
+      for (let i = 0; i < props.editorUi.pages.length; i++) {
+        pages.value.push(props.editorUi.pages[i].getName());
+      }
+    }
+
+    function selectPage(pageNumner: number) {
+      props.editorUi.selectPage(props.editorUi.pages[pageNumner]);
+    }
+
+    function isCurrentPgae(pageNumner: number) {
+      return props.editorUi.getCurrentPage() == props.editorUi.pages[pageNumner];
+    }
+
     watch(
       () => props.editorUi.editor.undoManager.indexOfNextAdd,
       (val) => {
         undoDisabled.value = val > 0;
+      },
+    );
+
+    watch(
+      () => cellSelectedVisible.value,
+      (val) => {
+        if (val) {
+          pagePopupVisible.value = false;
+          pageMenu.value = false;
+          visible.value = false;
+        }
+      },
+    );
+
+    watch(
+      () => pagePopupVisible.value,
+      (val) => {
+        if (val) {
+          cellSelectedVisible.value = false;
+          pageMenu.value = false;
+          visible.value = false;
+        }
+      },
+    );
+
+    watch(
+      () => visible.value,
+      (val) => {
+        if (val) {
+          cellSelectedVisible.value = false;
+          pageMenu.value = false;
+          pagePopupVisible.value = false;
+        }
+      },
+    );
+
+    watch(
+      () => props.editorUi.pages,
+      () => {
+        updatePages();
       },
     );
 
@@ -147,15 +221,21 @@ export default defineComponent({
       duplicatePage,
       graph,
       insertPage,
+      isCurrentPgae,
       isMultiplCellSelected,
       left,
+      openPageMenuPopup,
       openPagePopupMenu,
       openPopupMenu,
+      pageMenu,
       pagePopupVisible,
+      pages,
       renamePage,
       redoDisabled,
       setPopupPosition,
+      selectPage,
       top,
+      updatePages,
       undoDisabled,
       visible,
     };
@@ -209,6 +289,8 @@ div
       span.shortcuts Alt + Shift + L
     b-list-group-item(@click='doAction("group")', v-show='isMultiplCellSelected') Group
       span.shortcuts Ctrl + G
+    b-list-group-item(@click='doAction("ungroup")', v-show='isMultiplCellSelected') Ungroup
+      span.shortcuts Ctrl + Shift + G
   b-list-group.w-15.position-absolute.cursor-pointer(
     v-show='pagePopupVisible',
     v-bind:style='{ left: left + "px", top: top + "px" }'
@@ -217,19 +299,23 @@ div
     b-list-group-item(@click='deletePage') Delete
     b-list-group-item(@click='renamePage') Rename
     b-list-group-item(@click='duplicatePage') Duplicate
+  b-list-group.w-15.position-absolute.cursor-pointer(
+    v-show='pageMenu',
+    v-bind:style='{ left: left + "px", top: top + "px" }'
+  )
+    b-list-group-item(v-for='(item, index) in pages', :key='index', @click='selectPage(index)')
+      i.fa-solid.fa-check.float-left(v-show='isCurrentPgae(index)')
+      span(:class='[isCurrentPgae(index) ? "pl-2" : "pl-20"]') {{ item }}
+    b-list-group-item(@click='insertPage')
+      span.pl-20 Insert
+    b-list-group-item(@click='deletePage')
+      span.pl-20 Delete
+    b-list-group-item(@click='renamePage')
+      span.pl-20 Rename
+    b-list-group-item(@click='duplicatePage')
+      span.pl-20 Duplicate
 </template>
 
 <style type="scss">
-.w-15 {
-  width: 15%;
-}
-
-.list-group-item {
-  padding: 5px 10px;
-  font-size: 13px;
-}
-
-.list-group-item:hover {
-  background: #ececec;
-}
+@import '../../styles/popupmenu.scss';
 </style>
