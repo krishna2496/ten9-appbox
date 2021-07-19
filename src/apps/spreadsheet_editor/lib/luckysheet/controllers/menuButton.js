@@ -510,7 +510,7 @@ const menuButton = {
                     ret.value = fItem;
                     ret.index = a;
                     ret.type = "inner";
-                    ret.text = "<span class='luckysheet-mousedown-cancel' style='font-size:11px;font-family:"+fItem+"'>"+fItem+"</span>";
+                    ret.text = "<span class='luckysheet-mousedown-cancel' style='line-height:1.6;font-size:14px;font-family:"+fItem+"'>"+fItem+"</span>";
                     ret.example = "";
                     itemdata.push(ret);
                 }
@@ -520,7 +520,7 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "zoom", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
-                $menuButton = $("#" + menuButtonId).width(200);
+                $menuButton = $("#" + menuButtonId).width(100);
                 _this.focus($menuButton, '100%');
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
@@ -531,7 +531,9 @@ const menuButton = {
                     $("#luckysheet-icon-zoom").attr("itemvalue", itemvalue);
 
                     let ratio = parseInt(itemvalue);
+                    $("#dropdown-zoom").val(ratio+"%");
                     ratio = ratio/100;
+                    
                     // TEN9: zoom imported for zoom dropdown
                     zoomChange(ratio)
                     _this.focus($menuButton, itemvalue);
@@ -650,7 +652,9 @@ const menuButton = {
             }
             _this.updateFormat(d, "fc", color);
         });
-
+        $("#luckysheet-icon-text-color").click(function(){ 
+            $("#luckysheet-icon-text-color-menu").click();
+        })
         $("#luckysheet-icon-text-color-menu").mousedown(function(e){
             hideMenuByCancel(e);
             e.stopPropagation();
@@ -795,6 +799,9 @@ const menuButton = {
             _this.updateFormat(d, "bg", color);
         });
 
+        $("#luckysheet-icon-cell-color").click(function() {
+            $("#luckysheet-icon-cell-color-menu").click();
+        });
         $("#luckysheet-icon-cell-color-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1096,6 +1103,10 @@ const menuButton = {
             }, 1);
         });
 
+        $("#luckysheet-icon-border-all").click(function(){
+            $("#luckysheet-icon-border-menu").click();
+        });
+
         $("#luckysheet-icon-border-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1113,7 +1124,7 @@ const menuButton = {
                     {"text": locale_border.borderRight, "value":"border-right", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-right iconfont luckysheet-iconfont-youbiankuang" style="user-select: none;"> </div> </div>'},
                     {"text": "", "value": "split", "example":""},
                     {"text": locale_border.borderNone, "value": "border-none", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-none iconfont luckysheet-iconfont-wubiankuang" style="user-select: none;"> </div> </div>'},
-                    {"text": locale_border.borderAll, "value": "border-all", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-all iconfont luckysheet-iconfont-quanjiabiankuang" style="user-select: none;"> </div> </div>'},
+                    {"text": locale_border.borderAll, "value": "border-all", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-all iconfont luckysheet-iconfont-quanjiabiankuang" style="user-select: none;"></div> </div>'},
                     {"text": locale_border.borderOutside, "value": "border-outside", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-outside iconfont luckysheet-iconfont-sizhoujiabiankuang" style="user-select: none;"> </div> </div>'},
                     {"text": "", "value": "split", "example": ""},
                     {"text": locale_border.borderInside, "value": "border-inside", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-inside iconfont luckysheet-iconfont-neikuangxian" style="user-select: none;"> </div> </div>'},
@@ -1380,6 +1391,9 @@ const menuButton = {
             _this.updateFormat_mc(d, "mergeAll");
         });
 
+        $("#luckysheet-icon-merge-button").click(function(){
+            $("#luckysheet-icon-merge-menu").click();
+        })
         $("#luckysheet-icon-merge-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1475,7 +1489,10 @@ const menuButton = {
             let d = editor.deepCopyFlowData(Store.flowdata);
             _this.updateFormat(d, "ht", itemvalue);
         });
-
+        
+        $("#luckysheet-icon-align").click(function(){
+            $("#luckysheet-icon-align-menu").click();
+        });
         $("#luckysheet-icon-align-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1547,6 +1564,9 @@ const menuButton = {
             _this.updateFormat(d, "vt", itemvalue);
         });
 
+        $("#luckysheet-icon-valign").click(function() {
+            $("#luckysheet-icon-valign-menu").click();
+        });
         $("#luckysheet-icon-valign-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1555,7 +1575,7 @@ const menuButton = {
             if($menuButton.length == 0){
                 let itemdata = [
                     {"text": locale_align.top, "value": "top", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-top iconfont luckysheet-iconfont-dingbuduiqi" style="user-select: none;"> </div> </div>'},
-                    {"text": locale_align.middle, "value": "middle", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-middle iconfont luckysheet-iconfont-shuipingduiqi" style="user-select: none;"> </div> </div>'},
+                    {"text": locale_align.middle, "value": "middle", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-middle iconfont luckysheet-iconfont-shuipingduiqi" style="user-select: none;"><i class="ten9-icon-vertical-align-middle"></i> </div> </div>'},
                     {"text": locale_align.bottom, "value": "bottom", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-bottom iconfont luckysheet-iconfont-dibuduiqi" style="user-select: none;"> </div> </div>'}
                 ];
 
@@ -1598,6 +1618,9 @@ const menuButton = {
         });
 
         //文本换行
+        $("#luckysheet-icon-textwrap").click(function(){
+            $("#luckysheet-icon-textwrap-menu").click();
+        });
         $("#luckysheet-icon-textwrap-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1608,7 +1631,7 @@ const menuButton = {
                 let itemdata = [
                     {"text": locale_textWrap.overflow, "value": "overflow", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-overflow iconfont luckysheet-iconfont-yichu1" style="user-select: none;"> </div> </div>'},
                     {"text": locale_textWrap.wrap, "value": "wrap", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-wrap iconfont luckysheet-iconfont-zidonghuanhang" style="user-select: none;"> </div> </div>'},
-                    {"text": locale_textWrap.clip, "value": "clip", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan" style="user-select: none;"> </div> </div>'}
+                    {"text": locale_textWrap.clip, "value": "clip", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan" style="user-select: none;"><i class="ten9-icon-clip"></i> </div> </div>'}
                 ];
 
                 // itemvalue to iconfont
@@ -1653,6 +1676,9 @@ const menuButton = {
         });
 
         //文本旋转
+        $("#luckysheet-icon-rotation").click(function(){
+            $("#luckysheet-icon-rotation-menu").click();
+        });
         $("#luckysheet-icon-rotation-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -2182,6 +2208,9 @@ const menuButton = {
         });
 
         //公式菜单
+        $("#luckysheet-icon-function").click(function(){
+            $("#luckysheet-icon-function-menu").click();
+        });
         $("#luckysheet-icon-function-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);

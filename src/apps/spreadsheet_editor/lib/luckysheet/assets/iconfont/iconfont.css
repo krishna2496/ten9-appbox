@@ -331,8 +331,9 @@
 .luckysheet-iconfont-dingbuduiqi:before {
   content: "\e7a2";
   /* TEN9: Added for better design */
-  font-size: 26px;
+  font-size: 30px;
   color: black;
+  /* line-height: 0 !important; */
 }
 
 .luckysheet-iconfont-xiangxia90:before {
@@ -438,6 +439,13 @@
   color: black;
 }
 
+.luckysheet-iconfont-quanjiabiankuang:before {
+  content: "\e7a6";
+  /* TEN9: Added for better design */
+  font-size: 26px;
+  color: black;
+}
+
 .luckysheet-iconfont-cebianlanzhankai:before {
   content: "\e7c0";
 }
@@ -515,7 +523,7 @@
 .luckysheet-iconfont-dibuduiqi:before {
   content: "\e7d3";
   /* TEN9: Added for better design */
-  font-size: 26px;
+  font-size: 30px;
   color: black;
 }
 
