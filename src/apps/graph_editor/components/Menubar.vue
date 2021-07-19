@@ -283,26 +283,20 @@ export default defineComponent({
 .menubar-container(v-if='editorUi')
   b-navbar.menubar(toggleable='lg', type='dark', variant='')
     b-navbar-nav.text-hover
-      b-nav-item-dropdown#menu-padding.file.menu-icon(text='File')
+      b-nav-item-dropdown#menu-padding(text='File')
         b-dropdown-item(@click='doAction("print")')
           i.fa-solid.fa-print.float-left.shortcut.pl-2
-          span.pl-5 Print
-          span.float-right.shortcut.pl-5
-            i.fa-solid.fa-command.f-12.icon-color
-            span +P
+          span.pl-2 Print
+          span.float-right.shortcut.f-12.py-0 {{ controlKey }}+P
       b-nav-item-dropdown#menu-padding(text='Edit')
         b-dropdown-item(href='#', @click='handleClick("undo")', :disabled='undoDisabled')
           i.fa-solid.fa-arrow-rotate-left.float-left.pl-2
           span.pl-2 Undo
-          span.float-right.shortcut.f-12.py-0
-            i.fa-solid.fa-command.f-12.icon-color
-            span +Z
+          span.float-right.shortcut.f-12.py-0 {{ controlKey }}+Z
         b-dropdown-item(href='#', @click='doAction("redo")', :disabled='redoDisabled')
           i.fa-solid.fa-arrow-rotate-right.float-left.pl-2
           span.pl-2 Redo
-          span.float-right.shortcut.f-12.py-0
-            i.fa-solid.fa-command.f-12.icon-color
-            span +Shift+Z
+          span.float-right.shortcut.f-12.py-0 {{ controlKey }}+Shift+Z
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("cut")', :disabled='!isSomethingSelected')
           i.fa-solid.fa-scissors.float-left.pl-2
@@ -413,7 +407,7 @@ export default defineComponent({
           i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.outline')
           span.pl-5 Outline
           span.float-right.shortcut.f-12.py-0
-            i.fa-solid.fa-command.f-12.icon-color 
+            i.fa-solid.fa-command.f-12.icon-color
             span +Shift+O
         b-dropdown-item(href='#', @click='doAction("layers")')
           i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.layers')
