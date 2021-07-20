@@ -631,7 +631,7 @@ const menuButton = {
                     $("#luckysheet-icon-font-family").find(".luckysheet-toolbar-menu-button-caption").html(" "+ itemname +" ");
 
                     let d = editor.deepCopyFlowData(Store.flowdata);
-
+                    _this.updateFormat(d, "ff", itemvalue);
                  
                 });
             }
@@ -1544,7 +1544,12 @@ const menuButton = {
                     let $t = $(this), itemvalue = $t.attr("itemvalue");
                     _this.focus($menuButton, itemvalue);
 
+                    /* TEN9 : Added to update icon in toolbar */
                     let $icon = $("#luckysheet-icon-align").attr("type", itemvalue).find(".luckysheet-icon-img-container");
+                    const item = document.getElementById("text-alignment");
+                    var htmlNode = document.createElement('i');
+                    htmlNode.className = 'fa-solid fa-align-'+itemvalue;
+                    item.replaceChild(htmlNode, item.childNodes[1]);
 
                     // add iconfont
                     $icon.removeAttr("class").addClass("luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-" + itemvalue + iconfontObject[itemvalue]);
@@ -1671,7 +1676,6 @@ const menuButton = {
                     _this.focus($menuButton, itemvalue);
 
                     let $icon = $("#luckysheet-icon-textwrap").attr("type", itemvalue).find(".luckysheet-icon-img-container");
-
                     // add iconfont
                     $icon.removeAttr("class").addClass("luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-" + itemvalue + iconfontObject[itemvalue]);
 
@@ -4677,7 +4681,9 @@ const menuButton = {
             ret.value = fItem;
             ret.index = a;
             ret.type = "inner";
-            ret.text = "<span class='luckysheet-mousedown-cancel' style='font-size:11px;font-family:"+fItem+"'>"+fItem+"</span>";
+
+            /* TEN9 : font size changes from 11px to 14px */
+            ret.text = "<span class='luckysheet-mousedown-cancel' style='font-size:14px;font-family:"+fItem+"'>"+fItem+"</span>";
             ret.example = "";
             itemdata.push(ret);
         }

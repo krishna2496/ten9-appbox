@@ -3425,8 +3425,10 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     border-top: 1px solid #ffc6c6;
 }
 
+/* TEN9 : margin bottom changes for better layout
+ margin-bottom: 8px; */ 
 .luckysheet-sort-modal table tr td>div:first-child {
-    margin-bottom: 8px;
+    margin-bottom: -3px;
 }
 
 .luckysheet-sort-modal table tr td select {
