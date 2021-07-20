@@ -1,0 +1,148 @@
+/**
+ * ten9, Inc
+ * Copyright (c) 2015 - 2020 ten9, Inc
+ * -----
+ * NOTICE:  All information contained herein is, and remains
+ * the property of ten9 Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to ten9 Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from ten9 Incorporated.
+ * -----
+ */
+
+@import 'ten9-icon-variables';
+
+/* roboto-100 - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 100;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-100.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-100.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-300 - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-300.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-300.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-100italic - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 100;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-100italic.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-100italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-300italic - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 300;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-300italic.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-300italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-regular - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-regular.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-italic - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 400;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-italic.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-500 - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-500.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-500.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-500italic - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 500;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-500italic.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-500italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-700 - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-700.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-700italic - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 700;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-700italic.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-700italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-900 - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 900;
+  src:
+    local(''),
+    url('#{$ten9-font-path}/roboto-v27-latin-900.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-900.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* roboto-900italic - latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 900;
+  src:
+    url('#{$ten9-font-path}/roboto-v27-latin-900italic.woff2') format('woff2'),
+    url('#{$ten9-font-path}/roboto-v27-latin-900italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
