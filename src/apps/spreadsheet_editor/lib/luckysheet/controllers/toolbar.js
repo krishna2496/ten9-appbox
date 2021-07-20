@@ -183,12 +183,12 @@ export function createToolbarHtml() {
                     <div aria-posinset="4" aria-setsize="7" class="luckysheet-inline-block luckysheet-toolbar-combo-button-caption"
                     style="user-select: none;">
                         <input aria-label="${zoomarray[3]}" class="luckysheet-toolbar-combo-button-input luckysheet-toolbar-textinput"
-                        role="combobox" id="dropdown-zoom" style="user-select: none;width:30px" tabindex="-1" type="text" value="100%"
+                        role="combobox" id="dropdown-zoom" style="user-select: none;font-size:12px;width:40px" tabindex="-1" type="text" value="100%"
                         />
                     </div>
                     ${/* TEN9: margin-left: 8px added */'' }
                     <div class="luckysheet-toolbar-combo-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
-                    style="user-select: none;margin-left: 8px;">
+                    style="user-select: none;margin-left: 13px;">
                     </div>
                 </div>
             </div>
@@ -283,8 +283,9 @@ export function createToolbarHtml() {
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
+                    ${/* TEN9 : font-size :12px added  */'' }
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                    style="user-select: none;">
+                    style="user-select: none;font-size:12px">
                         ${fontarray[0]}
                     </div>
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
@@ -523,7 +524,9 @@ export function createToolbarHtml() {
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                            <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont luckysheet-iconfont-wenbenzuoduiqi"
+                            ${ /* TEN9: id added 
+                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont luckysheet-iconfont-wenbenzuoduiqi" */'' }
+                            <div aria-hidden="true" id="text-alignment" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont luckysheet-iconfont-wenbenzuoduiqi"
                             style="user-select: none;">
                             ${ /* TEN9: icon added for align left */'' }
                             <i class="fa-solid fa-align-left"></i>
