@@ -298,7 +298,7 @@ export default defineComponent({
     b-navbar-nav.text-hover
       b-nav-item-dropdown#menu-padding(text='File')
         b-dropdown-item(@click='doAction("print")')
-          i.fa-solid.fa-print.float-left.shortcut.pl-2
+          i.fa-solid.fa-print.float-left.shortcut.f-12.py-0.pl-2
           span.pl-2 Print
           span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+P
       b-nav-item-dropdown#menu-padding(text='Edit')
@@ -492,13 +492,13 @@ export default defineComponent({
           @click='doAction("bringForward")',
           :disabled='!isSomethingSelected'
         )
-          span.pl-5 Bring Forward
+          span.pl-5.py-0 Bring Forward
         b-dropdown-item(
           href='#',
           @click='doAction("sendBackward")',
           :disabled='!isSomethingSelected'
         )
-          span.pl-5 Send Backward
+          span.pl-5.py-0 Send Backward
         b-dropdown-divider
         b-dropdown#direction-dropright.sub-menu(
           dropright='',
@@ -541,7 +541,7 @@ export default defineComponent({
             span.pl-5 Middle
           b-dropdown-item(href='#', @click='align("bottom")')
             span.pl-5 Bottom Align
-        b-dropdown#distribute-dropright.ml-5.sub-menu(
+        b-dropdown#distribute-dropright.sub-menu(
           dropright='',
           text='Distribute',
           block,

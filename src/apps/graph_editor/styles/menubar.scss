@@ -54,7 +54,7 @@
 }
 
 .dropdown-divider {
-  margin: 0;
+  margin-left: 25px;
 }
 
 .show .dropdown .dropdown-toggle {
@@ -77,9 +77,12 @@
   transform: translate(0, -50%);
 }
 
+.dropdown-toggle.disabled::after {
+  color: #ccc;
+}
+
 .f-12 {
   font-size: 14px;
-  // color: #80868b;
 }
 
 .navbar-nav > li > a {
@@ -167,6 +170,10 @@ a table tr td:hover {
   padding-left: 2rem;
 }
 
+#distribute-dropright button {
+  padding-left: 2rem;
+}
+
 .dropdown-toggle {
   font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
   font-size: 14px !important;
@@ -251,4 +258,13 @@ a table tr td:hover {
   .menubar ul {
     margin-top: -12px;
   }
+}
+
+.shortcut {
+  color: #80868b;
+  font-weight: 500;
+}
+
+.dropdown-item.disabled .shortcut {
+  color: #ccc;
 }
