@@ -45,8 +45,8 @@ export default defineComponent({
     InsertImageModal,
     InsertLinkModal,
     LayerRenameModal,
-    OrganicModal,
     MoreShapesModal,
+    OrganicModal,
     PageRenameModal,
     PageScaleModal,
     PrintModal,
@@ -85,8 +85,8 @@ export default defineComponent({
   edit-style-modal(:editorUi='editorUi')
   insert-image-modal(:editorUi='editorUi', @insert-image='insertImage')
   insert-link-modal(:editorUi='editorUi')
-  more-shapes-modal(:editorUi='editorUi', :shape-libraries='shapeLibraries')
   layer-rename-modal(:editorUi='editorUi')
+  more-shapes-modal(:editorUi='editorUi', :shape-libraries='shapeLibraries')
   organic-modal(:editorUi='editorUi')
   page-rename-modal(:editorUi='editorUi')
   page-scale-modal(:editorUi='editorUi')

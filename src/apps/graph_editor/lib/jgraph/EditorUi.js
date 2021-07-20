@@ -686,6 +686,11 @@ EditorUi = function (editor, container, lightbox) {
       }
 
       graphFireMouseEvent.apply(this, arguments);
+      // TEN9: fire hide popup event when popup is open
+      if (evtName == 'mouseDown') {
+        ui.fireEvent(new mxEventObject('closePopupMenu'));
+        ui.isPopupOpen = false;
+      }
     };
 
     // Configures automatic expand on mouseover
@@ -694,7 +699,12 @@ EditorUi = function (editor, container, lightbox) {
     // Installs context menu
     if (this.menus != null) {
       graph.popupMenuHandler.factoryMethod = mxUtils.bind(this, function (menu, cell, evt) {
-        this.menus.createPopupMenu(menu, cell, evt);
+        // TEN9: fire event to open popup menu
+        //this.menus.createPopupMenu(menu, cell, evt);
+        const x = evt.clientX;
+        const y = evt.clientY;
+        this.fireEvent(new mxEventObject('openPopupMenu', 'pointer', { x, y }));
+        this.isPopupOpen = true;
       });
     }
 

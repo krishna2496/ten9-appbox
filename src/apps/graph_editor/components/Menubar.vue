@@ -61,6 +61,8 @@ export default defineComponent({
 
     const isUngroupButtonVisible = ref<boolean>(false);
 
+    const isGroupButtonVisible = ref<boolean>(true);
+
     const checkboxes = ref({
       formatPanel: true,
       outline: false,
@@ -80,6 +82,13 @@ export default defineComponent({
     });
 
     function doAction(action: string) {
+      if (action === 'group') {
+        isUngroupButtonVisible.value = true;
+        isGroupButtonVisible.value = true;
+      } else if (action === 'ungroup') {
+        isUngroupButtonVisible.value = false;
+        isGroupButtonVisible.value = false;
+      }
       props.editorUi.actions.get(action).funct();
       redoDisabled.value = !props.editorUi.canRedo();
     }
@@ -105,7 +114,7 @@ export default defineComponent({
         'layout-dropright',
         'insert-dropright',
         'direction-dropright',
-        'navigation-dropright',
+        //'navigation-dropright',
         'align-dropright',
         'distribute-dropright',
       ];
@@ -239,12 +248,15 @@ export default defineComponent({
         isMultipleCellSelected.value = val > 1;
 
         if (val > 0) {
+          isGroupButtonVisible.value = false;
           const cells = graph.getSelectionCells();
-          if (cells[0].style.includes('group')) {
+          if (cells[0].style.includes('group') || cells[0].style.includes('container')) {
             isUngroupButtonVisible.value = true;
+            isGroupButtonVisible.value = true;
           }
         } else {
           isUngroupButtonVisible.value = false;
+          isGroupButtonVisible.value = false;
         }
       },
     );
@@ -268,6 +280,7 @@ export default defineComponent({
       graph,
       hide,
       horizontalFlow,
+      isGroupButtonVisible,
       isMultipleCellSelected,
       isSomethingSelected,
       isUngroupButtonVisible,
@@ -283,166 +296,209 @@ export default defineComponent({
 .menubar-container(v-if='editorUi')
   b-navbar.menubar(toggleable='lg', type='dark', variant='')
     b-navbar-nav.text-hover
-      b-nav-item-dropdown.file.pl-35(text='File')
+      b-nav-item-dropdown#menu-padding(text='File')
         b-dropdown-item(@click='doAction("print")')
-          span Print
-      b-nav-item-dropdown.pl-35(text='Edit')
+          i.fa-solid.fa-print.float-left.shortcut.f-12.py-0.pl-2
+          span.pl-2 Print
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+P
+      b-nav-item-dropdown#menu-padding(text='Edit')
         b-dropdown-item(href='#', @click='handleClick("undo")', :disabled='undoDisabled')
-          span Undo
-          span.float-right.shortcut.f-12 {{ controlKey }}+Z
+          i.fa-solid.fa-arrow-rotate-left.float-left.pl-2
+          span.pl-2 Undo
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+Z
         b-dropdown-item(href='#', @click='doAction("redo")', :disabled='redoDisabled')
-          span Redo
-          span.float-right.shortcut.f-12 {{ controlKey }}+Shift+Z
+          i.fa-solid.fa-arrow-rotate-right.float-left.pl-2
+          span.pl-2 Redo
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+Shift+Z
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("cut")', :disabled='!isSomethingSelected')
-          span Cut
-          span.float-right.shortcut.f-12 {{ controlKey }}+X
+          i.fa-solid.fa-scissors.float-left.pl-2
+          span.pl-2 Cut
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +X
         b-dropdown-item(href='#', @click='doAction("copy")', :disabled='!isSomethingSelected')
-          span Copy
-          span.float-right.shortcut.f-12 {{ controlKey }}+C
-        b-dropdown-item(href='#', @click='doAction("paste")', :disabled='!isSomethingSelected')
-          span Paste
-          span.float-right.shortcut.f-12 {{ controlKey }}+P
+          i.fa-solid.fa-book-copy.float-left.pl-2
+          span.pl-2 Copy
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +C
+        b-dropdown-item(href='#', @click='doAction("paste")')
+          i.fa-solid.fa-clipboard.float-left.pl-2
+          span.pl-13 Paste
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +P
         b-dropdown-item(href='#', @click='doAction("delete")', :disabled='!isSomethingSelected')
-          span Delete
-          span.float-right.shortcut.f-12 Delete
+          span.pl-5 Delete
+          span.float-right.shortcut.f-12.py-0.px-3.icon-color Delete
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("duplicate")', :disabled='!isSomethingSelected')
-          span Duplicate
-          span.float-right.shortcut.f-12 {{ controlKey }}+D
+          span.pl-5 Duplicate
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +D
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("find")')
-          span Find/Replace...
-          span.float-right.shortcut.f-12 {{ controlKey }}+F
+          span.pl-5 Find/Replace...
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +F
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("editData")')
-          span Edit Data...
-          span.float-right.shortcut.f-12 {{ controlKey }}+M
+          span.pl-5 Edit Data...
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +M
         b-dropdown-item(
           href='#',
           @click='doAction("editTooltip")',
           :disabled='!isSomethingSelected'
         )
-          span Edit Tooltip...
-          span.float-right.shortcut.f-12 Alt+Shift+T
+          span.pl-5 Edit Tooltip...
+          span.float-right.shortcut.f-12.py-0.px-3.icon-color Alt+Shift+T
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("editStyle")', :disabled='!isSomethingSelected')
-          span Edit Style...
-          span.float-right.shortcut.f-12 {{ controlKey }}+E
+          span.pl-5 Edit Style...
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +E
         b-dropdown-item(href='#', @click='doAction("edit")', :disabled='!isSomethingSelected')
-          span Edit
-          span.float-right.shortcut.f-12 F2/Enter
+          span.pl-5 Edit
+          span.float-right.shortcut.f-12.py-0.px-3.icon-color F2/Enter
         b-dropdown-item(href='#', @click='doAction("editLink")', :disabled='!isSomethingSelected')
-          span Edit link...
-          span.float-right.shortcut.f-12 Alt+Shift+L
+          span.pl-5 Edit link...
+          span.float-right.shortcut.f-12.py-0.px-3.icon-color Alt+Shift+L
         b-dropdown-item(href='#', @click='doAction("openLink")', :disabled='!isSomethingSelected')
-          span Open Link
+          span.pl-5 Open Link
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("selectVertices")')
-          span Select Vertices
-          span.float-right.shortcut.f-12 Alt+Shift+I
+          span.pl-5 Select Vertices
+          span.float-right.shortcut.f-12.py-0.px-3.icon-color Alt+Shift+I
         b-dropdown-item(href='#', @click='doAction("selectEdges")')
-          span Select Edges
-          span.float-right.shortcut.f-12 Alt+Shift+E
+          span.pl-5 Select Edges
+          span.float-right.shortcut.f-12.py-0.px-3.icon-color Alt+Shift+E
         b-dropdown-item(href='#', @click='doAction("selectAll")')
-          span Select All
-          span.float-right.shortcut.f-12 {{ controlKey }}+A
+          span.pl-5 Select All
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +A
         b-dropdown-item(href='#', @click='doAction("selectNone")')
-          span Select None
-          span.float-right.shortcut.f-12 {{ controlKey }}+Shift+A
+          span.pl-5 Select None
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +Shift+A
         b-dropdown-divider
-        b-dropdown-item(
+        b-dropdown-item.pb-1(
           href='#',
           @click='doAction("lockUnlock")',
           :disabled='!isSomethingSelected'
         )
-          span Lock/Unlock
-      b-nav-item-dropdown.large-dropdown.pl-35(text='View')
+          span.pl-5 Lock/Unlock
+      b-nav-item-dropdown#menu-padding.xl-large-dropdown.pl-35(text='View')
         b-dropdown-item(href='#', @click='doAction("formatPanel")')
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.formatPanel')
-          span Format Panel
-          span.float-right.shortcut.f-12 {{ controlKey }}+Shift+P
-        b-dropdown-item(href='#', @click='doAction("outline")') Outline
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.outline')
-          span.float-right.shortcut.f-12 {{ controlKey }}+Shift+O
-        b-dropdown-item(href='#', @click='doAction("layers")') Layers
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.layers')
-          span.float-right.shortcut.f-12 {{ controlKey }}+Shift+L
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.formatPanel')
+          span.pl-5 Format Panel
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.pl-2.icon-color
+            span.pl-0 +Shift+P
+        b-dropdown-item(href='#', @click='doAction("outline")')
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.outline')
+          span.pl-5 Outline
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +Shift+O
+        b-dropdown-item(href='#', @click='doAction("layers")')
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.layers')
+          span.pl-5 Layers
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +Shift+L
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("colors")')
-          span Colors
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.color')
+          span.pl-5 Colors
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.color')
         b-dropdown-item(href='#', @click='doAction("scratchpad")')
-          span Scratchpad
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.scratchpad')
+          span.pl-5 Scratchpad
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.scratchpad')
         b-dropdown-item(href='#', @click='fireEvent("moreShapes")')
-          span Shapes...
+          span.pl-5 Shapes...
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("pageView")')
-          span Page View
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.pageView')
+          span.pl-5 Page View
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.pageView')
         b-dropdown-item(href='#', @click='doAction("pageScale")')
-          span Page Scale...
+          span.pl-5 Page Scale...
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("scrollbars")')
-          span Scrollbars
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.scrollbars')
+          span.pl-5 Scrollbars
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.scrollbars')
         b-dropdown-item(href='#', @click='')
-          span Tooltip
+          span.pl-5 Tooltip
         b-dropdown-item(href='#', @click='doAction("ruler")')
-          span Ruler
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.ruler')
+          span.pl-5 Ruler
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.ruler')
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("grid")')
-          span Grid
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.grid')
-          span.float-right.shortcut.f-12 {{ controlKey }}+Shift+G
+          span.pl-5 Grid
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.grid')
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +Shift+G
         b-dropdown-item(href='#', @click='doAction("guides")')
-          span Guides
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.guides')
+          span.pl-5 Guides
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.guides')
         b-dropdown-item(href='#', @click='doAction("shadow")', :disabled='!isSomethingSelected')
-          span Shadow
+          .pl-5 Shadow
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("connectionArrows")')
-          span Connection Arrow
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.connectionArrow')
-          span.float-right.shortcut.f-12 Alt+Shift+A
+          span.pl-5 Connection Arrow
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(
+            v-show='checkboxes.connectionArrow'
+          )
+          span.float-right.shortcut.f-12.py-0.px-3 Alt+Shift+A
         b-dropdown-item(href='#', @click='doAction("connectionPoints")')
-          span Connection Points
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.connectionPoints')
-          span.float-right.shortcut.f-12 Alt+Shift+P
+          span.pl-5 Connection Points
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(
+            v-show='checkboxes.connectionPoints'
+          )
+          span.float-right.shortcut.f-12.py-0.px-3 Alt+Shift+P
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("resetView")')
-          span Reset View
-          span.float-right.shortcut.f-12 Enter/Home
+          span.pl-5 Reset View
+          span.float-right.shortcut.f-12.py-0.px-3 Enter/Home
         b-dropdown-item(href='#', @click='doAction("zoomIn")')
-          span Zoom In
-          span.float-right.shortcut.f-12 {{ controlKey }}+(Numpad) / Alt+MouseWheel
+          span.pl-5 Zoom In
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.icon-color
+            span.pl-0 +(Numpad) / Alt+MouseWheel
         b-dropdown-item(href='#', @click='doAction("zoomOut")')
-          span Zoom Out
-          span.float-right.shortcut.f-12 {{ controlKey }}-(Numpad) / Alt+MouseWheel
+          span.pl-5.pl-0 Zoom Out
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 -(Numpad) / Alt+MouseWheel
         b-dropdown-divider
-        b-dropdown-item(href='#', @click='doAction("fullscreen")')
-          span Fullscreen
-      b-nav-item-dropdown.large-dropdown.pl-35(text='Arrange')
+        b-dropdown-item.pb-1(href='#', @click='doAction("fullscreen")')
+          span.pl-5 Fullscreen
+      b-nav-item-dropdown#menu-padding.large-dropdown.pl-35(text='Arrange')
         b-dropdown-item(href='#', @click='doAction("toFront")', :disabled='!isSomethingSelected')
-          span To Front
-          span.float-right.shortcut.f-12 Alt+Shift+F
+          span.pl-5 To Front
+          span.float-right.shortcut.f-12.py-0.px-3.icon-color Alt+Shift+F
         b-dropdown-item(href='#', @click='doAction("toBack")', :disabled='!isSomethingSelected')
-          span To Back
-          span.float-right.shortcut.f-12 Alt+Shift+B
+          span.pl-5 To Back
+          span.float-right.shortcut.f-12.py-0.px-3.icon-color Alt+Shift+B
         b-dropdown-item(
           href='#',
           @click='doAction("bringForward")',
           :disabled='!isSomethingSelected'
         )
-          span Bring Forward
+          span.pl-5.py-0 Bring Forward
         b-dropdown-item(
           href='#',
           @click='doAction("sendBackward")',
           :disabled='!isSomethingSelected'
         )
-          span Send Backward
+          span.pl-5.py-0 Send Backward
         b-dropdown-divider
         b-dropdown#direction-dropright.sub-menu(
           dropright='',
@@ -453,15 +509,17 @@ export default defineComponent({
           :disabled='!isSomethingSelected'
         )
           b-dropdown-item(href='#', @click='direction("horizontal")')
-            span Flip Horizontal
+            span.pl-5 Flip Horizontal
           b-dropdown-item(href='#', @click='direction("vertical")')
-            span Flip Vertical
+            span.pl-5 Flip Vertical
           b-dropdown-divider
           b-dropdown-item(href='#', @click='fireEvent("openRotation")')
-            span Rotation
+            span.pl-5 Rotation
         b-dropdown-item(href='#', @click='doAction("turn")', :disabled='!isSomethingSelected')
-          span Rotate shape only by 90/ Reverse
-          span.float-right.shortcut.f-12 {{ controlKey }}+R
+          span.pl-5 Rotate shape only by 90/ Reverse
+          span.float-right.shortcut.f-12.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +R
         b-dropdown-divider
         b-dropdown#align-dropright.sub-menu(
           dropright='',
@@ -472,18 +530,18 @@ export default defineComponent({
           :disabled='!isMultipleCellSelected'
         )
           b-dropdown-item(href='#', @click='align("left")')
-            span Left Align
+            span.pl-5 Left Align
           b-dropdown-item(href='#', @click='align("center")')
-            span Center
+            span.pl-5 Center
           b-dropdown-item(href='#', @click='align("right")')
-            span Right Align
+            span.pl-5 Right Align
           b-dropdown-item(href='#', @click='align("top")')
-            span Top Align
+            span.pl-5 Top Align
           b-dropdown-item(href='#', @click='align("middle")')
-            span Middle
+            span.pl-5 Middle
           b-dropdown-item(href='#', @click='align("bottom")')
-            span Bottom Align
-        b-dropdown#distribute-dropright.ml-5.sub-menu(
+            span.pl-5 Bottom Align
+        b-dropdown#distribute-dropright.sub-menu(
           dropright='',
           text='Distribute',
           block,
@@ -492,30 +550,30 @@ export default defineComponent({
           :disabled='!isMultipleCellSelected'
         )
           b-dropdown-item(href='#', @click='distribute("horizontal")')
-            span Horizontal
+            span.pl-5 Horizontal
           b-dropdown-item(href='#', @click='distribute("vertical")')
-            span Vertical
+            span.pl-5 Vertical
         b-dropdown-divider
-        b-dropdown#navigation-dropright.sub-menu(
-          dropright='',
-          text='Navigation',
-          block,
-          @mouseover.native='showSubmenu("navigation-dropright")',
-          @mouseleave.native='hide("navigation-dropright")',
-          :disabled='!isSomethingSelected'
-        )
-          b-dropdown-item(href='#', @click='doAction("home")')
-            span Home
-          b-dropdown-item(href='#', @click='doAction("exitGroup")')
-            span Exit Group
-          b-dropdown-item(href='#', @click='doAction("enterGroup")')
-            span Enter Group
-          b-dropdown-item(href='#', @click='doAction("expand")')
-            span Expand
-          b-dropdown-item(href='#', @click='doAction("collapse")')
-            span Collapse
-          b-dropdown-item(href='#', @click='')
-            span Collapsable
+        //- b-dropdown#navigation-dropright.sub-menu(
+        //-   dropright='',
+        //-   text='Navigation',
+        //-   block,
+        //-   @mouseover.native='showSubmenu("navigation-dropright")',
+        //-   @mouseleave.native='hide("navigation-dropright")',
+        //-   :disabled='!isSomethingSelected'
+        //- )
+        //-   b-dropdown-item(href='#', @click='doAction("home")')
+        //-     span.pl-5 Home
+        //-   b-dropdown-item(href='#', @click='doAction("exitGroup")')
+        //-     span.pl-5 Exit Group
+        //-   b-dropdown-item(href='#', @click='doAction("enterGroup")')
+        //-     span.pl-5 Enter Group
+        //-   b-dropdown-item(href='#', @click='doAction("expand")')
+        //-     span.pl-5 Expand
+        //-   b-dropdown-item(href='#', @click='doAction("collapse")')
+        //-     span.pl-5 Collapse
+        //-   b-dropdown-item(href='#', @click='')
+        //-     span.pl-5 Collapsable
         b-dropdown#insert-dropright.sub-menu(
           dropright='',
           text='Insert',
@@ -524,18 +582,18 @@ export default defineComponent({
           @mouseleave.native='hide("insert-dropright")'
         )
           b-dropdown-item(href='#', @click='doAction("insertRectangle")')
-            span Rectangle
+            span.pl-5 Rectangle
           b-dropdown-item(href='#', @click='doAction("insertEllipse")')
-            span Ellipse
+            span.pl-5 Ellipse
           b-dropdown-item(href='#', @click='doAction("insertRhombus")')
-            span Rhombus
+            span.pl-5 Rhombus
           b-dropdown-item(href='#', @click='doAction("insertText")')
-            span Text
+            span.pl-5 Text
           b-dropdown-item(href='#', @click='doAction("link")')
-            span Link...
+            span.pl-5 Link...
           b-dropdown-item(href='#', @click='doAction("image")')
-            span Image...
-        b-dropdown#layout-dropright.sub-menu(
+            span.pl-5 Image...
+        b-dropdown#layout-dropright(
           dropright='',
           text='Layout',
           block,
@@ -543,53 +601,69 @@ export default defineComponent({
           @mouseleave.native='hide("layout-dropright")'
         )
           b-dropdown-item(href='#', @click='horizontalFlow("horizontal")')
-            span Horizontal Flow
+            span.pl-5 Horizontal Flow
           b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span Vertical Flow
+            span.pl-5 Vertical Flow
           b-dropdown-item(href='#', @click='fireEvent("horizontalTree")')
-            span Horizontal Tree
+            span.pl-5 Horizontal Tree
           b-dropdown-item(href='#', @click='fireEvent("verticalTree")')
-            span Vertical Tree
+            span.pl-5 Vertical Tree
           b-dropdown-item(href='#', @click='fireEvent("radialTree")')
-            span Radial Tree
+            span.pl-5 Radial Tree
           b-dropdown-item(href='#', @click='fireEvent("OrganicLayout")')
-            span Organic
+            span.pl-5 Organic
           b-dropdown-item(href='#', @click='circle')
-            span Circle
+            span.pl-5 Circle
         b-dropdown-divider
-        b-dropdown-item(href='#', @click='doAction("group")', :disabled='!isSomethingSelected')
-          span Group
-          span.float-right.shortcut.f-12 {{ controlKey }}+G
+        b-dropdown-item(href='#', @click='doAction("group")', :disabled='isGroupButtonVisible')
+          span.pl-5 Group
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +G
         b-dropdown-item(
           href='#',
           @click='doAction("ungroup")',
           :disabled='!isUngroupButtonVisible'
         )
-          span Ungroup
-          span.float-right.shortcut.f-12 {{ controlKey }}+Shift+U
-        b-dropdown-item(href='#', @click='doAction("removeFromGroup")')
-          span Remove from Group
+          span.pl-5 Ungroup
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +Shift+U
+        b-dropdown-item(
+          href='#',
+          @click='doAction("removeFromGroup")',
+          :disabled='!isUngroupButtonVisible'
+        )
+          span.pl-5 Remove from Group
         b-dropdown-divider
         b-dropdown-item(
           href='#',
           @click='doAction("clearWaypoints")',
           :disabled='!isSomethingSelected'
         )
-          span Clear waypoints
-          span.float-right.shortcut.f-12 Alt+Shift+C
-        b-dropdown-item(href='#', @click='doAction("autosize")', :disabled='!isSomethingSelected')
-          span Autosize
-          span.float-right.shortcut.f-12 {{ controlKey }}+Shift+Y
-      b-nav-item-dropdown.extra.pl-35(text='Extra')
+          span.pl-5 Clear waypoints
+          span.float-right.shortcut.f-12.icon-color.py-0.px-3 Alt+Shift+C
+        b-dropdown-item.pb-1(
+          href='#',
+          @click='doAction("autosize")',
+          :disabled='!isSomethingSelected'
+        )
+          span.pl-5 Autosize
+          span.float-right.shortcut.f-12.py-0.px-2
+            i.fa-solid.fa-command.f-12.icon-color
+            span.pl-0 +Shift+Y
+      b-nav-item-dropdown#menu-padding.extra.pl-35(text='Extras')
         b-dropdown-item(href='#', @click='doAction("copyConnect")')
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.copyOnConnect')
-          span Copy on Connect
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(v-show='checkboxes.copyOnConnect')
+          span.pl-5 Copy on Connect
         b-dropdown-item(href='#', @click='doAction("collapseExpand")')
-          i.fa-solid.fa-check.float-left.pr-2.menu-checkbox(v-show='checkboxes.collapseExpand')
-          span Collapse/Expand
+          i.fa-solid.fa-check.tp-2.float-left.pr-2.menu-checkbox(
+            v-show='checkboxes.collapseExpand'
+          )
+          span.pl-5 Collapse/Expand
         b-dropdown-divider
-        b-dropdown-item(href='#', @click='doAction("editDiagram")')
-          span Edit Diagram...
+        b-dropdown-item.pb-1(href='#', @click='doAction("editDiagram")')
+          span.pl-5 Edit Diagram...
 </template>
 
 <style lang="scss">

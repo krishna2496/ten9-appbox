@@ -137,7 +137,7 @@ RenamePage.prototype.execute = function () {
   this.previous = tmp;
 
   // Required to update page name in placeholders
-  this.ui.updatePlaceholders();
+  this.ui.editor.graph.updatePlaceholders();
   this.ui.editor.fireEvent(new mxEventObject('pageRenamed'));
 };
 
@@ -1529,7 +1529,10 @@ EditorUi.prototype.createPageMenuTab = function () {
       // var y = mxEvent.getClientY(evt);
       var x = mxEvent.getClientX(evt) - offset.x;
       var y = mxEvent.getClientY(evt) - offset.y;
-      menu.popup(x, y, null, evt);
+      // TEN9: create bootstrapVue component
+      //menu.popup(x, y, null, evt);
+      const pointer = { x, y };
+      this.fireEvent(new mxEventObject('openPageMenuPopup', 'pointer', pointer));
 
       graphUtils.fit(menu.div, this.container);
 
@@ -1652,8 +1655,10 @@ EditorUi.prototype.addTabListeners = function (page, tab) {
           // var y = mxEvent.getClientY(evt);
           var x = mxEvent.getClientX(evt) - offset.x;
           var y = mxEvent.getClientY(evt) - offset.y;
-          menu.popup(x, y, null, evt);
-
+          // TEN9: create bootstrapVue component
+          //menu.popup(x, y, null, evt);
+          const pointer = { x, y };
+          this.fireEvent(new mxEventObject('openPagePopupMenu', 'pointer', pointer));
           graphUtils.fit(menu.div, this.container);
 
           this.setCurrentMenu(menu, tab);
