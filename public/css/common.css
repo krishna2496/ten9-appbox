@@ -14,7 +14,7 @@
  * -----
  */
 
- div.mxRubberband {
+div.mxRubberband {
 	position: absolute;
 	overflow: hidden;
 	border-style: solid;
