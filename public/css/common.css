@@ -188,14 +188,14 @@ td.mxPopupMenuIcon {
 }
 
 @font-face {
-  font-family: 'Material Icons';
+  font-family: 'Material Icons Outlined';
   font-style: normal;
   font-weight: 550;
   src: url(../fonts/materialIcons.woff2) format('woff2');
 }
 
 .material-icons {
-  font-family: 'Material Icons';
+  font-family: 'Material Icons Outlined';
   font-weight: normal;
   font-style: normal;
   font-size: 18px;
@@ -207,4 +207,5 @@ td.mxPopupMenuIcon {
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
+  color: rgba(0, 0, 0, 0.7);
 }
