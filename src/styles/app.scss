@@ -22,7 +22,7 @@
 // Font icons
 
 @import './ten9-icon-font.scss';
-@import './roboto-font.scss';
+@import './material-icons-font.scss';
 
 $fa-font-path: '~@fortawesome/fontawesome-pro/webfonts';
 
@@ -34,6 +34,10 @@ $fa-font-path: '~@fortawesome/fontawesome-pro/webfonts';
 @import '@fortawesome/fontawesome-pro/scss/solid';
 @import '@fortawesome/fontawesome-pro/scss/thin';
 @import '@fortawesome/fontawesome-pro/scss/v4-shims';
+
+// Fonts
+
+@import './roboto-font.scss';
 
 #container {
   // TODO Part 2
