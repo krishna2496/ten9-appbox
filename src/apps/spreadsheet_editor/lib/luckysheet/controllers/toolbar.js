@@ -122,7 +122,7 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-undo iconfont luckysheet-iconfont-qianjin"
-                        style="user-select: none;">${ /* material design undo icon added */'' }<span class="material-icons">&#xE166;</span>
+                        style="user-select: none;">${ /* material design undo icon added */'' }<span class="material-icons">undo</span>
                         </div>
                     </div>
                 </div>
@@ -136,7 +136,7 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-redo iconfont luckysheet-iconfont-houtui"
-                        style="user-select: none;">${ /* material design redo icon added */'' }<span class="material-icons">&#xE15A;</span>
+                        style="user-select: none;">${ /* material design redo icon added */'' }<span class="material-icons">redo</span>
                         </div>
                     </div>
                 </div>

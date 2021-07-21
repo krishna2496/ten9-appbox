@@ -303,11 +303,11 @@ export default defineComponent({
           span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+P
       b-nav-item-dropdown#menu-padding(text='Edit')
         b-dropdown-item(href='#', @click='handleClick("undo")', :disabled='undoDisabled')
-          span.material-icons &#xE166;
+          span.material-icons undo
           span.pl-2 Undo
           span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+Z
         b-dropdown-item(href='#', @click='doAction("redo")', :disabled='redoDisabled')
-          span.material-icons &#xE15A;
+          span.material-icons redo
           span.pl-2 Redo
           span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+Shift+Z
         b-dropdown-divider
