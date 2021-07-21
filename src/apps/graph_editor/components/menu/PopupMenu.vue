@@ -16,6 +16,7 @@
 
 <script lang="ts">
 import { mxEventSource, mxPoint, mxResources, mxUtils } from '../../lib/jgraph/mxClient.js';
+import { Editor } from '../../lib/jgraph/Editor.js';
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
 interface CustomEvent {
@@ -35,6 +36,8 @@ export default defineComponent({
 
     const cellSelectedVisible = ref<boolean>(false);
 
+    const controlKey = ref<string>(Editor.ctrlKey);
+
     const left = ref<number>(0);
 
     const top = ref<number>(0);
@@ -45,13 +48,13 @@ export default defineComponent({
 
     const { graph } = props.editorUi.editor;
 
-    const redoDisabled = ref<boolean>(true);
+    const redoDisabled = ref<boolean>(false);
 
-    const undoDisabled = ref<boolean>(true);
+    const undoDisabled = ref<boolean>(false);
 
     const pageMenu = ref<boolean>(false);
 
-    const pages = ref(['page-1']);
+    const pages = ref(['Page-1']);
 
     function setPopupPosition(pagePopup: boolean) {
       const coordinates = graphUtils.getDocumentContainerRect();
@@ -174,6 +177,13 @@ export default defineComponent({
     );
 
     watch(
+      () => props.editorUi.canRedo(),
+      (val) => {
+        redoDisabled.value = val;
+      },
+    );
+
+    watch(
       () => cellSelectedVisible.value,
       (val) => {
         if (val) {
@@ -216,6 +226,7 @@ export default defineComponent({
     return {
       cellSelectedVisible,
       close,
+      controlKey,
       deletePage,
       doAction,
       duplicatePage,
@@ -249,71 +260,78 @@ div
     v-show='visible',
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
-    b-list-group-item(@click='doAction("undo")', v-show='!undoDisabled') Undo
-      span.shortcuts Ctrl + Z
-    b-list-group-item(@click='doAction("redo")', v-show='!redoDisabled') Redo
-      span.shortcuts Ctrl + Shift + Z
+    b-list-group-item.none-border(@click='doAction("undo")', v-show='undoDisabled') Undo
+      span.shortcuts {{ controlKey }}+ Z
+    b-list-group-item.none-border(@click='doAction("redo")', v-show='redoDisabled') Redo
+      span.shortcuts {{ controlKey }}+Shift+Z
     b-list-group-item(@click='doAction("pasteHere")') Paste Here
     b-list-group-item(@click='doAction("clearDefaultStyle")') Clear Default Style
-      span.shortcuts Ctrl + Shift + R
-    b-list-group-item(@click='doAction("selectVertices")') Select Vertices
-      span.shortcuts Ctrl + Shift + I
-    b-list-group-item(@click='doAction("selectEdges")') Select Edges
-      span.shortcuts Ctrl + Shift + E
+      span.shortcuts {{ controlKey }}+Shift+R
+    b-list-group-item.none-border(@click='doAction("selectVertices")') Select Vertices
+      span.shortcuts {{ controlKey }}+Shift+I
+    b-list-group-item.none-border(@click='doAction("selectEdges")') Select Edges
+      span.shortcuts {{ controlKey }}+Shift+E
     b-list-group-item(@click='doAction("selectAll")') Select All
-      span.shortcuts Ctrl + A
+      span.shortcuts {{ controlKey }}+ A
   b-list-group.w-15.position-absolute.cursor-pointer(
     v-show='cellSelectedVisible',
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
     b-list-group-item(@click='doAction("delete")') Delete
       span.shortcuts Delete
-    b-list-group-item(@click='doAction("cut")') Cut
-      span.shortcuts Ctrl + X
-    b-list-group-item(@click='doAction("pasteHere")') Copy
-      span.shortcuts Ctrl + C
+    b-list-group-item.none-border(@click='doAction("cut")') Cut
+      span.shortcuts {{ controlKey }}+ X
+    b-list-group-item.none-border(@click='doAction("pasteHere")') Copy
+      span.shortcuts {{ controlKey }}+ C
     b-list-group-item(@click='doAction("clearDefaultStyle")') Copy as Image
     b-list-group-item(@click='doAction("duplicate")') Duplicate
-      span.shortcuts Ctrl + D
+      span.shortcuts {{ controlKey }}+ D
     b-list-group-item(@click='doAction("setAsDefaultStyle")', v-show='!isMultiplCellSelected') Set as Default Style
-      span.shortcuts Ctrl + Shift + D
-    b-list-group-item(@click='doAction("toFront")') To Fromt
-      span.shortcuts Ctrl + Shift + F
-    b-list-group-item(@click='doAction("toBack")') To Back
-      span.shortcuts Ctrl + Shift + B
-    b-list-group-item(@click='doAction("editStyle")', v-show='!isMultiplCellSelected') Edit Style...
-      span.shortcuts Ctrl + E
-    b-list-group-item(@click='doAction("editData")', v-show='!isMultiplCellSelected') Edit Data...
-      span.shortcuts Ctrl + M
+      span.shortcuts {{ controlKey }}+Shift+D
+    b-list-group-item.none-border(@click='doAction("toFront")') To Front
+      span.shortcuts {{ controlKey }}+Shift+F
+    b-list-group-item.none-border(@click='doAction("toBack")') To Back
+      span.shortcuts {{ controlKey }}+Shift+B
+    b-list-group-item.none-border(@click='doAction("bringForward")') Bring Forward
+    b-list-group-item(@click='doAction("sendBackward")') Send Backward
+    b-list-group-item.none-border(@click='doAction("editStyle")', v-show='!isMultiplCellSelected') Edit Style...
+      span.shortcuts {{ controlKey }}+E
+    b-list-group-item.none-border(@click='doAction("editData")', v-show='!isMultiplCellSelected') Edit Data...
+      span.shortcuts {{ controlKey }}+M
     b-list-group-item(@click='doAction("editLink")', v-show='!isMultiplCellSelected') Edit Link...
-      span.shortcuts Alt + Shift + L
-    b-list-group-item(@click='doAction("group")', v-show='isMultiplCellSelected') Group
-      span.shortcuts Ctrl + G
+      span.shortcuts Alt +Shift+L
+    b-list-group-item.none-border(@click='doAction("group")', v-show='isMultiplCellSelected') Group
+      span.shortcuts {{ controlKey }}+G
     b-list-group-item(@click='doAction("ungroup")', v-show='isMultiplCellSelected') Ungroup
-      span.shortcuts Ctrl + Shift + G
+      span.shortcuts {{ controlKey }}+Shift+G
   b-list-group.w-15.position-absolute.cursor-pointer(
     v-show='pagePopupVisible',
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
-    b-list-group-item(@click='insertPage') Insert
-    b-list-group-item(@click='deletePage') Delete
+    b-list-group-item.none-border(@click='insertPage') Insert
+    b-list-group-item.none-border(@click='deletePage') Delete
     b-list-group-item(@click='renamePage') Rename
     b-list-group-item(@click='duplicatePage') Duplicate
   b-list-group.w-15.position-absolute.cursor-pointer(
     v-show='pageMenu',
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
-    b-list-group-item(v-for='(item, index) in pages', :key='index', @click='selectPage(index)')
+    b-list-group-item(
+      v-for='(item, index) in pages',
+      :key='index',
+      @click='selectPage(index)',
+      :class='[index == item.length - 1 ? "none-border" : ""]'
+    )
       i.fa-solid.fa-check.float-left(v-show='isCurrentPgae(index)')
       span(:class='[isCurrentPgae(index) ? "pl-2" : "pl-20"]') {{ item }}
     b-list-group-item(@click='insertPage')
-      span.pl-20 Insert
-    b-list-group-item(@click='deletePage')
-      span.pl-20 Delete
+      span.pl-20 Insert Page
+    b-list-group-item.none-border(@click='deletePage')
+      span.pl-20 Remove {{ editorUi.getCurrentPage().getName() }}
     b-list-group-item(@click='renamePage')
-      span.pl-20 Rename
+      span.pl-20 Rename {{ editorUi.getCurrentPage().getName() }}
     b-list-group-item(@click='duplicatePage')
-      span.pl-20 Duplicate
+      span.pl-20 Duplicate {{ editorUi.getCurrentPage().getName() }}
 </template>
 
 <style type="scss">

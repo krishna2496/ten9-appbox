@@ -127,11 +127,11 @@ a table tr td:hover {
 }
 
 .large-dropdown ul {
-  min-width: 310px;
+  min-width: 330px;
 }
 
 .xl-large-dropdown ul {
-  min-width: 335px;
+  min-width: 300px;
 }
 
 .pl-35 ul li a {
@@ -267,4 +267,21 @@ a table tr td:hover {
 
 .dropdown-item.disabled .shortcut {
   color: #ccc;
+}
+
+.lp-9 {
+  padding-left: 9px !important;
+}
+
+.text-hover .show .nav-link span {
+  background: #e8f0fe;
+}
+
+.dropdown-item.disabled,
+.dropdown-item:disabled {
+  color: #9aa0a6;
+}
+
+.dropdown-item.disabled i {
+  color: #9aa0a6 !important;
 }
