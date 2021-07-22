@@ -16,6 +16,7 @@
 
 <script lang="ts">
 import {
+  mxClient,
   mxCircleLayout,
   mxConstants,
   mxHierarchicalLayout,
@@ -246,6 +247,10 @@ export default defineComponent({
       },
     );
 
+    function temp() {
+      console.log('123');
+    }
+
     return {
       align,
       checkboxes,
@@ -260,9 +265,11 @@ export default defineComponent({
       horizontalFlow,
       isMultipleCellSelected,
       isSomethingSelected,
+      mxClient,
       redoDisabled,
       showSubmenu,
       undoDisabled,
+      temp,
     };
   },
 });
@@ -270,13 +277,13 @@ export default defineComponent({
 
 <template lang="pug">
 .menubar-container(v-if='editorUi')
-  b-navbar.menubar(toggleable='lg', type='dark', variant='')
+  b-navbar.menubar(toggleable='lg', type='dark', variant='', @click='temp')
     b-navbar-nav.text-hover
       b-nav-item-dropdown#menu-padding(text='File')
         b-dropdown-item(@click='doAction("print")')
           i.fa-solid.fa-print.float-left.shortcut.f-12.py-0.pl-2
           span.lp-9 Print
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+P
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}P
       b-nav-item-dropdown#menu-padding(text='Edit')
         b-dropdown-item(
           href='#',
@@ -284,44 +291,45 @@ export default defineComponent({
           :disabled='!editorUi.actions.get("undo").isEnabled()'
         )
           span.material-icons undo
-          span.lp-9 Undo
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+Z
+          span.pl-2 Undo
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}Z
         b-dropdown-item(
           href='#',
           @click='doAction("redo")',
           :disabled='!editorUi.actions.get("redo").isEnabled()'
         )
           span.material-icons redo
-          span.lp-9 Redo
+          span.pl-2 Redo
           span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+Shift+Z
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("cut")', :disabled='!isSomethingSelected')
-          i.fa-solid.fa-scissors.float-left.pl-2
-          span.lp-9 Cut
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+X
+          span.material-icons content_cut
+          span.pl-2 Cut
+          span.float-right.shortcut.f-12.pt2-0.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}X
         b-dropdown-item(href='#', @click='doAction("copy")', :disabled='!isSomethingSelected')
-          i.fa-solid.fa-book-copy.float-left.pl-2
+          span.material-icons content_copy
           span.pl-2 Copy
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+C
+          span.float-right.shortcut.f-12.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}C
         b-dropdown-item(href='#', @click='doAction("paste")')
-          i.fa-solid.fa-clipboard.float-left.pl-2
-          span.pl-13 Paste
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+P
+          span.material-icons content_paste
+          span.pl-2 Paste
+          span.float-right.shortcut.f-12.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}P
         b-dropdown-item(href='#', @click='doAction("delete")', :disabled='!isSomethingSelected')
-          span.pl-5 Delete
-          span.float-right.shortcut.f-12.py-0.px-3.icon-color Delete
+          span.material-icons delete
+          span.pl-2 Delete
+          span.float-right.shortcut.f-12.px-3.icon-color Delete
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("duplicate")', :disabled='!isSomethingSelected')
           span.pl-5 Duplicate
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+D
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}D
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("find")')
           span.pl-5 Find/Replace...
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+F
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}F
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("editData")')
           span.pl-5 Edit Data...
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+M
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}M
         b-dropdown-item(
           href='#',
           @click='doAction("editTooltip")',
@@ -332,7 +340,7 @@ export default defineComponent({
         b-dropdown-divider
         b-dropdown-item(href='#', @click='doAction("editStyle")', :disabled='!isSomethingSelected')
           span.pl-5 Edit Style...
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+E
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}E
         b-dropdown-item(href='#', @click='doAction("edit")', :disabled='!isSomethingSelected')
           span.pl-5 Edit
           span.float-right.shortcut.f-12.py-0.px-3.icon-color F2/Enter
@@ -350,7 +358,7 @@ export default defineComponent({
           span.float-right.shortcut.f-12.py-0.px-3.icon-color Alt+Shift+E
         b-dropdown-item(href='#', @click='doAction("selectAll")')
           span.pl-5 Select All
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+A
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}A
         b-dropdown-item(href='#', @click='doAction("selectNone")')
           span.pl-5 Select None
           span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+Shift+A
@@ -426,21 +434,25 @@ export default defineComponent({
           span.pl-5 Reset View
           span.float-right.shortcut.f-12.py-0.px-3 Enter/Home
         b-dropdown-item(href='#', @click='doAction("zoomIn")')
-          span.pl-5 Zoom In
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+(Numpad)
+          span.material-icons zoom_in
+          span Zoom In
+          span.float-right.shortcut.f-12.px-3 {{ controlKey }}+(Numpad)
         b-dropdown-item(href='#', @click='doAction("zoomOut")')
-          span.pl-5.pl-0 Zoom Out
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}-(Numpad)
+          span.material-icons zoom_out
+          span Zoom Out
+          span.float-right.shortcut.f-12.px-3 {{ controlKey }}-(Numpad)
         b-dropdown-divider
         b-dropdown-item.pb-1(href='#', @click='doAction("fullscreen")')
           span.pl-5 Fullscreen
       b-nav-item-dropdown#menu-padding.large-dropdown.pl-35(text='Arrange')
         b-dropdown-item(href='#', @click='doAction("toFront")', :disabled='!isSomethingSelected')
-          span.pl-5 To Front
-          span.float-right.shortcut.f-12.py-0.px-3.icon-color Alt+Shift+F
+          span.material-icons flip_to_front
+          span.pl-1 To Front
+          span.float-right.shortcut.f-12.px-3.icon-color Alt+Shift+F
         b-dropdown-item(href='#', @click='doAction("toBack")', :disabled='!isSomethingSelected')
-          span.pl-5 To Back
-          span.float-right.shortcut.f-12.py-0.px-3.icon-color Alt+Shift+B
+          span.material-icons flip_to_back
+          span.pl-1 To Back
+          span.float-right.shortcut.f-12.px-3.icon-color Alt+Shift+B
         b-dropdown-item(
           href='#',
           @click='doAction("bringForward")',
@@ -470,8 +482,9 @@ export default defineComponent({
           b-dropdown-item(href='#', @click='fireEvent("openRotation")')
             span.pl-5 Rotation
         b-dropdown-item(href='#', @click='doAction("turn")', :disabled='!isSomethingSelected')
-          span.pl-5 Rotate shape only by 90/ Reverse
-          span.float-right.shortcut.f-12.px-3 {{ controlKey }}+R
+          span.material-icons rotate_right
+          span.pl-2 Rotate shape only by 90/ Reverse
+          span.float-right.shortcut.f-12.px-3.tp-1 {{ controlKey }}+R
         b-dropdown-divider
         b-dropdown#align-dropright.sub-menu(
           dropright='',
@@ -573,7 +586,7 @@ export default defineComponent({
           :disabled='!editorUi.actions.get("group").isEnabled()'
         )
           span.pl-5 Group
-          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}+G
+          span.float-right.shortcut.f-12.py-0.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}G
         b-dropdown-item(
           href='#',
           @click='doAction("ungroup")',

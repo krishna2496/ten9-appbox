@@ -269,12 +269,13 @@ a table tr td:hover {
   color: #ccc;
 }
 
-.lp-9 {
-  padding-left: 9px !important;
+.dropdown-item .lp-9 {
+  padding-left: 9px;
 }
 
 .text-hover .show .nav-link span {
   background: #e8f0fe;
+  border-radius: 5px 5px 0 0;
 }
 
 .dropdown-item.disabled,
@@ -284,4 +285,32 @@ a table tr td:hover {
 
 .dropdown-item.disabled i {
   color: #9aa0a6 !important;
+}
+
+.dropdown-item .material-icons {
+  padding-left: 0.7rem;
+  padding-right: 0;
+  font-size: 16px;
+}
+
+.lf-4 {
+  padding-left: 4px;
+}
+
+.b-nav-dropdown .dropdown-menu li:first-child {
+  padding: 5px 1px;
+}
+
+.material-icons {
+  padding: 0;
+}
+
+.navbar-nav li ul li a {
+  span {
+    padding: 0;
+  }
+}
+
+.tp-1 {
+  padding-top: 1px;
 }
