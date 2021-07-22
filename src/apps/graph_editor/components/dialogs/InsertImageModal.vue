@@ -91,5 +91,5 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel
     button.btn.btn-primary(type='button', @click='insertImage')
-      | Ok
+      | OK
 </template>
