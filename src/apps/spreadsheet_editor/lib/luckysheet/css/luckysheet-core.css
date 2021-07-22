@@ -206,13 +206,13 @@
 }
 
 .luckysheet-wa-editor {
-    height: 32px;
+    min-height: 37px;
     /* background: #f7f7f7; */
     background: #fafafc;
     position: relative;
     /* padding-left: 15px; */
     /* padding: 0px 0px 10px 15px; */
-    padding: 5px 0px 3px 15px;
+    padding: 0 21px 0 22px;
     border-bottom: 1px solid #d4d4d4;
     white-space: nowrap;
     transition: all 0.2s;
@@ -7392,6 +7392,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     font-size: 14px;
     font-weight: 600 !important;
     color: rgba(0,0,0,.7) !important;
+    line-height: 2 !important;
 }
 
 .luckysheet-work-area {
@@ -7515,6 +7516,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 
 .toolbar .luckysheet-toolbar-button {
     width: 30px;
+    margin-top: 5px;
 }
 
 #luckysheet-icon-fmt-decimal-increase {
@@ -7549,4 +7551,10 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 
 #luckysheet-icon-rotation-menu {
     width: 16px;
+}
+.ten9-font {
+    line-height: 2;
+}
+#luckysheet-icon-border-menu-menuButton .material-icons {
+    line-height: 1;
 }
