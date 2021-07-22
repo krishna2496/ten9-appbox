@@ -23,6 +23,7 @@
     position: absolute;
     right: 15px;
     transform: translate(0,-50%);
+    /* TEN9 : top: 50%; replaced with top: 35%; */
     top: 35%;
 }
 
