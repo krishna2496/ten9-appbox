@@ -356,7 +356,7 @@ div
       v-clamp.pl-20(autoresize, :max-lines='1', :class='[isCurrentPgae(index) ? "pl-2" : "pl-20"]') {{ item }}
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='insertPage')
-      span.pl-20 Insert Page
+      span.pl-20 Insert page
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='deletePage')
       v-clamp.pl-20(autoresize, :max-lines='1') Remove {{ editorUi.getCurrentPage().getName() }}
