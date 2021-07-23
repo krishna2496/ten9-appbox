@@ -36,7 +36,7 @@
   font-style: normal;
   font-size: 19px; /* Preferred icon size */
   display: inline-block;
-  // line-height: 2;
+  line-height: 1;
   text-transform: none;
   letter-spacing: normal;
   word-wrap: normal;
@@ -45,6 +45,7 @@
   color: rgb(95, 99, 104) !important;
   width: 18px;
   height: 18px;
+  margin-right: 2px;
 
   /* Support for all WebKit browsers. */
   -webkit-font-smoothing: antialiased;
