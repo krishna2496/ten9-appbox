@@ -4,37 +4,39 @@
     /* TEN9: font size changed to 13px 
      font-size: 24px;
     */
-    font-size: 13px;
+    /* font-size: 13px; */
 }
 
 .luckysheet-toolbar-menu-button .luckysheet-iconfont-xiayige,
 .luckysheet-toolbar-combo-button .luckysheet-iconfont-xiayige
 {
     font-size: 12px;
-    top: -8px;
-    left: -3px;
+    top: -9px;
+    left: -2px;
 }
 
 .luckysheet-toolbar-select .luckysheet-iconfont-xiayige{
     margin-right: 4px;
+    line-height: 2.2;
 }
 
 #luckysheet-icon-morebtn{
     position: absolute;
     right: 15px;
     transform: translate(0,-50%);
-    top: 50%;
+    /* TEN9 : top: 50%; replaced with top: 35%; */
+    top: 35%;
 }
 
 
-.toolbar .luckysheet-icon-text-color,
+/* .toolbar .luckysheet-icon-text-color,
 .toolbar .luckysheet-icon-cell-color,
 .toolbar .luckysheet-icon-border-all,
 .toolbar .luckysheet-icon-valign,
 .toolbar .luckysheet-icon-textwrap
 {
     margin-right: -3px;
-}
+} */
 
 .toolbar .luckysheet-icon-merge-button,
 .toolbar .luckysheet-icon-align,
