@@ -1414,10 +1414,12 @@ EditorUi.prototype.setEnabled = function (enabled) {
   this.toolbar.setEnabled(enabled);
 
   const undo = this.actions.get('undo');
-  undo.setEnabled(enabled);
+  // TEN9: make false at graph initialize stage
+  undo.setEnabled(false);
 
   const redo = this.actions.get('redo');
-  redo.setEnabled(enabled);
+  // TEN9: make false at graph initialize stage
+  redo.setEnabled(false);
 
   if (enabled) {
     this.showLayersDialog();

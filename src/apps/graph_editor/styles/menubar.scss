@@ -28,6 +28,7 @@
 
 .nav-link span:hover {
   background: #e5e5e5;
+  border-radius: 5px;
 }
 
 .nav-link span:focus {
@@ -183,8 +184,7 @@ a table tr td:hover {
 }
 
 #menu-padding a {
-  padding-left: 0;
-  padding-right: 0;
+  padding: 0;
 }
 
 .icon-color {
@@ -298,7 +298,8 @@ a table tr td:hover {
 }
 
 .b-nav-dropdown .dropdown-menu li:first-child {
-  padding: 5px 1px;
+  padding: 7px 1px;
+  margin-top: 5px;
 }
 
 .material-icons {
@@ -311,6 +312,16 @@ a table tr td:hover {
   }
 }
 
-.tp-1 {
+.dropdown-item .tp-1 {
   padding-top: 1px;
+}
+
+.dropdown-menu-nav li,
+.dropdown-menu li {
+  padding: 7px 1px;
+}
+
+.dropdown-menu-nav li:hover,
+.dropdown-menu li:hover {
+  background-color: #eee;
 }
