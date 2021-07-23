@@ -14,6 +14,10 @@
  * -----
  */
 
+.menubar-container .material-icons {
+  font-weight: bold;
+}
+
 .menubar {
   height: 30px;
 }
@@ -28,6 +32,7 @@
 
 .nav-link span:hover {
   background: #e5e5e5;
+  border-radius: 5px;
 }
 
 .nav-link span:focus {
@@ -127,11 +132,11 @@ a table tr td:hover {
 }
 
 .large-dropdown ul {
-  min-width: 310px;
+  min-width: 330px;
 }
 
 .xl-large-dropdown ul {
-  min-width: 335px;
+  min-width: 300px;
 }
 
 .pl-35 ul li a {
@@ -183,8 +188,7 @@ a table tr td:hover {
 }
 
 #menu-padding a {
-  padding-left: 0;
-  padding-right: 0;
+  padding: 0;
 }
 
 .icon-color {
@@ -267,4 +271,61 @@ a table tr td:hover {
 
 .dropdown-item.disabled .shortcut {
   color: #ccc;
+}
+
+.dropdown-item .lp-9 {
+  padding-left: 9px;
+}
+
+.text-hover .show .nav-link span {
+  background: #e8f0fe;
+  border-radius: 5px 5px 0 0;
+}
+
+.dropdown-item.disabled,
+.dropdown-item:disabled {
+  color: #9aa0a6;
+}
+
+.dropdown-item.disabled i {
+  color: #9aa0a6 !important;
+}
+
+.dropdown-item .material-icons {
+  padding-left: 0.7rem;
+  padding-right: 0;
+  font-size: 16px;
+}
+
+.lf-4 {
+  padding-left: 4px;
+}
+
+.b-nav-dropdown .dropdown-menu li:first-child {
+  padding: 7px 1px;
+  margin-top: 5px;
+}
+
+.material-icons {
+  padding: 0;
+}
+
+.navbar-nav li ul li a {
+  span {
+    padding: 0;
+  }
+}
+
+.dropdown-item .tp-1 {
+  padding-top: 1px;
+}
+
+.dropdown-menu-nav li,
+.dropdown-menu li {
+  padding: 7px 1px;
+}
+
+.dropdown-menu-nav li:hover,
+.dropdown-menu li:hover {
+  background-color: #eee;
 }

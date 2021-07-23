@@ -92,8 +92,8 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
         morebtn = `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${locale_toolbar.toolMoreTip}" id="luckysheet-icon-morebtn" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block" style="user-select: none;">
                 <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block" style="user-select: none;">
-
-                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block" style="user-select: none;">
+                    ${ /* TEN9 : margin-right:-5px added */'' }
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block" style="user-select: none;margin-right:-5px">
                         ${ /* Replaced more text with down arrow
                             locale_toolbar.toolMore */'' } <i class="fas fa-angle-down"></i>
                     </div>

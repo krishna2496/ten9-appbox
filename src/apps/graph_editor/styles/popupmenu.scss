@@ -1,10 +1,34 @@
 .w-15 {
   width: 15%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  min-width: 200px;
+  z-index: 10;
+}
+
+.w-18 {
+  width: 18%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  min-width: 200px;
+  z-index: 10;
+}
+
+.w-22 {
+  width: 22%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  min-width: 200px;
+  z-index: 10;
 }
 
 .list-group-item {
-  padding: 5px 10px;
-  font-size: 13px;
+  padding: 5px 10px 5px 35px;
+  font-size: 14px;
+  font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
 }
 
 .list-group-item:hover {
@@ -13,4 +37,37 @@
 
 .pl-20 {
   padding-left: 20px;
+}
+
+.none-border {
+  border: none;
+  color: #2e2e2e;
+}
+
+hr {
+  margin: 0;
+}
+
+.popup-dropdown-divider {
+  margin-top: 5px;
+  margin-left: 35px;
+  margin-bottom: 5px;
+}
+
+.list-group-item:first-child {
+  margin-top: 5px;
+}
+
+.list-group-item:last-child {
+  margin-bottom: 5px;
+}
+
+.tp-5 {
+  padding-top: 5px;
+}
+
+.none-border .popup-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 16px;
 }

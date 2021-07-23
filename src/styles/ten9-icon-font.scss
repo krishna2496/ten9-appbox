@@ -32,7 +32,7 @@
   font-weight: normal;
   font-variant: normal;
   text-transform: none;
-  line-height: 1;
+  // line-height: 1;
 
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
@@ -74,11 +74,11 @@
 }
 
 .ten9-font {
-  font-size: 18px;
+  font-size: 17px;
 }
 
 .ten9-icon-auto-filter {
-  line-height: 1.2;
+  line-height: 1.5;
 
   &::before {
     content: $ten9-icon-auto-filter;
@@ -128,4 +128,13 @@
   &::before {
     content: $ten9-icon-vertical-align-middle;
   }
+}
+
+.ten9-icon-merge-cell {
+  &::before {
+    content: $ten9-icon-merge-cell;
+  }
+}
+.luckysheet-icon-img-container {
+  line-height: 1.7;
 }

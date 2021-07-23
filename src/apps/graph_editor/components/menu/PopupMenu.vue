@@ -15,8 +15,16 @@
 -->
 
 <script lang="ts">
-import { mxEventSource, mxPoint, mxResources, mxUtils } from '../../lib/jgraph/mxClient.js';
+import {
+  mxClient,
+  mxEventSource,
+  mxPoint,
+  mxResources,
+  mxUtils,
+} from '../../lib/jgraph/mxClient.js';
+import { Editor } from '../../lib/jgraph/Editor.js';
 import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
+import VClamp from 'vue-clamp';
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
 interface CustomEvent {
   getProperty?(propName: string): mxPoint | mxPoint;
@@ -24,6 +32,9 @@ interface CustomEvent {
 
 export default defineComponent({
   name: 'PopupMenu',
+  components: {
+    VClamp,
+  },
   props: {
     editorUi: {
       type: Object,
@@ -35,6 +46,8 @@ export default defineComponent({
 
     const cellSelectedVisible = ref<boolean>(false);
 
+    const controlKey = ref<string>(Editor.ctrlKey);
+
     const left = ref<number>(0);
 
     const top = ref<number>(0);
@@ -45,13 +58,9 @@ export default defineComponent({
 
     const { graph } = props.editorUi.editor;
 
-    const redoDisabled = ref<boolean>(true);
-
-    const undoDisabled = ref<boolean>(true);
-
     const pageMenu = ref<boolean>(false);
 
-    const pages = ref(['page-1']);
+    const pages = ref(['Page-1']);
 
     function setPopupPosition(pagePopup: boolean) {
       const coordinates = graphUtils.getDocumentContainerRect();
@@ -92,7 +101,7 @@ export default defineComponent({
 
     function openPageMenuPopup(_sender: typeof mxEventSource, event: CustomEvent) {
       const pageCount = pages.value.length;
-      const popupMenuHeight = 100;
+      const popupMenuHeight = 130;
       const pageMenuHeight = 30;
       const pagesMenuHeight = pageCount * pageMenuHeight;
       const pointer = event.getProperty('pointer');
@@ -106,6 +115,7 @@ export default defineComponent({
       props.editorUi.addListener('closePopupMenu', close);
       props.editorUi.addListener('openPagePopupMenu', openPagePopupMenu);
       props.editorUi.addListener('openPageMenuPopup', openPageMenuPopup);
+      props.editorUi.editor.graph.refresh();
     });
 
     onUnmounted(() => {
@@ -135,6 +145,13 @@ export default defineComponent({
       close();
     }
 
+    function updatePages() {
+      pages.value = [];
+      for (let i = 0; i < props.editorUi.pages.length; i++) {
+        pages.value.push(props.editorUi.pages[i].getName());
+      }
+    }
+
     function renamePage() {
       props.editorUi.renamePage(
         props.editorUi.getCurrentPage(),
@@ -151,13 +168,6 @@ export default defineComponent({
       close();
     }
 
-    function updatePages() {
-      pages.value = [];
-      for (let i = 0; i < props.editorUi.pages.length; i++) {
-        pages.value.push(props.editorUi.pages[i].getName());
-      }
-    }
-
     function selectPage(pageNumner: number) {
       props.editorUi.selectPage(props.editorUi.pages[pageNumner]);
     }
@@ -165,13 +175,6 @@ export default defineComponent({
     function isCurrentPgae(pageNumner: number) {
       return props.editorUi.getCurrentPage() == props.editorUi.pages[pageNumner];
     }
-
-    watch(
-      () => props.editorUi.editor.undoManager.indexOfNextAdd,
-      (val) => {
-        undoDisabled.value = val > 0;
-      },
-    );
 
     watch(
       () => cellSelectedVisible.value,
@@ -213,9 +216,22 @@ export default defineComponent({
       },
     );
 
+    watch(
+      () => pageMenu.value,
+      (val) => {
+        if (val) {
+          updatePages();
+          visible.value = false;
+          cellSelectedVisible.value = false;
+          pagePopupVisible.value = false;
+        }
+      },
+    );
+
     return {
       cellSelectedVisible,
       close,
+      controlKey,
       deletePage,
       doAction,
       duplicatePage,
@@ -224,6 +240,7 @@ export default defineComponent({
       isCurrentPgae,
       isMultiplCellSelected,
       left,
+      mxClient,
       openPageMenuPopup,
       openPagePopupMenu,
       openPopupMenu,
@@ -231,12 +248,10 @@ export default defineComponent({
       pagePopupVisible,
       pages,
       renamePage,
-      redoDisabled,
       setPopupPosition,
       selectPage,
       top,
       updatePages,
-      undoDisabled,
       visible,
     };
   },
@@ -245,75 +260,111 @@ export default defineComponent({
 
 <template lang="pug">
 div
-  b-list-group.w-15.position-absolute.cursor-pointer(
+  b-list-group.w-22.position-absolute.cursor-pointer.tp-5(
     v-show='visible',
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
-    b-list-group-item(@click='doAction("undo")', v-show='!undoDisabled') Undo
-      span.shortcuts Ctrl + Z
-    b-list-group-item(@click='doAction("redo")', v-show='!redoDisabled') Redo
-      span.shortcuts Ctrl + Shift + Z
-    b-list-group-item(@click='doAction("pasteHere")') Paste Here
-    b-list-group-item(@click='doAction("clearDefaultStyle")') Clear Default Style
-      span.shortcuts Ctrl + Shift + R
-    b-list-group-item(@click='doAction("selectVertices")') Select Vertices
-      span.shortcuts Ctrl + Shift + I
-    b-list-group-item(@click='doAction("selectEdges")') Select Edges
-      span.shortcuts Ctrl + Shift + E
-    b-list-group-item(@click='doAction("selectAll")') Select All
-      span.shortcuts Ctrl + A
-  b-list-group.w-15.position-absolute.cursor-pointer(
+    b-list-group-item.none-border(
+      @click='doAction("undo")',
+      v-show='editorUi.actions.get("undo").isEnabled()'
+    )
+      span.material-icons.popup-icon undo
+      span Undo
+      span.shortcuts {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}Z
+    b-list-group-item.none-border(
+      @click='doAction("redo")',
+      v-show='editorUi.actions.get("redo").isEnabled()'
+    )
+      span.material-icons.popup-icon redo
+      span Redo
+      span.shortcuts {{ controlKey }}+Shift+Z
+    b-list-group-item.none-border(@click='doAction("pasteHere")') Paste Here
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")') Clear Default Style
+      span.shortcuts {{ controlKey }}+Shift+R
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='doAction("selectVertices")') Select Vertices
+      span.shortcuts {{ controlKey }}+Shift+I
+    b-list-group-item.none-border(@click='doAction("selectEdges")') Select Edges
+      span.shortcuts {{ controlKey }}+Shift+E
+    b-list-group-item.none-border(@click='doAction("selectAll")') Select All
+      span.shortcuts {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}A
+  b-list-group.w-22.position-absolute.cursor-pointer(
     v-show='cellSelectedVisible',
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
-    b-list-group-item(@click='doAction("delete")') Delete
+    b-list-group-item.none-border(@click='doAction("delete")')
+      span.material-icons.popup-icon delete
+      span Delete
       span.shortcuts Delete
-    b-list-group-item(@click='doAction("cut")') Cut
-      span.shortcuts Ctrl + X
-    b-list-group-item(@click='doAction("pasteHere")') Copy
-      span.shortcuts Ctrl + C
-    b-list-group-item(@click='doAction("clearDefaultStyle")') Copy as Image
-    b-list-group-item(@click='doAction("duplicate")') Duplicate
-      span.shortcuts Ctrl + D
-    b-list-group-item(@click='doAction("setAsDefaultStyle")', v-show='!isMultiplCellSelected') Set as Default Style
-      span.shortcuts Ctrl + Shift + D
-    b-list-group-item(@click='doAction("toFront")') To Fromt
-      span.shortcuts Ctrl + Shift + F
-    b-list-group-item(@click='doAction("toBack")') To Back
-      span.shortcuts Ctrl + Shift + B
-    b-list-group-item(@click='doAction("editStyle")', v-show='!isMultiplCellSelected') Edit Style...
-      span.shortcuts Ctrl + E
-    b-list-group-item(@click='doAction("editData")', v-show='!isMultiplCellSelected') Edit Data...
-      span.shortcuts Ctrl + M
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='doAction("cut")')
+      span.material-icons.popup-icon content_cut
+      span Cut
+      span.shortcuts {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}X
+    b-list-group-item.none-border(@click='doAction("pasteHere")')
+      span.material-icons.popup-icon content_copy
+      span Copy
+      span.shortcuts {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}C
+    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")') Copy as Image
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='doAction("duplicate")') Duplicate
+      span.shortcuts {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}D
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(
+      @click='doAction("setAsDefaultStyle")',
+      v-show='!isMultiplCellSelected'
+    ) Set as Default Style
+      span.shortcuts {{ controlKey }}+Shift+D
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='doAction("toFront")') To Front
+      span.shortcuts {{ controlKey }}+Shift+F
+    b-list-group-item.none-border(@click='doAction("toBack")') To Back
+      span.shortcuts {{ controlKey }}+Shift+B
+    b-list-group-item.none-border(@click='doAction("bringForward")') Bring Forward
+    b-list-group-item.none-border(@click='doAction("sendBackward")') Send Backward
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='doAction("editStyle")', v-show='!isMultiplCellSelected') Edit Style...
+      span.shortcuts {{ controlKey }}+E
+    b-list-group-item.none-border(@click='doAction("editData")', v-show='!isMultiplCellSelected') Edit Data...
+      span.shortcuts {{ controlKey }}+M
     b-list-group-item(@click='doAction("editLink")', v-show='!isMultiplCellSelected') Edit Link...
-      span.shortcuts Alt + Shift + L
-    b-list-group-item(@click='doAction("group")', v-show='isMultiplCellSelected') Group
-      span.shortcuts Ctrl + G
+      span.shortcuts Alt +Shift+L
+    b-list-group-item.none-border(@click='doAction("group")', v-show='isMultiplCellSelected') Group
+      span.shortcuts {{ controlKey }}+G
     b-list-group-item(@click='doAction("ungroup")', v-show='isMultiplCellSelected') Ungroup
-      span.shortcuts Ctrl + Shift + G
+      span.shortcuts {{ controlKey }}+Shift+G
   b-list-group.w-15.position-absolute.cursor-pointer(
     v-show='pagePopupVisible',
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
-    b-list-group-item(@click='insertPage') Insert
-    b-list-group-item(@click='deletePage') Delete
-    b-list-group-item(@click='renamePage') Rename
-    b-list-group-item(@click='duplicatePage') Duplicate
+    b-list-group-item.none-border(@click='insertPage') Insert
+    b-list-group-item.none-border(@click='deletePage') Delete
+    b-list-group-item.none-border(@click='renamePage') Rename
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='duplicatePage') Duplicate
   b-list-group.w-15.position-absolute.cursor-pointer(
     v-show='pageMenu',
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
-    b-list-group-item(v-for='(item, index) in pages', :key='index', @click='selectPage(index)')
-      i.fa-solid.fa-check.float-left(v-show='isCurrentPgae(index)')
-      span(:class='[isCurrentPgae(index) ? "pl-2" : "pl-20"]') {{ item }}
-    b-list-group-item(@click='insertPage')
-      span.pl-20 Insert
-    b-list-group-item(@click='deletePage')
-      span.pl-20 Delete
-    b-list-group-item(@click='renamePage')
-      span.pl-20 Rename
-    b-list-group-item(@click='duplicatePage')
-      span.pl-20 Duplicate
+    b-list-group-item.none-border(
+      v-for='(item, index) in pages',
+      :key='index',
+      @click='selectPage(index)'
+    )
+      i.fa-solid.fa-check.float-left.pt-1(v-show='isCurrentPgae(index)')
+      v-clamp.pl-20(autoresize, :max-lines='1', :class='[isCurrentPgae(index) ? "pl-2" : "pl-20"]') {{ item }}
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='insertPage')
+      span.pl-20 Insert page
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='deletePage')
+      v-clamp.pl-20(autoresize, :max-lines='1') Remove {{ editorUi.getCurrentPage().getName() }}
+    b-list-group-item.none-border(@click='renamePage')
+      v-clamp.pl-20(autoresize, :max-lines='1') Rename {{ editorUi.getCurrentPage().getName() }}
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='duplicatePage')
+      v-clamp.pl-20(autoresize, :max-lines='1') Duplicate {{ editorUi.getCurrentPage().getName() }}
 </template>
 
 <style type="scss">

@@ -106,5 +106,5 @@ b-modal#modal(
     button.btn.btn-grey(type='button', @click='closeModal')
       | Cancel
     button.btn.btn-primary(type='button', @click='setPageName')
-      | Ok
+      | OK
 </template>

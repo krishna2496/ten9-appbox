@@ -509,7 +509,7 @@ export default defineComponent({
     #page.col-md-10
       .row-btn
         b-dropdown.ml-3.app-options(text='Create new...', variant='info')
-          b-dropdown-item(
+          b-dropdown-item.py-0(
             v-for='item in apps',
             v-bind:title='item.documentName',
             v-bind:key='item.uniqueAppId',
