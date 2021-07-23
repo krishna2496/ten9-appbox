@@ -7503,6 +7503,12 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     color: #188038 !important;
 }
 
+.luckysheet-wa-editor.toolbar .material-icons {
+    width: 18px;
+    height: 18px;
+    margin-right: 2px;
+}
+
 .toolbar .luckysheet-toolbar-button {
     width: 25px;
      /* TEN9 : margin added for better layout */
