@@ -7381,7 +7381,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     font-weight: 600 !important;
     color: rgba(0,0,0,.7) !important;
     /* TEN9 : line-height: 2 added  */
-    line-height: 2 !important;
+    line-height: 2;
 }
 
 .luckysheet-work-area {

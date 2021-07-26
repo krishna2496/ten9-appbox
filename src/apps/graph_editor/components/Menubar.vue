@@ -483,8 +483,8 @@ export default defineComponent({
             span.pl-5 Rotation
         b-dropdown-item(href='#', @click='doAction("turn")', :disabled='!isSomethingSelected')
           span.material-icons rotate_right
-          span.pl-2 Rotate shape only by 90/ Reverse
-          span.float-right.shortcut.f-12.px-3.tp-1 {{ controlKey }}+R
+          span.pl-1 Rotate shape only by 90/ Reverse
+          span.float-right.shortcut.f-12.px-3 {{ controlKey }}+R
         b-dropdown-divider.py-0
         b-dropdown#align-dropright.sub-menu(
           dropright='',

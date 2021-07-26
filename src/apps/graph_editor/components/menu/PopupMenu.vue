@@ -278,7 +278,9 @@ div
       span.material-icons.popup-icon redo
       span Redo
       span.shortcuts {{ controlKey }}+Shift+Z
-    b-list-group-item.none-border(@click='doAction("pasteHere")') Paste Here
+    b-list-group-item.none-border(@click='doAction("pasteHere")')
+      span.material-icons.popup-icon content_paste
+      span Paste Here
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='doAction("clearDefaultStyle")') Clear Default Style
       span.shortcuts {{ controlKey }}+Shift+R
@@ -352,19 +354,19 @@ div
       :key='index',
       @click='selectPage(index)'
     )
-      i.fa-solid.fa-check.float-left.pt-1(v-show='isCurrentPgae(index)')
-      v-clamp.pl-20(autoresize, :max-lines='1', :class='[isCurrentPgae(index) ? "pl-2" : "pl-20"]') {{ item }}
+      i.fa-solid.fa-check.float-left.pt-1.popup-icon(v-show='isCurrentPgae(index)')
+      v-clamp(autoresize, :max-lines='1', :class='[isCurrentPgae(index) ? "" : "pl-20"]') {{ item }}
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='insertPage')
-      span.pl-20 Insert page
+      span Insert page
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='deletePage')
-      v-clamp.pl-20(autoresize, :max-lines='1') Remove {{ editorUi.getCurrentPage().getName() }}
+      v-clamp(autoresize, :max-lines='1') Remove {{ editorUi.getCurrentPage().getName() }}
     b-list-group-item.none-border(@click='renamePage')
-      v-clamp.pl-20(autoresize, :max-lines='1') Rename {{ editorUi.getCurrentPage().getName() }}
+      v-clamp(autoresize, :max-lines='1') Rename {{ editorUi.getCurrentPage().getName() }}
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='duplicatePage')
-      v-clamp.pl-20(autoresize, :max-lines='1') Duplicate {{ editorUi.getCurrentPage().getName() }}
+      v-clamp(autoresize, :max-lines='1') Duplicate {{ editorUi.getCurrentPage().getName() }}
 </template>
 
 <style type="scss">
