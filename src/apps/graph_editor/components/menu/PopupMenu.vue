@@ -172,7 +172,7 @@ export default defineComponent({
       props.editorUi.selectPage(props.editorUi.pages[pageNumner]);
     }
 
-    function isCurrentPgae(pageNumner: number) {
+    function isCurrentPage(pageNumner: number) {
       return props.editorUi.getCurrentPage() == props.editorUi.pages[pageNumner];
     }
 
@@ -237,7 +237,7 @@ export default defineComponent({
       duplicatePage,
       graph,
       insertPage,
-      isCurrentPgae,
+      isCurrentPage,
       isMultiplCellSelected,
       left,
       mxClient,
@@ -354,8 +354,8 @@ div
       :key='index',
       @click='selectPage(index)'
     )
-      i.fa-solid.fa-check.float-left.pt-1.popup-icon(v-show='isCurrentPgae(index)')
-      v-clamp(autoresize, :max-lines='1', :class='[isCurrentPgae(index) ? "" : "pl-20"]') {{ item }}
+      i.fa-solid.fa-check.float-left.pt-1.popup-icon(v-show='isCurrentPage(index)')
+      v-clamp(autoresize, :max-lines='1', :class='[isCurrentPage(index) ? "" : "pl-20"]') {{ item }}
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='insertPage')
       span Insert page
