@@ -21,7 +21,7 @@
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 5px;
-  min-width: 200px;
+  min-width: 250px;
   z-index: 10;
 }
 
@@ -32,7 +32,11 @@
 }
 
 .list-group-item:hover {
-  background: #ececec;
+  background: #f1f3f4;
+}
+
+.list-group-item:focus {
+  background: #e8eaed;
 }
 
 .pl-20 {

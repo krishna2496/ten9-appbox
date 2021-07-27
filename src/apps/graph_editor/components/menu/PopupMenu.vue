@@ -17,6 +17,7 @@
 <script lang="ts">
 import {
   mxClient,
+  mxEventObject,
   mxEventSource,
   mxPoint,
   mxResources,
@@ -185,6 +186,7 @@ export default defineComponent({
           pagePopupVisible.value = false;
           pageMenu.value = false;
           visible.value = false;
+          props.editorUi.fireEvent(new mxEventObject('closedMenu'));
         }
       },
     );
@@ -196,6 +198,7 @@ export default defineComponent({
           cellSelectedVisible.value = false;
           pageMenu.value = false;
           visible.value = false;
+          props.editorUi.fireEvent(new mxEventObject('closedMenu'));
         }
       },
     );
@@ -207,6 +210,7 @@ export default defineComponent({
           cellSelectedVisible.value = false;
           pageMenu.value = false;
           pagePopupVisible.value = false;
+          props.editorUi.fireEvent(new mxEventObject('closedMenu'));
         }
       },
     );
@@ -226,6 +230,7 @@ export default defineComponent({
           visible.value = false;
           cellSelectedVisible.value = false;
           pagePopupVisible.value = false;
+          props.editorUi.fireEvent(new mxEventObject('closedMenu'));
         }
       },
     );

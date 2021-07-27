@@ -156,27 +156,27 @@ a table tr td:hover {
 }
 
 #insert-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 #direction-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 #align-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 #navigation-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 #layout-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 #distribute-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 .dropdown-toggle {
@@ -273,10 +273,6 @@ a table tr td:hover {
   color: #ccc;
 }
 
-.dropdown-item .lp-9 {
-  padding-left: 9px;
-}
-
 .text-hover .show .nav-link span {
   background: #e8f0fe;
   border-radius: 5px 5px 0 0;
@@ -306,6 +302,11 @@ a table tr td:hover {
   margin-top: 5px;
 }
 
+.b-nav-dropdown .dropdown-menu li:last-child {
+  padding: 7px 1px;
+  margin-bottom: 5px;
+}
+
 .material-icons {
   padding: 0;
 }
@@ -327,5 +328,19 @@ a table tr td:hover {
 
 .dropdown-menu-nav li:hover,
 .dropdown-menu li:hover {
-  background-color: #eee;
+  background-color: #f1f3f4;
+}
+
+.dropdown-menu li > a:not(.disable-hover):hover,
+.dropdown-menu li > a:focus {
+  background-color: transparent;
+}
+
+.dropdown-menu-nav li:focus,
+.dropdown-menu li:focus {
+  background-color: #e8eaed;
+}
+
+.dropdown-item .pl-35 {
+  padding-left: 35px;
 }
