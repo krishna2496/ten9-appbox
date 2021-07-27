@@ -30,6 +30,8 @@ interface CustomEvent {
   getProperty?(propName: string): mxPoint | mxPoint;
 }
 
+import '../../styles/popupmenu.scss';
+
 export default defineComponent({
   name: 'PopupMenu',
   components: {
@@ -368,7 +370,3 @@ div
     b-list-group-item.none-border(@click='duplicatePage')
       v-clamp(autoresize, :max-lines='1') Duplicate {{ editorUi.getCurrentPage().getName() }}
 </template>
-
-<style type="scss">
-@import '../../styles/popupmenu.scss';
-</style>
