@@ -30,6 +30,8 @@ interface CustomEvent {
   getProperty?(propName: string): mxPoint | mxPoint;
 }
 
+import '../../styles/popupmenu.scss';
+
 export default defineComponent({
   name: 'PopupMenu',
   components: {
@@ -168,12 +170,12 @@ export default defineComponent({
       close();
     }
 
-    function selectPage(pageNumner: number) {
-      props.editorUi.selectPage(props.editorUi.pages[pageNumner]);
+    function selectPage(pageNumber: number) {
+      props.editorUi.selectPage(props.editorUi.pages[pageNumber]);
     }
 
-    function isCurrentPgae(pageNumner: number) {
-      return props.editorUi.getCurrentPage() == props.editorUi.pages[pageNumner];
+    function isCurrentPage(pageNumber: number) {
+      return props.editorUi.getCurrentPage() == props.editorUi.pages[pageNumber];
     }
 
     watch(
@@ -237,7 +239,7 @@ export default defineComponent({
       duplicatePage,
       graph,
       insertPage,
-      isCurrentPgae,
+      isCurrentPage,
       isMultiplCellSelected,
       left,
       mxClient,
@@ -278,7 +280,9 @@ div
       span.material-icons.popup-icon redo
       span Redo
       span.shortcuts {{ controlKey }}+Shift+Z
-    b-list-group-item.none-border(@click='doAction("pasteHere")') Paste Here
+    b-list-group-item.none-border(@click='doAction("pasteHere")')
+      span.material-icons.popup-icon content_paste
+      span Paste Here
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='doAction("clearDefaultStyle")') Clear Default Style
       span.shortcuts {{ controlKey }}+Shift+R
@@ -352,21 +356,17 @@ div
       :key='index',
       @click='selectPage(index)'
     )
-      i.fa-solid.fa-check.float-left.pt-1(v-show='isCurrentPgae(index)')
-      v-clamp.pl-20(autoresize, :max-lines='1', :class='[isCurrentPgae(index) ? "pl-2" : "pl-20"]') {{ item }}
+      i.fa-solid.fa-check.float-left.pt-1.popup-icon(v-show='isCurrentPage(index)')
+      v-clamp(autoresize, :max-lines='1', :class='[isCurrentPage(index) ? "" : "pl-20"]') {{ item }}
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='insertPage')
-      span.pl-20 Insert page
+      span Insert page
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='deletePage')
-      v-clamp.pl-20(autoresize, :max-lines='1') Remove {{ editorUi.getCurrentPage().getName() }}
+      v-clamp(autoresize, :max-lines='1') Remove {{ editorUi.getCurrentPage().getName() }}
     b-list-group-item.none-border(@click='renamePage')
-      v-clamp.pl-20(autoresize, :max-lines='1') Rename {{ editorUi.getCurrentPage().getName() }}
+      v-clamp(autoresize, :max-lines='1') Rename {{ editorUi.getCurrentPage().getName() }}
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='duplicatePage')
-      v-clamp.pl-20(autoresize, :max-lines='1') Duplicate {{ editorUi.getCurrentPage().getName() }}
+      v-clamp(autoresize, :max-lines='1') Duplicate {{ editorUi.getCurrentPage().getName() }}
 </template>
-
-<style type="scss">
-@import '../../styles/popupmenu.scss';
-</style>
