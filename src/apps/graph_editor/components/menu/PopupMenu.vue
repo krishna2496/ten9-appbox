@@ -170,12 +170,12 @@ export default defineComponent({
       close();
     }
 
-    function selectPage(pageNumner: number) {
-      props.editorUi.selectPage(props.editorUi.pages[pageNumner]);
+    function selectPage(pageNumber: number) {
+      props.editorUi.selectPage(props.editorUi.pages[pageNumber]);
     }
 
-    function isCurrentPage(pageNumner: number) {
-      return props.editorUi.getCurrentPage() == props.editorUi.pages[pageNumner];
+    function isCurrentPage(pageNumber: number) {
+      return props.editorUi.getCurrentPage() == props.editorUi.pages[pageNumber];
     }
 
     watch(
