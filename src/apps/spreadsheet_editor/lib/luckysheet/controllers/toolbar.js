@@ -36,7 +36,6 @@ export const defaultToolbar = [
     'border',
     'mergeCell',
     '|',
-
     'horizontalAlignMode',
     'verticalAlignMode',
     'textWrapMode',
@@ -84,10 +83,10 @@ export const toolbarIdMap = {
     textColor: ['#luckysheet-icon-text-color', '#luckysheet-icon-text-color-menu'], //'Text color'
     fillColor: ['#luckysheet-icon-cell-color', '#luckysheet-icon-cell-color-menu'], //'Cell color'
     border: ['#luckysheet-icon-border-all', '#luckysheet-icon-border-menu'], //'border'
-    mergeCell: ['#luckysheet-icon-merge-button', '#luckysheet-icon-merge-menu'], //'Merge cells'
-    horizontalAlignMode: ['#luckysheet-icon-align', '#luckysheet-icon-align-menu'], //'Horizontal alignment'
-    verticalAlignMode: ['#luckysheet-icon-valign', '#luckysheet-icon-valign-menu'], //'Vertical alignment'
-    textWrapMode: ['#luckysheet-icon-textwrap', '#luckysheet-icon-textwrap-menu'], //'Wrap mode'
+    mergeCell: ['#luckysheet-icon-merge-menu', '#luckysheet-icon-merge-menu'], //'Merge cells'
+    horizontalAlignMode: '#luckysheet-icon-align-menu', //'Horizontal alignment'
+    verticalAlignMode: '#luckysheet-icon-valign-menu', //'Vertical alignment'
+    textWrapMode: '#luckysheet-icon-textwrap-menu', //'Wrap mode'
     textRotateMode: ['#luckysheet-icon-rotation', '#luckysheet-icon-rotation-menu'], //'Text Rotation Mode'
     image: '#luckysheet-insertImg-btn-title', //'Insert link'
     link: '#luckysheet-insertLink-btn-title', //'Insert picture'
@@ -174,7 +173,7 @@ export function createToolbarHtml() {
         </div>`,*/
 
         zoom: `<div class="luckysheet-toolbar-select luckysheet-toolbar-zoom-combobox luckysheet-toolbar-combo-button luckysheet-inline-block"
-        data-tips="${toolbar.zoom}" id="luckysheet-icon-zoom" style="user-select: none;width:65px">
+        data-tips="${toolbar.zoom}" id="luckysheet-icon-zoom" style="user-select: none;width:60px">
             <div class="luckysheet-toolbar-combo-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-combo-button-inner-box luckysheet-inline-block"
@@ -280,7 +279,7 @@ export function createToolbarHtml() {
         font: `<div class="luckysheet-toolbar-select luckysheet-toolbar-menu-button luckysheet-inline-block"
         data-tips="${toolbar.font}" id="luckysheet-icon-font-family" role="button" style="user-select: none;width:104px">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
-            style="user-select: none;line-height: 2">
+            style="user-select: none;line-height: 2.5">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
                     ${/* TEN9 : font-size :12px added  */'' }
@@ -296,7 +295,7 @@ export function createToolbarHtml() {
             </div>
         </div>`, //'font'
         fontSize: `<div class="luckysheet-toolbar-select luckysheet-toolbar-zoom-combobox luckysheet-toolbar-combo-button luckysheet-inline-block"
-        data-tips="${toolbar.fontSize}" id="luckysheet-icon-font-size" style="user-select: none;width:64px">
+        data-tips="${toolbar.fontSize}" id="luckysheet-icon-font-size" style="user-select: none;width:58px">
             <div class="luckysheet-toolbar-combo-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-combo-button-inner-box luckysheet-inline-block"
@@ -330,7 +329,7 @@ export function createToolbarHtml() {
             </div>
         </div>`, //'Bold (Ctrl+B)'
         italic: `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.italic}"
-        id="luckysheet-icon-italic" role="button" style="user-select: none;">
+        id="luckysheet-icon-italic" role="button" style="user-select: none;margin-right: 0px;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
@@ -380,13 +379,13 @@ export function createToolbarHtml() {
             </div>
         </div>`, //'Underline (Alt+Shift+6)'
         textColor: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-text-color"
-        data-tips="${toolbar.textColor}" id="luckysheet-icon-text-color" role="button" style="user-select: none;margin-right: 1px;margin-left: 2px;">
+        data-tips="${toolbar.textColor}" id="luckysheet-icon-text-color" role="button" style="user-select: none;margin-right: -1px;margin-left: 2px;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                    style="user-select: none;line-height: 3.3;">
+                    style="user-select: none;line-height: 3.5;">
                         ${ /* TEN9: Material design text color icon added */'' }
                         <span class="material-icons">format_color_text</span>
                         <div class="luckysheet-color-menu-button-indicator" style="border-bottom-color: rgb(0, 0, 0); user-select: none;">
@@ -418,7 +417,7 @@ export function createToolbarHtml() {
             </div>
         </div>*/''}`, //'Text color'
         fillColor: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-cell-color"
-        data-tips="${toolbar.fillColor}" id="luckysheet-icon-cell-color" role="button" style="user-select: none;">
+        data-tips="${toolbar.fillColor}" id="luckysheet-icon-cell-color" role="button" style="user-select: none;margin-left: 4px;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
@@ -454,7 +453,7 @@ export function createToolbarHtml() {
             </div>
         </div> */'' }`, //'Cell color'
         border: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-border-all"
-        data-tips="${toolbar.border}" id="luckysheet-icon-border-all" role="button" style="user-select: none;">
+        data-tips="${toolbar.border}" id="luckysheet-icon-border-all" role="button" style="user-select: none;margin-left: -2px;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
@@ -483,37 +482,23 @@ export function createToolbarHtml() {
                 </div>
             </div>
         </div> */'' }`, //'border'
-        mergeCell: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-merge-button"
-        data-tips="${toolbar.mergeCell}" id="luckysheet-icon-merge-button" role="button" style="user-select: none;">
-            <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
-            style="user-select: none;">
-                <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
-                style="user-select: none;">
-                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                        ${ /* <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-merge iconfont luckysheet-iconfont-hebing"
-                        style="user-select: none;font-size:15px;">
-                         TEN9: icon added for merge cell */'' }
-                        <i class="ten9-font ten9-icon-merge-cell" style="font-size: 15px;
-                        line-height: 1.3;"></i>
-                        ${ /* </div> */'' }
-                    </div>
-                </div>
-            </div>
-        </div>
-        ${/* TEN9 : top:2px added for better layout */'' }
-        <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-        data-tips="${toolbar.chooseMergeType}..." id="luckysheet-icon-merge-menu" role="button" style="user-select: none;top:2px;margin-right: 6px;">
+        mergeCell: `<div class="luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.chooseMergeType}..." id="luckysheet-icon-merge-menu" role="button" style="user-select: none;margin-right: 5px;padding-right: 5px;
+        padding-left: 4px;">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                style="user-select: none;">
+                style="user-select: none;"> <i class="ten9-font ten9-icon-merge-cell" style="font-size: 15px;
+                line-height: 1.8;margin-right: 3px;"></i>
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
-                    style="user-select: none;">
+                    style="user-select: none;line-height: 2.4;">
                     </div>
                 </div>
             </div>
         </div>`, //'Merge cells'
-        horizontalAlignMode: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-align"
+
+        
+        horizontalAlignMode: `${ /* TEN9: Structure changes to match google sheet  <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-align"
         data-tips="${toolbar.horizontalAlign}" id="luckysheet-icon-align" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
@@ -522,11 +507,11 @@ export function createToolbarHtml() {
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                            ${ /* TEN9: id added
-                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont luckysheet-iconfont-wenbenzuoduiqi" */'' }
+                             TEN9: id added
+                                <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont luckysheet-iconfont-wenbenzuoduiqi" 
                             <div aria-hidden="true" id="text-alignment" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-left iconfont luckysheet-iconfont-wenbenzuoduiqi"
                             style="user-select: none;">
-                            ${ /* TEN9: Material design icons added for align left */'' }
+                            TEN9: Material design icons added for align left 
                             <span class="material-icons">format_align_left</span>
                             </div>
                         </div>
@@ -534,7 +519,6 @@ export function createToolbarHtml() {
                 </div>
             </div>
         </div>
-        ${/* TEN9 : top:3px added for better layout */'' }
         <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
         data-tips="${toolbar.alignment}..." id="luckysheet-icon-align-menu" role="button" style="user-select: none;top:3px">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
@@ -546,8 +530,24 @@ export function createToolbarHtml() {
                     </div>
                 </div>
             </div>
-        </div>`, //'Horizontal alignment'
-        verticalAlignMode: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-valign"
+        </div> */'' }
+        
+        <div class="luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.horizontalAlign}..." id="luckysheet-icon-align-menu" role="button" style="user-select: none;
+        margin-top: 5px;padding-right: 2px;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block" id="text-alignment"
+                style="user-select: none;"> <span class="material-icons">format_align_left</span>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
+                    style="user-select: none;line-height: 2.4;left: -4px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        `, //'Horizontal alignment'
+        verticalAlignMode: `${ /*  TEN9: Structure changes to match google sheet 
+        <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-valign"
         data-tips="${toolbar.verticalAlign}" id="luckysheet-icon-valign" role="button" style="user-select: none;margin-left: 3px;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
@@ -556,10 +556,10 @@ export function createToolbarHtml() {
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                            ${ /* TEN9: line-height removed for better layout */'' }
+                             TEN9: line-height removed for better layout
                             <div aria-hidden="true" class="luckysheet-icon-img luckysheet-icon-valign-bottom iconfont luckysheet-iconfont-dibuduiqi"
                             style="user-select: none;font-size:20px;line-height: 1.3;">
-                            ${ /* TEN9: Material design icon added for vertical alignMode */'' }
+                            TEN9: Material design icon added for vertical alignMode
                             <span class="material-icons">vertical_align_bottom</span>
                             </div>
                         </div>
@@ -567,9 +567,9 @@ export function createToolbarHtml() {
                 </div>
             </div>
         </div>
-        ${/* TEN9 : top:2px added for better layout */'' }
+        TEN9 : top:2px added for better layout 
         <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-        data-tips="${toolbar.alignment}..." id="luckysheet-icon-valign-menu" role="button" style="user-select: none;top:2px;margin-left: -9px;">
+        data-tips="${toolbar.alignment}..." id="luckysheet-icon-valign-menu" role="button" style="user-select: none;top:2px;margin-left: -4px;width:13px">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
@@ -579,8 +579,22 @@ export function createToolbarHtml() {
                     </div>
                 </div>
             </div>
-        </div>`, //'Vertical alignment'
-        textWrapMode: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-textwrap"
+        </div>*/'' }
+        <div class="luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.verticalAlign}..." id="luckysheet-icon-valign-menu" role="button" style="user-select: none;
+        margin-top: 5px;padding-right: 2px;padding-left: 5px;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block" id="text-valignment"
+                style="user-select: none;"><span class="material-icons">vertical_align_bottom</span>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
+                    style="user-select: none;line-height: 2.4;left: -4px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        `, //'Vertical alignment'
+        textWrapMode: `${/* <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-textwrap"
         data-tips="${toolbar.textWrap}" id="luckysheet-icon-textwrap" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
@@ -589,13 +603,13 @@ export function createToolbarHtml() {
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
                         <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
-                        ${ /* TEN9: font-size:14px;style added
+                       TEN9: font-size:14px;style added
                          <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan"
                             style="user-select: none;">
-                        */'' }     
+                         
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan"
                             style="user-select: none;font-size:15px;">
-                                ${/* TEN9: Font awesome wrap-overflow icon added */''}
+                               TEN9: Font awesome wrap-overflow icon added 
                                 <i class="ten9-icon-wrap-overflow"></i>
                             </div>
                         </div>
@@ -603,7 +617,7 @@ export function createToolbarHtml() {
                 </div>
             </div>
         </div>
-        ${/* TEN9 : width:15px added for better layout */'' }
+        TEN9 : width:15px added for better layout 
         <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
         data-tips="${toolbar.textWrapMode}..." id="luckysheet-icon-textwrap-menu" role="button" style="user-select: none;width:15px;top:2px">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
@@ -612,6 +626,19 @@ export function createToolbarHtml() {
                 style="user-select: none;margin-left: -1px;line-height: 2;">
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
                     style="user-select: none;">
+                    </div>
+                </div>
+            </div>
+        </div>*/'' }
+        <div class="luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.textWrapMode}..." id="luckysheet-icon-textwrap-menu" role="button" style="user-select: none;
+        margin-top: 5px;padding-right: 17px;padding-left: 5px;line-height: 1.7;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block" id="text-textWrapMode"
+                style="user-select: none;font-size:15px;"><i class="ten9-icon-wrap-overflow"></i>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
+                    style="user-select: none;line-height: 1.8;left: -2px;">
                     </div>
                 </div>
             </div>

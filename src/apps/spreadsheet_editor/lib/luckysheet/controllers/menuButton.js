@@ -1411,10 +1411,10 @@ const menuButton = {
             _this.updateFormat_mc(d, "mergeAll");
         });
 
-        /* TEN9 : Clicking on the icons in the Left, Center, Right menu ,do same as clicking on text */
+        /* TEN9 : Clicking on the icons in the Left, Center, Right menu ,do same as clicking on text 
         $("#luckysheet-icon-merge-button").click(function(){
             $("#luckysheet-icon-merge-menu").click();
-        })
+        })*/
         $("#luckysheet-icon-merge-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1548,6 +1548,7 @@ const menuButton = {
                 _this.focus($menuButton);
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
+                   
                     $menuButton.hide();
                     luckysheetContainerFocus();
 
@@ -1557,8 +1558,9 @@ const menuButton = {
                     /* TEN9 : Added to update icon in toolbar */
                     let $icon = $("#luckysheet-icon-align").attr("type", itemvalue).find(".luckysheet-icon-img-container");
                     const item = document.getElementById("text-alignment");
-                    var htmlNode = document.createElement('i');
-                    htmlNode.className = 'fa-solid fa-align-'+itemvalue;
+                    var htmlNode = document.createElement('span');
+                    htmlNode.className = 'material-icons';
+                    htmlNode.innerHTML = 'format_align_'+itemvalue;
                     item.replaceChild(htmlNode, item.childNodes[1]);
 
                     // add iconfont
@@ -1590,10 +1592,7 @@ const menuButton = {
             _this.updateFormat(d, "vt", itemvalue);
         });
 
-        /* TEN9 : Clicking on the icons in the Left, Center, Right menu ,do same as clicking on text */
-        $("#luckysheet-icon-valign").click(function() {
-            $("#luckysheet-icon-valign-menu").click();
-        });
+       
         $("#luckysheet-icon-valign-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1626,6 +1625,16 @@ const menuButton = {
                     _this.focus($menuButton, itemvalue);
 
                     let $icon = $("#luckysheet-icon-valign").attr("type", itemvalue).find(".luckysheet-icon-img-container");
+                    
+                     /* TEN9 : Added to update icon in toolbar */
+                     const item = document.getElementById("text-valignment");
+                     var htmlNode = document.createElement('span');
+                     htmlNode.className = 'material-icons';
+                     if(itemvalue == 'middle') {
+                        itemvalue = 'center';
+                     }
+                     htmlNode.innerHTML = 'vertical_align_'+itemvalue;
+                     item.replaceChild(htmlNode, item.childNodes[0]);
 
                     // add iconfont
                     $icon.removeAttr("class").addClass("luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-" + itemvalue + iconfontObject[itemvalue]);
@@ -1646,10 +1655,7 @@ const menuButton = {
         });
 
         //文本换行
-         /* TEN9 : Clicking on the icons in the Left, Center, Right menu ,do same as clicking on text */
-        $("#luckysheet-icon-textwrap").click(function(){
-            $("#luckysheet-icon-textwrap-menu").click();
-        });
+        
         $("#luckysheet-icon-textwrap-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1688,6 +1694,12 @@ const menuButton = {
                     _this.focus($menuButton, itemvalue);
 
                     let $icon = $("#luckysheet-icon-textwrap").attr("type", itemvalue).find(".luckysheet-icon-img-container");
+                    const item = document.getElementById("text-textWrapMode");
+                    var htmlNode = document.createElement('i');
+                    htmlNode.className = 'ten9-icon-wrap-'+itemvalue;
+                    item.replaceChild(htmlNode, item.childNodes[0]);
+                    
+                    
                     // add iconfont
                     $icon.removeAttr("class").addClass("luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-" + itemvalue + iconfontObject[itemvalue]);
 
