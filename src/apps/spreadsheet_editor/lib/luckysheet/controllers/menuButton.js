@@ -660,9 +660,7 @@ const menuButton = {
         });
 
         /* TEN9 : Clicking on the icons in the Left, Center, Right menu ,do same as clicking on text */
-        $("#luckysheet-icon-text-color").click(function(){ 
-            $("#luckysheet-icon-text-color-menu").click();
-        })
+
         $("#luckysheet-icon-text-color-menu").mousedown(function(e){
             hideMenuByCancel(e);
             e.stopPropagation();
@@ -807,10 +805,6 @@ const menuButton = {
             _this.updateFormat(d, "bg", color);
         });
         
-        /* TEN9 : Clicking on the icons in the Left, Center, Right menu ,do same as clicking on text */
-        $("#luckysheet-icon-cell-color").click(function() {
-            $("#luckysheet-icon-cell-color-menu").click();
-        });
         $("#luckysheet-icon-cell-color-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1110,11 +1104,6 @@ const menuButton = {
             setTimeout(function () {
                 luckysheetrefreshgrid();
             }, 1);
-        });
-
-        /* TEN9 : Clicking on the icons in the Left, Center, Right menu ,do same as clicking on text */
-        $("#luckysheet-icon-border-all").click(function(){
-            $("#luckysheet-icon-border-menu").click();
         });
 
         $("#luckysheet-icon-border-menu").click(function(){
@@ -1669,7 +1658,7 @@ const menuButton = {
                     // TEN9 : <i class="ten9-icon-wrap-wrap" style="font-size:16px"> ten9 icon added
                     {"text": locale_textWrap.wrap, "value": "wrap", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-wrap iconfont luckysheet-iconfont-zidonghuanhang" style="user-select: none;"><i class="ten9-icon-wrap-wrap" style="font-size:16px"></i></div> </div>'},
                     // TEN9 : CLIP font awsome icon added {"text": locale_textWrap.clip, "value": "clip", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan" style="user-select: none;"><i class="ten9-icon-clip"></i> </div> </div>'}
-                    {"text": locale_textWrap.clip, "value": "clip", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan" style="user-select: none;"><i class="ten9-icon-clip" style="font-size:14px"></i> </div> </div>'}
+                    {"text": locale_textWrap.clip, "value": "clip", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-textwrap-clip iconfont luckysheet-iconfont-jieduan" style="user-select: none;"><i class="ten9-icon-clip" style="font-size:14px;margin-left: -3px;"></i> </div> </div>'}
                 ];
 
                 // itemvalue to iconfont
@@ -1719,10 +1708,6 @@ const menuButton = {
         });
 
         //文本旋转
-        /* TEN9 : Clicking on the icons in the Left, Center, Right menu ,do same as clicking on text */
-        $("#luckysheet-icon-rotation").click(function(){
-            $("#luckysheet-icon-rotation-menu").click();
-        });
         $("#luckysheet-icon-rotation-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1768,6 +1753,29 @@ const menuButton = {
                     _this.focus($menuButton, itemvalue);
 
                     let $icon = $("#luckysheet-icon-rotation").attr("type", itemvalue).find(".luckysheet-icon-img-container");
+                    const item = document.getElementById("text-textRotate");
+                    var htmlNode = document.createElement('span');
+                    htmlNode.className = 'material-icons';
+                    let itemName = 'text_rotation_';
+                    alert(itemvalue);
+                    if(itemvalue == 'vertical')  {
+                       itemName = 'text_rotate_';
+                    } 
+                    if (itemvalue == 'rotation-down') {
+                        itemName = 'text_';
+                        itemvalue = 'rotation_down';
+                    }
+                    if (itemvalue == 'rotation-down') {
+                        itemName = 'text_';
+                        itemvalue = 'rotation_down';
+                    }
+                    if (itemvalue == 'rotation-up') {
+                        itemName = 'text_';
+                        itemvalue = 'rotate_up';
+                    }
+                    
+                    htmlNode.innerHTML = itemName+itemvalue;
+                    item.replaceChild(htmlNode, item.childNodes[0]);
 
                     // add iconfont
                     $icon.removeAttr("class").addClass("luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-rotation-" + itemvalue + iconfontObject[itemvalue]);

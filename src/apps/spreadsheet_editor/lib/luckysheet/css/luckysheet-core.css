@@ -557,7 +557,7 @@
 .luckysheet-toolbar-button:active,
 .luckysheet-toolbar-menu-button:active {
     /* border: 1px solid transparent; */
-    background-color: rgba(0, 0, 0, 0.12);
+    /* background-color: rgba(0, 0, 0, 0.12); */
     background-image: none;
     box-shadow: none;
     cursor: pointer;
@@ -7546,13 +7546,13 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 
 #luckysheet-icon-function-menu {
     width: 18px;
-    margin-left: 1px;
+    margin-left: -4px;
 }
 
-#luckysheet-icon-rotation-menu {
-    width: 16px;
-}
 /* TEN9 : added for better layout */
 #luckysheet-icon-border-menu-menuButton .material-icons {
     line-height: 1;
+}
+.luckysheet-iconfont-yichu1 ,.luckysheet-iconfont-zidonghuanhang,.luckysheet-iconfont-jieduan{
+    margin-top: -2px;
 }

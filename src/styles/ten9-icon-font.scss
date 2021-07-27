@@ -116,9 +116,6 @@
 }
 
 .ten9-icon-clip {
-  color: rgba(0, 0, 0, 0.9);
-  font-size: 15px;
-
   &::before {
     content: $ten9-icon-clip;
   }
