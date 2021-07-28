@@ -51,7 +51,8 @@ const menuButton = {
     "subcolor": '<div id="luckysheet-icon-${id}-menuButton" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-rightgclick-menu-sub luckysheet-menuButton-sub luckysheet-mousedown-cancel"> <div class="luckysheet-mousedown-cancel"> <div class="luckysheet-mousedown-cancel"> <input type="text" class="luckysheet-color-selected" /> </div> </div></div>',
     "rightclickmenu": null,
     "submenuhide": {},
-    focus: function($obj, value){
+    focus: function($obj, value){ 
+
         if($obj.attr("id")=="luckysheet-icon-font-family-menuButton"){
             if (isdatatypemulti(value)["num"]) {
                  let  _locale = locale();
@@ -68,6 +69,41 @@ const menuButton = {
             $obj.find(".luckysheet-cols-menuitem").eq(0).find("span.icon").html('<i class="fa fa-check luckysheet-mousedown-cancel"></i>');
         }
         else{
+            /* TEN9 : Update toolbar icon based on cell/Range selection */
+            let currSelector =$obj.selector.split("-").slice(0,-1).join("-").replace("#",'');
+            const currElem = document.getElementById(currSelector);
+            const currClass = currElem.getElementsByClassName('luckysheet-toolbar-menu-button-inner-box');
+            if ($obj.selector == '#luckysheet-icon-border-menu-menuButton') {
+                if (currClass && currClass[0]) {
+                const item = document.getElementById(currClass[0].id);
+                    if (item) {
+                        let innerText = currClass[0].innerText;
+                        let itmeName = innerText.split("_").slice(0,-1).join("_");
+                        if (itmeName !== '') {
+                            var htmlNode = document.createElement('span');
+                            htmlNode.className = 'material-icons';
+                            if(value == 'middle') {
+                                value = 'center';
+                            }
+                            htmlNode.innerHTML = itmeName+'_'+value;
+                            if (itmeName == 'border') {
+                                if(value == 'border_outside') {
+                                    value = 'border_outer'
+                                }
+                                if(value == 'border-all') {
+                                    value = 'border_all'
+                                }
+                                htmlNode.innerHTML = value;
+                            }
+                        } else {
+                            let itmeName = currClass[0].firstChild.className.split("-").slice(0,-1).join("-");
+                            var htmlNode = document.createElement('i');
+                            htmlNode.className = itmeName+'-'+value;
+                        }
+                        item.replaceChild(htmlNode, item.childNodes[0]);
+                    }
+                }
+            }
             $obj.find(".luckysheet-cols-menuitem[itemvalue='"+ value +"']").find("span.icon").html('<i class="fa fa-check luckysheet-mousedown-cancel"></i>');
         }
     },
@@ -1178,7 +1214,7 @@ const menuButton = {
                 /* TEN9:  Width changes to improve layout 
                     $menuButton = $("#" + menuButtonId).width(170);
                 */
-                $menuButton = $("#" + menuButtonId).width(200);
+                $menuButton = $("#" + menuButtonId).width(250);
                 _this.focus($menuButton, "border-all");
 
                 $("#" + submenuid + " canvas").each(function(i){
@@ -1217,6 +1253,7 @@ const menuButton = {
                     luckysheetContainerFocus();
 
                     let $t = $(this), itemvalue = $t.attr("itemvalue");
+                    
                     if(itemvalue == "borderColor" || itemvalue == "borderSize"){
                         return;
                     }
@@ -1280,6 +1317,12 @@ const menuButton = {
                     $("#luckysheet-icon-border-all").attr("type", itemvalue);
 
                     let $icon = $("#luckysheet-icon-border-all").find(".luckysheet-icon-img-container");
+
+                    const item = document.getElementById("text-border");
+                    var htmlNode = document.createElement('span');
+                    htmlNode.className = 'material-icons';
+                    htmlNode.innerHTML = itemvalue;
+                    item.replaceChild(htmlNode, item.childNodes[0]);
 
                     // add iconfont
                     $icon.removeAttr("class").addClass("luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-" + itemvalue + iconfontObject[itemvalue]);
@@ -1550,7 +1593,7 @@ const menuButton = {
                     var htmlNode = document.createElement('span');
                     htmlNode.className = 'material-icons';
                     htmlNode.innerHTML = 'format_align_'+itemvalue;
-                    item.replaceChild(htmlNode, item.childNodes[1]);
+                    item.replaceChild(htmlNode, item.childNodes[0]);
 
                     // add iconfont
                     $icon.removeAttr("class").addClass("luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-align-" + itemvalue + iconfontObject[itemvalue]);
@@ -1757,7 +1800,6 @@ const menuButton = {
                     var htmlNode = document.createElement('span');
                     htmlNode.className = 'material-icons';
                     let itemName = 'text_rotation_';
-                    alert(itemvalue);
                     if(itemvalue == 'vertical')  {
                        itemName = 'text_rotate_';
                     } 

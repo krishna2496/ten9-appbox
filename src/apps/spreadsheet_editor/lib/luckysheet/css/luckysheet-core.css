@@ -7543,12 +7543,6 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     font-size: 12px;
 }
 
-
-#luckysheet-icon-function-menu {
-    width: 18px;
-    margin-left: -4px;
-}
-
 /* TEN9 : added for better layout */
 #luckysheet-icon-border-menu-menuButton .material-icons {
     line-height: 1;

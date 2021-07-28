@@ -93,7 +93,7 @@ export const toolbarIdMap = {
     chart: '#luckysheet-chart-btn-title', //'chart' (the icon is hidden, but if the chart plugin is configured, you can still create a new chart by right click)
     postil: '#luckysheet-icon-postil', //'comment'
     pivotTable: ['#luckysheet-pivot-btn-title'], //'PivotTable'
-    function: ['#luckysheet-icon-function', '#luckysheet-icon-function-menu'], //'formula'
+    function: '#luckysheet-icon-function-menu', //'formula'
     frozenMode: ['#luckysheet-freezen-btn-horizontal', '#luckysheet-icon-freezen-menu'], //'freeze mode'
     sortAndFilter: '#luckysheet-icon-autofilter', //'sort and filter'
     conditionalFormat: '#luckysheet-icon-conditionformat', //'Conditional Format'
@@ -214,7 +214,8 @@ export function createToolbarHtml() {
             style="user-select: none;">
                 <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
-                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
+                    ${ /* TEN9 : margin-top:5px added for better layout  */'' }
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;margin-top: 5px;">
                         ${ /* <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont luckysheet-iconfont-baifenhao"
                         style="user-select: none;">
                         TEN9: Font awesome icon added for percentage */'' }
@@ -512,7 +513,7 @@ export function createToolbarHtml() {
         margin-top: 5px;padding-right: 2px;padding-left: 5px;">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
-                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block" id="text-fillColor"
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block" id="text-border"
                 style="user-select: none;"><span class="material-icons">border_all</span>
                 </div>
             </div>
@@ -575,7 +576,7 @@ export function createToolbarHtml() {
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block" id="text-alignment"
-                style="user-select: none;"> <span class="material-icons">format_align_left</span>
+                style="user-select: none;"><span class="material-icons">format_align_left</span>
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
                     style="user-select: none;line-height: 2.4;left: -4px;">
                     </div>
@@ -835,7 +836,7 @@ export function createToolbarHtml() {
                 </div>
             </div>
         </div>`, //'PivotTable'
-        function: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-function"
+        function: `${/* <div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-icon-function"
         data-tips="${toolbar.autoSum}" id="luckysheet-icon-function" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
             style="user-select: none;">
@@ -844,7 +845,7 @@ export function createToolbarHtml() {
                     <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-function iconfont luckysheet-iconfont-jisuan"
                         style="user-select: none;margin-left: 2px;">
-                        ${/* TEN9: Material-icon sum icon added */''}
+                         TEN9: Material-icon sum icon added
                         <span class="material-icons" style="line-height: 1.5;">functions</span>
                         </div>
                     </div>
@@ -856,7 +857,7 @@ export function createToolbarHtml() {
             </div>
         </div>
         <div class="luckysheet-toolbar-button-split-right luckysheet-toolbar-menu-button luckysheet-inline-block"
-        data-tips="${toolbar.moreFunction}..." id="luckysheet-icon-function-menu" role="button" style="user-select: none;top:2px;margin-left: -6px;">
+        data-tips="${toolbar.moreFunction}..." id="luckysheet-icon-function-menu" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;line-height: 2;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
@@ -866,7 +867,22 @@ export function createToolbarHtml() {
                     </div>
                 </div>
             </div>
-        </div>`, //'formula'
+        </div> */''}
+        
+        <div class="luckysheet-toolbar-menu-button luckysheet-inline-block"
+        data-tips="${toolbar.autoSum}..." id="luckysheet-icon-function-menu" role="button" style="user-select: none;
+        margin-top: 5px;padding-left: 4px;line-height: 1.7;">
+            <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
+            style="user-select: none;">
+                <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block" id="text-textRotate"
+                style="user-select: none;font-size:15px;"><span class="material-icons">functions</span>
+                    <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
+                    style="user-select: none;line-height: 2.4;left: -4px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        `, //'formula'
         frozenMode: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block luckysheet-freezen-btn-horizontal"
         data-tips="${toolbar.freezeTopRow}" id="luckysheet-freezen-btn-horizontal" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
