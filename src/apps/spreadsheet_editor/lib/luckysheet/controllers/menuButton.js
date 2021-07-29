@@ -74,7 +74,6 @@ const menuButton = {
             const currElem = document.getElementById(currSelector);
             if (currElem) {
             const currClass = currElem.getElementsByClassName('luckysheet-toolbar-menu-button-inner-box');
-            if ($obj.selector == '#luckysheet-icon-border-menu-menuButton') {
                 if (currClass && currClass[0]) {
                 const item = document.getElementById(currClass[0].id);
                     if (item) {
@@ -127,7 +126,6 @@ const menuButton = {
                       
                     }
                 }
-            }
             }
             $obj.find(".luckysheet-cols-menuitem[itemvalue='"+ value +"']").find("span.icon").html('<i class="fa fa-check luckysheet-mousedown-cancel"></i>');
         }
