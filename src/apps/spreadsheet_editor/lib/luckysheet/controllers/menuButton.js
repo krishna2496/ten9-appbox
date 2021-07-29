@@ -72,6 +72,7 @@ const menuButton = {
             /* TEN9 : Update toolbar icon based on cell/Range selection */
             let currSelector =$obj.selector.split("-").slice(0,-1).join("-").replace("#",'');
             const currElem = document.getElementById(currSelector);
+            if (currElem) {
             const currClass = currElem.getElementsByClassName('luckysheet-toolbar-menu-button-inner-box');
             if ($obj.selector == '#luckysheet-icon-border-menu-menuButton') {
                 if (currClass && currClass[0]) {
@@ -95,14 +96,38 @@ const menuButton = {
                                 }
                                 htmlNode.innerHTML = value;
                             }
+                            item.replaceChild(htmlNode, item.childNodes[0]);
                         } else {
-                            let itmeName = currClass[0].firstChild.className.split("-").slice(0,-1).join("-");
-                            var htmlNode = document.createElement('i');
-                            htmlNode.className = itmeName+'-'+value;
+                            let itmeName = innerText.split("-").slice(0,-1).join("-");
+                            if (itmeName == 'border') {
+                                let newItmeName = innerText.replace("-", "_");
+                               if (newItmeName) {
+                                if (newItmeName == 'border_none') {
+                                    newItmeName = 'border_clear'
+                                }
+                                if (newItmeName == 'border_outside') {
+                                    newItmeName = 'border_outer';
+                                }
+                                if(newItmeName == 'border_inside') {
+                                    newItmeName = 'border_inner';
+                                }
+                                var htmlNode = document.createElement('span');
+                                htmlNode.className = 'material-icons';
+                                htmlNode.innerHTML = newItmeName;
+                                item.replaceChild(htmlNode, item.childNodes[0]);
+                            }
+                            } else {
+                                let itmeName = currClass[0].firstChild.className.split("-").slice(0,-1).join("-");
+                                var htmlNode = document.createElement('i');
+                                htmlNode.className = itmeName+'-'+value;
+                                item.replaceChild(htmlNode, item.childNodes[0]);
+                            }
+                          
                         }
-                        item.replaceChild(htmlNode, item.childNodes[0]);
+                      
                     }
                 }
+            }
             }
             $obj.find(".luckysheet-cols-menuitem[itemvalue='"+ value +"']").find("span.icon").html('<i class="fa fa-check luckysheet-mousedown-cancel"></i>');
         }
@@ -581,7 +606,7 @@ const menuButton = {
                     _this.focus($menuButton, itemvalue);
 
                     let d = editor.deepCopyFlowData(Store.flowdata);
-                    
+                    _this.updateFormat(d, "zm", itemvalue);
                     clearTimeout(luckysheet_fs_setTimeout);
                 });
             }
@@ -591,10 +616,9 @@ const menuButton = {
 
             let defualtvalue = $("#luckysheet-icon-zoom").attr("itemvalue");
             if(defualtvalue == null){
-                defualtvalue = 10;
+                defualtvalue = '100%';
             }
             _this.focus($menuButton, defualtvalue);
-
             let menuleft = $(this).offset().left;
             if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
                 menuleft = menuleft - tlen + userlen;
@@ -612,7 +636,6 @@ const menuButton = {
             }
 
             let $this = $(this);
-
             let itemvalue = parseInt($this.val());
             let ratio = parseInt(itemvalue);
             $("#dropdown-zoom").val(ratio+"%");
@@ -622,7 +645,7 @@ const menuButton = {
             _this.focus($menuButton, itemvalue);
             
             let d = editor.deepCopyFlowData(Store.flowdata);
-            _this.updateFormat(d, "fs", itemvalue);
+            _this.updateFormat(d, "zm", itemvalue);
            
             luckysheet_fs_setTimeout = setTimeout(function(){
                 $menuButton.hide();
@@ -694,8 +717,6 @@ const menuButton = {
             }
             _this.updateFormat(d, "fc", color);
         });
-
-        /* TEN9 : Clicking on the icons in the Left, Center, Right menu ,do same as clicking on text */
 
         $("#luckysheet-icon-text-color-menu").mousedown(function(e){
             hideMenuByCancel(e);
@@ -1158,9 +1179,9 @@ const menuButton = {
                       // TEN9 : <span class="material-icons">border_bottom</span> icon added
                     {"text": locale_border.borderBottom, "value":"border-bottom", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-bottom iconfont luckysheet-iconfont-xiabiankuang" style="user-select: none;"><span class="material-icons">border_bottom</span></div> </div>'},
                       // TEN9 : <span class="material-icons">border_left</span> icon added
-                    {"text": locale_border.borderLeft, "value":"border-left", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-left iconfont luckysheet-iconfont-zuobiankuang" style="user-select: none;"><span class="material-icons">border_left</span></div> </div>'},
+                    {"text": locale_border.borderLeft, "value":"border-left","example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-left iconfont luckysheet-iconfont-zuobiankuang" style="user-select: none;"><span class="material-icons">border_left</span></div> </div>'},
                       // TEN9 : <span class="material-icons">border_right</span> icon added
-                    {"text": locale_border.borderRight, "value":"border-right", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-right iconfont luckysheet-iconfont-youbiankuang" style="user-select: none;"><span class="material-icons">border_right</span></div> </div>'},
+                    {"text": locale_border.borderRight, "value":"border-right",  "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-right iconfont luckysheet-iconfont-youbiankuang" style="user-select: none;"><span class="material-icons">border_right</span></div> </div>'},
                     {"text": "", "value": "split", "example":""},
                       // TEN9 : <span class="material-icons">border_none</span> icon added
                     {"text": locale_border.borderNone, "value": "border-none", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-none iconfont luckysheet-iconfont-wubiankuang" style="user-select: none;"><span class="material-icons">border_clear</span></div> </div>'},
@@ -1174,7 +1195,7 @@ const menuButton = {
                       // TEN9 : <span class="material-icons">border_horizontal</span> icon added
                     {"text": locale_border.borderHorizontal, "value": "border-horizontal", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-horizontal iconfont luckysheet-iconfont-neikuanghengxian" style="user-select: none;"><span class="material-icons">border_horizontal</span></div> </div>'},
                       // TEN9 : <span class="material-icons">border_vertical</span> icon added
-                    {"text": locale_border.borderVertical, "value": "border-vertical", "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-vertical iconfont luckysheet-iconfont-neikuangshuxian" style="user-select: none;"><span class="material-icons">border_vertical</span></div> </div>'},
+                    {"text": locale_border.borderVertical, "value": "border-vertical",  "example": '<div class="luckysheet-icon luckysheet-inline-block luckysheet-material-icon luckysheet-mousedown-cancel" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-border-vertical iconfont luckysheet-iconfont-neikuangshuxian" style="user-select: none;"><span class="material-icons">border_vertical</span></div> </div>'},
                     {"text": "", "value": "split", "example": ""},
                     {"text": "<span id='luckysheet-icon-borderColor-linecolor' class='luckysheet-mousedown-cancel' style='border-bottom:3px solid #000;'>"+ locale_border.borderColor +"</span>", "value":"borderColor", "example":"more"},
                     {"text": ""+ locale_border.borderSize +"<img id='luckysheetborderSizepreview' width=100 height=10 src='data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==' style='position:absolute;bottom:-5px;right:0px;width:100px;height:10px;'>", "value":"borderSize", "example":"more"}
@@ -1318,6 +1339,7 @@ const menuButton = {
 
                     let $icon = $("#luckysheet-icon-border-all").find(".luckysheet-icon-img-container");
 
+                    /* TEN9 : Icon update on border option change  */
                     const item = document.getElementById("text-border");
                     var htmlNode = document.createElement('span');
                     htmlNode.className = 'material-icons';
@@ -1443,10 +1465,6 @@ const menuButton = {
             _this.updateFormat_mc(d, "mergeAll");
         });
 
-        /* TEN9 : Clicking on the icons in the Left, Center, Right menu ,do same as clicking on text 
-        $("#luckysheet-icon-merge-button").click(function(){
-            $("#luckysheet-icon-merge-menu").click();
-        })*/
         $("#luckysheet-icon-merge-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1726,6 +1744,7 @@ const menuButton = {
                     _this.focus($menuButton, itemvalue);
 
                     let $icon = $("#luckysheet-icon-textwrap").attr("type", itemvalue).find(".luckysheet-icon-img-container");
+                    /* TEN9 : Added to update toolbar menu font  */
                     const item = document.getElementById("text-textWrapMode");
                     var htmlNode = document.createElement('i');
                     htmlNode.className = 'ten9-icon-wrap-'+itemvalue;
@@ -1796,6 +1815,8 @@ const menuButton = {
                     _this.focus($menuButton, itemvalue);
 
                     let $icon = $("#luckysheet-icon-rotation").attr("type", itemvalue).find(".luckysheet-icon-img-container");
+                    
+                    /* TEN9 : Update icon of toolbar on selection change  */
                     const item = document.getElementById("text-textRotate");
                     var htmlNode = document.createElement('span');
                     htmlNode.className = 'material-icons';
@@ -3701,10 +3722,19 @@ const menuButton = {
             $("#luckysheet-icon-font-family").find(".luckysheet-toolbar-menu-button-caption").html(" "+ itemname +" ");
         }
         else if(attr == "fs"){
+           
             let $menuButton = $("#luckysheet-icon-font-size-menuButton");
             let itemvalue = foucsStatus, $input = $("#luckysheet-icon-font-size input");
             _this.focus($menuButton, itemvalue);
             $("#luckysheet-icon-font-size").attr("itemvalue", itemvalue);
+            $input.val(itemvalue);
+        }
+        /* TEN9 : Added for zoom dropdown  */
+        else if(attr == "zm"){
+            let $menuButton = $("#luckysheet-icon-zoom-menuButton");
+            let itemvalue = $("#dropdown-zoom").val(), $input = $("#luckysheet-icon-zoom input");
+            _this.focus($menuButton, itemvalue);
+            $("#luckysheet-icon-zoom").attr("itemvalue", itemvalue);
             $input.val(itemvalue);
         }
         else if(attr == "ht"){
@@ -3830,7 +3860,8 @@ const menuButton = {
     },
     menuButtonFocus: function(d, r, c){
         let _this = this;
-        let foucsList = ["bl", "it", "cl", "ff", "ht", "vt", "fs", "tb", "tr", "ct", "un"];
+        /* TEN9 : zm Added for zoom dropdown  */
+        let foucsList = ["bl", "it", "cl", "ff", "ht", "vt", "fs", "tb", "tr", "ct", "un","zm"];
         const _locale = locale();
         for(let i = 0; i < foucsList.length; i++){
             let attr = foucsList[i];
