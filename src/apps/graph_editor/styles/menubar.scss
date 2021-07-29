@@ -59,7 +59,9 @@
 }
 
 .dropdown-divider {
-  margin-left: 25px;
+  margin-left: 35px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .show .dropdown .dropdown-toggle {
@@ -84,10 +86,6 @@
 
 .dropdown-toggle.disabled::after {
   color: #ccc;
-}
-
-.f-12 {
-  font-size: 14px;
 }
 
 .navbar-nav > li > a {
@@ -139,10 +137,6 @@ a table tr td:hover {
   min-width: 300px;
 }
 
-.pl-35 ul li a {
-  padding-left: 35px;
-}
-
 .menu-icon ul li a {
   display: flex;
 }
@@ -152,31 +146,35 @@ a table tr td:hover {
 }
 
 .sub-menu:hover {
-  background-color: #e5e5e5;
+  background-color: #f1f3f4;
 }
 
 #insert-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 #direction-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 #align-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 #navigation-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 #layout-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
 }
 
 #distribute-dropright button {
-  padding-left: 2rem;
+  padding-left: 35px;
+}
+
+#image-dropright button {
+  padding-left: 35px;
 }
 
 .dropdown-toggle {
@@ -229,16 +227,14 @@ a table tr td:hover {
   padding-left: 13px !important;
 }
 
-.sub-menu ul {
+.dropdown.sub-menu ul.dropdown-menu {
   min-width: 150px;
+  margin-top: 0;
+  margin-left: -5px;
 }
 
 #layout-dropright ul {
   min-width: 180px;
-}
-
-#layout-dropright:hover {
-  background-color: #e5e5e5;
 }
 
 .float-right {
@@ -267,14 +263,17 @@ a table tr td:hover {
 .shortcut {
   color: #80868b;
   font-weight: 500;
+  float: right;
+  font-size: 14px;
+}
+
+.navbar-nav li ul li a span.shortcut,
+.list-group-item .shortcut {
+  padding-right: 1rem;
 }
 
 .dropdown-item.disabled .shortcut {
   color: #ccc;
-}
-
-.dropdown-item .lp-9 {
-  padding-left: 9px;
 }
 
 .text-hover .show .nav-link span {
@@ -295,6 +294,7 @@ a table tr td:hover {
   padding-left: 0.7rem;
   padding-right: 0;
   font-size: 16px;
+  position: absolute;
 }
 
 .lf-4 {
@@ -302,8 +302,11 @@ a table tr td:hover {
 }
 
 .b-nav-dropdown .dropdown-menu li:first-child {
-  padding: 7px 1px;
   margin-top: 5px;
+}
+
+.b-nav-dropdown .dropdown-menu li:last-child {
+  margin-bottom: 7px;
 }
 
 .material-icons {
@@ -322,10 +325,44 @@ a table tr td:hover {
 
 .dropdown-menu-nav li,
 .dropdown-menu li {
-  padding: 7px 1px;
+  padding: 8px 1px 7px;
 }
 
 .dropdown-menu-nav li:hover,
 .dropdown-menu li:hover {
-  background-color: #eee;
+  background-color: #f1f3f4;
+}
+
+.dropdown-menu li > a:not(.disable-hover):hover,
+.dropdown-menu li > a:focus {
+  background-color: transparent;
+}
+
+.dropdown-menu-nav li:focus,
+.dropdown-menu li:focus {
+  background-color: #e8eaed;
+}
+
+.dropdown-item .item-name,
+.list-group-item .item-name {
+  padding-left: 35px;
+}
+
+.dropdown-item .print-icon {
+  font-size: 19px;
+  font-weight: normal;
+}
+
+#image-dropright:hover {
+  background-color: #f1f3f4;
+}
+
+.btn-block.btn {
+  padding-top: 7px;
+  padding-right: 0;
+  padding-bottom: 6px;
+}
+
+li.no-hover:hover {
+  background: #fff;
 }
