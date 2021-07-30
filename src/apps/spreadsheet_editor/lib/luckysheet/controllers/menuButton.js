@@ -52,7 +52,6 @@ const menuButton = {
     "rightclickmenu": null,
     "submenuhide": {},
     focus: function($obj, value){ 
-        console.log($obj.seletor,value);
         if($obj.attr("id")=="luckysheet-icon-font-family-menuButton"){
             if (isdatatypemulti(value)["num"]) {
                  let  _locale = locale();
@@ -1036,6 +1035,7 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "font-size", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
+                /* TEN9 : width changes for better layout */
                 $menuButton = $("#" + menuButtonId).width(90);
                 _this.focus($menuButton, 10);
 
@@ -1595,7 +1595,7 @@ const menuButton = {
                 $menuButton = $("#" + menuButtonId).width(150);
                 _this.focus($menuButton);
 
-                $menuButton.find(".luckysheet-icon-img-container").click(function(){
+                $menuButton.find(".luckysheet-cols-menuitem").click(function(){
                     $menuButton.hide();
                     luckysheetContainerFocus();
 
@@ -3776,13 +3776,13 @@ const menuButton = {
         }
         else if(attr == "tb"){
             let $menuButton = $("#luckysheet-icon-textwrap-menu-menuButton");
-            let $t = $("luckysheet-icon-textwrap"), itemvalue = "clip";
+            let $t = $("luckysheet-icon-textwrap"), itemvalue = "overflow";
             
             if(foucsStatus == "1"){
-                itemvalue = "overflow";
+                itemvalue = "wrap";
             }
             else if(foucsStatus == "2"){
-                itemvalue = "wrap";
+                itemvalue = "clip";
             }
 
             _this.focus($menuButton, itemvalue);

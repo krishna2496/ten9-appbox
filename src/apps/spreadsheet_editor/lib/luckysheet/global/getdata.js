@@ -495,6 +495,7 @@ export function checkstatusByCell(cell, a){
     }
     else if(a == "vt"){//默认垂直居中
         if(foucsStatus == null){
+            // TEN9 : default focus status changes to match google sheet
             foucsStatus = "2";
         }
         else{
