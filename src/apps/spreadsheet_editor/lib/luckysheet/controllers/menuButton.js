@@ -3776,13 +3776,13 @@ const menuButton = {
         }
         else if(attr == "tb"){
             let $menuButton = $("#luckysheet-icon-textwrap-menu-menuButton");
-            let $t = $("luckysheet-icon-textwrap"), itemvalue = "overflow";
+            let $t = $("luckysheet-icon-textwrap"), itemvalue = "clip";
             
             if(foucsStatus == "1"){
-                itemvalue = "wrap";
+                itemvalue = "overflow";
             }
             else if(foucsStatus == "2"){
-                itemvalue = "clip";
+                itemvalue = "wrap";
             }
 
             _this.focus($menuButton, itemvalue);
