@@ -52,7 +52,7 @@ const menuButton = {
     "rightclickmenu": null,
     "submenuhide": {},
     focus: function($obj, value){ 
-
+        console.log($obj.seletor,value);
         if($obj.attr("id")=="luckysheet-icon-font-family-menuButton"){
             if (isdatatypemulti(value)["num"]) {
                  let  _locale = locale();
@@ -1036,7 +1036,7 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "font-size", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
-                $menuButton = $("#" + menuButtonId).width(150);
+                $menuButton = $("#" + menuButtonId).width(90);
                 _this.focus($menuButton, 10);
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
@@ -1595,8 +1595,7 @@ const menuButton = {
                 $menuButton = $("#" + menuButtonId).width(150);
                 _this.focus($menuButton);
 
-                $menuButton.find(".luckysheet-cols-menuitem").click(function(){
-                   
+                $menuButton.find(".luckysheet-icon-img-container").click(function(){
                     $menuButton.hide();
                     luckysheetContainerFocus();
 
@@ -3758,7 +3757,7 @@ const menuButton = {
         else if(attr == "vt"){
             let $menuButton = $("#luckysheet-icon-valign-menu-menuButton");
             let $t = $("luckysheet-icon-valign"), itemvalue = "bottom";
-            
+           
             if(foucsStatus == "1"){
                 itemvalue = "top";
             }

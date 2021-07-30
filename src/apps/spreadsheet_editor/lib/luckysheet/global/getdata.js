@@ -495,7 +495,7 @@ export function checkstatusByCell(cell, a){
     }
     else if(a == "vt"){//默认垂直居中
         if(foucsStatus == null){
-            foucsStatus = "0";
+            foucsStatus = "2";
         }
         else{
             foucsStatus = foucsStatus[a];
