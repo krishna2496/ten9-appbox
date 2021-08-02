@@ -126,6 +126,11 @@ const menuButton = {
                     }
                 }
             }
+            if ($obj.attr("id") == 'luckysheet-icon-valign-menu-menuButton') {
+                if(value == 'center') {
+                    value = 'middle';
+                }
+            }
             $obj.find(".luckysheet-cols-menuitem[itemvalue='"+ value +"']").find("span.icon").html('<i class="fa fa-check luckysheet-mousedown-cancel"></i>');
         }
     },
@@ -841,11 +846,11 @@ const menuButton = {
                 menuleft = menuleft - tlen + userlen;
             }
 
-            let offsetTop = $(this).offset().top+26;
+            let offsetTop = $(this).offset().top+28;
             setTimeout(function(){
                 let $input = $("#" + menuButtonId).find(".luckysheet-color-selected");
                 $input.spectrum("set", $input.val());
-                mouseclickposition($menuButton, menuleft-28, offsetTop, "lefttop");
+                mouseclickposition($menuButton, menuleft, offsetTop, "lefttop");
             }, 1);
         });
 
@@ -983,11 +988,11 @@ const menuButton = {
                 menuleft = menuleft - tlen + userlen;
             }
 
-            let offsetTop = $(this).offset().top + 26;
+            let offsetTop = $(this).offset().top + 28;
             setTimeout(function(){
                 let $input = $("#"+ menuButtonId).find(".luckysheet-color-selected");
                 $input.spectrum("set", $input.val());
-                mouseclickposition($menuButton, menuleft - 28, offsetTop, "lefttop");
+                mouseclickposition($menuButton, menuleft + 168, offsetTop, "lefttop");
             }, 1);
         });
 
@@ -1412,7 +1417,7 @@ const menuButton = {
             if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
                 menuleft = menuleft - tlen + userlen;
             }
-            mouseclickposition($menuButton, menuleft-28, $(this).offset().top+25, "lefttop");
+            mouseclickposition($menuButton, menuleft+226, $(this).offset().top+28, "lefttop");
         });
 
         //合并单元格
@@ -1545,7 +1550,7 @@ const menuButton = {
             if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
                 menuleft = menuleft - tlen + userlen;
             }
-            mouseclickposition($menuButton, menuleft - 28, $(this).offset().top + 25, "lefttop");
+            mouseclickposition($menuButton, menuleft + 109, $(this).offset().top + 28, "lefttop");
         });
 
         //水平对齐
@@ -1559,9 +1564,7 @@ const menuButton = {
             _this.updateFormat(d, "ht", itemvalue);
         });
         
-        $("#luckysheet-icon-align").click(function(){
-            $("#luckysheet-icon-align-menu").click();
-        });
+        
         $("#luckysheet-icon-align-menu").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1625,7 +1628,7 @@ const menuButton = {
             if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
                 menuleft = menuleft - tlen + userlen;
             }
-            mouseclickposition($menuButton, menuleft - 28, $(this).offset().top + 25, "lefttop");
+            mouseclickposition($menuButton, menuleft + 117, $(this).offset().top + 28, "lefttop");
         });
 
         //垂直对齐
@@ -1661,7 +1664,7 @@ const menuButton = {
                 let menu = replaceHtml(_this.menu, { "id": "valign-menu", "item": itemset, "subclass": "", "sub": "" });
 
                 $("body").append(menu);
-                $menuButton = $("#" + menuButtonId).width(120);
+                $menuButton = $("#" + menuButtonId).width(133);
                 _this.focus($menuButton, "bottom");
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
@@ -1669,6 +1672,7 @@ const menuButton = {
                     luckysheetContainerFocus();
 
                     let $t = $(this), itemvalue = $t.attr("itemvalue");
+                    alert(itemvalue);
                     _this.focus($menuButton, itemvalue);
 
                     let $icon = $("#luckysheet-icon-valign").attr("type", itemvalue).find(".luckysheet-icon-img-container");
@@ -1682,7 +1686,9 @@ const menuButton = {
                      }
                      htmlNode.innerHTML = 'vertical_align_'+itemvalue;
                      item.replaceChild(htmlNode, item.childNodes[0]);
-
+                    if(itemvalue == 'center') {
+                        itemvalue = 'middle';
+                    }
                     // add iconfont
                     $icon.removeAttr("class").addClass("luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-" + itemvalue + iconfontObject[itemvalue]);
 
@@ -1698,7 +1704,7 @@ const menuButton = {
             if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
                 menuleft = menuleft - tlen + userlen;
             }
-            mouseclickposition($menuButton, menuleft - 28, $(this).offset().top + 25, "lefttop");
+            mouseclickposition($menuButton, menuleft + 98, $(this).offset().top + 28, "lefttop");
         });
 
         //文本换行
@@ -1763,7 +1769,7 @@ const menuButton = {
             if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
                 menuleft = menuleft - tlen + userlen;
             }
-            mouseclickposition($menuButton, menuleft - 28, $(this).offset().top + 25, "lefttop");
+            mouseclickposition($menuButton, menuleft + 105, $(this).offset().top + 25, "lefttop");
         });
 
         //文本旋转
@@ -1852,7 +1858,7 @@ const menuButton = {
             if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
                 menuleft = menuleft - tlen + userlen;
             }
-            mouseclickposition($menuButton, menuleft - 28, $(this).offset().top + 25, "lefttop");
+            mouseclickposition($menuButton, menuleft , $(this).offset().top + 28, "lefttop");
         });
 
         //冻结行列
@@ -2446,7 +2452,7 @@ const menuButton = {
             if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
                 menuleft = menuleft - tlen + userlen;
             }
-            mouseclickposition($menuButton, menuleft-48, $(this).offset().top+25, "lefttop");
+            mouseclickposition($menuButton, menuleft, $(this).offset().top+28, "lefttop");
         });
 
         //加粗
@@ -3298,6 +3304,7 @@ const menuButton = {
                 }
             }
             else if(attr == "vt"){
+                alert(foucsStatus);
                 if(foucsStatus == "top"){
                     foucsStatus = "1";
                 }
@@ -3873,6 +3880,7 @@ const menuButton = {
             return null;
         }
         let foucsStatus = d[r][c];
+    
         return checkstatusByCell(foucsStatus, a);
     },
     setLineDash: function(canvasborder, type, hv, m_st, m_ed, line_st, line_ed){

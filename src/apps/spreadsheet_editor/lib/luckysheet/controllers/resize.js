@@ -93,7 +93,7 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block" style="user-select: none;">
                 <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block" style="user-select: none;">
                     ${ /* TEN9 : margin-right:-5px added */'' }
-                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block" style="user-select: none;margin-right:-5px">
+                    <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block" style="user-select: none;line-height: 2.8;">
                         ${ /* Replaced more text with down arrow
                             locale_toolbar.toolMore */'' } <i class="fas fa-angle-down"></i>
                     </div>

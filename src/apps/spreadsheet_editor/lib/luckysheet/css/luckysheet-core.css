@@ -283,7 +283,6 @@
     /* margin: 0 1px; */
     margin: 5px 1px 0px 5px;
     /* ten9 : added for better layout */
-    margin-top:8px;
     margin-right :4px;
 }
 
@@ -839,7 +838,7 @@
 /*toolbar菜单end*/
 
 .luckysheet-wa-calculate {
-    height: 28px;
+    height: 24px;
     /*padding: 10px 8px;*/
     background: #fff;
     position: relative;
@@ -7546,6 +7545,6 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 #luckysheet-icon-textwrap-menu-menuButton i {
     line-height: 1.4;
 }
-#luckysheet-icon-rotation-menu-menuButton .material-icons{
-margin-top: -1px;
+.luckysheet-menuButton .material-icons {
+    line-height: 1;
 }
