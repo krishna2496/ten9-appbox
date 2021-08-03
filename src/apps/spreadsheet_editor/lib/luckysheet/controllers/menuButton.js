@@ -982,17 +982,18 @@ const menuButton = {
 
             let userlen = $(this).outerWidth();
             let tlen = $menuButton.outerWidth();
+            /* TEN9 : Added for better layout */
+            let leftAlign = document.getElementById('luckysheet-icon-cell-color-menu').getBoundingClientRect();
+            let menuleft = leftAlign.left;
 
-            let menuleft = $(this).offset().left;
-            if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
-                menuleft = menuleft - tlen + userlen;
-            }
-
+            // if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
+            //     menuleft = menuleft - tlen + userlen;
+            // }
             let offsetTop = $(this).offset().top + 28;
             setTimeout(function(){
                 let $input = $("#"+ menuButtonId).find(".luckysheet-color-selected");
                 $input.spectrum("set", $input.val());
-                mouseclickposition($menuButton, menuleft + 168, offsetTop, "lefttop");
+                mouseclickposition($menuButton, menuleft, offsetTop, "lefttop");
             }, 1);
         });
 
@@ -1412,12 +1413,15 @@ const menuButton = {
 
             let userlen = $(this).outerWidth();
             let tlen = $menuButton.outerWidth();
-
-            let menuleft = $(this).offset().left;
-            if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
-                menuleft = menuleft - tlen + userlen;
-            }
-            mouseclickposition($menuButton, menuleft+226, $(this).offset().top+28, "lefttop");
+            
+             /* TEN9 : Added for better layout */
+            let leftAlign = document.getElementById('luckysheet-icon-border-menu').getBoundingClientRect();
+            let menuleft = leftAlign.left;
+           
+            // if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
+            //     menuleft = menuleft - tlen + userlen;
+            // } 
+            mouseclickposition($menuButton, menuleft, $(this).offset().top+28, "lefttop");
         });
 
         //合并单元格
@@ -1546,11 +1550,13 @@ const menuButton = {
             let userlen = $(this).outerWidth();
             let tlen = $menuButton.outerWidth();
 
-            let menuleft = $(this).offset().left;
-            if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
-                menuleft = menuleft - tlen + userlen;
-            }
-            mouseclickposition($menuButton, menuleft + 109, $(this).offset().top + 28, "lefttop");
+             /* TEN9 : Added for better layout */
+            let leftAlign = document.getElementById('luckysheet-icon-merge-menu').getBoundingClientRect();
+            let menuleft = leftAlign.left;
+            // if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
+            //     menuleft = menuleft - tlen + userlen;
+            // }
+            mouseclickposition($menuButton, menuleft, $(this).offset().top + 28, "lefttop");
         });
 
         //水平对齐
@@ -1597,7 +1603,7 @@ const menuButton = {
                  $menuButton = $("#"+menuButtonId).width(120); */
                 $menuButton = $("#" + menuButtonId).width(150);
                 _this.focus($menuButton);
-
+                
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
                     $menuButton.hide();
                     luckysheetContainerFocus();
@@ -1624,11 +1630,14 @@ const menuButton = {
             let userlen = $(this).outerWidth();
             let tlen = $menuButton.outerWidth();
 
-            let menuleft = $(this).offset().left;
-            if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
-                menuleft = menuleft - tlen + userlen;
-            }
-            mouseclickposition($menuButton, menuleft + 117, $(this).offset().top + 28, "lefttop");
+            /* TEN9 : Added for better layout */
+            let leftAlign = document.getElementById('luckysheet-icon-align-menu').getBoundingClientRect();
+            let menuleft = leftAlign.left;
+            // let menuleft = $(this).offset().left;
+            // if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
+            //     menuleft = menuleft - tlen + userlen;
+            // }
+            mouseclickposition($menuButton, menuleft, $(this).offset().top + 28, "lefttop");
         });
 
         //垂直对齐
@@ -1672,7 +1681,7 @@ const menuButton = {
                     luckysheetContainerFocus();
 
                     let $t = $(this), itemvalue = $t.attr("itemvalue");
-                    alert(itemvalue);
+                    
                     _this.focus($menuButton, itemvalue);
 
                     let $icon = $("#luckysheet-icon-valign").attr("type", itemvalue).find(".luckysheet-icon-img-container");
@@ -1700,11 +1709,14 @@ const menuButton = {
             let userlen = $(this).outerWidth();
             let tlen = $menuButton.outerWidth();
 
-            let menuleft = $(this).offset().left;
-            if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
-                menuleft = menuleft - tlen + userlen;
-            }
-            mouseclickposition($menuButton, menuleft + 98, $(this).offset().top + 28, "lefttop");
+            /* TEN9 : Added for better layout */
+            let leftAlign = document.getElementById('luckysheet-icon-valign-menu').getBoundingClientRect();
+            let menuleft = leftAlign.left;
+            // let menuleft = $(this).offset().left;
+            // if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
+            //     menuleft = menuleft - tlen + userlen;
+            // }
+            mouseclickposition($menuButton, menuleft, $(this).offset().top + 28, "lefttop");
         });
 
         //文本换行
@@ -1765,11 +1777,15 @@ const menuButton = {
             let userlen = $(this).outerWidth();
             let tlen = $menuButton.outerWidth();
 
-            let menuleft = $(this).offset().left;
-            if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
-                menuleft = menuleft - tlen + userlen;
-            }
-            mouseclickposition($menuButton, menuleft + 105, $(this).offset().top + 25, "lefttop");
+            /* TEN9 : Added for better layout */
+            let leftAlign = document.getElementById('luckysheet-icon-textwrap-menu').getBoundingClientRect();
+            let menuleft = leftAlign.left;
+            // let menuleft = $(this).offset().left;
+
+            // if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
+            //     menuleft = menuleft - tlen + userlen;
+            // }
+            mouseclickposition($menuButton, menuleft, $(this).offset().top + 25, "lefttop");
         });
 
         //文本旋转
@@ -1854,10 +1870,12 @@ const menuButton = {
             let userlen = $(this).outerWidth();
             let tlen = $menuButton.outerWidth();
 
-            let menuleft = $(this).offset().left;
-            if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
-                menuleft = menuleft - tlen + userlen;
-            }
+            let leftAlign = document.getElementById('luckysheet-icon-rotation-menu').getBoundingClientRect();
+            let menuleft = leftAlign.left;
+            // let menuleft = $(this).offset().left;
+            // if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
+            //     menuleft = menuleft - tlen + userlen;
+            // }
             mouseclickposition($menuButton, menuleft , $(this).offset().top + 28, "lefttop");
         });
 
@@ -2448,7 +2466,10 @@ const menuButton = {
             let userlen = $(this).outerWidth();
             let tlen = $menuButton.outerWidth();
 
-            let menuleft = $(this).offset().left;
+            /* TEN9 : Added for better layout */
+            let leftAlign = document.getElementById('luckysheet-icon-function-menu').getBoundingClientRect();
+            let menuleft = leftAlign.left;
+            //let menuleft = $(this).offset().left;
             if(tlen > userlen && (tlen + menuleft) > $("#" + Store.container).width()){
                 menuleft = menuleft - tlen + userlen;
             }

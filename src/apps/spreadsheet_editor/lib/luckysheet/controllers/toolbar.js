@@ -206,7 +206,7 @@ export function createToolbarHtml() {
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont luckysheet-iconfont-jine"
                         style="user-select: none;">
                         ${/* TEN9: material design icon added for currency */'' }
-                        <span class="material-icons" style="font-size: 16px;margin-top: 2px;">attach_money</span>
+                        <span class="material-icons" style="font-size: 16px;margin-top: 1px;">attach_money</span>
                         </div>
                     </div>
                 </div>
@@ -219,7 +219,7 @@ export function createToolbarHtml() {
                 <div class="luckysheet-toolbar-button-inner-box luckysheet-inline-block"
                 style="user-select: none;">
                     ${ /* TEN9 : margin-top:5px added for better layout  */'' }
-                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;margin-top: 7px;">
+                    <div class="luckysheet-icon luckysheet-inline-block " style="user-select: none;margin-top: 5px;">
                         ${ /* <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img iconfont luckysheet-iconfont-baifenhao"
                         style="user-select: none;">
                         TEN9: Font awesome icon added for percentage */'' }
@@ -238,7 +238,7 @@ export function createToolbarHtml() {
                     <div class="luckysheet-icon luckysheet-inline-block toolbar-decimal-icon"
                     style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-decrease iconfont luckysheet-iconfont-jianxiaoxiaoshuwei"
-                        style="user-select: none;margin-top: 2px;">
+                        style="user-select: none;margin-top: 1px;">
                         ${ /* TEN9: Font awesome icon added for decimal decrease */'' }
                         <i class="ten9-font ten9-icon-decimal-decrease"></i>
                         </div>
@@ -255,7 +255,7 @@ export function createToolbarHtml() {
                     <div class="luckysheet-icon luckysheet-inline-block toolbar-decimal-icon"
                     style="user-select: none;">
                         <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-decimal-increase iconfont luckysheet-iconfont-zengjiaxiaoshuwei"
-                        style="user-select: none;margin-top: 2px;">
+                        style="user-select: none;margin-top: 1px;">
                         ${ /* TEN9: Font awesome icon added for decimal increase */'' }
                         <i class="ten9-font ten9-icon-decimal-increase"></i>
                         </div>
@@ -268,7 +268,7 @@ export function createToolbarHtml() {
             <div class="luckysheet-toolbar-menu-button-outer-box luckysheet-inline-block"
             style="user-select: none;line-height: 1.8;">
                 <div class="luckysheet-toolbar-menu-button-inner-box luckysheet-inline-block"
-                style="user-select: none;font-size: 12px;margin-top: 3px;">
+                style="user-select: none;font-size: 12px;margin-top: 2px;">
                     ${ /* TEN9: Replaced with 123 as default text
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
                     style="user-select: none;">
@@ -290,7 +290,7 @@ export function createToolbarHtml() {
                 style="user-select: none;">
                     ${/* TEN9 : font-size :12px added  */'' }
                     <div class="luckysheet-toolbar-menu-button-caption luckysheet-inline-block"
-                    style="width: 80px;user-select: none;font-size:12px;padding: 0px 2px 0px 2px;">
+                    style="width: 80px;user-select: none;font-size:12px;padding: 0px 2px 0px 2px;top: -3px;">
                         ${fontarray[0]}
                     </div>
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
