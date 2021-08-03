@@ -1681,7 +1681,8 @@ const menuButton = {
                     luckysheetContainerFocus();
 
                     let $t = $(this), itemvalue = $t.attr("itemvalue");
-                    
+                    // TEN9: Adding alert for debugging purposes
+                    // alert(itemvalue);
                     _this.focus($menuButton, itemvalue);
 
                     let $icon = $("#luckysheet-icon-valign").attr("type", itemvalue).find(".luckysheet-icon-img-container");
@@ -3325,7 +3326,8 @@ const menuButton = {
                 }
             }
             else if(attr == "vt"){
-                alert(foucsStatus);
+                // TEN9: Alert for debugging purposes
+                // alert(foucsStatus);
                 if(foucsStatus == "top"){
                     foucsStatus = "1";
                 }
