@@ -224,7 +224,7 @@ export default defineComponent({
     }
 
     function closedMenu() {
-      const container = document.getElementById('container');
+      const container = mxClient.getDocumentContainer();
       container.click();
     }
 
