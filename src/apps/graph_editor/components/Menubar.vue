@@ -432,7 +432,7 @@ export default defineComponent({
           span.material-icons(v-show='checkboxes.guides') done
           span.item-name Guides
         b-dropdown-item(href='#', @click='doAction("shadow")', :disabled='!isSomethingSelected')
-          .pl-35 Shadow
+          .item-name Shadow
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("connectionArrows")')
           span.material-icons(v-show='checkboxes.connectionArrow') done
