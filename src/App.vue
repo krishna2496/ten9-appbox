@@ -528,7 +528,7 @@ export default defineComponent({
       #container
         div(v-if='!activeAppInfo')
           | Create a new file or open an existing one
-        component(
+        component#draw-app(
           v-else-if='activeAppInfo.uniqueAppId === getGraphEditorAppInfo().uniqueAppId',
           ref='activeAppRef',
           :is='activeAppComponent',
