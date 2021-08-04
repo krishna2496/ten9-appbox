@@ -474,7 +474,39 @@ export default defineComponent({
 <template lang="pug">
 #app
   .row
-    #page.col-md-12
+    .col-md-2
+      b-list-group#logs-list.custom-list-group
+        template(v-for='(log, index) in logs')
+          table.custom-table(:key='index')
+            tr
+              td.custom-header-background(colspan='2')
+                b.text-center.custom-header {{ log.title }}
+            tr(v-if='log.name')
+              td.table-details
+                b Filename
+              td.table-details
+                | {{ log.name }}
+            tr(v-if='log.what')
+              td.table-details
+                b What
+              td.table-details
+                | {{ log.what }}
+            tr(v-if='log.size')
+              td.table-details
+                b Size
+              td.table-details
+                | {{ log.size }}
+            tr(v-if='log.type')
+              td.table-details
+                b Type
+              td.table-details
+                | {{ log.type }}
+            tr(v-if='log.lastModified')
+              td.table-details
+                b Modified
+              td.table-details
+                | {{ getDateString(log.lastModified) }}
+    #page.col-md-10
       .row-btn
         b-dropdown.ml-3.app-options(text='Create new...', variant='info')
           b-dropdown-item.py-0(
