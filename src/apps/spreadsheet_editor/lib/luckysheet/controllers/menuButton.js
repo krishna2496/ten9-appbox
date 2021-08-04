@@ -2382,7 +2382,7 @@ const menuButton = {
 
                 /*  TEN9: width changes for better layout 
                  $menuButton = $("#"+menuButtonId).width(180); */
-                $menuButton = $("#" + menuButtonId).width(220);
+                $menuButton = $("#" + menuButtonId).width(200);
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
                     $menuButton.hide();
