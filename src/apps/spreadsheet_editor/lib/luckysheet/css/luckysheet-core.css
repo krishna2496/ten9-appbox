@@ -7553,3 +7553,9 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 #luckysheet-icon-font-size {
     padding-top: 3px;
 }
+#luckysheet-icon-function-menu-menuButton .luckysheet-submenu-arrow {
+    line-height: 1.6;
+}
+#luckysheet-icon-autofilter-menuButton .luckysheet-submenu-arrow {
+    line-height: 0.7;
+}
