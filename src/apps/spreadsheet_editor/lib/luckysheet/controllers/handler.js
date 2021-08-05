@@ -4661,6 +4661,8 @@ export default function luckysheetHandler() {
 
     //Menu bar, Chart button
     $("#luckysheet-chart-btn-title").click(function () {
+        /* TEN9 : Background changes  */
+        menuButton.changeBackgroundColor("#luckysheet-chart-btn-title");
         createLuckyChart();
     });
 
@@ -4906,6 +4908,8 @@ export default function luckysheetHandler() {
 
     //菜单栏 插入链接按钮
     $("#luckysheet-insertLink-btn-title").click(function () {
+        /* TEN9 : Background changes  */
+        menuButton.changeBackgroundColor("#luckysheet-insertLink-btn-title");
         if(!checkProtectionNotEnable(Store.currentSheetIndex)){
             return;
         }
@@ -5054,9 +5058,13 @@ export default function luckysheetHandler() {
 
     //回退 重做 按钮
     $("#luckysheet-icon-undo").click(function (event) {
+        /* TEN9 : Background changes  */
+        menuButton.changeBackgroundColor("#luckysheet-icon-undo");
         controlHistory.redo(event);
     });
     $("#luckysheet-icon-redo").click(function (event) {
+        /* TEN9 : Background changes  */
+        menuButton.changeBackgroundColor("#luckysheet-icon-redo");
         controlHistory.undo(event);
     });
 
