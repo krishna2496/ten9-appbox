@@ -275,18 +275,18 @@ div
     //-   @click='doAction("undo")',
     //-   v-show='editorUi.actions.get("undo").isEnabled()'
     //- )
-    //-   span.material-icons.popup-icon undo
+    //-   span.material-icons.menu-icons undo
     //-   span.item-name Undo
     //-   span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}Z
     //- b-list-group-item.none-border(
     //-   @click='doAction("redo")',
     //-   v-show='editorUi.actions.get("redo").isEnabled()'
     //- )
-    //-   span.material-icons.popup-icon redo
+    //-   span.material-icons.menu-icons redo
     //-   span.item-name Redo
     //-   span.shortcut {{ controlKey }}+Shift+Z
     //- b-list-group-item.none-border(@click='doAction("pasteHere")')
-    //-   span.material-icons.popup-icon content_paste
+    //-   span.material-icons.menu-icons content_paste
     //-   span.item-name Paste Here
     //- hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     //- b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
@@ -303,19 +303,19 @@ div
     //-   span.item-name Select All
     //-   span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}A
     b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.material-icons.popup-icon undo
+      span.material-icons.menu-icons content_cut
       span.item-name Cut
       span.shortcut {{ controlKey }}+X
     b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.material-icons.popup-icon undo
+      span.material-icons.menu-icons content_copy
       span.item-name Copy
       span.shortcut {{ controlKey }}+C
     b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.material-icons.popup-icon undo
+      span.material-icons.menu-icons content_paste
       span.item-name Paste
       span.shortcut {{ controlKey }}+V
     b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.material-icons.popup-icon undo
+      span.material-icons.menu-icons undo
       span.item-name Paste without formating
       span.shortcut {{ controlKey }}+Shift+V
     b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
@@ -325,7 +325,7 @@ div
       span.item-name Background
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.material-icons.popup-icon undo
+      i.material-icons.menu-icons.ten9-font.ten9-icon-insert-comment
       span.item-name Comment
       span.shortcut {{ controlKey }}+Alt+M
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
@@ -336,16 +336,16 @@ div
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
     b-list-group-item.none-border(@click='doAction("delete")')
-      span.material-icons.popup-icon delete
+      span.material-icons.menu-icons delete
       span.item-name Delete
       span.shortcut Delete
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='doAction("cut")')
-      span.material-icons.popup-icon content_cut
+      span.material-icons.menu-icons content_cut
       span.item-name Cut
       span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}X
     b-list-group-item.none-border(@click='doAction("pasteHere")')
-      span.material-icons.popup-icon content_copy
+      span.material-icons.menu-icons content_copy
       span.item-name Copy
       span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}C
     b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
@@ -410,7 +410,7 @@ div
       :key='index',
       @click='selectPage(index)'
     )
-      i.fa-solid.fa-check.float-left.pt-1.popup-icon(v-show='isCurrentPage(index)')
+      i.fa-solid.fa-check.float-left.pt-1(v-show='isCurrentPage(index)')
       v-clamp.item-name(autoresize, :max-lines='1', :class='[isCurrentPage(index) ? "" : "pl-20"]') {{ item }}
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='insertPage')
