@@ -74,7 +74,22 @@ require('spectrum-colorpicker');
 
 //, columeflowset, rowflowset
 export default function luckysheetHandler() {
-
+    /* TEN9 : Added to remove selected state of toolbar menu */
+    document.addEventListener('click', (evt) => {
+        if (!(evt.srcElement.classList.contains('luckysheet-toolbar-textinput') || 
+        evt.srcElement.classList.contains('luckysheet-inline-block') || 
+        evt.srcElement.classList.contains('material-icons') ||
+        evt.srcElement.classList.contains('ten9-font'))) {
+            $(".luckysheet-toolbar-button").removeClass("luckysheet-toolbar-button-hover");
+            $(".luckysheet-toolbar-select").removeClass("luckysheet-toolbar-button-hover");
+            $(".luckysheet-toolbar-menu-button").removeClass("luckysheet-toolbar-button-hover");
+            $(".luckysheet-toolbar-button").removeClass("google-sheet-background");
+            $(".luckysheet-toolbar-menu-button").removeClass("google-sheet-background");
+            $("#luckysheet-icon-bold").removeClass("luckysheet-toolbar-button-hover");
+            $("#luckysheet-icon-italic").removeClass("luckysheet-toolbar-button-hover");
+            $("#luckysheet-icon-strikethrough").removeClass("luckysheet-toolbar-button-hover");
+        }
+      });
     const os = browser.detectOS(), isMobile = browser.mobilecheck();
 
     //移动端

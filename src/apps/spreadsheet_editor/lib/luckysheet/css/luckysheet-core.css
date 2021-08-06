@@ -7582,6 +7582,9 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 .luckysheet-toolbar-button:active .fa-solid { 
     color: #188038 !important;
 }
+.luckysheet-toolbar-button:active .material-icons { 
+    color: #188038 !important;
+}
 #luckysheet-sheet-container-c .luckysheet-sheets-item {
     font-weight: 500 !important;
 }
