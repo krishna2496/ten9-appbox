@@ -65,20 +65,14 @@ export default defineComponent({
 
     const pages = ref(['Page-1']);
 
-    function setPopupPosition(pagePopup: boolean) {
+    function setPopupPosition() {
       const coordinates = graphUtils.getDocumentContainerRect();
-      if (pagePopup) {
-        const popupMenuHeight = 100;
-        left.value = graph.lastEvent.clientX - coordinates.x;
-        top.value = graph.lastEvent.clientY - coordinates.y - popupMenuHeight;
-      } else {
-        left.value = graph.lastMouseX - coordinates.x;
-        top.value = graph.lastMouseY - coordinates.y;
-      }
+      left.value = graph.lastMouseX - coordinates.x;
+      top.value = graph.lastMouseY - coordinates.y;
     }
 
     function openPopupMenu() {
-      setPopupPosition(false);
+      setPopupPosition();
       if (graph.getSelectionCount() == 0) {
         visible.value = true;
       } else if (graph.getSelectionCount() == 1) {
@@ -89,8 +83,11 @@ export default defineComponent({
       }
     }
 
-    function openPagePopupMenu() {
-      setPopupPosition(true);
+    function openPagePopupMenu(_sender: typeof mxEventSource, event: CustomEvent) {
+      const pointer = event.getProperty('pointer');
+      const popupMenuHeight = 140;
+      left.value = pointer.x;
+      top.value = pointer.y - popupMenuHeight;
       pagePopupVisible.value = true;
     }
 
@@ -104,8 +101,8 @@ export default defineComponent({
 
     function openPageMenuPopup(_sender: typeof mxEventSource, event: CustomEvent) {
       const pageCount = pages.value.length;
-      const popupMenuHeight = 130;
-      const pageMenuHeight = 30;
+      const popupMenuHeight = 155;
+      const pageMenuHeight = 40;
       const pagesMenuHeight = pageCount * pageMenuHeight;
       const pointer = event.getProperty('pointer');
       top.value = pointer.y - popupMenuHeight - pagesMenuHeight;
@@ -410,7 +407,7 @@ div
       :key='index',
       @click='selectPage(index)'
     )
-      i.fa-solid.fa-check.float-left.pt-1(v-show='isCurrentPage(index)')
+      span.material-icons.menu-icons(v-show='isCurrentPage(index)') done
       v-clamp.item-name(autoresize, :max-lines='1', :class='[isCurrentPage(index) ? "" : "pl-20"]') {{ item }}
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     b-list-group-item.none-border(@click='insertPage')
