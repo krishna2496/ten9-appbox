@@ -278,6 +278,10 @@ export default defineComponent<SpreadsheetEditorProps>({
     watch(
       () => props.isEditing,
       (val) => {
+        // cancelActiveImgItem
+        if (!val) {
+          imageCtrl.cancelActiveImgItem();
+        }
         luckysheet.setReadOnlyMode(!val);
       },
     );

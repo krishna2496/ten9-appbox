@@ -74,7 +74,22 @@ require('spectrum-colorpicker');
 
 //, columeflowset, rowflowset
 export default function luckysheetHandler() {
-
+    /* TEN9 : Added to remove selected state of toolbar menu */
+    document.addEventListener('click', (evt) => {
+        if (!(evt.srcElement.classList.contains('luckysheet-toolbar-textinput') || 
+        evt.srcElement.classList.contains('luckysheet-inline-block') || 
+        evt.srcElement.classList.contains('material-icons') ||
+        evt.srcElement.classList.contains('ten9-font'))) {
+            $(".luckysheet-toolbar-button").removeClass("luckysheet-toolbar-button-hover");
+            $(".luckysheet-toolbar-select").removeClass("luckysheet-toolbar-button-hover");
+            $(".luckysheet-toolbar-menu-button").removeClass("luckysheet-toolbar-button-hover");
+            $(".luckysheet-toolbar-button").removeClass("google-sheet-background");
+            $(".luckysheet-toolbar-menu-button").removeClass("google-sheet-background");
+            $("#luckysheet-icon-bold").removeClass("luckysheet-toolbar-button-hover");
+            $("#luckysheet-icon-italic").removeClass("luckysheet-toolbar-button-hover");
+            $("#luckysheet-icon-strikethrough").removeClass("luckysheet-toolbar-button-hover");
+        }
+      });
     const os = browser.detectOS(), isMobile = browser.mobilecheck();
 
     //移动端
@@ -4661,6 +4676,8 @@ export default function luckysheetHandler() {
 
     //Menu bar, Chart button
     $("#luckysheet-chart-btn-title").click(function () {
+        /* TEN9 : Background changes  */
+        menuButton.changeBackgroundColor("#luckysheet-chart-btn-title");
         createLuckyChart();
     });
 
@@ -4906,6 +4923,8 @@ export default function luckysheetHandler() {
 
     //菜单栏 插入链接按钮
     $("#luckysheet-insertLink-btn-title").click(function () {
+        /* TEN9 : Background changes  */
+        menuButton.changeBackgroundColor("#luckysheet-insertLink-btn-title");
         if(!checkProtectionNotEnable(Store.currentSheetIndex)){
             return;
         }
@@ -5054,9 +5073,13 @@ export default function luckysheetHandler() {
 
     //回退 重做 按钮
     $("#luckysheet-icon-undo").click(function (event) {
+        /* TEN9 : Background changes  */
+        menuButton.changeBackgroundColor("#luckysheet-icon-undo");
         controlHistory.redo(event);
     });
     $("#luckysheet-icon-redo").click(function (event) {
+        /* TEN9 : Background changes  */
+        menuButton.changeBackgroundColor("#luckysheet-icon-redo");
         controlHistory.undo(event);
     });
 

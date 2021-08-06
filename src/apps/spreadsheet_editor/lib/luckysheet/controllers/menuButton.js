@@ -180,12 +180,41 @@ const menuButton = {
     },
     luckysheetPaintModelOn:false,
     luckysheetPaintSingle: false,
+    /* TEN9 : Change background color  */
+    changeBackgroundColor:function(id) {
+        $(".luckysheet-toolbar-button").removeClass("luckysheet-toolbar-button-hover");
+        $(".luckysheet-toolbar-select").removeClass("luckysheet-toolbar-button-hover");
+        $(".luckysheet-toolbar-menu-button").removeClass("luckysheet-toolbar-button-hover");
+        $(".luckysheet-toolbar-button").removeClass("google-sheet-background");
+        $(".luckysheet-toolbar-menu-button").removeClass("google-sheet-background");
+        
+        $("#luckysheet-icon-bold").removeClass("luckysheet-toolbar-button-hover");
+        $("#luckysheet-icon-italic").removeClass("luckysheet-toolbar-button-hover");
+        $("#luckysheet-icon-strikethrough").removeClass("luckysheet-toolbar-button-hover");
+
+       
+        if ( id == "#luckysheet-icon-fmt-other" || id == '#luckysheet-icon-paintformat' ||
+            id == '#luckysheet-icon-zoom' || id == "#luckysheet-icon-font-family" ||
+            id == '#luckysheet-icon-font-size' || id == "#luckysheet-icon-text-color-menu" ||
+            id == '#luckysheet-icon-border-menu' || id == '#luckysheet-icon-merge-menu' ||
+            id == '#luckysheet-icon-align-menu' || id == '#luckysheet-icon-valign-menu' || 
+            id == '#luckysheet-icon-textwrap-menu' || id == '#luckysheet-icon-rotation-menu' ||
+            id == '#luckysheet-icon-autofilter' || id == '#luckysheet-icon-function-menu' || 
+            id == '#luckysheet-icon-cell-color-menu'
+        ) {
+            $(id).addClass("luckysheet-toolbar-button-hover");
+        }
+    },
+
     initialMenuButton: function(){
         let _this = this;
 
         //格式刷
         $("#luckysheet-icon-paintformat").click(function(e){
             e.stopPropagation();
+
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-paintformat");
             let _locale = locale();
             let locale_paint = _locale.paint;
 
@@ -240,6 +269,8 @@ const menuButton = {
             _this.luckysheetPaintSingle = true;
         });
         $("#luckysheet-icon-paintformat").dblclick(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-paintformat");
             let _locale = locale();
             let locale_paint = _locale.paint;
             if(Store.luckysheet_select_save == null || Store.luckysheet_select_save.length == 0){
@@ -295,6 +326,8 @@ const menuButton = {
 
         //货币格式
         $("#luckysheet-icon-currency").click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-currency");
             let d = editor.deepCopyFlowData(Store.flowdata);//取数据
 
             _this.updateFormat(d, "ct", "$ #.00");
@@ -302,6 +335,8 @@ const menuButton = {
 
         //百分比
         $("#luckysheet-icon-percent").click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-percent");
             let d = editor.deepCopyFlowData(Store.flowdata);//取数据
 
             _this.updateFormat(d, "ct", "0.00%");
@@ -309,6 +344,8 @@ const menuButton = {
 
         //减少小数位数
         $("#luckysheet-icon-fmt-decimal-decrease").click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-fmt-decimal-decrease");
             let d = editor.deepCopyFlowData(Store.flowdata);//取数据
             let row_index = Store.luckysheet_select_save[0]["row_focus"], 
                 col_index = Store.luckysheet_select_save[0]["column_focus"];
@@ -386,6 +423,8 @@ const menuButton = {
 
         //增加小数位数
         $("#luckysheet-icon-fmt-decimal-increase").click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-fmt-decimal-increase");
             let d = editor.deepCopyFlowData(Store.flowdata);//取数据
             let row_index = Store.luckysheet_select_save[0]["row_focus"], 
                 col_index = Store.luckysheet_select_save[0]["column_focus"];
@@ -472,13 +511,15 @@ const menuButton = {
 
         //更多格式
         $("#luckysheet-icon-fmt-other").click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-fmt-other");
             const _locale = locale();
             const locale_format = _locale.format;
             const locale_defaultFmt = _locale.defaultFmt;
 
             let menuButtonId = $(this).attr("id")+"-menuButton";
             let $menuButton = $("#" + menuButtonId);
-            
+           
             if($menuButton.length == 0){
                 let itemdata = locale_defaultFmt;
 
@@ -503,7 +544,7 @@ const menuButton = {
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
                     $menuButton.hide();
                     luckysheetContainerFocus();
-
+                    
                     let $t = $(this), itemvalue = $t.attr("itemvalue"),itemname = $t.attr("itemname");
                     $("#luckysheet-icon-fmt-other").find(".luckysheet-toolbar-menu-button-caption").html(" "+ itemname +" ");
 
@@ -561,6 +602,8 @@ const menuButton = {
             hideMenuByCancel(e);
             e.stopPropagation();
         }).click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-zoom");
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             
@@ -660,8 +703,11 @@ const menuButton = {
             hideMenuByCancel(e);
             e.stopPropagation();
         }).click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-font-family");
             let menuButtonId = $(this).attr("id")+"-menuButton";
             let $menuButton = $("#"+menuButtonId);
+            
             if($menuButton.length == 0){
                 // const locale_fontarray = locale().fontarray;
                 // let itemdata = [];
@@ -712,6 +758,8 @@ const menuButton = {
             hideMenuByCancel(e);
             e.stopPropagation();
         }).click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-text-color");
             let d = editor.deepCopyFlowData(Store.flowdata);
             let color =  $(this).attr("color");
             if(color == null){
@@ -720,10 +768,13 @@ const menuButton = {
             _this.updateFormat(d, "fc", color);
         });
 
-        $("#luckysheet-icon-text-color-menu").mousedown(function(e){
-            hideMenuByCancel(e);
-            e.stopPropagation();
-        }).click(function(){
+        $("#luckysheet-icon-text-color-menu").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-text-color-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-text-color-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-text-color-menu");
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#"+menuButtonId);
 
@@ -856,6 +907,7 @@ const menuButton = {
 
         //背景颜色
         $("#luckysheet-icon-cell-color").click(function() {
+            _this.changeBackgroundColor("#luckysheet-icon-cell-color");
             let d = editor.deepCopyFlowData(Store.flowdata);
             let color =  $(this).attr("color");
             if(color == null){
@@ -865,9 +917,15 @@ const menuButton = {
         });
         
         $("#luckysheet-icon-cell-color-menu").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-cell-color-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-cell-color-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-cell-color-menu");
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
-            
+           
             if($menuButton.length == 0){
                 let subid = "cell-color-self";
 
@@ -1000,23 +1058,17 @@ const menuButton = {
 
         //字体大小
         let luckysheet_fs_setTimeout = null;
-        $("#luckysheet-icon-font-size").mousedown(function(e){
-            if (parseInt($("#luckysheet-input-box").css("top")) > 0){
-                let w = window.getSelection();
-                if(w.type!="None"){
-                    let range = w.getRangeAt(0);
-                    if(!range.collapsed){
-                        Store.inlineStringEditRange = range.cloneRange();
-                    }
-                }
+        $("#luckysheet-icon-font-size").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-font-size").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-font-size").removeClass("luckysheet-toolbar-button-hover");
+                return false;
             }
-            hideMenuByCancel(e);
-            e.stopPropagation();
-        }).click(function(){
+            _this.changeBackgroundColor("#luckysheet-icon-font-size");
             
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
-            
+
             if($menuButton.length == 0){
                 let itemdata = [
                     { "text": "9", "value": "9", "example": "" },
@@ -1103,7 +1155,8 @@ const menuButton = {
 
         //边框设置
         $("#luckysheet-icon-border-all").click(function(){
-
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-border-all");
             if(!checkProtectionFormatCells(Store.currentSheetIndex)){
                 return;
             }
@@ -1168,6 +1221,13 @@ const menuButton = {
         });
 
         $("#luckysheet-icon-border-menu").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-border-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-border-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-border-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
 
@@ -1426,7 +1486,6 @@ const menuButton = {
 
         //合并单元格
         $("#luckysheet-icon-merge-button").click(function(){
-
             if(!checkProtectionNotEnable(Store.currentSheetIndex)){
                 return;
             }
@@ -1473,9 +1532,16 @@ const menuButton = {
         });
 
         $("#luckysheet-icon-merge-menu").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-merge-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-merge-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-merge-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
-            
+
             if($menuButton.length == 0){
                 const _locale = locale();
                 const locale_merge =  _locale.merge;
@@ -1561,6 +1627,13 @@ const menuButton = {
 
         //水平对齐
         $("#luckysheet-icon-align").click(function(){
+            /* TEN9 : Background changes  */
+            if ($("#luckysheet-icon-align").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-align").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-align");
+            
         	let itemvalue = $("#luckysheet-icon-align").attr("type");
         	if(itemvalue == null){
         		itemvalue = "left";
@@ -1572,9 +1645,16 @@ const menuButton = {
         
         
         $("#luckysheet-icon-align-menu").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-align-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-align-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-align-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
-            
+
             if($menuButton.length == 0){
                 const _locale = locale();
                 const locale_align = _locale.align;
@@ -1642,6 +1722,8 @@ const menuButton = {
 
         //垂直对齐
         $("#luckysheet-icon-valign").click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-valign");
         	let itemvalue = $("#luckysheet-icon-valign").attr("type");
         	if(itemvalue == null){
         		itemvalue = "bottom";
@@ -1653,10 +1735,18 @@ const menuButton = {
 
        
         $("#luckysheet-icon-valign-menu").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-valign-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-valign-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-valign-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             const _locale = locale();
             const locale_align = _locale.align;
+
             if($menuButton.length == 0){
                 let itemdata = [
                     {"text": locale_align.top, "value": "top", "example": '<div class="luckysheet-icon luckysheet-inline-block" style="user-select: none;opacity:1;"> <div aria-hidden="true" class="luckysheet-icon-img-container luckysheet-icon-img luckysheet-icon-valign-top iconfont luckysheet-iconfont-dingbuduiqi" style="user-select: none;"><span class="material-icons">vertical_align_top</span></div> </div>'},
@@ -1723,6 +1813,13 @@ const menuButton = {
         //文本换行
         
         $("#luckysheet-icon-textwrap-menu").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-textwrap-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-textwrap-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-textwrap-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             
@@ -1791,6 +1888,13 @@ const menuButton = {
 
         //文本旋转
         $("#luckysheet-icon-rotation-menu").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-rotation-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-rotation-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-rotation-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             
@@ -1882,6 +1986,12 @@ const menuButton = {
 
         //冻结行列
         $("#luckysheet-icon-freezen-menu").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-freezen-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-freezen-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-freezen-menu");
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             
@@ -2154,6 +2264,13 @@ const menuButton = {
 
         //过滤和排序
         $("#luckysheet-icon-autofilter").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-autofilter").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-autofilter").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-autofilter");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             
@@ -2356,6 +2473,13 @@ const menuButton = {
             $("#luckysheet-icon-function-menu").click();
         });
         $("#luckysheet-icon-function-menu").click(function(){
+            /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-function-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-function-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
+            _this.changeBackgroundColor("#luckysheet-icon-function-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
 
@@ -2382,7 +2506,7 @@ const menuButton = {
 
                 /*  TEN9: width changes for better layout 
                  $menuButton = $("#"+menuButtonId).width(180); */
-                $menuButton = $("#" + menuButtonId).width(220);
+                $menuButton = $("#" + menuButtonId).width(200);
 
                 $menuButton.find(".luckysheet-cols-menuitem").click(function(){
                     $menuButton.hide();
@@ -2482,6 +2606,8 @@ const menuButton = {
             hideMenuByCancel(e);
             e.stopPropagation();
         }).click(function(e){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-bold");
             let d = editor.deepCopyFlowData(Store.flowdata);
             
             let flag = checkTheStatusOfTheSelectedCells("bl",1);
@@ -2495,6 +2621,8 @@ const menuButton = {
             hideMenuByCancel(e);
             e.stopPropagation();
         }).click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-italic");
             let d = editor.deepCopyFlowData(Store.flowdata);
 
             let flag = checkTheStatusOfTheSelectedCells("it",1);
@@ -2508,6 +2636,8 @@ const menuButton = {
             hideMenuByCancel(e);
             e.stopPropagation();
         }).click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-strikethrough");
             let d = editor.deepCopyFlowData(Store.flowdata);
             let flag = checkTheStatusOfTheSelectedCells("cl",1);
             let foucsStatus = flag ? 0 : 1;
@@ -2520,6 +2650,8 @@ const menuButton = {
             hideMenuByCancel(e);
             e.stopPropagation();
         }).click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-underline");
             let d = editor.deepCopyFlowData(Store.flowdata);
             let flag = checkTheStatusOfTheSelectedCells("un",1);
             let foucsStatus = flag ? 0 : 1;
@@ -2531,7 +2663,8 @@ const menuButton = {
         $("#luckysheet-icon-conditionformat").click(function(){
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
-
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-conditionformat");
             const conditionformat_text = locale().conditionformat;
             
             if($menuButton.length == 0){
@@ -3025,7 +3158,8 @@ const menuButton = {
         $("#luckysheet-icon-postil").click(function(){
             let menuButtonId = $(this).attr("id")+"-menuButton";
             let $menuButton = $("#" + menuButtonId);
-            
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-postil");
             const locale_comment = locale().comment;
 
             $menuButton.remove();
@@ -3105,12 +3239,16 @@ const menuButton = {
         
         //sheet protection
         $("#luckysheet-icon-protection").click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-protection");
             let sheetFile = sheetmanage.getSheetByIndex();
             openProtectionModal(sheetFile);
         });
 
         //print
         $("#luckysheet-icon-print").click(function(){
+            /* TEN9 : Background changes  */
+            _this.changeBackgroundColor("#luckysheet-icon-print");
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             const _locale = locale();
@@ -3721,6 +3859,7 @@ const menuButton = {
         else if(attr == "ff"){
             let menuButtonId = "luckysheet-icon-font-family-menuButton";
             let $menuButton = $("#" + menuButtonId);
+            
             // const locale_fontarray = locale().fontarray;
             let itemname = locale_fontarray[0], itemvalue = 0;
             if(foucsStatus != null){
@@ -3749,7 +3888,6 @@ const menuButton = {
             $("#luckysheet-icon-font-family").find(".luckysheet-toolbar-menu-button-caption").html(" "+ itemname +" ");
         }
         else if(attr == "fs"){
-           
             let $menuButton = $("#luckysheet-icon-font-size-menuButton");
             let itemvalue = foucsStatus, $input = $("#luckysheet-icon-font-size input");
             _this.focus($menuButton, itemvalue);
@@ -3856,6 +3994,7 @@ const menuButton = {
         else if(attr == "ct") {
             let $menuButton = $("#luckysheet-icon-fmt-other");
             const _locale = locale();
+           
             const locale_defaultFmt = _locale.defaultFmt;
             if(!foucsStatus) {
                 $menuButton.find(".luckysheet-toolbar-menu-button-caption").html(" "+ locale_defaultFmt[0].text +" ");
@@ -3869,7 +4008,8 @@ const menuButton = {
                 const otherFormat = locale_defaultFmt.find(f => f.value === "fmtOtherSelf");
                 $menuButton.find(".luckysheet-toolbar-menu-button-caption").html(" "+ otherFormat.text +" ");
             }
-        }
+        } 
+      
     },
     inputMenuButtonFocus:function(focusTarget){
         var  w = window.getSelection(); 
