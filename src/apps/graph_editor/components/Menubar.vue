@@ -640,65 +640,65 @@ export default defineComponent({
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("editDiagram")')
           span.item-name Edit Diagram...
-      b-nav-item-dropdown#menu-padding.extra(text='Insert', @show='disabledHover')
-        b-dropdown#image-dropright(
-          dropright='',
-          text='Image',
-          block,
-          @mouseover.native='showSubmenu("image-dropright")',
-          @mouseleave.native='hide("image-dropright")'
-        )
-          b-dropdown-item(href='#', @click='horizontalFlow("horizontal")')
-            span.material-icons.menu-icons file_upload
-            span.item-name Upload from computer
-          b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span.material-icons.menu-icons search
-            span.item-name Search For Web
-          b-dropdown-divider
-          b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span.material-icons.menu-icons add_to_drive
-            span.item-name Drive
-          b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span.material-icons.menu-icons filter_vintage
-            span.item-name Photos
-          b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span.material-icons.menu-icons insert_link
-            span.item-name By Url
-          b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span.material-icons.menu-icons photo_camera
-            span.item-name Camera
-        b-dropdown-item(href='#')
-          span.material-icons.menu-icons format_shapes
-          span.item-name.py-0 Text Box
-        b-dropdown-item(href='#')
-          span.material-icons.menu-icons format_shapes
-          span.item-name.py-0 Shape
-        b-dropdown-item(href='#')
-          span.material-icons.menu-icons format_shapes
-          span.item-name.py-0 Table
-        b-dropdown-item(href='#')
-          span.material-icons.menu-icons insert_chart_outlined
-          span.item-name.py-0 Chart
-        b-dropdown-item(href='#')
-          span.material-icons.menu-icons format_shapes
-          span.item-name.py-0 Diagram
-        b-dropdown-item(href='#')
-          span.material-icons.menu-icons format_shapes
-          span.item-name.py-0 Word Art
-        b-dropdown-item(href='#')
-          span.material-icons.menu-icons format_shapes
-          span.item-name.py-0 Line
-        b-dropdown-divider
-        b-dropdown-item(href='#')
-          span.material-icons.menu-icons format_shapes
-          span.item-name.py-0 Spacial Character
-        b-dropdown-divider
-        b-dropdown-item(href='#')
-          span.material-icons.menu-icons link
-          span.item-name.py-0 Link
-          span.shortcut {{ controlKey }}+K
-        b-dropdown-item(href='#')
-          i.material-icons.menu-icons.ten9-font.ten9-icon-insert-comment
-          span.item-name.py-0 Comment
-          span.shortcut {{ controlKey }}+Alt+M
+      //- b-nav-item-dropdown#menu-padding.extra(text='Insert', @show='disabledHover')
+      //-   b-dropdown#image-dropright(
+      //-     dropright='',
+      //-     text='Image',
+      //-     block,
+      //-     @mouseover.native='showSubmenu("image-dropright")',
+      //-     @mouseleave.native='hide("image-dropright")'
+      //-   )
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("horizontal")')
+      //-       span.material-icons.menu-icons file_upload
+      //-       span.item-name Upload from computer
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
+      //-       span.material-icons.menu-icons search
+      //-       span.item-name Search For Web
+      //-     b-dropdown-divider
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
+      //-       span.material-icons.menu-icons add_to_drive
+      //-       span.item-name Drive
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
+      //-       span.material-icons.menu-icons filter_vintage
+      //-       span.item-name Photos
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
+      //-       span.material-icons.menu-icons insert_link
+      //-       span.item-name By Url
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
+      //-       span.material-icons.menu-icons photo_camera
+      //-       span.item-name Camera
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Text Box
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Shape
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Table
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons insert_chart_outlined
+      //-     span.item-name.py-0 Chart
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Diagram
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Word Art
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Line
+      //-   b-dropdown-divider
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Spacial Character
+      //-   b-dropdown-divider
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons link
+      //-     span.item-name.py-0 Link
+      //-     span.shortcut {{ controlKey }}+K
+      //-   b-dropdown-item(href='#')
+      //-     i.material-icons.menu-icons.ten9-font.ten9-icon-insert-comment
+      //-     span.item-name.py-0 Comment
+      //-     span.shortcut {{ controlKey }}+Alt+M
 </template>

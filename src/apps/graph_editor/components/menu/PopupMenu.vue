@@ -268,66 +268,66 @@ div
     v-show='visible',
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
-    //- b-list-group-item.none-border(
-    //-   @click='doAction("undo")',
-    //-   v-show='editorUi.actions.get("undo").isEnabled()'
-    //- )
-    //-   span.material-icons.menu-icons undo
-    //-   span.item-name Undo
-    //-   span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}Z
-    //- b-list-group-item.none-border(
-    //-   @click='doAction("redo")',
-    //-   v-show='editorUi.actions.get("redo").isEnabled()'
-    //- )
-    //-   span.material-icons.menu-icons redo
-    //-   span.item-name Redo
-    //-   span.shortcut {{ controlKey }}+Shift+Z
-    //- b-list-group-item.none-border(@click='doAction("pasteHere")')
+    b-list-group-item.none-border(
+      @click='doAction("undo")',
+      v-show='editorUi.actions.get("undo").isEnabled()'
+    )
+      span.material-icons.menu-icons undo
+      span.item-name Undo
+      span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}Z
+    b-list-group-item.none-border(
+      @click='doAction("redo")',
+      v-show='editorUi.actions.get("redo").isEnabled()'
+    )
+      span.material-icons.menu-icons redo
+      span.item-name Redo
+      span.shortcut {{ controlKey }}+Shift+Z
+    b-list-group-item.none-border(@click='doAction("pasteHere")')
+      span.material-icons.menu-icons content_paste
+      span.item-name Paste Here
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
+      span.item-name Clear Default Style
+      span.shortcut {{ controlKey }}+Shift+R
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-list-group-item.none-border(@click='doAction("selectVertices")')
+      span.item-name Select Vertices
+      span.shortcut {{ controlKey }}+Shift+I
+    b-list-group-item.none-border(@click='doAction("selectEdges")')
+      span.item-name Select Edges
+      span.shortcut {{ controlKey }}+Shift+E
+    b-list-group-item.none-border(@click='doAction("selectAll")')
+      span.item-name Select All
+      span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}A
+    //- b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
+    //-   span.material-icons.menu-icons content_cut
+    //-   span.item-name Cut
+    //-   span.shortcut {{ controlKey }}+X
+    //- b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
+    //-   span.material-icons.menu-icons content_copy
+    //-   span.item-name Copy
+    //-   span.shortcut {{ controlKey }}+C
+    //- b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
     //-   span.material-icons.menu-icons content_paste
-    //-   span.item-name Paste Here
+    //-   span.item-name Paste
+    //-   span.shortcut {{ controlKey }}+V
+    //- b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
+    //-   span.material-icons.menu-icons undo
+    //-   span.item-name Paste without formating
+    //-   span.shortcut {{ controlKey }}+Shift+V
+    //- b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
+    //-   span.item-name Delete
     //- hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
     //- b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-    //-   span.item-name Clear Default Style
-    //-   span.shortcut {{ controlKey }}+Shift+R
+    //-   span.item-name Background
     //- hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
-    //- b-list-group-item.none-border(@click='doAction("selectVertices")')
-    //-   span.item-name Select Vertices
-    //-   span.shortcut {{ controlKey }}+Shift+I
-    //- b-list-group-item.none-border(@click='doAction("selectEdges")')
-    //-   span.item-name Select Edges
-    //-   span.shortcut {{ controlKey }}+Shift+E
-    //- b-list-group-item.none-border(@click='doAction("selectAll")')
-    //-   span.item-name Select All
-    //-   span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}A
-    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.material-icons.menu-icons content_cut
-      span.item-name Cut
-      span.shortcut {{ controlKey }}+X
-    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.material-icons.menu-icons content_copy
-      span.item-name Copy
-      span.shortcut {{ controlKey }}+C
-    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.material-icons.menu-icons content_paste
-      span.item-name Paste
-      span.shortcut {{ controlKey }}+V
-    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.material-icons.menu-icons undo
-      span.item-name Paste without formating
-      span.shortcut {{ controlKey }}+Shift+V
-    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.item-name Delete
-    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
-    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.item-name Background
-    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
-    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      i.material-icons.menu-icons.ten9-font.ten9-icon-insert-comment
-      span.item-name Comment
-      span.shortcut {{ controlKey }}+Alt+M
-    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
-    b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
-      span.item-name Guides
+    //- b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
+    //-   i.material-icons.menu-icons.ten9-font.ten9-icon-insert-comment
+    //-   span.item-name Comment
+    //-   span.shortcut {{ controlKey }}+Alt+M
+    //- hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    //- b-list-group-item.none-border(@click='doAction("clearDefaultStyle")')
+    //-   span.item-name Guides
   b-list-group.w-22.position-absolute.cursor-pointer(
     v-show='cellSelectedVisible',
     v-bind:style='{ left: left + "px", top: top + "px" }'
