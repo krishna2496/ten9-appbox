@@ -7602,3 +7602,6 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 .google-sheet-background .material-icons{
     color: #188038 !important;
 }
+.luckysheet-toolbar-button-hover .luckysheet-iconfont-xiayige {
+    color: #188038 !important;
+}

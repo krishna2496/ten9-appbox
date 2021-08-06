@@ -187,9 +187,21 @@ const menuButton = {
         $(".luckysheet-toolbar-menu-button").removeClass("luckysheet-toolbar-button-hover");
         $(".luckysheet-toolbar-button").removeClass("google-sheet-background");
         $(".luckysheet-toolbar-menu-button").removeClass("google-sheet-background");
-        if ( id == '#luckysheet-icon-undo' || id == '#luckysheet-icon-redo' || id == '#luckysheet-icon-text-color-menu') {
-            $(id).addClass("google-sheet-background");
-        } else {
+        
+        $("#luckysheet-icon-bold").removeClass("luckysheet-toolbar-button-hover");
+        $("#luckysheet-icon-italic").removeClass("luckysheet-toolbar-button-hover");
+        $("#luckysheet-icon-strikethrough").removeClass("luckysheet-toolbar-button-hover");
+
+       
+        if ( id == "#luckysheet-icon-fmt-other" || id == '#luckysheet-icon-paintformat' ||
+            id == '#luckysheet-icon-zoom' || id == "#luckysheet-icon-font-family" ||
+            id == '#luckysheet-icon-font-size' || id == "#luckysheet-icon-text-color-menu" ||
+            id == '#luckysheet-icon-border-menu' || id == '#luckysheet-icon-merge-menu' ||
+            id == '#luckysheet-icon-align-menu' || id == '#luckysheet-icon-valign-menu' || 
+            id == '#luckysheet-icon-textwrap-menu' || id == '#luckysheet-icon-rotation-menu' ||
+            id == '#luckysheet-icon-autofilter' || id == '#luckysheet-icon-function-menu' || 
+            id == '#luckysheet-icon-cell-color-menu'
+        ) {
             $(id).addClass("luckysheet-toolbar-button-hover");
         }
     },
@@ -756,12 +768,12 @@ const menuButton = {
             _this.updateFormat(d, "fc", color);
         });
 
-        $("#luckysheet-icon-text-color-menu").mousedown(function(e){
-            
-            hideMenuByCancel(e);
-            e.stopPropagation();
-        }).click(function(){
+        $("#luckysheet-icon-text-color-menu").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-text-color-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-text-color-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-text-color-menu");
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#"+menuButtonId);
@@ -906,6 +918,10 @@ const menuButton = {
         
         $("#luckysheet-icon-cell-color-menu").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-cell-color-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-cell-color-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-cell-color-menu");
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1042,21 +1058,13 @@ const menuButton = {
 
         //字体大小
         let luckysheet_fs_setTimeout = null;
-        $("#luckysheet-icon-font-size").mousedown(function(e){
+        $("#luckysheet-icon-font-size").click(function(){
             /* TEN9 : Background changes  */
-            _this.changeBackgroundColor("#luckysheet-icon-font-size");
-            if (parseInt($("#luckysheet-input-box").css("top")) > 0){
-                let w = window.getSelection();
-                if(w.type!="None"){
-                    let range = w.getRangeAt(0);
-                    if(!range.collapsed){
-                        Store.inlineStringEditRange = range.cloneRange();
-                    }
-                }
+            if($("#luckysheet-icon-font-size").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-font-size").removeClass("luckysheet-toolbar-button-hover");
+                return false;
             }
-            hideMenuByCancel(e);
-            e.stopPropagation();
-        }).click(function(){
+            _this.changeBackgroundColor("#luckysheet-icon-font-size");
             
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -1214,7 +1222,12 @@ const menuButton = {
 
         $("#luckysheet-icon-border-menu").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-border-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-border-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-border-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
 
@@ -1473,8 +1486,6 @@ const menuButton = {
 
         //合并单元格
         $("#luckysheet-icon-merge-button").click(function(){
-            /* TEN9 : Background changes  */
-            _this.changeBackgroundColor("#luckysheet-icon-merge-button");
             if(!checkProtectionNotEnable(Store.currentSheetIndex)){
                 return;
             }
@@ -1522,7 +1533,12 @@ const menuButton = {
 
         $("#luckysheet-icon-merge-menu").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-merge-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-merge-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-merge-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
 
@@ -1612,7 +1628,12 @@ const menuButton = {
         //水平对齐
         $("#luckysheet-icon-align").click(function(){
             /* TEN9 : Background changes  */
+            if ($("#luckysheet-icon-align").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-align").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-align");
+            
         	let itemvalue = $("#luckysheet-icon-align").attr("type");
         	if(itemvalue == null){
         		itemvalue = "left";
@@ -1625,7 +1646,12 @@ const menuButton = {
         
         $("#luckysheet-icon-align-menu").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-align-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-align-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-align-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
 
@@ -1710,7 +1736,12 @@ const menuButton = {
        
         $("#luckysheet-icon-valign-menu").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-valign-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-valign-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-valign-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             const _locale = locale();
@@ -1783,7 +1814,12 @@ const menuButton = {
         
         $("#luckysheet-icon-textwrap-menu").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-textwrap-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-textwrap-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-textwrap-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             
@@ -1853,7 +1889,12 @@ const menuButton = {
         //文本旋转
         $("#luckysheet-icon-rotation-menu").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-rotation-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-rotation-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-rotation-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             
@@ -1946,6 +1987,10 @@ const menuButton = {
         //冻结行列
         $("#luckysheet-icon-freezen-menu").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-freezen-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-freezen-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-freezen-menu");
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
@@ -2220,7 +2265,12 @@ const menuButton = {
         //过滤和排序
         $("#luckysheet-icon-autofilter").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-autofilter").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-autofilter").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-autofilter");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
             
@@ -2424,7 +2474,12 @@ const menuButton = {
         });
         $("#luckysheet-icon-function-menu").click(function(){
             /* TEN9 : Background changes  */
+            if($("#luckysheet-icon-function-menu").hasClass("luckysheet-toolbar-button-hover")) {
+                $("#luckysheet-icon-function-menu").removeClass("luckysheet-toolbar-button-hover");
+                return false;
+            }
             _this.changeBackgroundColor("#luckysheet-icon-function-menu");
+            
             let menuButtonId = $(this).attr("id") + "-menuButton";
             let $menuButton = $("#" + menuButtonId);
 
