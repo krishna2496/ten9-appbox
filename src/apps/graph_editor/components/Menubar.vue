@@ -298,7 +298,7 @@ export default defineComponent({
     b-navbar-nav.text-hover
       b-nav-item-dropdown#menu-padding(text='File', @show='disabledHover')
         b-dropdown-item(@click='doAction("print")')
-          span.material-icons.print-icon print
+          span.material-icons.menu-icons.print-icon print
           span.item-name Print
           span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}P
       b-nav-item-dropdown#menu-padding(text='Edit', @show='disabledHover')
@@ -307,7 +307,7 @@ export default defineComponent({
           @click='doAction("undo")',
           :disabled='!editorUi.actions.get("undo").isEnabled()'
         )
-          span.material-icons undo
+          span.material-icons.menu-icons undo
           span.item-name Undo
           span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}Z
         b-dropdown-item(
@@ -315,26 +315,25 @@ export default defineComponent({
           @click='doAction("redo")',
           :disabled='!editorUi.actions.get("redo").isEnabled()'
         )
-          span.material-icons redo
+          span.material-icons.menu-icons redo
           span.item-name Redo
           span.shortcut {{ controlKey }}+Shift+Z
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("cut")', :disabled='!isSomethingSelected')
-          span.material-icons content_cut
+          span.material-icons.menu-icons content_cut
           span.item-name Cut
           span.shortcut.pt2-0.px-3 {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}X
         b-dropdown-item(href='#', @click='doAction("copy")', :disabled='!isSomethingSelected')
-          span.material-icons content_copy
+          span.material-icons.menu-icons content_copy
           span.item-name Copy
           span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}C
         b-dropdown-item(href='#', @click='doAction("paste")')
-          span.material-icons content_paste
+          span.material-icons.menu-icons content_paste
           span.item-name Paste
           span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}V
         b-dropdown-item(href='#', @click='doAction("delete")', :disabled='!isSomethingSelected')
-          span.material-icons delete
           span.item-name Delete
-          span.shortcut.icon-color Delete
+          span.shortcut Delete
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("duplicate")', :disabled='!isSomethingSelected')
           span.item-name Duplicate
@@ -353,26 +352,26 @@ export default defineComponent({
           :disabled='!isSomethingSelected'
         )
           span.item-name Edit Tooltip...
-          span.shortcut.icon-color Alt+Shift+T
+          span.shortcut Alt+Shift+T
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("editStyle")', :disabled='!isSomethingSelected')
           span.item-name Edit Style...
           span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}E
         b-dropdown-item(href='#', @click='doAction("edit")', :disabled='!isSomethingSelected')
           span.item-name Edit
-          span.shortcut.icon-color F2/Enter
+          span.shortcut F2/Enter
         b-dropdown-item(href='#', @click='doAction("editLink")', :disabled='!isSomethingSelected')
           span.item-name Edit link...
-          span.shortcut.icon-color Alt+Shift+L
+          span.shortcut Alt+Shift+L
         b-dropdown-item(href='#', @click='doAction("openLink")', :disabled='!isSomethingSelected')
           span.item-name Open Link
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("selectVertices")')
           span.item-name Select Vertices
-          span.shortcut.icon-color Alt+Shift+I
+          span.shortcut Alt+Shift+I
         b-dropdown-item(href='#', @click='doAction("selectEdges")')
           span.item-name Select Edges
-          span.shortcut.icon-color Alt+Shift+E
+          span.shortcut Alt+Shift+E
         b-dropdown-item(href='#', @click='doAction("selectAll")')
           span.item-name Select All
           span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}A
@@ -388,58 +387,58 @@ export default defineComponent({
           span.item-name Lock/Unlock
       b-nav-item-dropdown#menu-padding.xl-large-dropdown(text='View', @show='disabledHover')
         b-dropdown-item(href='#', @click='doAction("formatPanel")')
-          span.material-icons(v-show='checkboxes.formatPanel') done
+          span.material-icons.menu-icons(v-show='checkboxes.formatPanel') done
           span.item-name Format Panel
           span.shortcut {{ controlKey }}+Shift+P
         b-dropdown-item(href='#', @click='doAction("outline")')
-          span.material-icons(v-show='checkboxes.outline') done
+          span.material-icons.menu-icons(v-show='checkboxes.outline') done
           span.item-name Outline
           span.shortcut {{ controlKey }}+Shift+O
         b-dropdown-item(href='#', @click='doAction("layers")')
-          span.material-icons(v-show='checkboxes.layers') done
+          span.material-icons.menu-icons(v-show='checkboxes.layers') done
           span.item-name Layers
           span.shortcut {{ controlKey }}+Shift+L
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("colors")')
-          span.material-icons(v-show='checkboxes.color') done
+          span.material-icons.menu-icons(v-show='checkboxes.color') done
           span.item-name Colors
         b-dropdown-item(href='#', @click='doAction("scratchpad")')
-          span.material-icons(v-show='checkboxes.scratchpad') done
+          span.material-icons.menu-icons(v-show='checkboxes.scratchpad') done
           span.item-name Scratchpad
         b-dropdown-item(href='#', @click='fireEvent("moreShapes")')
           span.item-name Shapes...
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("pageView")')
-          span.material-icons(v-show='checkboxes.pageView') done
+          span.material-icons.menu-icons(v-show='checkboxes.pageView') done
           span.item-name Page View
         b-dropdown-item(href='#', @click='doAction("pageScale")')
           span.item-name Page Scale...
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("scrollbars")')
-          span.material-icons(v-show='checkboxes.scrollbars') done
+          span.material-icons.menu-icons(v-show='checkboxes.scrollbars') done
           span.item-name Scrollbars
         b-dropdown-item(href='#', @click='doAction("tooltips")')
           span.item-name Tooltip
         b-dropdown-item(href='#', @click='doAction("ruler")')
-          span.material-icons(v-show='checkboxes.ruler') done
+          span.material-icons.menu-icons(v-show='checkboxes.ruler') done
           span.item-name Ruler
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("grid")')
-          span.material-icons(v-show='checkboxes.grid') done
+          span.material-icons.menu-icons(v-show='checkboxes.grid') done
           span.item-name Grid
           span.shortcut {{ controlKey }}+Shift+G
         b-dropdown-item(href='#', @click='doAction("guides")')
-          span.material-icons(v-show='checkboxes.guides') done
+          span.material-icons.menu-icons(v-show='checkboxes.guides') done
           span.item-name Guides
         b-dropdown-item(href='#', @click='doAction("shadow")', :disabled='!isSomethingSelected')
-          .pl-35 Shadow
+          .item-name Shadow
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("connectionArrows")')
-          span.material-icons(v-show='checkboxes.connectionArrow') done
+          span.material-icons.menu-icons(v-show='checkboxes.connectionArrow') done
           span.item-name Connection Arrow
           span.shortcut Alt+Shift+A
         b-dropdown-item(href='#', @click='doAction("connectionPoints")')
-          span.material-icons(v-show='checkboxes.connectionPoints') done
+          span.material-icons.menu-icons(v-show='checkboxes.connectionPoints') done
           span.item-name Connection Points
           span.shortcut Alt+Shift+P
         b-dropdown-divider.no-hover
@@ -447,11 +446,11 @@ export default defineComponent({
           span.item-name Reset View
           span.shortcut Enter/Home
         b-dropdown-item(href='#', @click='doAction("zoomIn")')
-          span.material-icons zoom_in
+          span.material-icons.menu-icons zoom_in
           span.item-name Zoom In
           span.shortcut {{ controlKey }}+(Numpad)
         b-dropdown-item(href='#', @click='doAction("zoomOut")')
-          span.material-icons zoom_out
+          span.material-icons.menu-icons zoom_out
           span.item-name Zoom Out
           span.shortcut {{ controlKey }}-(Numpad)
         b-dropdown-divider.no-hover
@@ -459,13 +458,13 @@ export default defineComponent({
           span.item-name Fullscreen
       b-nav-item-dropdown#menu-padding.large-dropdown(text='Arrange', @show='disabledHover')
         b-dropdown-item(href='#', @click='doAction("toFront")', :disabled='!isSomethingSelected')
-          span.material-icons flip_to_front
+          span.material-icons.menu-icons flip_to_front
           span.item-name To Front
-          span.shortcut.icon-color Alt+Shift+F
+          span.shortcut Alt+Shift+F
         b-dropdown-item(href='#', @click='doAction("toBack")', :disabled='!isSomethingSelected')
-          span.material-icons flip_to_back
+          span.material-icons.menu-icons flip_to_back
           span.item-name To Back
-          span.shortcut.icon-color Alt+Shift+B
+          span.shortcut Alt+Shift+B
         b-dropdown-item(
           href='#',
           @click='doAction("bringForward")',
@@ -495,7 +494,7 @@ export default defineComponent({
           b-dropdown-item(href='#', @click='fireEvent("openRotation")')
             span.item-name Rotation
         b-dropdown-item(href='#', @click='doAction("turn")', :disabled='!isSomethingSelected')
-          span.material-icons rotate_right
+          span.material-icons.menu-icons rotate_right
           span.item-name Rotate shape only by 90/ Reverse
           span.shortcut {{ controlKey }}+R
         b-dropdown-divider.no-hover
@@ -620,7 +619,7 @@ export default defineComponent({
           :disabled='!isSomethingSelected'
         )
           span.item-name Clear waypoints
-          span.shortcut.icon-color.py-0.px-3 Alt+Shift+C
+          span.shortcut.py-0.px-3 Alt+Shift+C
         b-dropdown-item.pb-1(
           href='#',
           @click='doAction("autosize")',
@@ -640,65 +639,65 @@ export default defineComponent({
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("editDiagram")')
           span.item-name Edit Diagram...
-      b-nav-item-dropdown#menu-padding.extra(text='Insert', @show='disabledHover')
-        b-dropdown#image-dropright(
-          dropright='',
-          text='Image',
-          block,
-          @mouseover.native='showSubmenu("image-dropright")',
-          @mouseleave.native='hide("image-dropright")'
-        )
-          b-dropdown-item(href='#', @click='horizontalFlow("horizontal")')
-            span.material-icons file_upload
-            span.item-name Upload from computer
-          b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span.material-icons search
-            span.item-name Search For Web
-          b-dropdown-divider
-          b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span.material-icons add_to_drive
-            span.item-name Drive
-          b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span.material-icons filter_vintage
-            span.item-name Photos
-          b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span.material-icons insert_link
-            span.item-name By Url
-          b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
-            span.material-icons photo_camera
-            span.item-name Camera
-        b-dropdown-item(href='#')
-          span.material-icons format_shapes
-          span.item-name.py-0 Text Box
-        b-dropdown-item(href='#')
-          span.material-icons format_shapes
-          span.item-name.py-0 Shape
-        b-dropdown-item(href='#')
-          span.material-icons format_shapes
-          span.item-name.py-0 Table
-        b-dropdown-item(href='#')
-          span.material-icons format_shapes
-          span.item-name.py-0 Chart
-        b-dropdown-item(href='#')
-          span.material-icons format_shapes
-          span.item-name.py-0 Diagram
-        b-dropdown-item(href='#')
-          span.material-icons format_shapes
-          span.item-name.py-0 Word Art
-        b-dropdown-item(href='#')
-          span.material-icons format_shapes
-          span.item-name.py-0 Line
-        b-dropdown-divider
-        b-dropdown-item(href='#')
-          span.material-icons format_shapes
-          span.item-name.py-0 Spacial Character
-        b-dropdown-divider
-        b-dropdown-item(href='#')
-          span.material-icons format_shapes
-          span.item-name.py-0 Link
-          span.shortcut Ctrl+K
-        b-dropdown-item(href='#')
-          span.material-icons format_shapes
-          span.item-name.py-0 Comment
-          span.shortcut Ctrl+Alt+M
+      //- b-nav-item-dropdown#menu-padding.extra(text='Insert', @show='disabledHover')
+      //-   b-dropdown#image-dropright(
+      //-     dropright='',
+      //-     text='Image',
+      //-     block,
+      //-     @mouseover.native='showSubmenu("image-dropright")',
+      //-     @mouseleave.native='hide("image-dropright")'
+      //-   )
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("horizontal")')
+      //-       span.material-icons.menu-icons file_upload
+      //-       span.item-name Upload from computer
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
+      //-       span.material-icons.menu-icons search
+      //-       span.item-name Search For Web
+      //-     b-dropdown-divider
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
+      //-       span.material-icons.menu-icons add_to_drive
+      //-       span.item-name Drive
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
+      //-       span.material-icons.menu-icons filter_vintage
+      //-       span.item-name Photos
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
+      //-       span.material-icons.menu-icons insert_link
+      //-       span.item-name By Url
+      //-     b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
+      //-       span.material-icons.menu-icons photo_camera
+      //-       span.item-name Camera
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Text Box
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Shape
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Table
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons insert_chart_outlined
+      //-     span.item-name.py-0 Chart
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Diagram
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Word Art
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Line
+      //-   b-dropdown-divider
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons format_shapes
+      //-     span.item-name.py-0 Spacial Character
+      //-   b-dropdown-divider
+      //-   b-dropdown-item(href='#')
+      //-     span.material-icons.menu-icons link
+      //-     span.item-name.py-0 Link
+      //-     span.shortcut {{ controlKey }}+K
+      //-   b-dropdown-item(href='#')
+      //-     i.material-icons.menu-icons.ten9-font.ten9-icon-insert-comment
+      //-     span.item-name.py-0 Comment
+      //-     span.shortcut {{ controlKey }}+Alt+M
 </template>
