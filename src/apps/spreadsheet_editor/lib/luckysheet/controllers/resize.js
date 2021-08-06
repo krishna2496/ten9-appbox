@@ -65,8 +65,8 @@ export default function luckysheetsizeauto(isRefreshCanvas=true) {
         formulaEle.style.display = 'block';
         Store.calculatebarHeight = formulaEle.offsetHeight;
     }
-
-    $("#" + Store.container).find(".luckysheet-grid-container").css("top", Store.toolbarHeight + Store.infobarHeight + Store.calculatebarHeight);
+    /* TEN9 : Extra 4px height added for better layout */
+    $("#" + Store.container).find(".luckysheet-grid-container").css("top", Store.toolbarHeight + Store.infobarHeight + Store.calculatebarHeight + 4);
 
     gridW = $("#" + Store.container).width();
 
