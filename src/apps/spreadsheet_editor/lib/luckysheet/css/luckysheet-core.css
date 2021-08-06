@@ -1177,8 +1177,7 @@ div.luckysheet-sheets-m:hover {
     /* border-top-color: #aaa; */
     /* border-width: 0 1px 1px 1px; */
     color: #676464;
-    /* TEN9 : width changes for better layout */
-    /* min-width: 30px; */
+    min-width: 30px;
     top: 0px;
     position: relative;
     /* border-radius: 0 0 2px 2px; */
