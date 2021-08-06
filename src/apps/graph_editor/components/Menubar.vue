@@ -332,7 +332,6 @@ export default defineComponent({
           span.item-name Paste
           span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}V
         b-dropdown-item(href='#', @click='doAction("delete")', :disabled='!isSomethingSelected')
-          span.material-icons.menu-icons delete
           span.item-name Delete
           span.shortcut Delete
         b-dropdown-divider.no-hover

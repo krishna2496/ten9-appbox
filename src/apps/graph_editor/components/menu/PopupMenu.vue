@@ -333,7 +333,7 @@ div
     v-bind:style='{ left: left + "px", top: top + "px" }'
   )
     b-list-group-item.none-border(@click='doAction("delete")')
-      span.material-icons.menu-icons delete
+      //- span.material-icons.menu-icons delete
       span.item-name Delete
       span.shortcut Delete
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
