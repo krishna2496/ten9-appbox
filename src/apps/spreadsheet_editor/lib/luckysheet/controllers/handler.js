@@ -79,6 +79,7 @@ export default function luckysheetHandler() {
         if (!(evt.srcElement.classList.contains('luckysheet-toolbar-textinput') || 
         evt.srcElement.classList.contains('luckysheet-inline-block') || 
         evt.srcElement.classList.contains('material-icons') ||
+        evt.srcElement.classList.contains('ten9-icon-wrap-clip') ||
         evt.srcElement.classList.contains('ten9-font'))) {
             $(".luckysheet-toolbar-button").removeClass("luckysheet-toolbar-button-hover");
             $(".luckysheet-toolbar-select").removeClass("luckysheet-toolbar-button-hover");
@@ -90,6 +91,7 @@ export default function luckysheetHandler() {
             $("#luckysheet-icon-strikethrough").removeClass("luckysheet-toolbar-button-hover");
         }
       });
+
     const os = browser.detectOS(), isMobile = browser.mobilecheck();
 
     //移动端
