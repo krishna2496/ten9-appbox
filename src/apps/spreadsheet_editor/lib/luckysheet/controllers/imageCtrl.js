@@ -8,6 +8,7 @@ import { setluckysheet_scroll_status } from '../methods/set';
 import { replaceHtml } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
+import luckysheetConfigsetting from './luckysheetConfigsetting';
 
 const imageCtrl = {
     imgItem: {
@@ -339,7 +340,10 @@ const imageCtrl = {
         //image active
         $("#luckysheet-image-showBoxs").off("mousedown.active").on("mousedown.active", ".luckysheet-modal-dialog-image", function(e) {
 
-
+            /* TEN9 : Return when edit mode is off */
+            if (luckysheetConfigsetting.editMode) {
+                return;
+            }
             if(!checkProtectionAuthorityNormal(Store.currentSheetIndex, "editObjects",false)){
                 return;
             }
