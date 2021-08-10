@@ -866,7 +866,8 @@
     left: 0;
     position: absolute;
     right: 0;
-    top: 6px;
+    /*  TEN9 :  top style removed for better layout */
+    /* top: 6px; */
     resize: none;
     /* border: 1px #b9b9b9 solid; */
     /* TEN9 : font family sans, sans-serif removed */
@@ -874,7 +875,9 @@
     font-size: 14px;
     line-height: 14px;
     background-color: #ffffff;
-    padding: 2px 5px;
+    /* TEN9 : padding changes for better layout 
+    padding: 2px 5px; */
+    padding: 5px 5px;
 }
 
 .luckysheet-helpbox-cell-input {
@@ -914,7 +917,7 @@
 
 .luckysheet-wa-calculate-size {
     position: absolute;
-    height: 3px;
+    height: 1px;
     width: 100%;
     left: 0px;
     bottom: 0px;
@@ -922,7 +925,8 @@
 }
 
 .luckysheet-wa-calculate-size:hover {
-    background: #5e5e5e;
+    /* background: #5e5e5e; */
+    height: 1px;
     cursor: ns-resize;
 }
 
