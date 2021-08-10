@@ -1651,9 +1651,12 @@ export default function luckysheetHandler() {
             }
 
             Store.calculatebarHeight = mpx;
+            // console.log(Store.calculatebarHeight);
             $("#luckysheet-wa-calculate").css("height", Store.calculatebarHeight - 2);
-            $("#luckysheet-wa-calculate-size").css({ "background": "#5e5e5e", "cursor": "ns-resize" });
-
+            /* TEN9 : Background color changes 
+            $("#luckysheet-wa-calculate-size").css({ "background": "#5e5e5e", "cursor": "ns-resize" });*/
+            $("#luckysheet-wa-calculate-size").css({ "background": "#e5e5e5","cursor": "ns-resize" });
+            
             clearTimeout(formula.functionResizeTimeout);
             formula.functionResizeTimeout = setTimeout(function () {
                 luckysheetsizeauto();
