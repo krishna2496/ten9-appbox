@@ -792,6 +792,8 @@ export function keyboardInitial(){
             else if (kcode == keycode.ESC) {
                 if(menuButton.luckysheetPaintModelOn){
                     menuButton.cancelPaintModel();
+                    /* TEN9 : Removed green color from background on ESC */
+                    $(".luckysheet-toolbar-button").removeClass("luckysheet-toolbar-button-hover");
                 }
                 else{
                     cleargridelement(event);
