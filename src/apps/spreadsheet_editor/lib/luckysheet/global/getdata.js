@@ -495,17 +495,23 @@ export function checkstatusByCell(cell, a){
     }
     else if(a == "vt"){//默认垂直居中
         if(foucsStatus == null){
-            foucsStatus = "0";
+            // TEN9 : default focus status changes to match google sheet
+            //foucsStatus = "0"
+            foucsStatus = "2";
         }
         else{
             foucsStatus = foucsStatus[a];
             if(foucsStatus == null){
-                foucsStatus = "0";
+                // TEN9 : default focus status changes to match google sheet
+                //foucsStatus = "0"
+                foucsStatus = "2";
             }
         }
 
         if(["0", "1", "2"].indexOf(foucsStatus.toString()) == -1){
-            foucsStatus = "0";
+            // TEN9 : default focus status changes to match google sheet
+            //foucsStatus = "0"
+            foucsStatus = "2";
         }
     }
     else if(a == "ct"){

@@ -21,18 +21,22 @@
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 5px;
-  min-width: 200px;
+  min-width: 250px;
   z-index: 10;
 }
 
 .list-group-item {
-  padding: 5px 10px 5px 35px;
+  padding: 5px 0 6px;
   font-size: 14px;
   font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
 }
 
 .list-group-item:hover {
-  background: #ececec;
+  background: #f1f3f4;
+}
+
+.list-group-item:focus {
+  background: #e8eaed;
 }
 
 .pl-20 {
@@ -49,9 +53,9 @@ hr {
 }
 
 .popup-dropdown-divider {
-  margin-top: 5px;
+  margin-top: 6px;
   margin-left: 35px;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .list-group-item:first-child {
@@ -64,10 +68,4 @@ hr {
 
 .tp-5 {
   padding-top: 5px;
-}
-
-.none-border .popup-icon {
-  position: absolute;
-  left: 10px;
-  font-size: 16px;
 }
