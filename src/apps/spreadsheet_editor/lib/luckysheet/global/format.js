@@ -1432,6 +1432,9 @@ var make_ssf = function make_ssf(SSF) {
                 break;
         }
 
+        // TEN9: No Chinese number formatting for now
+        return v;
+
         //new runze 增加万 亿 格式  
         //注："w":2万2500  "w0":2万2500  "w0.0":2万2500.2  "w0.00":2万2500.23......自定义精确度
         var reg = /^(w|W)((0?)|(0\.0+))$/;
