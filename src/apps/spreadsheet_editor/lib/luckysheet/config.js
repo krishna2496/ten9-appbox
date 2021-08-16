@@ -55,7 +55,9 @@ export default {
     forceCalculation:false,//强制刷新公式，公式较多会有性能问题，慎用
     rowHeaderWidth: 46,
     columnHeaderHeight: 20,
-    defaultColWidth:73,
+    //TEN9 : Default col width changes 
+    //defaultColWidth: 73,
+    defaultColWidth:100,
     defaultRowHeight:19,
     defaultFontSize:10,
     limitSheetNameLength:true,    //是否限制工作表名的长度
