@@ -86,3 +86,16 @@ hr {
 .tp-5 {
   padding-top: 5px;
 }
+
+#line-dropright button {
+  padding-left: 35px;
+  border: 0;
+}
+
+#draw-app #line-dropright li {
+  padding: 0;
+}
+
+#draw-app #line-dropright .dropdown-menu {
+  min-width: 50px;
+}

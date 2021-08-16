@@ -17,8 +17,10 @@
 <script lang="ts">
 import {
   mxClient,
+  //mxEdgeHandler,
   mxEventObject,
   mxEventSource,
+  //mxMouseEvent,
   mxPoint,
   mxResources,
   mxUtils,
@@ -29,6 +31,14 @@ import VClamp from 'vue-clamp';
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
 interface CustomEvent {
   getProperty?(propName: string): mxPoint | mxPoint;
+}
+
+interface ListElementStyle {
+  display: string;
+}
+
+interface ListElement extends Element {
+  style?: ListElementStyle;
 }
 
 import '../../styles/popupmenu.scss';
@@ -64,6 +74,12 @@ export default defineComponent({
     const pageMenu = ref<boolean>(false);
 
     const pages = ref(['Page-1']);
+
+    const imageSelected = ref<boolean>(false);
+
+    const isWaypoint = ref<boolean>(false);
+
+    const isLine = ref<boolean>(false);
 
     function setPopupPosition() {
       const coordinates = graphUtils.getDocumentContainerRect();
@@ -176,9 +192,55 @@ export default defineComponent({
       return props.editorUi.getCurrentPage() == props.editorUi.pages[pageNumber];
     }
 
+    function editImnage() {
+      const imageURL = graph.getSelectionCell().style.substring(
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+        graph.getSelectionCell().style.lastIndexOf('image=') +
+          // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+          6,
+        graph.getSelectionCell().style.lastIndexOf(';'),
+      );
+      props.editorUi.fireEvent(new mxEventObject('editImage', 'image', imageURL));
+    }
+
+    function checkWayPoints() {
+      // const handler = graph.selectionCellsHandler.getHandler(graph.getSelectionCell());
+      // if (handler instanceof mxEdgeHandler && handler.bends != null && handler.bends.length > 2) {
+      //   const index = handler.getHandleForEvent(
+      //     graph.updateMouseEvent(new mxMouseEvent(props.editorUi.editor.graph.lastEvent)),
+      //   );
+      //   // Configures removeWaypoint action before execution
+      //   // Using trigger parameter is cleaner but have to find waypoint here anyway.
+      //   const rmWaypointAction = props.editorUi.actions.get('removeWaypoint');
+      //   rmWaypointAction.handler = handler;
+      //   rmWaypointAction.index = index;
+      //   isWaypoint.value = index > 0 && index < handler.bends.length - 1;
+      // }
+    }
+
+    function showSubmenu(id: string) {
+      // TODO: Figure out how we are able to show sub menu on mouse hover
+      const [_, ele] = (document.getElementById(id)?.children as unknown) as ListElement[];
+      if (ele) {
+        ele.style.display = 'block';
+      }
+    }
+
+    function hide(id: string) {
+      // TODO: Figure out how we are able to hide sub menu on mouse hover
+      const [_, ele] = (document.getElementById(id)?.children as unknown) as ListElement[];
+      if (ele) {
+        ele.style.display = 'none';
+      }
+    }
+
     watch(
       () => cellSelectedVisible.value,
       (val) => {
+        console.log(graph.getSelectionCell().style);
+        imageSelected.value = graph.getSelectionCell().style.includes('shape=image;');
+        checkWayPoints();
+        isLine.value = graph.getSelectionCell().style.includes('endArrow=');
         if (val) {
           pagePopupVisible.value = false;
           pageMenu.value = false;
@@ -236,13 +298,19 @@ export default defineComponent({
       cellSelectedVisible,
       close,
       controlKey,
+      checkWayPoints,
       deletePage,
       doAction,
       duplicatePage,
+      editImnage,
       graph,
+      hide,
+      imageSelected,
       insertPage,
       isCurrentPage,
+      isLine,
       isMultiplCellSelected,
+      isWaypoint,
       left,
       mxClient,
       openPageMenuPopup,
@@ -254,6 +322,7 @@ export default defineComponent({
       renamePage,
       setPopupPosition,
       selectPage,
+      showSubmenu,
       top,
       updatePages,
       visible,
@@ -370,19 +439,81 @@ div
     b-list-group-item.none-border(@click='doAction("sendBackward")')
       span.item-name Send Backward
     hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal')
+    b-dropdown#line-dropright.sub-menu(
+      dropright='',
+      text='Line',
+      block,
+      @mouseover.native='showSubmenu("line-dropright")',
+      @mouseleave.native='hide("line-dropright")',
+      v-show='isLine'
+    )
+      b-dropdown-item(href='#', @click='doAction("insertRectangle")')
+        span.material-icons open_in_full
+      b-dropdown-item(href='#', @click='doAction("insertEllipse")')
+        .geIcon.geSprite.geSprite-orthogonal
+      b-dropdown-item(href='#', @click='doAction("insertRhombus")')
+        .geIcon.geSprite.geSprite-horizontalelbow
+      b-dropdown-item(href='#', @click='doAction("insertText")')
+        .geIcon.geSprite.geSprite-verticalelbow
+      b-dropdown-item(href='#', @click='doAction("link")')
+        .geIcon.geSprite.geSprite-horizontalisometric
+      b-dropdown-item(href='#', @click='doAction("image")')
+        .geIcon.geSprite.geSprite-verticalisometric
+      b-dropdown-item(href='#', @click='doAction("image")')
+        .geIcon.geSprite.geSprite-curved
+      b-dropdown-item(href='#', @click='doAction("image")')
+        .geIcon.geSprite.geSprite-entity
+      b-dropdown-item(href='#', @click='doAction("insertRectangle")')
+        span.material-icons east
+      b-dropdown-item(href='#', @click='doAction("insertRectangle")')
+        .geIcon.geSprite.geSprite-linkedge
+      b-dropdown-item(href='#', @click='doAction("insertRectangle")')
+        .geIcon.geSprite.geSprite-arrow
+      b-dropdown-item(href='#', @click='doAction("insertRectangle")')
+        .geIcon.geSprite.geSprite-simplearrow
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal', v-show='isLine')
+    b-list-group-item.none-border(@click='doAction("turn")', v-show='isLine')
+      span.item-name Reverse
+      span.shortcut {{ controlKey }}+R
+    b-list-group-item.none-border(@click='doAction("addWaypoint")', v-show='isLine')
+      span.item-name Add Waypoints
+    b-list-group-item.none-border(@click='doAction("removeWaypoint")', v-show='isLine')
+      span.item-name Remove Waypoints
+    b-list-group-item.none-border(@click='doAction("clearWaypoints")', v-show='isLine')
+      span.item-name Clear Waypoints
+      span.shortcut Alt+Shift+C
+    hr.popup-dropdown-divider(role='separator', aria-orientation='horizontal', v-show='isLine')
     b-list-group-item.none-border(@click='doAction("editStyle")', v-show='!isMultiplCellSelected')
       span.item-name Edit Style...
       span.shortcut {{ controlKey }}+E
     b-list-group-item.none-border(@click='doAction("editData")', v-show='!isMultiplCellSelected')
       span.item-name Edit Data...
       span.shortcut {{ controlKey }}+M
-    b-list-group-item(@click='doAction("editLink")', v-show='!isMultiplCellSelected')
+    b-list-group-item.none-border(@click='doAction("editLink")', v-show='!isMultiplCellSelected')
       span.item-name Edit Link...
       span.shortcut Alt +Shift+L
-    b-list-group-item.none-border(@click='doAction("group")', v-show='isMultiplCellSelected')
+    hr.popup-dropdown-divider(
+      role='separator',
+      aria-orientation='horizontal',
+      v-show='imageSelected || editorUi.actions.get("group").isEnabled() || editorUi.actions.get("ungroup").isEnabled()'
+    )
+    b-list-group-item.none-border(@click='editImnage', v-show='imageSelected')
+      span.item-name Edit Image...
+    hr.popup-dropdown-divider(
+      role='separator',
+      aria-orientation='horizontal',
+      v-show='imageSelected && (editorUi.actions.get("group").isEnabled() || editorUi.actions.get("ungroup").isEnabled())'
+    )
+    b-list-group-item.none-border(
+      @click='doAction("group")',
+      v-show='editorUi.actions.get("group").isEnabled()'
+    )
       span.item-name Group
       span.shortcut {{ controlKey }}+G
-    b-list-group-item(@click='doAction("ungroup")', v-show='isMultiplCellSelected')
+    b-list-group-item(
+      @click='doAction("ungroup")',
+      v-show='editorUi.actions.get("ungroup").isEnabled()'
+    )
       span.item-name Ungroup
       span.shortcut {{ controlKey }}+Shift+G
   b-list-group.w-15.position-absolute.cursor-pointer(
