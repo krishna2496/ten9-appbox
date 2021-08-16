@@ -910,7 +910,7 @@
 }
 
 .luckysheet-wa-calculate-help-tool:hover {
-    background: #f5f5f5;
+    /* background: #f5f5f5; */
     cursor: pointer;
     position: absolute;
     left: 81px;
@@ -925,26 +925,26 @@
     /* border-right: 1px solid #e5e5e5; */
 }
 /* TEN9 : border changes */
-#luckysheet-helpbox:hover {
+/* #luckysheet-helpbox:hover {
     background: #f5f5f5;
 }
 #luckysheet-helpbox:hover #luckysheet-helpbox-cell{
     background: #f5f5f5;
-}
-#luckysheet-helpbox:hover {
+} */
+/* #luckysheet-helpbox:hover {
     background: #f5f5f5;
 }
 #luckysheet-helpbox-cell:hover {
     background: #f5f5f5;
-}
-.luckysheet-wa-calculate-help:hover > div { background: #f5f5f5; }
+} */
+/* .luckysheet-wa-calculate-help:hover > div { background: #f5f5f5; }
 .luckysheet-wa-calculate-help:hover #luckysheet-helpbox {
     background: #f5f5f5;
     border-right: 1px solid #e5e5e5;
 }
 .luckysheet-wa-calculate-help:hover #luckysheet-helpbox-cell {
     background: #f5f5f5;
-}
+} */
  
 .luckysheet-wa-calculate-size {
     position: absolute;
