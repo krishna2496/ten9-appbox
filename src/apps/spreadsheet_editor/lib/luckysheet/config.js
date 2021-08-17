@@ -52,14 +52,22 @@ export default {
     fireMousedown: null, //单元格数据下钻
     lang: 'en', //language
     plugins: [], //plugins, e.g. ['chart']
-    forceCalculation:false,//强制刷新公式，公式较多会有性能问题，慎用
-    rowHeaderWidth: 46,
-    columnHeaderHeight: 20,
-    //TEN9 : Default col width changes 
-    //defaultColWidth: 73,
-    defaultColWidth:100,
-    defaultRowHeight:19,
-    defaultFontSize:10,
+    forceCalculation: false,//强制刷新公式，公式较多会有性能问题，慎用
+    // TEN9 : Default col width changes 
+    // columnHeaderHeight: 20,
+    rowHeaderWidth: 46.5,
+    // TEN9 : Default col width changes 
+    // columnHeaderHeight: 20,
+    columnHeaderHeight: 24.5,
+    // TEN9 : Default col width changes 
+    // defaultColWidth: 73,
+    defaultColWidth: 101,
+    // TEN9 : Default col width changes 
+    // defaultRowHeight:19,
+    defaultRowHeight: 21,
+    // TEN9 : Default col width changes 
+    // defaultFontSize:10,
+    defaultFontSize:8,
     limitSheetNameLength:true,    //是否限制工作表名的长度
     defaultSheetNameMaxLength:31,  //默认工作表名称的最大长度
     sheetFormulaBar:true, //是否显示公式栏
