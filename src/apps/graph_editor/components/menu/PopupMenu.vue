@@ -162,6 +162,7 @@ export default defineComponent({
         enabledState.value.removeWaypoint = false;
       }
 
+<<<<<<< Updated upstream
       enabledState.value.reverse =
         graph.getModel().isEdge(cell) &&
         mxUtils.getValue(state.style, mxConstants.STYLE_EDGE, null) != 'entityRelationEdgeStyle' &&
@@ -171,6 +172,14 @@ export default defineComponent({
       addWaypoint: boolean;
       removeWaypoint: boolean;
       clearWaypoints: boolean;
+=======
+      clearWaypoints: boolean;
+
+      enabledState.value.editStyle = selectionCount === 1;
+      enabledState.value.editdata = selectionCount === 1;
+      enabledState.value.editStyle = selectionCount === 1;
+
+>>>>>>> Stashed changes
       editStyle: boolean;
       editData: boolean;
       editLink: boolean;
