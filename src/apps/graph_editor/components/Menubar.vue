@@ -61,6 +61,8 @@ export default defineComponent({
 
     const controlKey = ref<string>(Editor.ctrlKey);
 
+    const dropdown = ref(null);
+
     const checkboxes = ref({
       formatPanel: true,
       outline: false,
@@ -135,6 +137,7 @@ export default defineComponent({
           selectionCells.length == 0 ? null : selectionCells,
         );
       }, true);
+      dropdown.value.hide(true);
     }
 
     function circle() {
@@ -153,6 +156,7 @@ export default defineComponent({
           graph.updateGroupBounds([tmp], graph.gridSize * 2, true);
         }
       }, true);
+      dropdown.value.hide(true);
     }
 
     function align(side: string) {
@@ -169,6 +173,7 @@ export default defineComponent({
       } else if (side === 'bottom') {
         graph.alignCells(mxConstants.ALIGN_BOTTOM);
       }
+      dropdown.value.hide(true);
     }
 
     function distribute(side: string) {
@@ -182,8 +187,11 @@ export default defineComponent({
       );
     }
 
-    function fireEvent(type: string) {
+    function fireEvent(type: string, closeDropDown = false) {
       props.editorUi.fireEvent(new mxEventObject(type));
+      if (closeDropDown) {
+        dropdown.value.hide(true);
+      }
     }
 
     function changeMenuStatus(_sender: typeof mxEventSource, event: CustomEvent) {
@@ -277,6 +285,7 @@ export default defineComponent({
       disabledHover,
       distribute,
       doAction,
+      dropdown,
       fireEvent,
       graph,
       hide,
@@ -456,7 +465,11 @@ export default defineComponent({
         b-dropdown-divider.no-hover
         b-dropdown-item.pb-1(href='#', @click='doAction("fullscreen")')
           span.item-name Fullscreen
-      b-nav-item-dropdown#menu-padding.large-dropdown(text='Arrange', @show='disabledHover')
+      b-nav-item-dropdown#menu-padding.large-dropdown(
+        text='Arrange',
+        @show='disabledHover',
+        ref='dropdown'
+      )
         b-dropdown-item(href='#', @click='doAction("toFront")', :disabled='!isSomethingSelected')
           span.material-icons.menu-icons flip_to_front
           span.item-name To Front
@@ -581,13 +594,13 @@ export default defineComponent({
             span.item-name Horizontal Flow
           b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
             span.item-name Vertical Flow
-          b-dropdown-item(href='#', @click='fireEvent("horizontalTree")')
+          b-dropdown-item(href='#', @click='fireEvent("horizontalTree", true)')
             span.item-name Horizontal Tree
-          b-dropdown-item(href='#', @click='fireEvent("verticalTree")')
+          b-dropdown-item(href='#', @click='fireEvent("verticalTree", true)')
             span.item-name Vertical Tree
-          b-dropdown-item(href='#', @click='fireEvent("radialTree")')
+          b-dropdown-item(href='#', @click='fireEvent("radialTree", true)')
             span.item-name Radial Tree
-          b-dropdown-item(href='#', @click='fireEvent("OrganicLayout")')
+          b-dropdown-item(href='#', @click='fireEvent("OrganicLayout", true)')
             span.item-name Organic
           b-dropdown-item(href='#', @click='circle')
             span.item-name Circle
