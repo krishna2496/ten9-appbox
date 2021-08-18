@@ -55,12 +55,13 @@ const gridHTML = function(){
                                     <i class="fa fa-caret-down" aria-hidden="true" style="margin-top: 7px;"></i>
                                 </div>
                             </div>
+                            ${ /*}
                             <div id="luckysheet-wa-functionbox-cancel" class="luckysheet-wa-functionbox">
                                 <span><i class="iconfont luckysheet-iconfont-qingchu" aria-hidden="true"></i></span>
                             </div>
                             <div id="luckysheet-wa-functionbox-confirm" class="luckysheet-wa-functionbox">
                                 <span><i class="iconfont luckysheet-iconfont-yunhang" aria-hidden="true"></i></span>
-                            </div>
+                            </div> */''}
                             <div id="luckysheet-wa-functionbox-fx" class="luckysheet-wa-functionbox">
                                 <span><i class="iconfont luckysheet-iconfont-hanshu" aria-hidden="true" style="color:#333"></i></span>
                             </div>
@@ -1044,7 +1045,7 @@ const keycode = {
 const luckysheetdefaultstyle = {
     fillStyle: "#000000",
     textBaseline: "middle",
-    strokeStyle: "#dfdfdf",
+    strokeStyle: "#c0c0c0",
     rowFillStyle: "#5e5e5e",
     textAlign: 'center'
 }

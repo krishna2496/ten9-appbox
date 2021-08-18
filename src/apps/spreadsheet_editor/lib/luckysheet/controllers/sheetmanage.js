@@ -1134,11 +1134,12 @@ const sheetmanage = {
             }
         }
     },
-    changeSheet: function(index, isPivotInitial, isNewSheet) {
-        if(isEditMode()){
+    changeSheet: function (index, isPivotInitial, isNewSheet) {
+        // TEN9 : Allow other tabs to be displayed in readonly mode
+        //if(isEditMode()){
             // alert("非编辑模式下不允许该操作！");
-            return;
-        }
+            //return;
+        //}
 
         let _this = this;
 

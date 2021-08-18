@@ -321,7 +321,8 @@ const hyperlinkCtrl = {
 
         let html = `<div id="luckysheet-hyperlink-overshow" style="background:#fff;padding:5px 10px;border:1px solid #000;box-shadow:2px 2px #999;position:absolute;left:${col_pre}px;top:${row + 5}px;z-index:100;">
                         <div>${linkTooltip}</div>
-                        <div>单击鼠标可以追踪</div>
+                        ${/* TEN9 : Remove Chinese for Link
+                            <div>单击鼠标可以追踪</div> */''}
                     </div>`;
 
         $(html).appendTo($("#luckysheet-cell-main"));
