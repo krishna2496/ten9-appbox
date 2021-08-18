@@ -594,12 +594,14 @@ export default defineComponent({
             span.item-name Horizontal Flow
           b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
             span.item-name Vertical Flow
+          b-dropdown-divider.no-hover
           b-dropdown-item(href='#', @click='fireEvent("horizontalTree", true)')
             span.item-name Horizontal Tree
           b-dropdown-item(href='#', @click='fireEvent("verticalTree", true)')
             span.item-name Vertical Tree
           b-dropdown-item(href='#', @click='fireEvent("radialTree", true)')
             span.item-name Radial Tree
+          b-dropdown-divider.no-hover
           b-dropdown-item(href='#', @click='fireEvent("OrganicLayout", true)')
             span.item-name Organic
           b-dropdown-item(href='#', @click='circle')
