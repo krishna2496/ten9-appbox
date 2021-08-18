@@ -187,8 +187,12 @@ export default defineComponent({
       );
     }
 
-    function fireEvent(type: string, closeDropDown = false) {
-      props.editorUi.fireEvent(new mxEventObject(type));
+    function fireEvent(type: string, closeDropDown = false, treeType = '') {
+      if (treeType == '') {
+        props.editorUi.fireEvent(new mxEventObject(type));
+      } else {
+        props.editorUi.fireEvent(new mxEventObject(type, 'type', treeType));
+      }
       if (closeDropDown) {
         dropdown.value.hide(true);
       }
@@ -594,13 +598,13 @@ export default defineComponent({
             span.item-name Horizontal Flow
           b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
             span.item-name Vertical Flow
-          b-dropdown-item(href='#', @click='fireEvent("openTreeLayout")')
+          b-dropdown-item(href='#', @click='fireEvent("openTreeLayout", false, "Horizontal Tree")')
             span.item-name Horizontal Tree
-          b-dropdown-item(href='#', @click='fireEvent("verticalTree", true)')
+          b-dropdown-item(href='#', @click='fireEvent("openTreeLayout", false, "Vertical Tree")')
             span.item-name Vertical Tree
-          b-dropdown-item(href='#', @click='fireEvent("radialTree", true)')
+          b-dropdown-item(href='#', @click='fireEvent("openTreeLayout", false, "Radial Tree")')
             span.item-name Radial Tree
-          b-dropdown-item(href='#', @click='fireEvent("OrganicLayout", true)')
+          b-dropdown-item(href='#', @click='fireEvent("openTreeLayout", false, "Organic")')
             span.item-name Organic
           b-dropdown-item(href='#', @click='circle')
             span.item-name Circle
