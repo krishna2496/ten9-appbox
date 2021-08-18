@@ -594,7 +594,7 @@ export default defineComponent({
             span.item-name Horizontal Flow
           b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
             span.item-name Vertical Flow
-          b-dropdown-item(href='#', @click='fireEvent("horizontalTree", true)')
+          b-dropdown-item(href='#', @click='fireEvent("openTreeLayout")')
             span.item-name Horizontal Tree
           b-dropdown-item(href='#', @click='fireEvent("verticalTree", true)')
             span.item-name Vertical Tree
