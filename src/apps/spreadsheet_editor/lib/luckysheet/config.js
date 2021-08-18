@@ -1,7 +1,7 @@
 /**
  * The default luckysheet config object.
  */
-export default {
+ export default {
     container: "luckysheet", //容器的ID
     loading:{}, //自定义loading
     column: 60, //空表格默认的列数量
@@ -52,16 +52,14 @@ export default {
     fireMousedown: null, //单元格数据下钻
     lang: 'en', //language
     plugins: [], //plugins, e.g. ['chart']
-    forceCalculation: false,//强制刷新公式，公式较多会有性能问题，慎用
+    forceCalculation:false,//强制刷新公式，公式较多会有性能问题，慎用
+    rowHeaderWidth: 46,
     // TEN9 : Default col width changes 
     // columnHeaderHeight: 20,
-    rowHeaderWidth: 46.5,
-    // TEN9 : Default col width changes 
-    // columnHeaderHeight: 20,
-    columnHeaderHeight: 24.5,
-    // TEN9 : Default col width changes 
-    // defaultColWidth: 73,
-    defaultColWidth: 101,
+    columnHeaderHeight: 24,
+    //TEN9 : Default col width changes 
+    //defaultColWidth: 73,
+    defaultColWidth:100,
     // TEN9 : Default col width changes 
     // defaultRowHeight:19,
     defaultRowHeight: 21,

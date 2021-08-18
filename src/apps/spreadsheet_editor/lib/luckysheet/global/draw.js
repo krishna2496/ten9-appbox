@@ -133,9 +133,10 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
             (Store.rowHeaderWidth - 2 + bodrder05) ,
              (end_r + offsetTop - 2)
         );
+        /* TEN9 : Border change
+        luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle; */
         luckysheetTableContent.lineWidth = 1;
-
-        luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+        luckysheetTableContent.strokeStyle = '#C0C0C0';
         luckysheetTableContent.stroke();
         luckysheetTableContent.closePath();
 
@@ -165,9 +166,10 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
                 (Store.rowHeaderWidth - 1) ,
                 (end_r + offsetTop - 2 + bodrder05) 
             );
-
-            // luckysheetTableContent.lineWidth = 1;
-            // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+            /* TEN9 : Border change
+            luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle; */
+            luckysheetTableContent.lineWidth = 1;
+            luckysheetTableContent.strokeStyle = '#C0C0C0';
             luckysheetTableContent.closePath();
             luckysheetTableContent.stroke();
 
@@ -357,9 +359,10 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
                 (end_c + offsetLeft - 2 + bodrder05) ,
                 (Store.columnHeaderHeight - 2) 
             );
-
+            /* TEN9 : Border change
+            luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle; */
             luckysheetTableContent.lineWidth = 1;
-            luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+            luckysheetTableContent.strokeStyle = '#C0C0C0';
             luckysheetTableContent.closePath();
             luckysheetTableContent.stroke();
         }
@@ -374,8 +377,10 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
                 (preEndC + offsetLeft + bodrder05) ,
                 (Store.columnHeaderHeight - 2) 
             );
-            // luckysheetTableContent.lineWidth = 1;
-            // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+            /* TEN9 : Border change
+            luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle; */
+            luckysheetTableContent.lineWidth = 1;
+            luckysheetTableContent.strokeStyle = '#C0C0C0';
             luckysheetTableContent.closePath();
             luckysheetTableContent.stroke();
         }
@@ -391,9 +396,10 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
              (end_c + offsetLeft - 1), 
             (Store.columnHeaderHeight - 2 + bodrder05) 
         );
-        // luckysheetTableContent.lineWidth = 1;
-
-        // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;        
+        /* TEN9 : Border change
+        luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle; */
+        luckysheetTableContent.lineWidth = 1;
+        luckysheetTableContent.strokeStyle = '#C0C0C0';      
         luckysheetTableContent.stroke();
         luckysheetTableContent.closePath();
 

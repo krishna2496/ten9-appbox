@@ -845,7 +845,9 @@
     background: #fff;
     position: relative;
     padding-right: 44px;
-    border-bottom: 1px solid #e5e5e5;
+    /* TEN9 : Border bottom changes
+    border-bottom: 1px solid #e5e5e5; */
+    border-bottom: 1px solid #c0c0c0;
 }
 
 .luckysheet-wa-calculate-help {
@@ -1363,7 +1365,9 @@ div.luckysheet-sheets-m:hover {
 .luckysheet-left-top {
     width: 44.5px;
     height: 18.5px;
-    border: solid 0 #dfdfdf;
+    /* TEN9 : Border changes 
+    border: solid 0 #dfdfdf; */
+    border: solid 0 #c0c0c0;
     position: relative;
     padding-top: 0;
     border-width: 0 1px 1px 0;
@@ -1400,11 +1404,15 @@ div.luckysheet-sheets-m:hover {
 }
 
 .luckysheet-cols-menu-btn {
-    color: #5e5e5e;
+    /* TEN9 : Color changes
+    color: #5e5e5e; */
+    color: #c0c0c0;
     cursor: pointer;
     position: absolute;
     z-index: 12;
-    border: 1px solid #5e5e5e;
+    /* TEN9 : Border Color changes
+    color: #5e5e5e; */
+    border: 1px solid #c0c0c0;
     border-radius: 1px;
     top: 3px;
     margin-left: 0px;
@@ -1440,7 +1448,8 @@ div.luckysheet-sheets-m:hover {
     cursor: default;
     position: absolute;
     z-index: 10;
-    border-bottom: 1px solid #0188fb;
+    /* TEN9 : border bottom removed
+    border-bottom: 1px solid #0188fb; */
     bottom: 0;
     height: 100%;
     margin-left: 0px;
@@ -1576,7 +1585,8 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 .luckysheet-rows-h-selected {
     position: absolute;
     z-index: 10;
-    border-right: 1px solid #0188fb;
+    /* TEN9 : Border right removed 
+    border-right: 1px solid #0188fb; */
     right: 0;
     width: 100%;
     margin-top: 2px;
