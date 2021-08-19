@@ -98,7 +98,11 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
             /*
             TEN9 : background color changes
             luckysheetTableContent.fillStyle = "#ffffff"; */
-            luckysheetTableContent.fillStyle = "#F8F9FA";
+            if (Store.luckysheet_select_save[0].row_focus == r && Store.luckysheet_select_save[0].row_select) {
+                luckysheetTableContent.fillStyle = "rgb(95,99,104)";
+            } else {
+                luckysheetTableContent.fillStyle = "#F8F9FA";
+            }
             luckysheetTableContent.fillRect(
                 0,
                 (start_r + offsetTop + firstOffset) , 
@@ -108,7 +112,11 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
             /* TEN9: Color changes
             luckysheetTableContent.fillStyle = "#000000";
             */
-            luckysheetTableContent.fillStyle = "#76797E";
+            if (Store.luckysheet_select_save[0].row_focus == r && Store.luckysheet_select_save[0].row_select) {
+                luckysheetTableContent.fillStyle = "white";
+            } else {
+                luckysheetTableContent.fillStyle = "#76797E";
+            }
 
             //行标题栏序列号
             luckysheetTableContent.save();//save scale before draw text
@@ -304,7 +312,11 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
             /*
             TEN9 : background color changes
             luckysheetTableContent.fillStyle = "#ffffff"; */
-            luckysheetTableContent.fillStyle = "#F8F9FA";
+            if (Store.luckysheet_select_save[0].column_focus == c && Store.luckysheet_select_save[0].column_select) {
+                luckysheetTableContent.fillStyle = "rgb(95,99,104)";
+            } else {
+                luckysheetTableContent.fillStyle = "#F8F9FA";
+            }
 
             luckysheetTableContent.fillRect(
                 (start_c + offsetLeft - 1) , 
@@ -316,7 +328,11 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
             TEN9 : background color changes
             luckysheetTableContent.fillStyle = "#000000";
             */
-            luckysheetTableContent.fillStyle = "#76797E";
+            if (Store.luckysheet_select_save[0].column_focus == c && Store.luckysheet_select_save[0].column_select) {
+                luckysheetTableContent.fillStyle = "white";
+            } else {
+                luckysheetTableContent.fillStyle = "#76797E";
+            }
 
             //列标题栏序列号
             luckysheetTableContent.save();//save scale before draw text
