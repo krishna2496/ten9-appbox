@@ -206,7 +206,9 @@ const tooltip = {
                 }
 
                 $toolup.css({ "top": toffset.top + $t.outerHeight() + 1, "left": toolleft });
-            }, 300);
+                // TEN9 : Timeout incresed 
+                //}, 300);
+            }, 500);
 
         }).on("mouseout", to, function (e) {
             _this.hoverTipshowState = false;
