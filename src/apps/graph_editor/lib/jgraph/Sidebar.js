@@ -4418,15 +4418,17 @@ Sidebar.prototype.createItem = function (
 
   // Applies default styles
   cells = this.graph.cloneCells(cells);
-  this.editorUi.insertHandler(
-    cells,
-    null,
-    this.graph.model,
-    Graph.prototype.defaultVertexStyle,
-    Graph.prototype.defaultEdgeStyle,
-    urlParams['sketch'] == '1',
-    urlParams['sketch'] == '1',
-  );
+
+  // TEN9: hide Style is getting applied to shapes in the sidebar
+  // this.editorUi.insertHandler(
+  //   cells,
+  //   null,
+  //   this.graph.model,
+  //   Graph.prototype.defaultVertexStyle,
+  //   Graph.prototype.defaultEdgeStyle,
+  //   urlParams['sketch'] == '1',
+  //   urlParams['sketch'] == '1',
+  // );
 
   this.createThumb(
     cells,
