@@ -584,10 +584,12 @@ export default defineComponent({
             span.item-name Ellipse
           b-dropdown-item(href='#', @click='doAction("insertRhombus")')
             span.item-name Rhombus
+          b-dropdown-divider.no-hover
           b-dropdown-item(href='#', @click='doAction("insertText")')
             span.item-name Text
           b-dropdown-item(href='#', @click='doAction("link")')
             span.item-name Link...
+          b-dropdown-divider.no-hover
           b-dropdown-item(href='#', @click='doAction("image")')
             span.item-name Image...
         b-dropdown#layout-dropright.sub-menu(
