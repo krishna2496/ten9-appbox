@@ -20,15 +20,8 @@
   border: 1px solid #ddd;
   border-radius: 5px;
   min-width: 200px;
-  z-index: 10;
-}
-
-.w-18 {
-  // width: 18%;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  min-width: 200px;
+  max-width: 250px;
+  padding-right: 10px;
   z-index: 10;
 }
 

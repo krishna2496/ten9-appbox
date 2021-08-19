@@ -1531,8 +1531,7 @@ EditorUi.prototype.createPageMenuTab = function () {
       var y = mxEvent.getClientY(evt) - offset.y;
       // TEN9: create bootstrapVue component
       //menu.popup(x, y, null, evt);
-      const pointer = { x, y };
-      this.fireEvent(new mxEventObject('openPageMenuPopup', 'pointer', pointer));
+      this.fireEvent(new mxEventObject('openPagesFooterPopup', 'event', evt));
 
       graphUtils.fit(menu.div, this.container);
 
@@ -1657,8 +1656,7 @@ EditorUi.prototype.addTabListeners = function (page, tab) {
           var y = mxEvent.getClientY(evt) - offset.y;
           // TEN9: create bootstrapVue component
           //menu.popup(x, y, null, evt);
-          const pointer = { x, y };
-          this.fireEvent(new mxEventObject('openPagePopupMenu', 'pointer', pointer));
+          this.fireEvent(new mxEventObject('openPagePopup', 'event', evt));
           graphUtils.fit(menu.div, this.container);
 
           this.setCurrentMenu(menu, tab);
