@@ -95,8 +95,6 @@ export default defineComponent({
         graph.getSelectionCount() === 1 &&
         graph.getModel().isVertex(cell) &&
         mxUtils.getValue(state.style, mxConstants.STYLE_IMAGE, null) !== null;
-
-
     }
 
     function openPopupMenu() {

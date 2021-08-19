@@ -38,4 +38,6 @@ export default defineComponent({
 <template lang="pug">
 .menu-container(v-if='editorUi')
   popup-menu(:editorUi='editorUi')
+  //- pages-footer-popup-menu(:editorUi='editorUi')
+  //- page-popup-menu(:editorUi='editorUi')
 </template>

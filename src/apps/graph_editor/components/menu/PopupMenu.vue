@@ -16,25 +16,19 @@
 
 <script lang="ts">
 import {
-  mxEdgeHandler,
-  mxMouseEvent,
   mxClient,
   mxConstants,
+  mxEdgeHandler,
   mxEventObject,
+  mxEventSource,
+  mxMouseEvent,
   mxUtils,
 } from '../../lib/jgraph/mxClient.js';
 import { Editor } from '../../lib/jgraph/Editor.js';
 import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { BvEvent } from 'bootstrap-vue';
 import VClamp from 'vue-clamp';
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
-
-interface ListElementStyle {
-  display: string;
-}
-
-interface ListElement extends Element {
-  style?: ListElementStyle;
-}
 
 import '../../styles/popupmenu.scss';
 
@@ -86,27 +80,25 @@ export default defineComponent({
 
     const controlKey = ref<string>(Editor.ctrlKey);
 
-    const left = ref<number>(0);
+    const popupMenuRef = ref<HTMLElement>(null);
 
-    const top = ref<number>(0);
+    const lineSubmenuRef = ref(null);
 
     const { graph } = props.editorUi.editor;
 
     const enabledState = ref<EnabledState>(new EnabledState());
 
+    const shouldDropUp = ref(false);
+
     function isEnabled(key: string) {
       return enabledState.value[key];
     }
 
-    function updateState() {
+    function updateState(evt: MouseEvent) {
       const cell = graph.getSelectionCell();
       const state = graph.view.getState(cell);
       const selectionCount = graph.getSelectionCount();
-      const coordinates = graphUtils.getDocumentContainerRect();
       let hasWaypoints = false;
-
-      left.value = graph.lastMouseX - coordinates.x;
-      top.value = graph.lastMouseY - coordinates.y;
 
       isSelectionEmpty.value = selectionCount === 0;
 
@@ -146,8 +138,7 @@ export default defineComponent({
         let isWaypoint = false;
         const handler = graph.selectionCellsHandler.getHandler(cell);
         if (handler instanceof mxEdgeHandler && handler.bends != null && handler.bends.length > 2) {
-          // TODO: set evt here
-          const index = handler.getHandleForEvent(graph.updateMouseEvent(new mxMouseEvent(null)));
+          const index = handler.getHandleForEvent(graph.updateMouseEvent(new mxMouseEvent(evt)));
 
           // Configures removeWaypoint action before execution
           // Using trigger parameter is cleaner but have to find waypoint here anyway.
@@ -189,10 +180,27 @@ export default defineComponent({
         mxUtils.getValue(state.style, mxConstants.STYLE_IMAGE, null) !== null;
     }
 
-    function openPopupMenu() {
+    function updatePosition(evt: MouseEvent) {
+      const containerRect = graphUtils.getDocumentContainerRect();
+      popupMenuRef.value.style.left = `${evt.clientX - containerRect.x}px`;
+      popupMenuRef.value.style.top = `${evt.clientY - containerRect.y}px`;
+      graphUtils.fit(popupMenuRef.value, mxClient.getDocumentContainer());
+
+      const lineSubmenuWidth = 50;
+      const lineSubmenuHeight = 446;
+      const lineSubmenuButtonRect = lineSubmenuRef.value.$el.getBoundingClientRect();
+
+      shouldDropUp.value =
+        containerRect.right - lineSubmenuButtonRect.right < lineSubmenuWidth ||
+        containerRect.bottom - lineSubmenuButtonRect.top < lineSubmenuHeight;
+    }
+
+    function openPopupMenu(_sender: typeof mxEventSource, event: mxEventObject) {
+      const evt = event.getProperty('event');
       show.value = true;
+      updateState(evt);
       nextTick(() => {
-        updateState();
+        updatePosition(evt);
       });
     }
 
@@ -223,61 +231,147 @@ export default defineComponent({
       props.editorUi.fireEvent(new mxEventObject('editImage', 'image', imageUrl));
     }
 
-    function showSubmenu(id: string) {
-      // TODO: Figure out how we are able to show sub menu on mouse hover
-      const [_, ele] = (document.getElementById(id)?.children as unknown) as ListElement[];
+    function showSubmenu() {
+      const [_, ele] = lineSubmenuRef.value.$el.children;
       if (ele) {
         ele.style.display = 'block';
       }
     }
 
-    function hide(id: string) {
-      // TODO: Figure out how we are able to hide sub menu on mouse hover
-      const [_, ele] = (document.getElementById(id)?.children as unknown) as ListElement[];
+    function hideSubmenu() {
+      const [_, ele] = lineSubmenuRef.value.$el.children;
       if (ele) {
         ele.style.display = 'none';
       }
     }
 
-    // watch(
-    //   () => cellSelectedVisible.value,
-    //   (val) => {
-    //     console.log(graph.getSelectionCell().style);
-    //     imageSelected.value = graph.getSelectionCell().style.includes('shape=image;');
-    //     checkWayPoints();
-    //     isLine.value = graph.getSelectionCell().style.includes('endArrow=');
-    //     if (val) {
-    //       nothingSelected.value = false;
-    //       props.editorUi.fireEvent(new mxEventObject('closedMenu'));
-    //     }
-    //   },
-    // );
+    function getKeysAndValuesForEdgeChange(
+      edgeChangeId: string,
+    ): { keys: unknown[]; values: unknown[] } {
+      let keys: unknown[] = [];
+      let values: unknown[] = [];
 
-    // watch(
-    //   () => visible.value,
-    //   (val) => {
-    //     if (val) {
-    //       cellSelectedVisible.value = false;
-    //       props.editorUi.fireEvent(new mxEventObject('closedMenu'));
-    //     }
-    //   },
-    // );
+      if (edgeChangeId === 'straight') {
+        keys = [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE];
+        values = [null, null, null];
+      } else if (edgeChangeId === 'orthogonal') {
+        keys = [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE];
+        values = ['orthogonalEdgeStyle', null, null];
+      } else if (edgeChangeId === 'horizontalelbow') {
+        keys = [
+          mxConstants.STYLE_EDGE,
+          mxConstants.STYLE_ELBOW,
+          mxConstants.STYLE_CURVED,
+          mxConstants.STYLE_NOEDGESTYLE,
+        ];
+        values = ['elbowEdgeStyle', null, null, null];
+      } else if (edgeChangeId === 'verticalelbow') {
+        keys = [
+          mxConstants.STYLE_EDGE,
+          mxConstants.STYLE_ELBOW,
+          mxConstants.STYLE_CURVED,
+          mxConstants.STYLE_NOEDGESTYLE,
+        ];
+        values = ['elbowEdgeStyle', 'vertical', null, null];
+      } else if (edgeChangeId === 'horizontalisometric') {
+        keys = [
+          mxConstants.STYLE_EDGE,
+          mxConstants.STYLE_ELBOW,
+          mxConstants.STYLE_CURVED,
+          mxConstants.STYLE_NOEDGESTYLE,
+        ];
+        values = ['isometricEdgeStyle', null, null, null];
+      } else if (edgeChangeId === 'verticalisometric') {
+        keys = [
+          mxConstants.STYLE_EDGE,
+          mxConstants.STYLE_ELBOW,
+          mxConstants.STYLE_CURVED,
+          mxConstants.STYLE_NOEDGESTYLE,
+        ];
+        values = ['isometricEdgeStyle', 'vertical', null, null];
+      } else if (edgeChangeId === 'curved') {
+        keys = [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE];
+        values = ['orthogonalEdgeStyle', '1', null];
+      } else if (edgeChangeId === 'entity') {
+        keys = [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE];
+        values = ['entityRelationEdgeStyle', null, null];
+      } else if (edgeChangeId === 'connection') {
+        keys = [mxConstants.STYLE_SHAPE, 'width'];
+        values = [null, null];
+      } else if (edgeChangeId === 'linkedge') {
+        keys = [mxConstants.STYLE_SHAPE, 'width'];
+        values = ['link', null];
+      } else if (edgeChangeId === 'arrow') {
+        keys = [mxConstants.STYLE_SHAPE, 'width'];
+        values = ['flexArrow', null];
+      } else if (edgeChangeId === 'simplearrow') {
+        keys = [mxConstants.STYLE_SHAPE, 'width'];
+        values = ['arrow', null];
+      }
+      return { keys, values };
+    }
+
+    function edgeStyleChange(edgeChangeId: string) {
+      const { keys, values } = getKeysAndValuesForEdgeChange(edgeChangeId);
+
+      graph.stopEditing(false);
+
+      graph.getModel().beginUpdate();
+      try {
+        const cells = graph.getSelectionCells();
+        const edges = [];
+
+        for (let i = 0; i < cells.length; i++) {
+          const cell = cells[i];
+
+          if (graph.getModel().isEdge(cell)) {
+            let geo = graph.getCellGeometry(cell);
+
+            // Resets all edge points
+            if (geo != null) {
+              geo = geo.clone();
+              geo.points = null;
+              graph.getModel().setGeometry(cell, geo);
+            }
+
+            for (let j = 0; j < keys.length; j++) {
+              graph.setCellStyles(keys[j], values[j], [cell]);
+            }
+
+            edges.push(cell);
+          }
+        }
+
+        props.editorUi.fireEvent(
+          new mxEventObject('styleChanged', 'keys', keys, 'values', values, 'cells', edges),
+        );
+      } finally {
+        graph.getModel().endUpdate();
+      }
+    }
+
+    function lineSubmenuShow(bvEvent: BvEvent) {
+      bvEvent.preventDefault();
+    }
 
     return {
       close,
       controlKey,
       doAction,
       editImage,
+      edgeStyleChange,
       graph,
-      hide,
+      hideSubmenu,
       isEnabled,
       isSelectionEmpty,
-      left,
+      lineSubmenuRef,
+      lineSubmenuShow,
       mxClient,
       openPopupMenu,
+      popupMenuRef,
+      shouldDropUp,
       show,
       showSubmenu,
-      top,
     };
   },
 });
@@ -285,10 +379,7 @@ export default defineComponent({
 
 <template lang="pug">
 div
-  b-list-group.w-22.position-absolute.cursor-pointer.tp-5(
-    v-show='show',
-    v-bind:style='{ left: left + "px", top: top + "px" }'
-  )
+  b-list-group.w-22.position-absolute.cursor-pointer.tp-5(ref='popupMenuRef', v-show='show')
     //- Popup Menu History Items
     b-list-group-item.none-border(@click='doAction("undo")', v-show='isEnabled("undo")')
       span.material-icons.menu-icons undo
@@ -311,11 +402,11 @@ div
       aria-orientation='horizontal',
       v-show='isEnabled("cut")'
     )
-    b-list-group-item.none-border(@click='doAction("cut")')
+    b-list-group-item.none-border(@click='doAction("cut")', v-show='isEnabled("cut")')
       span.material-icons.menu-icons content_cut
       span.item-name Cut
       span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}X
-    b-list-group-item.none-border(@click='doAction("copy")')
+    b-list-group-item.none-border(@click='doAction("copy")', v-show='isEnabled("copy")')
       span.material-icons.menu-icons content_copy
       span.item-name Copy
       span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}C
@@ -324,7 +415,7 @@ div
       aria-orientation='horizontal',
       v-show='isEnabled("duplicate")'
     )
-    b-list-group-item.none-border(@click='doAction("duplicate")')
+    b-list-group-item.none-border(@click='doAction("duplicate")', v-show='isEnabled("duplicate")')
       span.item-name Duplicate
       span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}D
 
@@ -387,43 +478,46 @@ div
       span.shortcut {{ controlKey }}+Shift+G
 
     //- Popup Menu Cell Items
-    //- hr.popup-dropdown-divider(
-    //-   role='separator',
-    //-   aria-orientation='horizontal',
-    //-   v-show='isEnabled("line")'
-    //- )
-    //- b-dropdown#line-dropright.sub-menu(
-    //-   dropright='',
-    //-   text='Line',
-    //-   block,
-    //-   @mouseover.native='showSubmenu("line-dropright")',
-    //-   @mouseleave.native='hide("line-dropright")',
-    //-   v-show='isEnabled("line")'
-    //- )
-    //- TODO: check these
-      b-dropdown-item(href='#', @click='doAction("insertRectangle")')
-        span.material-icons open_in_full
-      b-dropdown-item(href='#', @click='doAction("insertEllipse")')
+    hr.popup-dropdown-divider(
+      role='separator',
+      aria-orientation='horizontal',
+      v-show='isEnabled("line")'
+    )
+    b-dropdown#line-submenu.sub-menu(
+      ref='lineSubmenuRef',
+      text='Line',
+      dropright,
+      block,
+      :dropup='shouldDropUp',
+      :right='shouldDropUp',
+      @show='lineSubmenuShow',
+      @mouseover.native='showSubmenu()',
+      @mouseleave.native='hideSubmenu()',
+      v-show='isEnabled("line")'
+    )
+      b-dropdown-item(href='#', @click='edgeStyleChange("straight")')
+        .geIcon.geSprite.geSprite-straight
+      b-dropdown-item(href='#', @click='edgeStyleChange("orthogonal")')
         .geIcon.geSprite.geSprite-orthogonal
-      b-dropdown-item(href='#', @click='doAction("insertRhombus")')
+      b-dropdown-item(href='#', @click='edgeStyleChange("horizontalelbow")')
         .geIcon.geSprite.geSprite-horizontalelbow
-      b-dropdown-item(href='#', @click='doAction("insertText")')
+      b-dropdown-item(href='#', @click='edgeStyleChange("verticalelbow")')
         .geIcon.geSprite.geSprite-verticalelbow
-      b-dropdown-item(href='#', @click='doAction("link")')
+      b-dropdown-item(href='#', @click='edgeStyleChange("horizontalisometric")')
         .geIcon.geSprite.geSprite-horizontalisometric
-      b-dropdown-item(href='#', @click='doAction("image")')
+      b-dropdown-item(href='#', @click='edgeStyleChange("verticalisometric")')
         .geIcon.geSprite.geSprite-verticalisometric
-      b-dropdown-item(href='#', @click='doAction("image")')
+      b-dropdown-item(href='#', @click='edgeStyleChange("curved")')
         .geIcon.geSprite.geSprite-curved
-      b-dropdown-item(href='#', @click='doAction("image")')
+      b-dropdown-item(href='#', @click='edgeStyleChange("entity")')
         .geIcon.geSprite.geSprite-entity
-      b-dropdown-item(href='#', @click='doAction("insertRectangle")')
-        span.material-icons east
-      b-dropdown-item(href='#', @click='doAction("insertRectangle")')
+      b-dropdown-item(href='#', @click='edgeStyleChange("connection")')
+        .geIcon.geSprite.geSprite-connection
+      b-dropdown-item(href='#', @click='edgeStyleChange("linkedge")')
         .geIcon.geSprite.geSprite-linkedge
-      b-dropdown-item(href='#', @click='doAction("insertRectangle")')
+      b-dropdown-item(href='#', @click='edgeStyleChange("arrow")')
         .geIcon.geSprite.geSprite-arrow
-      b-dropdown-item(href='#', @click='doAction("insertRectangle")')
+      b-dropdown-item(href='#', @click='edgeStyleChange("simplearrow")')
         .geIcon.geSprite.geSprite-simplearrow
     hr.popup-dropdown-divider(
       role='separator',

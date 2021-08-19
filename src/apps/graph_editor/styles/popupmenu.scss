@@ -87,15 +87,16 @@ hr {
   padding-top: 5px;
 }
 
-#line-dropright button {
+#draw-app #line-submenu button {
   padding-left: 35px;
   border: 0;
 }
 
-#draw-app #line-dropright li {
+#draw-app #line-submenu li {
   padding: 0;
 }
 
-#draw-app #line-dropright .dropdown-menu {
+#draw-app #line-submenu .dropdown-menu {
   min-width: 50px;
+  padding: 0;
 }
