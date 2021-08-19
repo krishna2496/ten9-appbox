@@ -38,7 +38,7 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const spacingValue = ref<number>(null);
+    const spacingValue = ref(null);
 
     const treeType = ref<string>('');
 
@@ -48,44 +48,13 @@ export default defineComponent({
 
     const cells = ref(null);
 
+    const layout = ref(null);
+
     function closeModal() {
       show.value = false;
     }
 
-    function getHorizontalTreeSpacing() {
-      cells.value = graph.getSelectionCell();
-      let roots = null;
-      let layout = null;
-
-      if (cells.value == null || graph.getModel().getChildCount(cells.value) == 0) {
-        if (graph.getModel().getEdgeCount(cells.value) == 0) {
-          roots = graph.findTreeRoots(graph.getDefaultParent());
-        }
-      } else {
-        roots = graph.findTreeRoots(cells.value);
-      }
-
-      if (roots != null && roots.length > 0) {
-        [cells.value] = roots;
-      }
-
-      if (cells.value != null) {
-        spacingValue.value = 30;
-      } else {
-        layout = new mxCompactTreeLayout(graph, true);
-        spacingValue.value = layout.levelDistance;
-      }
-    }
-
-    function setHorizontalTree() {
-      const layout = new mxCompactTreeLayout(graph, true);
-      layout.levelDistance = spacingValue.value;
-      props.editorUi.executeLayout(() => {
-        layout.execute(graph.getDefaultParent(), cells.value);
-      }, true);
-    }
-
-    function getVerticalTreeSpacing() {
+    function getCompactTreeSpacing() {
       cells.value = graph.getSelectionCell();
       let roots = null;
 
@@ -106,10 +75,15 @@ export default defineComponent({
       }
     }
 
-    function setVerticalTree() {
-      const layout = new mxCompactTreeLayout(graph, false);
+    function setCompactTree() {
+      if (treeType.value === 'Horizontal Tree') {
+        layout.value = new mxCompactTreeLayout(graph, true);
+      } else {
+        layout.value = new mxCompactTreeLayout(graph, false);
+      }
+      layout.value.levelDistance = parseInt(spacingValue.value);
       props.editorUi.executeLayout(() => {
-        layout.execute(graph.getDefaultParent(), cells.value);
+        layout.value.execute(graph.getDefaultParent(), cells.value);
       }, true);
     }
 
@@ -135,9 +109,10 @@ export default defineComponent({
     }
 
     function setRadialTree() {
+      layout.value = new mxRadialTreeLayout(graph);
+      layout.value.levelDistance = parseInt(spacingValue.value);
       props.editorUi.executeLayout(() => {
-        const layout = new mxRadialTreeLayout(graph);
-        layout.execute(graph.getDefaultParent(), cells.value);
+        layout.value.execute(graph.getDefaultParent(), cells.value);
 
         if (!graph.isSelectionEmpty()) {
           cells.value = graph.getModel().getParent(cells.value);
@@ -150,12 +125,13 @@ export default defineComponent({
     }
 
     function getOrganic() {
-      const layout = new mxFastOrganicLayout(graph);
-      spacingValue.value = layout.forceConstant;
+      layout.value = new mxFastOrganicLayout(graph);
+      spacingValue.value = layout.value.forceConstant;
     }
 
     function setOrganic() {
-      const layout = new mxFastOrganicLayout(graph);
+      layout.value = new mxFastOrganicLayout(graph);
+      layout.value.forceConstant = parseInt(spacingValue.value);
       props.editorUi.executeLayout(() => {
         cells.value = graph.getSelectionCell();
 
@@ -163,7 +139,7 @@ export default defineComponent({
           cells.value = graph.getDefaultParent();
         }
 
-        layout.execute(cells.value);
+        layout.value.execute(cells.value);
 
         if (graph.getModel().isVertex(cells.value)) {
           graph.updateGroupBounds([cells.value], graph.gridSize * 2, true);
@@ -173,10 +149,8 @@ export default defineComponent({
 
     function setSpacing() {
       closeModal();
-      if (treeType.value === 'Horizontal Tree') {
-        setHorizontalTree();
-      } else if (treeType.value === 'Vertical Tree') {
-        setVerticalTree();
+      if (treeType.value === 'Horizontal Tree' || treeType.value === 'Vertical Tree') {
+        setCompactTree();
       } else if (treeType.value === 'Radial Tree') {
         setRadialTree();
       } else if (treeType.value === 'Organic') {
@@ -188,10 +162,8 @@ export default defineComponent({
     function openTreeLayout(_sender: typeof mxEventSource, event: CustomEvent) {
       treeType.value = event.getProperty('type');
       show.value = true;
-      if (treeType.value === 'Horizontal Tree') {
-        getHorizontalTreeSpacing();
-      } else if (treeType.value === 'Vertical Tree') {
-        getVerticalTreeSpacing();
+      if (treeType.value === 'Horizontal Tree' || treeType.value === 'Vertical Tree') {
+        getCompactTreeSpacing();
       } else if (treeType.value === 'Radial Tree') {
         getRadialTree();
       } else if (treeType.value === 'Organic') {
@@ -202,7 +174,6 @@ export default defineComponent({
     function onKeydown(event: KeyboardEvent) {
       if (event.key == 'Enter') {
         setSpacing();
-        setHorizontalTree();
       }
     }
 
@@ -224,18 +195,17 @@ export default defineComponent({
       cells,
       closeModal,
       focusOnInput,
-      getHorizontalTreeSpacing,
+      getCompactTreeSpacing,
       getOrganic,
       getRadialTree,
-      getVerticalTreeSpacing,
+      layout,
       onKeydown,
       spacingInput,
       spacingValue,
-      setHorizontalTree,
+      setCompactTree,
       setOrganic,
       setRadialTree,
       setSpacing,
-      setVerticalTree,
       show,
       treeType,
     };
