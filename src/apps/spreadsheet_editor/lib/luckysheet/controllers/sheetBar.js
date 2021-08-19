@@ -165,10 +165,11 @@ export function initialSheetBar(){
     isInitialSheetConfig = false
 
     $("#luckysheet-sheet-area").on("mousedown", "div.luckysheet-sheets-item", function (e) {
-        if(isEditMode()){
+        // TEN9 : Allow other tabs to be displayed in readonly mode
+        //if (isEditMode()) {
             // alert("非编辑模式下不允许该操作！");
-            return;
-        }
+            //return;
+        //}
 
         let $t = $(this), $cur = $(e.target), $item = $cur.closest(".luckysheet-sheets-item");
 
@@ -206,11 +207,11 @@ export function initialSheetBar(){
             }, 200);
         }
     }).on("click", "div.luckysheet-sheets-item", function (e) {
-
-        if(isEditMode()){
+        // TEN9 : Allow other tabs to be displayed in readonly mode
+        //if(isEditMode()){
             // alert("非编辑模式下不允许该操作！");
-            return;
-        }
+            //return;
+        //}
 
         let $t = $(this), $cur = $(e.target);
         luckysheetsheetrightclick($t, $cur, e);

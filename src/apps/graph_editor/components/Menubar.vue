@@ -16,20 +16,17 @@
 
 <script lang="ts">
 import {
-  mxClient,
   mxCircleLayout,
+  mxClient,
   mxConstants,
-  mxHierarchicalLayout,
   mxEventObject,
   mxEventSource,
+  mxHierarchicalLayout,
 } from '../lib/jgraph/mxClient.js';
 import { Editor } from '../lib/jgraph/Editor.js';
+import { BvEvent } from 'bootstrap-vue';
 import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api';
 import '../styles/menubar.scss';
-
-interface CustomEvent {
-  getProperty?(propName: string): string | boolean;
-}
 
 interface ListElementStyle {
   display: string;
@@ -60,6 +57,8 @@ export default defineComponent({
     const isMultipleCellSelected = ref<boolean>(false);
 
     const controlKey = ref<string>(Editor.ctrlKey);
+
+    const dropdown = ref(null);
 
     const checkboxes = ref({
       formatPanel: true,
@@ -135,6 +134,7 @@ export default defineComponent({
           selectionCells.length == 0 ? null : selectionCells,
         );
       }, true);
+      dropdown.value.hide(true);
     }
 
     function circle() {
@@ -153,6 +153,7 @@ export default defineComponent({
           graph.updateGroupBounds([tmp], graph.gridSize * 2, true);
         }
       }, true);
+      dropdown.value.hide(true);
     }
 
     function align(side: string) {
@@ -169,6 +170,7 @@ export default defineComponent({
       } else if (side === 'bottom') {
         graph.alignCells(mxConstants.ALIGN_BOTTOM);
       }
+      dropdown.value.hide(true);
     }
 
     function distribute(side: string) {
@@ -182,11 +184,14 @@ export default defineComponent({
       );
     }
 
-    function fireEvent(type: string) {
+    function fireEvent(type: string, closeDropDown = false) {
       props.editorUi.fireEvent(new mxEventObject(type));
+      if (closeDropDown) {
+        dropdown.value.hide(true);
+      }
     }
 
-    function changeMenuStatus(_sender: typeof mxEventSource, event: CustomEvent) {
+    function changeMenuStatus(_sender: typeof mxEventSource, event: mxEventObject) {
       const type = event.getProperty('type');
       const value = event.getProperty('value') as boolean;
 
@@ -241,6 +246,10 @@ export default defineComponent({
       }
     }
 
+    function preventDefaultShow(bvEvent: BvEvent) {
+      bvEvent.preventDefault();
+    }
+
     onMounted(() => {
       hideAll();
       props.editorUi.addListener('changeMenuStatus', changeMenuStatus);
@@ -277,6 +286,7 @@ export default defineComponent({
       disabledHover,
       distribute,
       doAction,
+      dropdown,
       fireEvent,
       graph,
       hide,
@@ -284,6 +294,7 @@ export default defineComponent({
       isMultipleCellSelected,
       isSomethingSelected,
       mxClient,
+      preventDefaultShow,
       redoDisabled,
       showSubmenu,
       undoDisabled,
@@ -456,7 +467,11 @@ export default defineComponent({
         b-dropdown-divider.no-hover
         b-dropdown-item.pb-1(href='#', @click='doAction("fullscreen")')
           span.item-name Fullscreen
-      b-nav-item-dropdown#menu-padding.large-dropdown(text='Arrange', @show='disabledHover')
+      b-nav-item-dropdown#menu-padding.large-dropdown(
+        text='Arrange',
+        @show='disabledHover',
+        ref='dropdown'
+      )
         b-dropdown-item(href='#', @click='doAction("toFront")', :disabled='!isSomethingSelected')
           span.material-icons.menu-icons flip_to_front
           span.item-name To Front
@@ -482,6 +497,7 @@ export default defineComponent({
           dropright='',
           text='Direction',
           block,
+          @show='preventDefaultShow',
           @mouseover.native='showSubmenu("direction-dropright")',
           @mouseleave.native='hide("direction-dropright")',
           :disabled='!isSomethingSelected'
@@ -502,6 +518,7 @@ export default defineComponent({
           dropright='',
           text='Align',
           block,
+          @show='preventDefaultShow',
           @mouseover.native='showSubmenu("align-dropright")',
           @mouseleave.native='hide("align-dropright")',
           :disabled='!isMultipleCellSelected'
@@ -522,6 +539,7 @@ export default defineComponent({
           dropright='',
           text='Distribute',
           block,
+          @show='preventDefaultShow',
           @mouseover.native='showSubmenu("distribute-dropright")',
           @mouseleave.native='hide("distribute-dropright")',
           :disabled='!isMultipleCellSelected'
@@ -535,6 +553,7 @@ export default defineComponent({
         //-   dropright='',
         //-   text='Navigation',
         //-   block,
+        //-   @show='preventDefaultShow',
         //-   @mouseover.native='showSubmenu("navigation-dropright")',
         //-   @mouseleave.native='hide("navigation-dropright")',
         //-   :disabled='!isSomethingSelected'
@@ -555,6 +574,7 @@ export default defineComponent({
           dropright='',
           text='Insert',
           block,
+          @show='preventDefaultShow',
           @mouseover.native='showSubmenu("insert-dropright")',
           @mouseleave.native='hide("insert-dropright")'
         )
@@ -574,6 +594,7 @@ export default defineComponent({
           dropright='',
           text='Layout',
           block,
+          @show='preventDefaultShow',
           @mouseover.native='showSubmenu("layout-dropright")',
           @mouseleave.native='hide("layout-dropright")'
         )
@@ -581,13 +602,13 @@ export default defineComponent({
             span.item-name Horizontal Flow
           b-dropdown-item(href='#', @click='horizontalFlow("vertical")')
             span.item-name Vertical Flow
-          b-dropdown-item(href='#', @click='fireEvent("horizontalTree")')
+          b-dropdown-item(href='#', @click='fireEvent("horizontalTree", true)')
             span.item-name Horizontal Tree
-          b-dropdown-item(href='#', @click='fireEvent("verticalTree")')
+          b-dropdown-item(href='#', @click='fireEvent("verticalTree", true)')
             span.item-name Vertical Tree
-          b-dropdown-item(href='#', @click='fireEvent("radialTree")')
+          b-dropdown-item(href='#', @click='fireEvent("radialTree", true)')
             span.item-name Radial Tree
-          b-dropdown-item(href='#', @click='fireEvent("OrganicLayout")')
+          b-dropdown-item(href='#', @click='fireEvent("OrganicLayout", true)')
             span.item-name Organic
           b-dropdown-item(href='#', @click='circle')
             span.item-name Circle
@@ -644,6 +665,7 @@ export default defineComponent({
       //-     dropright='',
       //-     text='Image',
       //-     block,
+      //-     @show='preventDefaultShow',
       //-     @mouseover.native='showSubmenu("image-dropright")',
       //-     @mouseleave.native='hide("image-dropright")'
       //-   )

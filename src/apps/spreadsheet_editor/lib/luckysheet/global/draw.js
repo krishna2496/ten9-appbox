@@ -95,14 +95,20 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
 
         }
         else {
-            luckysheetTableContent.fillStyle = "#ffffff";
+            /*
+            TEN9 : background color changes
+            luckysheetTableContent.fillStyle = "#ffffff"; */
+            luckysheetTableContent.fillStyle = "#F8F9FA";
             luckysheetTableContent.fillRect(
                 0,
                 (start_r + offsetTop + firstOffset) , 
                 Store.rowHeaderWidth -1,
                 (end_r - start_r + 1+lastOffset-firstOffset) 
             )
+            /* TEN9: Color changes
             luckysheetTableContent.fillStyle = "#000000";
+            */
+            luckysheetTableContent.fillStyle = "#76797E";
 
             //行标题栏序列号
             luckysheetTableContent.save();//save scale before draw text
@@ -293,14 +299,22 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
 
         }
         else {
-            luckysheetTableContent.fillStyle = "#ffffff";
+            /*
+            TEN9 : background color changes
+            luckysheetTableContent.fillStyle = "#ffffff"; */
+            luckysheetTableContent.fillStyle = "#F8F9FA";
+
             luckysheetTableContent.fillRect(
                 (start_c + offsetLeft - 1) , 
                 0, 
                 (end_c - start_c) ,
                 Store.columnHeaderHeight -1
             )
+            /*
+            TEN9 : background color changes
             luckysheetTableContent.fillStyle = "#000000";
+            */
+            luckysheetTableContent.fillStyle = "#76797E";
 
             //列标题栏序列号
             luckysheetTableContent.save();//save scale before draw text
@@ -327,8 +341,9 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
                 (end_c + offsetLeft - 4 + bodrder05) ,
                 (Store.columnHeaderHeight - 2) 
             );
-            luckysheetTableContent.lineWidth = 1;
-            luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
+            // TEN9: BORDER changes
+            // luckysheetTableContent.lineWidth = 1;
+            // luckysheetTableContent.strokeStyle = luckysheetdefaultstyle.strokeStyle;
             luckysheetTableContent.closePath();
             luckysheetTableContent.stroke();
         }

@@ -241,6 +241,14 @@ export default function luckysheetHandler() {
                 rowscroll -= luckysheetFreezen.freezenhorizontaldata[0];
             }
 
+            // TEN9 : Made Scrolling with mousewheel faster
+            if (event.originalEvent.wheelDelta < 0) {
+                rowscroll = rowscroll + 180;
+            }
+            if (event.originalEvent.wheelDelta > 0) {
+                rowscroll = rowscroll - 180;
+            }
+
             $("#luckysheet-scrollbar-y").scrollTop(rowscroll);
         }
         else if(event.deltaX != 0){
