@@ -67,6 +67,7 @@ export default defineComponent({
     });
 
     return {
+      cell,
       closeModal,
       editImage,
       imageLink,
