@@ -15,13 +15,10 @@
 -->
 
 <script lang="ts">
-import {
-  mxClient,
-  mxEventObject,
-  mxEventSource,
-  mxResources,
-  mxUtils,
-} from '../../lib/jgraph/mxClient.js';
+import { mxClient, mxEventObject, mxEventSource, mxUtils } from '../../lib/jgraph/mxClient.js';
+
+import { usePageActions } from '../composition/pages';
+
 import {
   defineComponent,
   nextTick,
@@ -87,48 +84,11 @@ export default defineComponent({
       props.editorUi.removeListener(close);
     });
 
-    function insertPage() {
-      props.editorUi.insertPage(
-        null,
-        (mxUtils.indexOf(props.editorUi.pages, props.editorUi.getCurrentPage()) as number) + 1,
-      );
-      // close();
-    }
-
-    function deletePage() {
-      props.editorUi.removePage(props.editorUi.getCurrentPage());
-      // close();
-    }
-
     function updatePages() {
       pages.value = [];
       for (let i = 0; i < props.editorUi.pages.length; i++) {
         pages.value.push(props.editorUi.pages[i].getName());
       }
-    }
-
-    function renamePage() {
-      props.editorUi.renamePage(
-        props.editorUi.getCurrentPage(),
-        props.editorUi.getCurrentPage().node.attributes.name.nodeValue,
-      );
-      // close();
-    }
-
-    function duplicatePage() {
-      props.editorUi.duplicatePage(
-        props.editorUi.getCurrentPage(),
-        mxResources.get('copyOf', [props.editorUi.getCurrentPage().node.attributes.name.nodeValue]),
-      );
-      // close();
-    }
-
-    function selectPage(pageNumber: number) {
-      props.editorUi.selectPage(props.editorUi.pages[pageNumber]);
-    }
-
-    function isCurrentPage(pageNumber: number) {
-      return props.editorUi.getCurrentPage() == props.editorUi.pages[pageNumber];
     }
 
     watch(
@@ -140,18 +100,11 @@ export default defineComponent({
 
     return {
       close,
-      deletePage,
-      duplicatePage,
       getCurrentPageName,
-      insertPage,
-      isCurrentPage,
-      openPopupMenu,
       pages,
       popupMenuRef,
-      renamePage,
-      selectPage,
       show,
-      updatePages,
+      ...usePageActions(props.editorUi),
     };
   },
 });

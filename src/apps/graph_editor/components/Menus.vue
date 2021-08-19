@@ -17,6 +17,8 @@
 <script lang="ts">
 import PopupMenu from './menu/PopupMenu.vue';
 import PagesFooterPopupMenu from './menu/PagesFooterPopupMenu.vue';
+import PagePopupMenu from './menu/PagePopupMenu.vue';
+
 import { defineComponent } from '@vue/composition-api';
 
 import '../styles/modals.scss';
@@ -24,8 +26,9 @@ import '../styles/modals.scss';
 export default defineComponent({
   name: 'Menus',
   components: {
-    PopupMenu,
     PagesFooterPopupMenu,
+    PagePopupMenu,
+    PopupMenu,
   },
   props: {
     editorUi: {
@@ -41,5 +44,5 @@ export default defineComponent({
 .menu-container(v-if='editorUi')
   popup-menu(:editorUi='editorUi')
   pages-footer-popup-menu(:editorUi='editorUi')
-  //- page-popup-menu(:editorUi='editorUi')
+  page-popup-menu(:editorUi='editorUi')
 </template>
