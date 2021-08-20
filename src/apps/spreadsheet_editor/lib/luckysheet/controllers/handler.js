@@ -4972,6 +4972,26 @@ export default function luckysheetHandler() {
         $("#luckysheet-rightclick-menu").hide();
     });
 
+    $("#luckysheetComment").click(function () {
+            const locale_comment = locale().comment;
+            luckysheetPostil.removeActivePs();
+
+            let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+            
+            let row_index = last["row_focus"];
+            if(row_index == null){
+                row_index = last["row"][0];
+            }
+
+            let col_index = last["column_focus"];
+            if(col_index == null){
+                col_index = last["column"][0];
+            }
+            luckysheetContainerFocus();
+            luckysheetPostil.newPs(row_index, col_index);
+            $("#luckysheet-rightclick-menu").css('display', 'none');
+    })
+
     //Cell format
     $("#luckysheetCellFormatRightClickMenu").click(function () {
         openCellFormatModel();

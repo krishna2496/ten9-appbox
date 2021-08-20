@@ -8879,7 +8879,8 @@ export default {
         splitColumn: 'Split text',
         insertImage: 'Insert image',
         insertLink: 'Insert link',
-        dataVerification: 'Data verification',
+        /* dataVerification: 'Data verification', */
+        dataValidation: 'Data validation',
         protection:"Protect the sheet",
 
         clearText:"Clear color",
@@ -9353,11 +9354,19 @@ export default {
         right: 'Right',
         top: 'Top',
         bottom: 'Bottom',
-        moveLeft: 'Move left',
-        moveUp: 'Move up',
+        /* TEN9 : text changes 
+        moveLeft: 'Move left', */
+        moveLeft: 'Shift left',
+        /* TEN9 : text changes 
+        moveUp: 'Move up', */
+        moveUp: 'Shift up',
         add: 'Add',
-        row: 'Row',
-        column: 'Column',
+        /* TEN9 : Text changes 
+        row: 'Row', */
+        row: 'row',
+        /* TEN9 : Text changes 
+        column: 'Column', */
+        column: 'column',
         width: 'Width',
         height: 'Height',
         number: 'Number',
