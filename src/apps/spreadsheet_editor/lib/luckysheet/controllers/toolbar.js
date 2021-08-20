@@ -944,7 +944,7 @@ export function createToolbarHtml() {
                         </div>
                     </div>
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
-                    style="user-select: none;margin-right: 7px;">
+                    style="user-select: none;margin-right: 7px;top:-8px">
                     </div>
                 </div>
             </div>
