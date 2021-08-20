@@ -189,9 +189,9 @@ export function createToolbarHtml() {
                         role="combobox" id="dropdown-zoom" style="user-select: none;font-size:12px;width:40px" tabindex="-1" type="text" value="100%"
                         />
                     </div>
-                    ${/* TEN9: margin-left: 8px added */'' }
+                    ${/* TEN9: margin-left: 8px added , top : -10px */'' }
                     <div class="luckysheet-toolbar-combo-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
-                    style="user-select: none;margin-left: 13px;">
+                    style="user-select: none;margin-left: 13px;top:-10px">
                     </div>
                 </div>
             </div>
@@ -276,7 +276,7 @@ export function createToolbarHtml() {
                     </div>
                     */'' } 123
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
-                    style="user-select: none;">
+                    style="user-select: none;top:-10px">
                     </div>
                 </div>
             </div>
@@ -293,8 +293,9 @@ export function createToolbarHtml() {
                     style="width: 80px;user-select: none;font-size:12px;padding: 0px 2px 0px 2px;top: -3px;">
                         ${fontarray[0]}
                     </div>
+                    ${/* TEN9 : Top:-10px added */'' }
                     <div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
-                    style="user-select: none;"><div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige" style="user-select: none;margin-left: 0px;margin-right: 4px;">
+                    style="user-select: none;top:-8px"><div class="luckysheet-toolbar-menu-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige" style="user-select: none;margin-left: 0px;margin-right: 4px;top:-10px">
                     </div>
                     </div>
                 </div>
@@ -313,8 +314,9 @@ export function createToolbarHtml() {
                         role="combobox" style="user-select: none;" tabindex="-1" type="text" value="10"
                         />
                     </div>
+                    ${/* TEN9 : top:-10px added */'' }
                     <div class="luckysheet-toolbar-combo-button-dropdown luckysheet-inline-block iconfont luckysheet-iconfont-xiayige"
-                    style="user-select: none;">
+                    style="user-select: none;top:-10px">
                     </div>
                 </div>
             </div>
