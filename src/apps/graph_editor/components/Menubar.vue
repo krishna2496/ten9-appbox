@@ -44,6 +44,11 @@ export default defineComponent({
       required: false,
       default: null,
     },
+    isEditing: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const { graph } = props.editorUi.editor;
@@ -580,7 +585,8 @@ export default defineComponent({
           block,
           @show='preventDefaultShow',
           @mouseover.native='showSubmenu("insert-dropright")',
-          @mouseleave.native='hide("insert-dropright")'
+          @mouseleave.native='hide("insert-dropright")',
+          :disabled='!isEditing'
         )
           b-dropdown-item(href='#', @click='doAction("insertRectangle")')
             span.item-name Rectangle
@@ -602,7 +608,8 @@ export default defineComponent({
           block,
           @show='preventDefaultShow',
           @mouseover.native='showSubmenu("layout-dropright")',
-          @mouseleave.native='hide("layout-dropright")'
+          @mouseleave.native='hide("layout-dropright")',
+          :disabled='!isEditing'
         )
           b-dropdown-item(href='#', @click='horizontalFlow("horizontal")')
             span.item-name Horizontal Flow
