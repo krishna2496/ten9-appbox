@@ -18,6 +18,7 @@ import App from './App.vue';
 import Vue from 'vue';
 import VueCompositionAPI from '@vue/composition-api';
 import { BootstrapVue, IconsPlugin, VBModal } from 'bootstrap-vue';
+import WebFont from 'webfontloader';
 
 Vue.use(VueCompositionAPI);
 
@@ -33,3 +34,10 @@ Vue.config.productionTip = false;
 new Vue({
   render: (h) => h(App),
 }).$mount('#app');
+
+// Load material icons to avoid FOUT with on-demand loading
+WebFont.load({
+  custom: {
+    families: ['Material Icons'],
+  },
+});
