@@ -2408,7 +2408,9 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     cursor: pointer;
     list-style: none;
     margin: 0;
-    padding: 6px 15px 6px 20px;
+    /* TEN9 : padding added
+    padding: 6px 15px 6px 20px; */
+    padding: 6px 15px 6px 36px;
     white-space: nowrap;
     user-select: none;
 }
