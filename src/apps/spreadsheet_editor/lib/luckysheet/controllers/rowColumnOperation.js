@@ -383,8 +383,8 @@ export function rowColumnOperationInitial(){
             if(isEditMode()){ //非编辑模式下禁止右键功能框
                 return;
             }
-
-            $("#luckysheet-cols-rows-shift").hide();
+            // TEN9 : show soring option
+            // $("#luckysheet-cols-rows-shift").hide();
             Store.luckysheetRightHeadClickIs = "row";
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(locale().rightclick.row);
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-size").text(locale().rightclick.height);
@@ -393,7 +393,7 @@ export function rowColumnOperationInitial(){
 
             $("#luckysheet-cols-rows-add").show();
             $("#luckysheet-cols-rows-data").show();
-            $("#luckysheet-cols-rows-shift").hide();
+            // $("#luckysheet-cols-rows-shift").hide();
             $("#luckysheet-cols-rows-handleincell").hide();
 
             $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'block';
@@ -826,7 +826,8 @@ export function rowColumnOperationInitial(){
 
             $("#luckysheet-cols-rows-add").show();
             $("#luckysheet-cols-rows-data").show();
-            $("#luckysheet-cols-rows-shift").hide();
+            // TEN9 : display sorting
+            // $("#luckysheet-cols-rows-shift").hide();
             $("#luckysheet-cols-rows-handleincell").hide();
 
             $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'block';
@@ -1041,7 +1042,7 @@ export function rowColumnOperationInitial(){
             $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'none';
         }
 
-        if(!cellRightClickConfig.sort){
+        if(!cellRightClickConfig.sort){debugger;
             $$('#luckysheet-cols-rows-shift .luckysheet-menuseparator').style.display = 'none';
         }
 

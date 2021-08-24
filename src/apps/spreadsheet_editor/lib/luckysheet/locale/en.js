@@ -9366,13 +9366,16 @@ export default {
         row: 'row',
         /* TEN9 : Text changes 
         column: 'Column', */
+        columns: 'columns',
         column: 'column',
         width: 'Width',
         height: 'Height',
         number: 'Number',
         confirm: 'Confirm',
-        orderAZ: 'A-Z order',
-        orderZA: 'Z-A order',
+        /* orderAZ: 'A-Z order',
+        orderZA: 'Z-A order', */
+        orderAZ: 'Short sheet A -> Z order',
+        orderZA: 'Short sheet Z -> A order',
         clearContent: 'Clear content',
         matrix: 'Matrix operation',
         sortSelection: 'Sort',

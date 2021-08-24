@@ -1203,7 +1203,8 @@ export default function luckysheetHandler() {
 
                 $("#luckysheet-cols-rows-add").show();
                 // $("#luckysheet-cols-rows-data").show();
-                $("#luckysheet-cols-rows-shift").hide();
+                // TEN9 : display sorting
+                // $("#luckysheet-cols-rows-shift").hide();
                 $("#luckysheet-cols-rows-handleincell").hide();
                 Store.luckysheet_cols_menu_status = true;
 
@@ -1277,7 +1278,8 @@ export default function luckysheetHandler() {
                 $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-right").text(locale().rightclick.bottom);
                 $("#luckysheet-cols-rows-add").show();
                 // $("#luckysheet-cols-rows-data").show();
-                $("#luckysheet-cols-rows-shift").hide();
+                // TEN9 : display sorting
+                // $("#luckysheet-cols-rows-shift").hide();
                 $("#luckysheet-cols-rows-handleincell").hide();
                 Store.luckysheet_cols_menu_status = true;
 
