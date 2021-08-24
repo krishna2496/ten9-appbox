@@ -1042,7 +1042,7 @@ export function rowColumnOperationInitial(){
             $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'none';
         }
 
-        if(!cellRightClickConfig.sort){debugger;
+        if(!cellRightClickConfig.sort){
             $$('#luckysheet-cols-rows-shift .luckysheet-menuseparator').style.display = 'none';
         }
 
