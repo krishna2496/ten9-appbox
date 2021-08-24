@@ -353,7 +353,7 @@ export function createToolbarHtml() {
             </div>
         </div>
         ${ /* TEN9: line break added to resolve flicker issue */'' }
-        <br/>`, //'Italic (Ctrl+I)'
+        `, //'Italic (Ctrl+I)'
         strikethrough: `<div class="luckysheet-toolbar-button luckysheet-inline-block" data-tips="${toolbar.strikethrough}"
         id="luckysheet-icon-strikethrough" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
@@ -829,7 +829,7 @@ export function createToolbarHtml() {
             </div>
         </div>
         ${ /* TEN9: line break added to resolve flicker issue */'' }
-        <br/>`, //'comment'
+        `, //'comment'
         pivotTable: `<div class="luckysheet-toolbar-button-split-left luckysheet-toolbar-button luckysheet-inline-block"
         data-tips="${toolbar.pivotTable}" id="luckysheet-pivot-btn-title" role="button" style="user-select: none;">
             <div class="luckysheet-toolbar-button-outer-box luckysheet-inline-block"
