@@ -58,3 +58,13 @@
   /* Support for IE. */
   font-feature-settings: 'liga';
 }
+
+// WebFontLoader attaches classes to html element to indicate state of
+// font loads. We can use this to hide the default FOUT text shown during
+// load and reduce jarring flicker.
+.wf-loading,
+.wf-materialicons-n4-inactive {
+  .material-icons {
+    visibility: hidden;
+  }
+}
