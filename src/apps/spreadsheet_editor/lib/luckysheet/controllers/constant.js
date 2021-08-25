@@ -304,8 +304,12 @@ function rightclickHTML() {
     }
 
     const rightclickContainer =  `<div id="luckysheet-rightclick-menu" class="luckysheet-cols-menu luckysheet-rightgclick-menu luckysheet-mousedown-cancel">
+                <div id="luckysheet-cut-btn" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel luckysheet-cut-btn" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" style="display:${config.copy ? 'block' : 'none'};display:flex">
+                    <span class="material-icons" style="margin-right: -25px;margin-left: 6px;line-height: 1.6;">content_cut</span>
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">Cut</div>
+                </div>
                 <div id="luckysheet-copy-btn" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel luckysheet-copy-btn" data-clipboard-action="copy" data-clipboard-target="#luckysheet-copy-content" style="display:${config.copy ? 'block' : 'none'};display:flex">
-                    <span class="material-icons" style="margin-right: -25px;margin-left: 6px;">content_copy</span>
+                    <span class="material-icons" style="margin-right: -25px;margin-left: 6px;line-height: 1.6;">content_copy</span>
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.copy}</div>
                 </div>
                 ${/*<div id="luckysheetcopyfor" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel"  style="display:${config.copyAs ? 'block' : 'none'};">
@@ -314,7 +318,7 @@ function rightclickHTML() {
                     </div>
                 </div> */'' }
                 <div id="luckysheet-copy-paste" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.paste ? 'block' : 'none'};display:flex">
-                    <span class="material-icons" style="margin-right: -25px;margin-left: 6px;">content_paste</span>    
+                    <span class="material-icons" style="margin-right: -25px;margin-left: 6px;line-height: 1.6;">content_paste</span>    
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.paste}</div>
                 </div>
                 <div id="luckysheet-cols-rows-handleincell">
@@ -439,7 +443,8 @@ function rightclickHTML() {
                     <div id="luckysheetInsertImage" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.image ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.insertImage}</div>
                     </div> */'' }
-                    <div id="luckysheetInsertLink" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.link ? 'block' : 'none'};">
+                    <div id="luckysheetInsertLink" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.link ? 'block' : 'none'};display:flex">
+                        <span class="material-icons" style="margin-right: -25px;margin-left: 6px;line-height: 1.6;">link</span>
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.insertLink}</div>
                     </div>
                     ${ /* <div id="luckysheetDataVerification" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.data ? 'block' : 'none'};">
@@ -452,7 +457,7 @@ function rightclickHTML() {
                 <div >
                 <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
                     <div id="luckysheetComment" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.data ? 'block' : 'none'};;display:flex">
-                        <i class="ten9-font ten9-icon-insert-comment" style="padding-right: 0px;margin-right: -24px;margin-left: 8px;"></i>
+                        <i class="ten9-font ten9-icon-insert-comment" style="padding-right: 0px;margin-right: -24px;margin-left: 8px;color: #5f6368;"></i>
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel" style="line-height:1">Comment</div>
                     </div>
                 </div>

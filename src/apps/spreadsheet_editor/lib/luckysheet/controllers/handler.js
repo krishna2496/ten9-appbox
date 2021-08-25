@@ -4581,6 +4581,108 @@ export default function luckysheetHandler() {
         $("#luckysheet-scrollbar-y").scrollTop(0);
     });
 
+    $("#luckysheet-cut-btn, #luckysheet-cols-cut-btn, #luckysheet-paste-btn-title").click(function (event) {
+        $(this).parent().hide();
+        //复制范围内包含部分合并单元格，提示
+        if (Store.config["merge"] != null) {
+            let has_PartMC = false;
+
+            for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
+                let r1 = Store.luckysheet_select_save[s].row[0],
+                    r2 = Store.luckysheet_select_save[s].row[1];
+                let c1 = Store.luckysheet_select_save[s].column[0],
+                    c2 = Store.luckysheet_select_save[s].column[1];
+
+                has_PartMC = hasPartMC(Store.config, r1, r2, c1, c2);
+
+                if (has_PartMC) {
+                    break;
+                }
+            }
+
+            if (has_PartMC) {
+                if (isEditMode()) {
+                    alert(locale_drag.noPartMerge);
+                }
+                else {
+                    tooltip.info(locale_drag.noPartMerge, "");
+                }
+                return;
+            }
+        }
+
+        //多重选区 有条件格式时 提示
+        let cdformat = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].luckysheet_conditionformat_save;
+        if (Store.luckysheet_select_save.length > 1 && cdformat != null && cdformat.length > 0) {
+            let hasCF = false;
+
+            let cf_compute = conditionformat.getComputeMap();
+
+            label:
+            for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
+                if (hasCF) {
+                    break;
+                }
+
+                let r1 = Store.luckysheet_select_save[s].row[0],
+                    r2 = Store.luckysheet_select_save[s].row[1];
+                let c1 = Store.luckysheet_select_save[s].column[0],
+                    c2 = Store.luckysheet_select_save[s].column[1];
+
+                for (let r = r1; r <= r2; r++) {
+                    for (let c = c1; c <= c2; c++) {
+                        if (conditionformat.checksCF(r, c, cf_compute) != null) {
+                            hasCF = true;
+                            continue label;
+                        }
+                    }
+                }
+            }
+
+            if (hasCF) {
+                if (isEditMode()) {
+                    alert(locale_drag.noMulti);
+                }
+                else {
+                    tooltip.info(locale_drag.noMulti, "");
+                }
+                return;
+            }
+        }
+
+        //多重选区 行不一样且列不一样时 提示
+        if (Store.luckysheet_select_save.length > 1) {
+            let isSameRow = true,
+                str_r = Store.luckysheet_select_save[0].row[0],
+                end_r = Store.luckysheet_select_save[0].row[1];
+            let isSameCol = true,
+                str_c = Store.luckysheet_select_save[0].column[0],
+                end_c = Store.luckysheet_select_save[0].column[1];
+
+            for (let s = 1; s < Store.luckysheet_select_save.length; s++) {
+                if (Store.luckysheet_select_save[s].row[0] != str_r || Store.luckysheet_select_save[s].row[1] != end_r) {
+                    isSameRow = false;
+                }
+                if (Store.luckysheet_select_save[s].column[0] != str_c || Store.luckysheet_select_save[s].column[1] != end_c) {
+                    isSameCol = false;
+                }
+            }
+
+            if ((!isSameRow && !isSameCol) || selectIsOverlap()) {
+                if (isEditMode()) {
+                    alert(locale_drag.noMulti);
+                }
+                else {
+                    tooltip.info(locale_drag.noMulti, "");
+                }
+                return;
+            }
+        }
+
+        selection.cut(event);
+    });
+
+
     //右键菜单 复制按钮
     $("#luckysheet-copy-btn, #luckysheet-cols-copy-btn, #luckysheet-paste-btn-title").click(function (event) {
         $(this).parent().hide();
