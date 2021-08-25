@@ -21,6 +21,10 @@ import luckysheetArray from '../global/array';
 import analysis from '../global/analysis';
 import { selectHightlightShow } from './select';
 import { luckysheet_searcharray } from './sheetSearch';
+import {
+    luckysheetDrawgridRowTitle, 
+    luckysheetDrawgridColumnTitle 
+} from '../global/draw';
 import { 
     modelHTML, 
     filtermenuHTML, 
@@ -37,6 +41,7 @@ import Store from '../store';
 import locale from '../locale/locale';
 import numeral from 'numeral';
 import { luckysheetlodingHTML } from '../controllers/constant';
+import { convertSpanToShareString } from './inlineString';
 
 const pivotTable = {
     pivotDatas: null,
@@ -756,6 +761,9 @@ const pivotTable = {
     drawPivotTable: true,
     pivotTableBoundary: [12, 6],
     pivotclick: function (row_index, col_index, index) {
+        /* TEN9 : background header changes */
+        luckysheetDrawgridRowTitle();
+        luckysheetDrawgridColumnTitle();
         if(index == null){
             index = Store.currentSheetIndex;
         }
