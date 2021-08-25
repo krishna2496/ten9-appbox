@@ -543,7 +543,7 @@ export function createToolbarHtml() {
                     </div>
                 </div>
             </div>
-        </div>`, //'Merge cells'
+        </div><br/>`, //'Merge cells'
 
         
         horizontalAlignMode: `${ /* TEN9: Structure changes to match google sheet  
