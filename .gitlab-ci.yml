@@ -17,6 +17,7 @@
 image: node:15-alpine
 
 stages:
+  - check-if-behind-default-branch
   - test
   - build
 
@@ -46,6 +47,21 @@ before_script:
   - yarn --version
   - echo "@fortawesome:registry=https://npm.fontawesome.com/" > .npmrc
   - echo "//npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_TOKEN}" >> .npmrc
+
+check-if-behind-default-branch:
+  stage: check-if-behind-default-branch
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  before_script: []
+  script: |
+    apk update
+    apk --verbose --no-cache add git git-lfs
+    git fetch
+    git checkout ${CI_DEFAULT_BRANCH}
+    git checkout ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
+    git config --global user.email ${GITLAB_USER_EMAIL}
+    git config --global user.name ${GITLAB_USER_NAME}
+    git merge --no-commit --no-ff origin/master | grep -q "Already up to date."
 
 lint:
   stage: test

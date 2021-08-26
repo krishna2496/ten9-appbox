@@ -88,7 +88,7 @@ const gridHTML = function(){
                                             <td valign="top" class="luckysheet-paneswrapper">
                                                 <div id="luckysheet-cols-h-c" class="luckysheet-cols-h-c">
                                                     <div class="luckysheet-cols-change-size" id="luckysheet-cols-change-size"></div>
-                                                    <div class="luckysheet-cols-menu-btn luckysheet-mousedown-cancel" id="luckysheet-cols-menu-btn"><i class="fa fa-caret-down luckysheet-mousedown-cancel" aria-hidden="true"></i></div>
+                                                    <div class="luckysheet-cols-menu-btn luckysheet-mousedown-cancel" id="luckysheet-cols-menu-btn"><i class="fa fa-caret-down luckysheet-mousedown-cancel" aria-hidden="true" style='line-height: 1;position:absolute'></i></div>
                                                     <div class="luckysheet-cols-h-hover" id="luckysheet-cols-h-hover"></div>
                                                     <div id="luckysheet-cols-h-selected"></div>
                                                     <div class="luckysheet-grdusedrange"></div>
@@ -1073,7 +1073,7 @@ const keycode = {
 const luckysheetdefaultstyle = {
     fillStyle: "#000000",
     textBaseline: "middle",
-    strokeStyle: "#c0c0c0",
+    strokeStyle: "#dfdfdf",
     rowFillStyle: "#5e5e5e",
     textAlign: 'center'
 }

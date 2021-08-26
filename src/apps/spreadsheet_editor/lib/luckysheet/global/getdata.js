@@ -8,6 +8,10 @@ import sheetmanage from '../controllers/sheetmanage';
 import { isInlineStringCT,isInlineStringCell,convertCssToStyleList } from '../controllers/inlineString';
 import locale from '../locale/locale';
 import Store from '../store';
+import {
+    luckysheetDrawgridRowTitle, 
+    luckysheetDrawgridColumnTitle 
+} from './draw';
 
 //Get selection range value
 export function getdatabyselection(range, sheetIndex) {
@@ -96,6 +100,11 @@ export function getdatabyselectionD(d, range) {
 }
 
 export function getdatabyselectionNoCopy(range) {
+    // TEN9 : background changes on selection 
+    if (range.column_select || range.row_select) {
+        luckysheetDrawgridRowTitle();
+        luckysheetDrawgridColumnTitle();
+    }
     if (range == null || range["row"] == null || range["row"].length == 0) {
         return [];
     }

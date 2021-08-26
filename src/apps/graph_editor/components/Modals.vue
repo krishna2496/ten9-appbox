@@ -30,6 +30,7 @@ import PageScaleModal from './dialogs/PageScaleModal.vue';
 import PrintModal from './dialogs/PrintModal.vue';
 import RotationModal from './dialogs/RotationModal.vue';
 import ScratchpadModal from './dialogs/ScratchpadModal.vue';
+import TreeLayoutModal from './dialogs/TreeLayoutModal.vue';
 import { defineComponent } from '@vue/composition-api';
 
 import '../styles/modals.scss';
@@ -52,6 +53,7 @@ export default defineComponent({
     PrintModal,
     RotationModal,
     ScratchpadModal,
+    TreeLayoutModal,
   },
   props: {
     editorUi: {
@@ -93,4 +95,5 @@ export default defineComponent({
   print-modal(:editorUi='editorUi')
   rotation-modal(:editorUi='editorUi')
   scratchpad-modal(:editorUi='editorUi')
+  tree-layout-modal(:editorUi='editorUi')
 </template>

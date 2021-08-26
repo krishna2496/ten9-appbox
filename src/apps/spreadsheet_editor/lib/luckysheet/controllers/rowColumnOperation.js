@@ -793,8 +793,8 @@ export function rowColumnOperationInitial(){
             col_pre = col_location[0], 
             col_index = col_location[2];
 
-        $("#luckysheet-cols-h-hover").css({ "left": col_pre, "width": col - col_pre - 1, "display": "block" });
-        $("#luckysheet-cols-menu-btn").css({ "left": col - 19, "display": "block" });
+        $("#luckysheet-cols-h-hover").css({ "left": col_pre, "width": col - col_pre - 1, "display": "block",'color': '#c0c0c0' });
+        $("#luckysheet-cols-menu-btn").css({ "left": col - 19, "display": "block",'width' : "7px", 'top' : "4px",'color': '#c0c0c0' });
 
         $("#luckysheet-cols-change-size").css({ "left": col - 5 });
         if (x < col && x >= col - 5) {

@@ -3,7 +3,7 @@
   "license": "https://git.ten9.xyz/ten9-hq/ten9-Software-Requirements/-/blob/master/LICENSE",
   "private": true,
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack --config ./config/webpack/webpack.config.js",
+    "build": "cross-env NODE_OPTIONS=\"--max_old_space_size=8192\" NODE_ENV=production webpack --config ./config/webpack/webpack.config.js",
     "clean-webpack": "./node_modules/.bin/rimraf \"./node_modules/.cache/webpack/ten9-appbox-development/*.pack*\"",
     "lint": "./node_modules/.bin/eslint --color --max-warnings 0 \"**/*.{vue,js,ts}\" --cache --cache-location ./.lintcache/eslintcache/",
     "lint:all": "yarn prettier && yarn stylelint && yarn lint",
@@ -35,7 +35,8 @@
     "vue-clamp": "^0.3.2",
     "vue-codemirror": "^4.0.6",
     "vue-resize-directive": "^1.2.0",
-    "vuedraggable": "^2.24.3"
+    "vuedraggable": "^2.24.3",
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
     "@babel/core": "^7.13.16",
@@ -45,6 +46,7 @@
     "@types/lodash": "^4.14.168",
     "@types/prettier": "^2.2.3",
     "@types/uuid": "^8.3.0",
+    "@types/webfontloader": "^1.6.33",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "@typescript-eslint/typescript-estree": "^4.22.0",

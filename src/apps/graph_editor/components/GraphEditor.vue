@@ -791,7 +791,7 @@ export default defineComponent<GraphEditorProps>({
 .div
   .geEditor(ref='containerRef')
   div(v-if='editorUiRef')
-    menubar(:editorUi='editorUiRef')
+    menubar(:editorUi='editorUiRef', :isEditing='isEditing')
   modals(:editorUi='editorUiRef', :shape-libraries='shapeLibraries', @insert-image='imageInsert')
   window(
     :editorUi='editorUiRef',

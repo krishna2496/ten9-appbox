@@ -701,9 +701,7 @@ EditorUi = function (editor, container, lightbox) {
       graph.popupMenuHandler.factoryMethod = mxUtils.bind(this, function (menu, cell, evt) {
         // TEN9: fire event to open popup menu
         //this.menus.createPopupMenu(menu, cell, evt);
-        const x = evt.clientX;
-        const y = evt.clientY;
-        this.fireEvent(new mxEventObject('openPopupMenu', 'pointer', { x, y }));
+        this.fireEvent(new mxEventObject('openPopupMenu', 'event', evt));
         this.isPopupOpen = true;
       });
     }
