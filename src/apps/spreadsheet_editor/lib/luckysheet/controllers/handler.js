@@ -5059,7 +5059,9 @@ export default function luckysheetHandler() {
     })
 
     //菜单栏 数据验证按钮
-    $("#luckysheet-dataVerification-btn-title").click(function () {
+    // TEN9 : dataverification modal click event replaced with function
+    // $("#luckysheet-dataVerification-btn-title").click(function () {
+    function showProtectionModal() {
         if(!checkProtectionNotEnable(Store.currentSheetIndex)){
             return;
         }
@@ -5070,9 +5072,11 @@ export default function luckysheetHandler() {
 
         dataVerificationCtrl.createDialog();
         dataVerificationCtrl.init();
-    });
+    };
     $("#luckysheetDataVerification").click(function () {
-        $("#luckysheet-dataVerification-btn-title").click();
+        // TEN9 : Show protection modal
+        // $("#luckysheet-dataVerification-btn-title").click();
+        showProtectionModal();
         $("#luckysheet-rightclick-menu").hide();
     });
 

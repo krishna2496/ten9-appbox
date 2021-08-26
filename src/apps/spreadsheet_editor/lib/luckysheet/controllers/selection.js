@@ -1035,7 +1035,6 @@ const selection = {
 
             if (data.indexOf("luckysheet_copy_action_table") >- 1 && Store.luckysheet_copy_save["copyRange"] != null && Store.luckysheet_copy_save["copyRange"].length > 0) {
                 if (Store.luckysheet_paste_iscut) {
-                    debugger;
                     Store.luckysheet_paste_iscut = false;
                     _this.pasteHandlerOfCutPaste(Store.luckysheet_copy_save);
                     _this.clearcopy(e);

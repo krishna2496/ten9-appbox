@@ -355,8 +355,8 @@ function rightclickHTML() {
                             ${ /* TEN9 : <span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
                             ${rightclick.add}
                             ${ /* TEN9 : width changes
-                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;margin-left:5px;"/> 
-                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:14px;height:20px;box-sizing:border-box;text-align: center;"/>*/'' }
+                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:40px;height:20px;box-sizing:border-box;text-align: center;margin-left:5px;"/> */'' }
+                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:14px;height:20px;box-sizing:border-box;text-align: center;"/>
                             <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
                         </div>
                     </div>

@@ -383,7 +383,7 @@ export function rowColumnOperationInitial(){
             if(isEditMode()){ //非编辑模式下禁止右键功能框
                 return;
             }
-            // TEN9 : show soring option
+            // TEN9 : show sorting option
             // $("#luckysheet-cols-rows-shift").hide();
             Store.luckysheetRightHeadClickIs = "row";
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(locale().rightclick.row);
@@ -393,6 +393,7 @@ export function rowColumnOperationInitial(){
 
             $("#luckysheet-cols-rows-add").show();
             $("#luckysheet-cols-rows-data").show();
+            // TEN9 : show sorting option
             // $("#luckysheet-cols-rows-shift").hide();
             $("#luckysheet-cols-rows-handleincell").hide();
 
