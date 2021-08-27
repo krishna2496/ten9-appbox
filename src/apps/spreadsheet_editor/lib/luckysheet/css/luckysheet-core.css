@@ -4398,8 +4398,12 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 
 /*边栏通用样式*/
 .luckysheet-modal-dialog-slider {
+    /* TEN9 : topand bottom css changes
     top: 1px;
     bottom: 1px;
+    */
+    top: 0px;
+    bottom: 15px;
     position: absolute;
     right: 0px;
     /* TEN9: style added width: 318px from 260px for better layout
@@ -4457,6 +4461,8 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     position: absolute;
     top: 0px;
     bottom: 0px;
+    /* TEN9 :Font size changes 
+    font-size: 12px; */
     font-size: 12px;
     /* TEN9: style added padding 5px for better layout */
     padding: 5px;

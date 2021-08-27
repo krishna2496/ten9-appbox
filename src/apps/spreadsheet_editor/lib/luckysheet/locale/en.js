@@ -9374,8 +9374,8 @@ export default {
         confirm: 'Confirm',
         /* orderAZ: 'A-Z order',
         orderZA: 'Z-A order', */
-        orderAZ: 'Short sheet A -> Z order',
-        orderZA: 'Short sheet Z -> A order',
+        orderAZ: 'Sort sheet A -> Z order',
+        orderZA: 'Sort sheet Z -> A order',
         clearContent: 'Clear content',
         matrix: 'Matrix operation',
         sortSelection: 'Sort',

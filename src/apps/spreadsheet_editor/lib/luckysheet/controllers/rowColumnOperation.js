@@ -40,8 +40,7 @@ import {checkProtectionLockedRangeList, checkProtectionAllSelected,checkProtecti
 import Store from '../store';
 import luckysheetConfigsetting from './luckysheetConfigsetting';
 
-export function rowColumnOperationInitial(){
-
+export function rowColumnOperationInitial() {
     //表格行标题 mouse事件
     $("#luckysheet-rows-h").mousedown(function (event) {
         if(!checkProtectionAllSelected(Store.currentSheetIndex)){
@@ -383,8 +382,9 @@ export function rowColumnOperationInitial(){
             if(isEditMode()){ //非编辑模式下禁止右键功能框
                 return;
             }
-            // TEN9 : show sorting option
+            // TEN9 : Display sorting 
             // $("#luckysheet-cols-rows-shift").hide();
+            $("#luckysheet-cols-rows-shift").show();
             Store.luckysheetRightHeadClickIs = "row";
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-word").text(locale().rightclick.row);
             $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-size").text(locale().rightclick.height);
@@ -393,9 +393,9 @@ export function rowColumnOperationInitial(){
 
             $("#luckysheet-cols-rows-add").show();
             $("#luckysheet-cols-rows-data").show();
-            // TEN9 : show sorting option
+            // TEN9 : Display sorting 
             // $("#luckysheet-cols-rows-shift").hide();
-            $("#luckysheet-cols-rows-handleincell").hide();
+            $("#luckysheet-cols-rows-handleincell").show();
 
             $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'block';
             $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'block';
@@ -433,7 +433,6 @@ export function rowColumnOperationInitial(){
             if(!cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat){
                 $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
             }
-            
             showrightclickmenu($("#luckysheet-rightclick-menu"), $(this).offset().left + 46, event.pageY);
             Store.luckysheet_cols_menu_status = true;
 
@@ -827,8 +826,9 @@ export function rowColumnOperationInitial(){
 
             $("#luckysheet-cols-rows-add").show();
             $("#luckysheet-cols-rows-data").show();
-            // TEN9 : display sorting
+            // TEN9 : Display sorting dropdown
             // $("#luckysheet-cols-rows-shift").hide();
+            $("#luckysheet-cols-rows-shift").show();
             $("#luckysheet-cols-rows-handleincell").hide();
 
             $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'block';
@@ -867,7 +867,6 @@ export function rowColumnOperationInitial(){
             if(!cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat){
                 $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
             }
-            
             showrightclickmenu($("#luckysheet-rightclick-menu"), event.pageX, $(this).offset().top + 18);
             Store.luckysheet_cols_menu_status = true;
 

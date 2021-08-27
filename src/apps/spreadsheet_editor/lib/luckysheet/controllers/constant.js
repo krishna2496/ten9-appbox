@@ -461,6 +461,12 @@ function rightclickHTML() {
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel" style="line-height:1">Comment</div>
                     </div>
                 </div>
+                ${ /* TEN9 : Protect option added */'' }
+                <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
+                    <div id="luckysheetProtect" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.data ? 'block' : 'none'};">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">Protect</div>
+                    </div>
+                </div>
                 <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
                     <div id="luckysheetDataVerification" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.data ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.dataValidation}</div>

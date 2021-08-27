@@ -563,7 +563,7 @@ function initialProtectionRIghtBar(file){
             </div>
             ${ /* TEN9: Changing top:138px from 130px for better layout
             <div class="luckysheet-slider-protection-config" style="top:130px;height:290px;border-top:1px solid #c5c5c5"> */'' }
-            <div class="luckysheet-slider-protection-config" style="top:138px;height:290px;border-top:1px solid #c5c5c5">
+            <div class="luckysheet-slider-protection-config" style="top:138px;height:290px;border-top:1px solid #c5c5c5;overflow-x:hidden">
                 ${ /* TEN9: style added margin-bottom: 6px;margin-top: 6px; for better layout
                 <div class="luckysheet-slider-protection-row" style="height:20px;"> */'' }
                 <div class="luckysheet-slider-protection-row" style="height:20px;margin-bottom: 6px;margin-top: 6px;">
