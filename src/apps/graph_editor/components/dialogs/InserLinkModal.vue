@@ -22,7 +22,7 @@ import {
   mxGeometry,
   mxUtils,
 } from '../../lib/jgraph/mxClient.js';
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 
 interface InsertLinkObject {
   cell?: typeof mxCell;
@@ -150,7 +150,7 @@ export default defineComponent({
       props.editorUi.addListener('openEditLink', openEditLink);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openInsertLink);
       props.editorUi.removeListener(openEditLink);
     });
@@ -184,8 +184,8 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     select.form-control.w-90(v-model='pageId')
       option(v-for='(page, index) in pages', :value='page.getId()') {{ page.getName() }}
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setLink')
+    b-button.btn.btn-primary(@click='setLink')
       | OK
 </template>

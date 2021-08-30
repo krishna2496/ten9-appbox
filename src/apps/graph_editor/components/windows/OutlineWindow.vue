@@ -18,7 +18,7 @@
 import WindowHeader from './Header.vue';
 import { mxConstants, mxEvent, mxEventObject, mxRectangle } from '../../lib/jgraph/mxClient.js';
 import { Graph } from '../../lib/jgraph/Graph.js';
-import { defineComponent, onMounted, onUnmounted, nextTick, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, nextTick, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
 // TODO: Figure out why we can't import here
 const { dragElement, bringWindowToFront } = require('./utils.ts');
@@ -132,7 +132,7 @@ export default defineComponent({
       dragElement(ele[index], index);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openOutlineWindow);
     });
 

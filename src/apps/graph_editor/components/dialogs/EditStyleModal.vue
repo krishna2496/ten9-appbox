@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { mxEventSource } from '../../lib/jgraph/mxClient';
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 interface CustomEvent {
   getProperty: FunctionStringCallback;
 }
@@ -58,7 +58,7 @@ export default defineComponent({
       props.editorUi.addListener('openEditStyle', onStyleChange);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(onStyleChange);
     });
 
@@ -83,8 +83,8 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     label Enter Style:
     textarea.style(v-model='style') {{ style }}
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setStyle')
+    b-button.btn.btn-primary(@click='setStyle')
       | OK
 </template>

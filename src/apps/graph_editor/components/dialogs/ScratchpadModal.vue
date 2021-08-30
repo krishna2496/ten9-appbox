@@ -17,7 +17,7 @@
 <script lang="ts">
 import ScratchpadShape from './ScratchpadShape.vue';
 import { mxCell, mxEventObject, mxEventSource } from '../../lib/jgraph/mxClient.js';
-import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 
 interface InsertLinkObject {
   length: number;
@@ -111,7 +111,7 @@ export default defineComponent({
       props.editorUi.addListener('scratchpadModal', scratchpadModal);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(scratchpadModal);
     });
 
@@ -156,8 +156,8 @@ b-modal#modal(
       @remove-shape='removeShape'
     )
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='saveScratchpad')
+    b-button.btn.btn-primary(@click='saveScratchpad')
       | Apply
 </template>

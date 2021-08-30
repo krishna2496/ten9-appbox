@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { mxEventSource } from '../../lib/jgraph/mxClient.js';
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 
 interface ImagePropertyFunction {
   getProperty: FunctionStringCallback;
@@ -62,7 +62,7 @@ export default defineComponent({
       props.editorUi.addListener('editImage', editImage);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openInsertImage);
     });
 
@@ -89,8 +89,8 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
   .row.ml-3
     input.txt-input.w-90(type='text', v-model='imageLink')
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='insertImage')
+    b-button.btn.btn-primary(@click='insertImage')
       | OK
 </template>

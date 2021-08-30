@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 const { getImage } = require('./shape_images.ts');
 const { mxEventObject } = require('../../lib/jgraph/mxClient.js');
 
@@ -113,7 +113,7 @@ export default defineComponent({
       props.editorUi.addListener('moreShapes', openMoreShapes);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openMoreShapes);
     });
 
@@ -166,8 +166,8 @@ b-modal#modal(
     .col-md-8.shape-modal-content
       img.full-width(:src='imageUrl')
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='loadShapes')
+    b-button.btn.btn-primary(@click='loadShapes')
       | Apply
 </template>
