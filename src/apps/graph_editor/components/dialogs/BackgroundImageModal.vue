@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 const { mxImage, mxResources, mxUtils } = require('../../lib/jgraph/mxClient');
 
 interface ImageDimension {
@@ -145,7 +145,7 @@ export default defineComponent({
       props.editorUi.addListener('openBackgroundImage', openBackgroundImage);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openBackgroundImage);
     });
 
@@ -180,10 +180,10 @@ b-modal(:visible='show', no-close-on-backdrop='', @close='close', @hide='close',
       input.ml-2.txt-input.w-20(type='text', v-model='imageWidth')
       label.ml-2.mt-1.text-box-label Height:
       input.ml-2.txt-input.w-20(type='text', v-model='imageHeight')
-      button.ml-4.btn.btn-default(type='button', @click='reset') Reset
+      b-button.ml-4.btn.btn-default(@click='reset') Reset
   template(v-slot:modal-footer)
-    button.btn.btn-grey(@click='close') Cancel
-    button.btn.btn-primary(@click='apply') Apply
+    b-button.btn.btn-grey(@click='close') Cancel
+    b-button.btn.btn-primary(@click='apply') Apply
 </template>
 
 <style lang="scss" scoped>

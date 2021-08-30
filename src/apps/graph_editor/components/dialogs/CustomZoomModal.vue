@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'CustomZoom',
@@ -28,9 +28,9 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const pageScaleInput = ref<HTMLInputElement>(null);
+    const zoomInput = ref<HTMLInputElement>(null);
 
-    const pageScaleValue = ref<number>(null);
+    const zoomValue = ref<number>(null);
 
     const scaleValue = 100;
 
@@ -39,44 +39,36 @@ export default defineComponent({
     }
 
     function zoom() {
-      if (!isNaN(pageScaleValue.value) && pageScaleValue.value > 0) {
+      if (!isNaN(zoomValue.value) && zoomValue.value > 0) {
         const { graph } = props.editorUi.editor;
-        graph.zoomTo(pageScaleValue.value / scaleValue);
+        graph.zoomTo(zoomValue.value / scaleValue);
       }
       closeModal();
     }
 
     function customZoom() {
       show.value = true;
-      pageScaleValue.value = props.editorUi.getPageScale() * scaleValue;
+      zoomValue.value = props.editorUi.getPageScale() * scaleValue;
     }
 
     function focusOnInput() {
-      pageScaleInput.value?.select();
-      pageScaleInput.value?.focus();
-    }
-
-    function onKeydown(event: KeyboardEvent) {
-      if (event.key == 'Enter') {
-        zoom();
-      }
+      zoomInput.value?.select();
+      zoomInput.value?.focus();
     }
 
     onMounted(() => {
       props.editorUi.addListener('customZoom', customZoom);
-      document.addEventListener('keydown', onKeydown);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(customZoom);
     });
 
     return {
       closeModal,
       focusOnInput,
-      onKeydown,
-      pageScaleInput,
-      pageScaleValue,
+      zoomInput,
+      zoomValue,
       show,
       zoom,
     };
@@ -88,7 +80,7 @@ export default defineComponent({
 b-modal#modal(
   :visible='show',
   no-close-on-backdrop='',
-  ref='pageScale',
+  ref='zoomInput',
   no-fade,
   @hide='closeModal',
   @shown='focusOnInput'
@@ -99,10 +91,15 @@ b-modal#modal(
   .mw-100
   .row.ml-3.mt-2
     label.mt-1 Percentage (%)
-    input.ml-2.txt-input(ref='pageScaleInput', type='number', v-model='pageScaleValue')
+    input.ml-2.txt-input(
+      ref='zoomInput',
+      type='number',
+      v-model='zoomValue',
+      @keyup.enter.stop.prevent='zoom'
+    )
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='zoom')
+    b-button.btn.btn-primary(@click='zoom')
       | Apply
 </template>

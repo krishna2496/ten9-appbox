@@ -16,7 +16,7 @@
 <script lang="ts">
 import NestedLayers from './NestedLayer.vue';
 import WindowHeader from './Header.vue';
-import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 import resize from 'vue-resize-directive';
 // TODO: Figure out why we can't import here
 const { dragElement, bringWindowToFront } = require('./utils.ts');
@@ -327,7 +327,7 @@ export default defineComponent({
       });
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openLayerWindow);
     });
 

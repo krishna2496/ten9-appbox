@@ -17,7 +17,7 @@
 <script lang="ts">
 import { mxClient, mxEventObject, mxEventSource, mxUtils } from '../../lib/jgraph/mxClient.js';
 import { usePageActions } from '../composition/pages';
-import { defineComponent, nextTick, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 import VClamp from 'vue-clamp';
 const graphUtils = require('../../lib/jgraph/graph_utils.js');
 
@@ -64,7 +64,7 @@ export default defineComponent({
       props.editorUi.editor.graph.refresh();
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openPopupMenu);
       props.editorUi.removeListener(close);
     });

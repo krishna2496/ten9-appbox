@@ -246,6 +246,7 @@ export default defineComponent({
 
     function onKeydown(event: KeyboardEvent) {
       if (event.key === 's' && (event.ctrlKey || event.metaKey)) {
+        event.stopPropagation();
         event.preventDefault();
         saveFile();
       }
@@ -419,7 +420,7 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
-      document.addEventListener('keydown', onKeydown);
+      document.removeEventListener('keydown', onKeydown);
     });
 
     function getDateString(value: number): string {

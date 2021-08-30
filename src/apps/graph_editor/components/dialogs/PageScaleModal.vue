@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'PageScaleModal',
@@ -50,12 +50,6 @@ export default defineComponent({
       pageScaleValue.value = props.editorUi.editor.graph.pageScale * scaleValue;
     }
 
-    function onKeydown(event: KeyboardEvent) {
-      if (event.key == 'Enter') {
-        setPageScale();
-      }
-    }
-
     function focusOnInput() {
       pageScaleInput.value?.select();
       pageScaleInput.value?.focus();
@@ -63,17 +57,15 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('openPageScale', openPageScale);
-      document.addEventListener('keydown', onKeydown);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openPageScale);
     });
 
     return {
       closeModal,
       focusOnInput,
-      onKeydown,
       pageScaleInput,
       pageScaleValue,
       setPageScale,
@@ -98,10 +90,15 @@ b-modal#modal(
   .mw-100
   .row.ml-3.mt-2
     label.mt-1 Percentage (%)
-    input.txt-input.ml-2(ref='pageScaleInput', type='number', v-model='pageScaleValue')
+    input.txt-input.ml-2(
+      ref='pageScaleInput',
+      type='number',
+      v-model='pageScaleValue',
+      @keyup.enter.stop.prevent='setPageScale'
+    )
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setPageScale')
+    b-button.btn.btn-primary(@click='setPageScale')
       | Apply
 </template>

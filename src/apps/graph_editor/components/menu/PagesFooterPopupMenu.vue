@@ -23,7 +23,7 @@ import {
   defineComponent,
   nextTick,
   onMounted,
-  onUnmounted,
+  onBeforeUnmount,
   ref,
   watch,
 } from '@vue/composition-api';
@@ -79,7 +79,7 @@ export default defineComponent({
       props.editorUi.editor.graph.refresh();
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openPopupMenu);
       props.editorUi.removeListener(close);
     });
