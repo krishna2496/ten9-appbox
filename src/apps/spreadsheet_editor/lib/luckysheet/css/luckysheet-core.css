@@ -7440,12 +7440,10 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 }
 
 /* TEN9 : css added to make luckysheet like google sheet */
-.fas, .fa-solid {
+.luckysheet .fas, .luckysheet .fa-solid {
     font-size: 14px;
     font-weight: 600 !important;
     color: rgba(0,0,0,.7) !important;
-    /* TEN9 : line-height: 2 added  */
-    line-height: 2;
 }
 
 .luckysheet-work-area {
