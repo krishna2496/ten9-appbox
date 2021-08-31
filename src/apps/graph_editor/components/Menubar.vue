@@ -368,7 +368,7 @@ export default defineComponent({
           span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}M
         b-dropdown-item(
           href='#',
-          @click='doAction("editTooltip")',
+          @click='fireEvent("editTooltip")',
           :disabled='!isSomethingSelected'
         )
           span.item-name Edit Tooltip...
