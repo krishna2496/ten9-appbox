@@ -474,7 +474,8 @@ export default defineComponent({
         type='text',
         v-model='searchInput',
         :class='{ bgLightPink: notFound }',
-        placeholder='Find'
+        placeholder='Find',
+        @keyup.enter.stop.prevent='searchText(true, false)'
       )
       input.mt-2.txt-input-window(type='text', v-model='replaceInput', placeholder='Replace with')
       .row.mt-2.ml-1
