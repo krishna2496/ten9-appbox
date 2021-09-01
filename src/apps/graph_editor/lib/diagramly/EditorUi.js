@@ -9490,9 +9490,7 @@ var SelectedFile;
       };
 
       if (onerror != null) {
-        // TEN9: throw error so at app level we can show the alert
-        throw new Error(mxResources.get('fileNotFound'));
-        //img.onerror = onerror;
+        img.onerror = onerror;
       }
 
       img.src = uri;
