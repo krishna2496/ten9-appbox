@@ -87,10 +87,10 @@ export default defineComponent({
     return {
       closeModal,
       focusOnInput,
-      tooltipInput,
-      tooltipValue,
       setTooltip,
       show,
+      tooltipInput,
+      tooltipValue,
     };
   },
 });
@@ -99,8 +99,7 @@ export default defineComponent({
 <template lang="pug">
 b-modal#modal(
   :visible='show',
-  no-close-on-backdrop='',
-  ref='pageScale',
+  ref='editTooltip',
   no-fade,
   @hide='closeModal',
   @shown='focusOnInput'
@@ -109,14 +108,8 @@ b-modal#modal(
     h6 Edit Tooltip
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
-  .row.ml-3.mt-2
-    b-form-textarea#textarea(
-      v-model='tooltipValue',
-      placeholder='',
-      rows='3',
-      max-rows='6',
-      @keyup.enter.stop.prevent='setTooltip'
-    )
+  .row.ml-3.mt-2.pr-4
+    b-form-textarea(v-model='tooltipValue', placeholder='', rows='3', max-rows='6')
   template(#modal-footer='')
     b-button.btn.btn-grey(@click='closeModal')
       | Cancel

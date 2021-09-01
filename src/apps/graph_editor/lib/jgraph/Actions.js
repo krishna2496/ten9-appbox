@@ -1251,6 +1251,16 @@ Actions.prototype.init = function () {
   action = this.addAction('tooltips', function () {
     graph.tooltipHandler.setEnabled(!graph.tooltipHandler.isEnabled());
     graph.fireEvent(new mxEventObject('graphChanged'));
+    // TEN9: change menubar and toolbar check icon value
+    ui.fireEvent(
+      new mxEventObject(
+        'changeMenuStatus',
+        'type',
+        'tooltips',
+        'value',
+        graph.tooltipHandler.isEnabled(),
+      ),
+    );
   });
   action.setToggleAction(true);
   action.setSelectedCallback(function () {
