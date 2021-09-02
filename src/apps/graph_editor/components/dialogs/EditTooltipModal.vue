@@ -109,7 +109,13 @@ b-modal#modal(
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
   .row.ml-3.mt-2.pr-4
-    b-form-textarea(v-model='tooltipValue', placeholder='', rows='3', max-rows='6')
+    b-form-textarea(
+      ref='tooltipInput',
+      v-model='tooltipValue',
+      placeholder='',
+      rows='3',
+      max-rows='6'
+    )
   template(#modal-footer='')
     b-button.btn.btn-grey(@click='closeModal')
       | Cancel
