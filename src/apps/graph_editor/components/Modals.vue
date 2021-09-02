@@ -20,6 +20,7 @@ import CustomZoomModal from './dialogs/CustomZoomModal.vue';
 import EditDataModal from './dialogs/EditDataModal.vue';
 import EditDiagramModal from './dialogs/EditDiagramModal.vue';
 import EditStyleModal from './dialogs/EditStyleModal.vue';
+import EditTooltipModal from './dialogs/EditTooltipModal.vue';
 import InsertImageModal from './dialogs/InsertImageModal.vue';
 import InsertLinkModal from './dialogs/InserLinkModal.vue';
 import MoreShapesModal from './dialogs/MoreShapesModal.vue';
@@ -43,6 +44,7 @@ export default defineComponent({
     EditDataModal,
     EditDiagramModal,
     EditStyleModal,
+    EditTooltipModal,
     InsertImageModal,
     InsertLinkModal,
     LayerRenameModal,
@@ -85,6 +87,7 @@ export default defineComponent({
   edit-data-modal(:editorUi='editorUi')
   edit-diagram-modal(:editorUi='editorUi')
   edit-style-modal(:editorUi='editorUi')
+  edit-tooltip-modal(:editorUi='editorUi')
   insert-image-modal(:editorUi='editorUi', @insert-image='insertImage')
   insert-link-modal(:editorUi='editorUi')
   layer-rename-modal(:editorUi='editorUi')
