@@ -1013,6 +1013,10 @@ DriveFile = function () {};
       new Action(mxResources.get('shadow'), function () {
         graph.setShadowVisible(!graph.shadowVisible);
         editorUi.fireEvent(new mxEventObject('shadowVisibleChanged'));
+        // TEN9: change menubar and toolbar check icon value
+        editorUi.fireEvent(
+          new mxEventObject('changeMenuStatus', 'type', 'shadow', 'value', graph.shadowVisible),
+        );
       }),
     );
     action.setToggleAction(true);

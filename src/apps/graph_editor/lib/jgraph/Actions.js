@@ -640,39 +640,41 @@ Actions.prototype.init = function () {
     'editTooltip...',
     function () {
       if (graph.isEnabled() && !graph.isSelectionEmpty()) {
-        var cell = graph.getSelectionCell();
-        var tooltip = '';
+        // TEN9: open editTooltip modal
+        // var cell = graph.getSelectionCell();
+        // var tooltip = '';
 
-        if (mxUtils.isNode(cell.value)) {
-          var tmp = null;
+        // if (mxUtils.isNode(cell.value)) {
+        //   var tmp = null;
 
-          if (
-            Graph.translateDiagram &&
-            Graph.diagramLanguage != null &&
-            cell.value.hasAttribute('tooltip_' + Graph.diagramLanguage)
-          ) {
-            tmp = cell.value.getAttribute('tooltip_' + Graph.diagramLanguage);
-          }
+        //   if (
+        //     Graph.translateDiagram &&
+        //     Graph.diagramLanguage != null &&
+        //     cell.value.hasAttribute('tooltip_' + Graph.diagramLanguage)
+        //   ) {
+        //     tmp = cell.value.getAttribute('tooltip_' + Graph.diagramLanguage);
+        //   }
 
-          if (tmp == null) {
-            tmp = cell.value.getAttribute('tooltip');
-          }
+        //   if (tmp == null) {
+        //     tmp = cell.value.getAttribute('tooltip');
+        //   }
 
-          if (tmp != null) {
-            tooltip = tmp;
-          }
-        }
+        //   if (tmp != null) {
+        //     tooltip = tmp;
+        //   }
+        // }
 
-        var dlg = new TextareaDialog(
-          ui,
-          mxResources.get('editTooltip') + ':',
-          tooltip,
-          function (newValue) {
-            graph.setTooltipForCell(cell, newValue);
-          },
-        );
-        ui.showDialog(dlg.container, 320, 200, true, true);
-        dlg.init();
+        // var dlg = new TextareaDialog(
+        //   ui,
+        //   mxResources.get('editTooltip') + ':',
+        //   tooltip,
+        //   function (newValue) {
+        //     graph.setTooltipForCell(cell, newValue);
+        //   },
+        // );
+        // ui.showDialog(dlg.container, 320, 200, true, true);
+        // dlg.init();
+        ui.fireEvent(new mxEventObject('editTooltip'));
       }
     },
     null,
@@ -1251,6 +1253,16 @@ Actions.prototype.init = function () {
   action = this.addAction('tooltips', function () {
     graph.tooltipHandler.setEnabled(!graph.tooltipHandler.isEnabled());
     graph.fireEvent(new mxEventObject('graphChanged'));
+    // TEN9: change menubar and toolbar check icon value
+    ui.fireEvent(
+      new mxEventObject(
+        'changeMenuStatus',
+        'type',
+        'tooltips',
+        'value',
+        graph.tooltipHandler.isEnabled(),
+      ),
+    );
   });
   action.setToggleAction(true);
   action.setSelectedCallback(function () {

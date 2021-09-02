@@ -81,6 +81,7 @@ export default defineComponent({
       connectionPoints: true,
       copyOnConnect: false,
       collapseExpand: true,
+      shadow: false,
     });
 
     function doAction(action: string) {
@@ -234,6 +235,8 @@ export default defineComponent({
         checkboxes.value.collapseExpand = value;
       } else if (type === 'copyOnConnect') {
         checkboxes.value.copyOnConnect = value;
+      } else if (type === 'shadow') {
+        checkboxes.value.shadow = value;
       }
     }
 
@@ -368,7 +371,7 @@ export default defineComponent({
           span.shortcut {{ controlKey }}{{ !mxClient.IS_MAC ? "+" : "" }}M
         b-dropdown-item(
           href='#',
-          @click='doAction("editTooltip")',
+          @click='fireEvent("editTooltip")',
           :disabled='!isSomethingSelected'
         )
           span.item-name Edit Tooltip...
@@ -438,6 +441,7 @@ export default defineComponent({
           span.material-icons.menu-icons(v-show='checkboxes.scrollbars') done
           span.item-name Scrollbars
         b-dropdown-item(href='#', @click='doAction("tooltips")')
+          span.material-icons.menu-icons(v-show='checkboxes.tooltips') done
           span.item-name Tooltip
         b-dropdown-item(href='#', @click='doAction("ruler")')
           span.material-icons.menu-icons(v-show='checkboxes.ruler') done
@@ -450,7 +454,8 @@ export default defineComponent({
         b-dropdown-item(href='#', @click='doAction("guides")')
           span.material-icons.menu-icons(v-show='checkboxes.guides') done
           span.item-name Guides
-        b-dropdown-item(href='#', @click='doAction("shadow")', :disabled='!isSomethingSelected')
+        b-dropdown-item(href='#', @click='doAction("shadowVisible")')
+          span.material-icons.menu-icons(v-show='checkboxes.shadow') done
           .item-name Shadow
         b-dropdown-divider.no-hover
         b-dropdown-item(href='#', @click='doAction("connectionArrows")')
