@@ -673,6 +673,8 @@ Actions.prototype.init = function () {
         );
         ui.showDialog(dlg.container, 320, 200, true, true);
         dlg.init();
+        // TEN9: open editTooltip modal
+        ui.fireEvent(new mxEventObject('editTooltip'));
       }
     },
     null,
