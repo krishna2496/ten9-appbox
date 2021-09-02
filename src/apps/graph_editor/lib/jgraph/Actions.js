@@ -640,40 +640,40 @@ Actions.prototype.init = function () {
     'editTooltip...',
     function () {
       if (graph.isEnabled() && !graph.isSelectionEmpty()) {
-        var cell = graph.getSelectionCell();
-        var tooltip = '';
-
-        if (mxUtils.isNode(cell.value)) {
-          var tmp = null;
-
-          if (
-            Graph.translateDiagram &&
-            Graph.diagramLanguage != null &&
-            cell.value.hasAttribute('tooltip_' + Graph.diagramLanguage)
-          ) {
-            tmp = cell.value.getAttribute('tooltip_' + Graph.diagramLanguage);
-          }
-
-          if (tmp == null) {
-            tmp = cell.value.getAttribute('tooltip');
-          }
-
-          if (tmp != null) {
-            tooltip = tmp;
-          }
-        }
-
-        var dlg = new TextareaDialog(
-          ui,
-          mxResources.get('editTooltip') + ':',
-          tooltip,
-          function (newValue) {
-            graph.setTooltipForCell(cell, newValue);
-          },
-        );
-        ui.showDialog(dlg.container, 320, 200, true, true);
-        dlg.init();
         // TEN9: open editTooltip modal
+        // var cell = graph.getSelectionCell();
+        // var tooltip = '';
+
+        // if (mxUtils.isNode(cell.value)) {
+        //   var tmp = null;
+
+        //   if (
+        //     Graph.translateDiagram &&
+        //     Graph.diagramLanguage != null &&
+        //     cell.value.hasAttribute('tooltip_' + Graph.diagramLanguage)
+        //   ) {
+        //     tmp = cell.value.getAttribute('tooltip_' + Graph.diagramLanguage);
+        //   }
+
+        //   if (tmp == null) {
+        //     tmp = cell.value.getAttribute('tooltip');
+        //   }
+
+        //   if (tmp != null) {
+        //     tooltip = tmp;
+        //   }
+        // }
+
+        // var dlg = new TextareaDialog(
+        //   ui,
+        //   mxResources.get('editTooltip') + ':',
+        //   tooltip,
+        //   function (newValue) {
+        //     graph.setTooltipForCell(cell, newValue);
+        //   },
+        // );
+        // ui.showDialog(dlg.container, 320, 200, true, true);
+        // dlg.init();
         ui.fireEvent(new mxEventObject('editTooltip'));
       }
     },
