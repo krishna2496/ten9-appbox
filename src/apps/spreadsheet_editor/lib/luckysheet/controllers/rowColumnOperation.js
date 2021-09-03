@@ -395,7 +395,10 @@ export function rowColumnOperationInitial() {
             $("#luckysheet-cols-rows-data").show();
             // TEN9 : Display sorting 
             // $("#luckysheet-cols-rows-shift").hide();
-            $("#luckysheet-cols-rows-handleincell").show();
+            $("#luckysheet-cols-rows-handleincell").hide();
+
+            $("#luckysheet-delCols").hide();
+            $("#luckysheet-delRows").show();
 
             $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'block';
             $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'block';
@@ -475,7 +478,6 @@ export function rowColumnOperationInitial() {
         }
         //有批注在编辑时
         luckysheetPostil.removeActivePs();
-
         //图片 active/cropping
         if($("#luckysheet-modal-dialog-activeImage").is(":visible") || $("#luckysheet-modal-dialog-cropping").is(":visible")){
             imageCtrl.cancelActiveImgItem();
@@ -829,8 +831,10 @@ export function rowColumnOperationInitial() {
             // TEN9 : Display sorting dropdown
             // $("#luckysheet-cols-rows-shift").hide();
             $("#luckysheet-cols-rows-shift").show();
+            $("#luckysheet-delRows").hide();
             $("#luckysheet-cols-rows-handleincell").hide();
-
+            $("#luckysheet-delCols").show();
+            $("#luckysheet-delRows").hide();
             $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'block';
             $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'block';
 
@@ -2055,7 +2059,6 @@ export function rowColumnOperationInitial() {
     //行高列宽设置
     // $("#luckysheet-rows-cols-changesize").click(function(){
     $("#luckysheet-column-row-width-selected").click(function (event) {
-
         // Click input element, don't comfirm 
         if(event.target.nodeName === 'INPUT'){
             return;

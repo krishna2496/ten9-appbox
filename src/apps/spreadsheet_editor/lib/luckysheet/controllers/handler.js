@@ -313,7 +313,7 @@ export default function luckysheetHandler() {
 
     //表格mousedown
     $("#luckysheet-cell-main, #luckysheetTableContent").mousedown(function (event) {
-       
+      
         if($(event.target).hasClass('luckysheet-mousedown-cancel')){
             return;
         }

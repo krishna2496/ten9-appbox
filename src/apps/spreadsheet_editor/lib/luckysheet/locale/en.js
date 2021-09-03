@@ -8879,7 +8879,9 @@ export default {
         splitColumn: 'Split text',
         insertImage: 'Insert image',
         insertLink: 'Insert link',
-        /* dataVerification: 'Data verification', */
+        /* TEN9 : lang label added 
+        dataVerification: 'Data verification', */
+        conditionalFormatting : "Conditional formatting",
         dataValidation: 'Data validation',
         protection:"Protect the sheet",
 

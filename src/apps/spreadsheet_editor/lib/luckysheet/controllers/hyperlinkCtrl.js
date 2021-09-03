@@ -150,6 +150,8 @@ const hyperlinkCtrl = {
             }
 
             let item = {
+                /* TEN9 : link text added */
+                linkText : linkText,
                 linkType: linkType,
                 linkAddress: linkAddress,
                 linkTooltip: linkTooltip,
@@ -224,7 +226,11 @@ const hyperlinkCtrl = {
 
         //提示
         let linkTooltip = item.linkTooltip || '';
+        let linkText = item.linkText || '';
         $("#luckysheet-insertLink-dialog-linkTooltip").val(linkTooltip);
+        /* TEN9 : link text dispaly on modal */
+        $("#luckysheet-insertLink-dialog-linkText").val(linkText);
+        
     },
     cellFocus: function(r, c){
         let _this = this;
