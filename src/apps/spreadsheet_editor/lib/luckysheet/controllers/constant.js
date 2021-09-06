@@ -9,13 +9,12 @@ import { v4 as UUIDv4 } from 'uuid';
 // TEN9: Import the GIF for webpack
 import loadingGif from '../css/loading.gif';
 // TEN9: Check for edit or insert link
-import hyperlinkCtrl from './hyperlinkCtrl';
+// import hyperlinkCtrl from './hyperlinkCtrl';
 
 //dom variable
 const gridHTML = function(){
     const _locale = locale();
-    const hyperlink = hyperlinkCtrl;
-    console.log("hyperlinkCtrl",hyperlinkCtrl);
+    // const hyperlink = hyperlinkCtrl;
     const locale_info = _locale.info;
     const locale_print = _locale.print;
     const userInfo = luckysheetConfigsetting.userInfo === true ? '<i style="font-size:16px;color:#ff6a00;" class="fa fa-taxi" aria-hidden="true"></i> Lucky' : luckysheetConfigsetting.userInfo; // When true, use the default HTML string. The rendering of userInfo below uses nested template strings. Otherwise, when display is used and the image path is not passed in, there will be an undefined request
