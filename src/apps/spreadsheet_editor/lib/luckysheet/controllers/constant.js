@@ -3,16 +3,19 @@ import Store from '../store';
 import luckysheetConfigsetting from './luckysheetConfigsetting';
 import { getObjType } from '../utils/util';
 import { createToolbarHtml } from './toolbar';
-
 // TEN9: Adding missing import
 import { v4 as UUIDv4 } from 'uuid';
 
 // TEN9: Import the GIF for webpack
 import loadingGif from '../css/loading.gif';
+// TEN9: Check for edit or insert link
+import hyperlinkCtrl from './hyperlinkCtrl';
 
 //dom variable
 const gridHTML = function(){
     const _locale = locale();
+    const hyperlink = hyperlinkCtrl;
+    console.log("hyperlinkCtrl",hyperlinkCtrl);
     const locale_info = _locale.info;
     const locale_print = _locale.print;
     const userInfo = luckysheetConfigsetting.userInfo === true ? '<i style="font-size:16px;color:#ff6a00;" class="fa fa-taxi" aria-hidden="true"></i> Lucky' : luckysheetConfigsetting.userInfo; // When true, use the default HTML string. The rendering of userInfo below uses nested template strings. Otherwise, when display is used and the image path is not passed in, there will be an undefined request
@@ -325,12 +328,14 @@ function rightclickHTML() {
                     <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator" style="display:${handleincellMenuseparator ? 'block' : 'none'};"></div>
                     <div id="luckysheetColsRowsHandleAdd_row" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.insertRow ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.insert} ${rightclick.row}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                            ${/* TEN9 : N rows added */'' }
+                            ${rightclick.insert} <span id='insertNRow'></span> ${rightclick.row}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
                     <div id="luckysheetColsRowsHandleAdd_column" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.insertColumn ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.insert} ${rightclick.column}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        ${/* TEN9 : N Column added */'' }
+                            ${rightclick.insert} <span id='insertNColumn'></span> ${rightclick.column}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
                 </div> 
@@ -396,12 +401,14 @@ function rightclickHTML() {
                     <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
                     <div id="luckysheet-delRows" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteRow ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.delete} ${rightclick.row}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        ${ /* TEN9 :Delete N row */'' }
+                        ${rightclick.delete} ${rightclick.row} <span id='deleteNRow'></span><span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
                     <div id="luckysheet-delCols" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteColumn ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                        ${rightclick.delete} ${rightclick.column}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        ${ /* TEN9 :Delete N column */'' }
+                        ${rightclick.delete} ${rightclick.column} <span id='deleteNColumn'></span><span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
                     <div id="luckysheet-hide-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
@@ -454,12 +461,11 @@ function rightclickHTML() {
                     <div id="luckysheetInsertImage" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.image ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.insertImage}</div>
                     </div> */'' }
-                    <div id="luckysheetInsertLink" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.link ? 'block' : 'none'};display:flex">
+                    <div id="luckysheetInsertLink" class=" luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.link ? 'block' : 'none'};display:flex">
                         <span class="material-icons" style="margin-right: -25px;margin-left: 6px;line-height: 1.6;">link</span>
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${toolbar.insertLink}</div>
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel rightClickInsertLink">${toolbar.insertLink}</div>
+                        <div class="rightClickEditLink luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">Edit Link</div>
                     </div>
-                    
-                   
                 </div>
                 <div >
                 ${ /* TEN9 : Protect option added */'' }

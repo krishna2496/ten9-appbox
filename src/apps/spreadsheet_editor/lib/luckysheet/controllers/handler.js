@@ -1370,6 +1370,26 @@ export default function luckysheetHandler() {
                     $("#luckysheet-cols-rows-shift").show();
                 }
             }
+
+            // TEN9 : check for edit or insert link
+            let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+            let rowIndex = last.row_focus || last.row[0];
+            let colIndex = last.column_focus || last.column[0];
+
+            let hyperlink = hyperlinkCtrl.hyperlink || {};
+            let item = hyperlink[rowIndex + "_" + colIndex] || '';
+
+            if (item) {
+                $(".rightClickInsertLink").hide();
+                $(".rightClickEditLink").show();
+                $("#insertLink").hide();
+                $("#editLink").show();
+            } else { 
+                $(".rightClickInsertLink").show();
+                $(".rightClickEditLink").hide();
+                $("#insertLink").show();
+                $("#editLink").hide();
+            }
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
 
