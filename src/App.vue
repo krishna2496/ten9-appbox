@@ -172,11 +172,6 @@ export default defineComponent({
     const debounceTime = 100;
     const onResize = debounce(() => {
       updateAppHeight();
-      /* TEN9:  Active state removed */
-      const elm = document.querySelector<HTMLElement>('#luckysheet-input-box');
-      if (elm) {
-        elm.style.display = 'none';
-      }
     }, debounceTime);
 
     function insertDummyImage(dataUri: string) {
@@ -247,12 +242,6 @@ export default defineComponent({
         URL.revokeObjectURL(a.href);
       }, 0);
       contentChanged.value = false;
-
-      /* TEN9:  Active state removed */
-      const elm = document.querySelector<HTMLElement>('#luckysheet-input-box');
-      if (elm) {
-        elm.style.display = 'none';
-      }
     }
 
     function onKeydown(event: KeyboardEvent) {
