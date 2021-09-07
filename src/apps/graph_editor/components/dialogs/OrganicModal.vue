@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { mxFastOrganicLayout } from '../../lib/jgraph/mxClient.js';
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'OrganicModal',
@@ -64,12 +64,6 @@ export default defineComponent({
       show.value = true;
     }
 
-    function onKeydown(event: KeyboardEvent) {
-      if (event.key == 'Enter') {
-        setSpacing();
-      }
-    }
-
     function focusOnInput() {
       spacingInput.value?.select();
       spacingInput.value?.focus();
@@ -77,18 +71,15 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('OrganicLayout', OrganicLayout);
-      document.addEventListener('keydown', onKeydown);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(OrganicLayout);
-      document.removeEventListener('keydown', onKeydown);
     });
 
     return {
       closeModal,
       focusOnInput,
-      onKeydown,
       spacingInput,
       spacingValue,
       setSpacing,
@@ -102,7 +93,6 @@ export default defineComponent({
 b-modal#modal(
   :visible='show',
   no-close-on-backdrop='',
-  ref='pageScale',
   no-fade,
   @hide='closeModal',
   @shown='focusOnInput'
@@ -113,10 +103,15 @@ b-modal#modal(
   .mw-100
   .row.ml-3.mt-2
     label.mt-1 Spacing
-    input.txt-input.ml-2(ref='spacingInput', type='number', v-model='spacingValue')
+    input.txt-input.ml-2(
+      ref='spacingInput',
+      type='number',
+      v-model='spacingValue',
+      @keyup.enter.stop.prevent='setSpacing'
+    )
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setSpacing')
+    b-button.btn.btn-primary(@click='setSpacing')
       | Apply
 </template>

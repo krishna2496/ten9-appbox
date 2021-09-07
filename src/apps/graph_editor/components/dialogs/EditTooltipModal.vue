@@ -15,10 +15,11 @@
 -->
 
 <script lang="ts">
+import { Graph } from '../../lib/jgraph/Graph.js';
 import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'CustomZoom',
+  name: 'EditTooltipModal',
   props: {
     editorUi: {
       type: Object,
@@ -28,49 +29,68 @@ export default defineComponent({
   setup(props) {
     const show = ref<boolean>(false);
 
-    const zoomInput = ref<HTMLInputElement>(null);
+    const tooltipValue = ref<string>(null);
 
-    const zoomValue = ref<number>(null);
+    const tooltipInput = ref<HTMLInputElement>(null);
 
-    const scaleValue = 100;
+    const { graph } = props.editorUi.editor;
+
+    const cell = ref(null);
 
     function closeModal() {
       show.value = false;
+      cell.value = null;
+      tooltipValue.value = null;
     }
 
-    function zoom() {
-      if (!isNaN(zoomValue.value) && zoomValue.value > 0) {
-        const { graph } = props.editorUi.editor;
-        graph.zoomTo(zoomValue.value / scaleValue);
-      }
+    function setTooltip() {
+      graph.setTooltipForCell(cell.value, tooltipValue.value);
       closeModal();
     }
 
-    function customZoom() {
+    function editTooltip() {
       show.value = true;
-      zoomValue.value = props.editorUi.getPageScale() * scaleValue;
+      cell.value = graph.getSelectionCell();
+
+      let tmp = null;
+      const diagramLanguages: string = Graph.diagramLanguage;
+      if (
+        Graph.translateDiagram &&
+        Graph.diagramLanguage != null &&
+        cell.value.hasAttribute('tooltip_' + diagramLanguages)
+      ) {
+        tmp = cell.value.getAttribute('tooltip_' + diagramLanguages);
+      }
+
+      if (tmp == null) {
+        tmp = cell.value.getAttribute('tooltip');
+      }
+
+      if (tmp != null) {
+        tooltipValue.value = tmp;
+      }
     }
 
     function focusOnInput() {
-      zoomInput.value?.select();
-      zoomInput.value?.focus();
+      tooltipInput.value?.select();
+      tooltipInput.value?.focus();
     }
 
     onMounted(() => {
-      props.editorUi.addListener('customZoom', customZoom);
+      props.editorUi.addListener('editTooltip', editTooltip);
     });
 
     onBeforeUnmount(() => {
-      props.editorUi.removeListener(customZoom);
+      props.editorUi.removeListener(editTooltip);
     });
 
     return {
       closeModal,
       focusOnInput,
-      zoomInput,
-      zoomValue,
+      setTooltip,
       show,
-      zoom,
+      tooltipInput,
+      tooltipValue,
     };
   },
 });
@@ -79,27 +99,26 @@ export default defineComponent({
 <template lang="pug">
 b-modal#modal(
   :visible='show',
-  no-close-on-backdrop='',
-  ref='zoomInput',
+  ref='editTooltip',
   no-fade,
   @hide='closeModal',
   @shown='focusOnInput'
 )
   template(v-slot:modal-header)
-    h6 Custom Zoom
+    h6 Edit Tooltip
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100
-  .row.ml-3.mt-2
-    label.mt-1 Percentage (%)
-    input.ml-2.txt-input(
-      ref='zoomInput',
-      type='number',
-      v-model='zoomValue',
-      @keyup.enter.stop.prevent='zoom'
+  .row.ml-3.mt-2.pr-4
+    b-form-textarea(
+      ref='tooltipInput',
+      v-model='tooltipValue',
+      placeholder='',
+      rows='3',
+      max-rows='6'
     )
   template(#modal-footer='')
     b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    b-button.btn.btn-primary(@click='zoom')
+    b-button.btn.btn-primary(@click='setTooltip')
       | Apply
 </template>

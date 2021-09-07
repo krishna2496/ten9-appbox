@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import PageSize from '../../lib/PageSize.js';
-import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api';
 const {
   mxConstants,
   mxClient,
@@ -628,7 +628,7 @@ export default defineComponent({
       props.editorUi.addListener('openPrintModal', openPrintModal);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openPrintModal);
     });
 
@@ -730,10 +730,10 @@ b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, @hide='closeMod
     label.ml-2.mt-2 Page Scale
     input.txt-input.ml-2(type='text', v-model='pageScaleInput')
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-grey(type='button', @click='preview(false)')
+    b-button.btn.btn-grey(@click='preview(false)')
       | Preview
-    button.btn.btn-primary(type='button', @click='preview(true)')
+    b-button.btn.btn-primary(@click='preview(true)')
       | Print
 </template>

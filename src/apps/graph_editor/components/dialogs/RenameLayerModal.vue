@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { mxEventSource } from '../../lib/jgraph/mxClient';
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 
 interface CustomEvent {
   getProperty: FunctionStringCallback;
@@ -58,12 +58,6 @@ export default defineComponent({
       name.value = props.editorUi.convertValueToString(layer.value);
     }
 
-    function onKeydown(event: KeyboardEvent) {
-      if (event.key == 'Enter') {
-        setLayerName();
-      }
-    }
-
     function focusOnInput() {
       layerRenameInput.value?.select();
       layerRenameInput.value?.focus();
@@ -71,10 +65,9 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('openLayerRenameDialog', onLayerRenameDialog);
-      document.addEventListener('keydown', onKeydown);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(onLayerRenameDialog);
     });
 
@@ -83,7 +76,6 @@ export default defineComponent({
       focusOnInput,
       layer,
       layerRenameInput,
-      onKeydown,
       name,
       setLayerName,
       show,
@@ -105,10 +97,16 @@ b-modal#modal(
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
   .mw-100.mt-2
     label Name
-    input.txt-input.ml-2(ref='layerRenameInput', type='text', v-model='name', autofocus)
+    input.txt-input.ml-2(
+      ref='layerRenameInput',
+      type='text',
+      v-model='name',
+      autofocus,
+      @keyup.enter.stop.prevent='setLayerName'
+    )
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setLayerName')
+    b-button.btn.btn-primary(@click='setLayerName')
       | OK
 </template>

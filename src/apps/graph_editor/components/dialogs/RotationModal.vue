@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { mxConstants } from '../../lib/jgraph/mxClient.js';
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'RotationModal',
@@ -52,12 +52,6 @@ export default defineComponent({
       show.value = true;
     }
 
-    function onKeydown(event: KeyboardEvent) {
-      if (event.key == 'Enter') {
-        setRotationValue();
-      }
-    }
-
     function focusOnInput() {
       rotationInput.value?.select();
       rotationInput.value?.focus();
@@ -65,18 +59,15 @@ export default defineComponent({
 
     onMounted(() => {
       props.editorUi.addListener('openRotation', openRotation);
-      document.addEventListener('keydown', onKeydown);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openRotation);
-      document.removeEventListener('keydown', onKeydown);
     });
 
     return {
       closeModal,
       focusOnInput,
-      onKeydown,
       rotationInput,
       rotationValue,
       setRotationValue,
@@ -90,7 +81,6 @@ export default defineComponent({
 b-modal#modal(
   :visible='show',
   no-close-on-backdrop='',
-  ref='pageScale',
   no-fade,
   @hide='closeModal',
   @shown='focusOnInput'
@@ -101,10 +91,15 @@ b-modal#modal(
   .mw-100
   .row.ml-3.mt-2
     label.mt-1 Rotation (0-360):
-    input.txt-input.ml-2(ref='rotationInput', type='number', v-model='rotationValue')
+    input.txt-input.ml-2(
+      ref='rotationInput',
+      type='number',
+      v-model='rotationValue',
+      @keyup.enter.stop.prevent='setRotationValue'
+    )
   template(#modal-footer='')
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setRotationValue')
+    b-button.btn.btn-primary(@click='setRotationValue')
       | Apply
 </template>

@@ -17,7 +17,7 @@
 <script lang="ts">
 import WindowHeader from './Header.vue';
 import { mxUtils } from '../../lib/jgraph/mxClient.js';
-import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api';
 // TODO: Figure out why we can't import here
 const { dragElement, bringWindowToFront } = require('./utils.ts');
 const { SelectPage } = require('../../lib/diagramly/Pages.js');
@@ -391,7 +391,7 @@ export default defineComponent({
       isMin.value = !isMin.value;
     }
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openFindWindow);
       props.editorUi.removeListener(enableAllPage);
       props.editorUi.removeListener(disableAllPage);
@@ -474,24 +474,25 @@ export default defineComponent({
         type='text',
         v-model='searchInput',
         :class='{ bgLightPink: notFound }',
-        placeholder='Find'
+        placeholder='Find',
+        @keyup.enter.stop.prevent='searchText(true, false)'
       )
       input.mt-2.txt-input-window(type='text', v-model='replaceInput', placeholder='Replace with')
       .row.mt-2.ml-1
         .col-md-6.pl-0
-          button.btn-center.btn.btn-primary(@click='searchText(true, false)') Find
+          b-button.btn-center.btn.btn-primary(@click='searchText(true, false)') Find
         .col-md-6.pl-0
-          button.btn-center.btn.btn-primary(@click='replace("true")', :disabled='validated') Replace/Find
+          b-button.btn-center.btn.btn-primary(@click='replace("true")', :disabled='validated') Replace/Find
       .row.mt-2.ml-1
         .col-md-6.pl-0
-          button.btn-center.btn.btn-primary(@click='replace', :disabled='validated') Replace
+          b-button.btn-center.btn.btn-primary(@click='replace', :disabled='validated') Replace
         .col-md-6.pl-0
-          button.btn-center.btn.btn-primary(@click='replaceAll', :disabled='replaceAllBtn') Replace All
+          b-button.btn-center.btn.btn-primary(@click='replaceAll', :disabled='replaceAllBtn') Replace All
       .row.mt-2.ml-1
         .col-md-6.pl-0
-          button.btn-center.btn.btn-grey(@click='reset') Reset
+          b-button.btn-center.btn.btn-grey(@click='reset') Reset
         .col-md-6.pl-0
-          button.btn-center.btn.btn-grey(@click='close') Close
+          b-button.btn-center.btn.btn-grey(@click='close') Close
       .row.mt-2.ml-1
         b-form-checkbox#checkbox-1(name='checkbox-1', @change='isRegularExpression')
           span.checkbox-text

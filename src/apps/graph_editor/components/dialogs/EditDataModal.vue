@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { mxEventSource, mxUtils } from '../../lib/jgraph/mxClient';
-import { defineComponent, onMounted, onUnmounted, ref, watch } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from '@vue/composition-api';
 interface CustomEvent {
   getProperty: FunctionStringCallback;
 }
@@ -137,7 +137,7 @@ export default defineComponent({
       props.editorUi.addListener('editData', editData);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(editData);
     });
 
@@ -168,14 +168,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-b-modal#modal(
-  :visible='show',
-  no-close-on-backdrop='',
-  ref='pageScale',
-  no-fade,
-  size='lg',
-  @hide='closeModal'
-)
+b-modal#modal(:visible='show', no-close-on-backdrop='', no-fade, size='lg', @hide='closeModal')
   template(v-slot:modal-header)
     h6 Edit Data
     i.fa.fa-times(aria-hidden='true', @click='closeModal')
@@ -193,11 +186,11 @@ b-modal#modal(
         label.pointer(@click='removeProperty(index)') X
   .row.ml-3
     input.txt-input.w-70(type='text', v-model='propertyName')
-    button.btn.ml-3(type='button', :class='{ disable: disable }', @click='addProperty') Add Property
+    b-button.btn.ml-3(:class='{ disable: disable }', @click='addProperty') Add Property
   template(#modal-footer='')
     b-form-checkbox.label-centers Placeholders
-    button.btn.btn-grey(type='button', @click='closeModal')
+    b-button.btn.btn-grey(@click='closeModal')
       | Cancel
-    button.btn.btn-primary(type='button', @click='setProperty')
+    b-button.btn.btn-primary(@click='setProperty')
       | Apply
 </template>
