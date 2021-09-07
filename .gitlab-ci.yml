@@ -31,6 +31,7 @@ variables:
 
 .build-stage-rules:
   rules:
+    - when: never
     - if: $CI_PIPELINE_SOURCE =~ /^(web|schedule|merge_request_event)$/
 
 before_script:
