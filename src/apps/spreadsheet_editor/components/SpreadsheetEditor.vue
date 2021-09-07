@@ -20,7 +20,7 @@ import luckysheet from '../lib/luckysheet';
 import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
 import sheetmanage from '../lib/luckysheet/controllers/sheetmanage';
 import Store from '../lib/luckysheet/store/index';
-import luckysheetformula from '../lib/luckysheet/global/formula';
+import { exitEditMode } from '../lib/luckysheet/global/api';
 import {
   canLoadFile as canLoadFileHelper,
   CommonAppProps,
@@ -110,16 +110,11 @@ export default defineComponent<SpreadsheetEditorProps>({
     }
 
     function getContentType() {
-      luckysheetformula.updatecell(
-        Store.luckysheetCellUpdate[0],
-        Store.luckysheetCellUpdate[1],
-        '',
-        true,
-      );
       return 'application/json';
     }
 
     function getContent() {
+      exitEditMode();
       const allSheetData = luckysheet.getluckysheetfile();
       return JSON.stringify(allSheetData);
     }
@@ -220,12 +215,7 @@ export default defineComponent<SpreadsheetEditorProps>({
 
     const resize = () => {
       try {
-        luckysheetformula.updatecell(
-          Store.luckysheetCellUpdate[0],
-          Store.luckysheetCellUpdate[1],
-          '',
-          true,
-        );
+        exitEditMode();
         luckysheet.resize();
       } catch (e) {
         // eat errors during resize
