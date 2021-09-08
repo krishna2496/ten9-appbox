@@ -81,14 +81,23 @@ export default function luckysheetHandler() {
         evt.srcElement.classList.contains('material-icons') ||
         evt.srcElement.classList.contains('ten9-icon-wrap-clip') ||
         evt.srcElement.classList.contains('ten9-font'))) {
+            const bold = $("#luckysheet-icon-bold").hasClass('luckysheet-toolbar-button-hover');
+            const italic = $("#luckysheet-icon-italic").hasClass('luckysheet-toolbar-button-hover');
+            const strikethrough = $("#luckysheet-icon-strikethrough").hasClass('luckysheet-toolbar-button-hover');
             $(".luckysheet-toolbar-button").removeClass("luckysheet-toolbar-button-hover");
             $(".luckysheet-toolbar-select").removeClass("luckysheet-toolbar-button-hover");
             $(".luckysheet-toolbar-menu-button").removeClass("luckysheet-toolbar-button-hover");
             $(".luckysheet-toolbar-button").removeClass("google-sheet-background");
             $(".luckysheet-toolbar-menu-button").removeClass("google-sheet-background");
-            $("#luckysheet-icon-bold").removeClass("luckysheet-toolbar-button-hover");
-            $("#luckysheet-icon-italic").removeClass("luckysheet-toolbar-button-hover");
-            $("#luckysheet-icon-strikethrough").removeClass("luckysheet-toolbar-button-hover");
+            if (bold) {
+                $("#luckysheet-icon-bold").addClass('luckysheet-toolbar-button-hover');
+            }
+            if (italic) {
+                $("#luckysheet-icon-italic").addClass('luckysheet-toolbar-button-hover');
+            }
+            if (strikethrough) {
+                $("#luckysheet-icon-strikethrough").addClass('luckysheet-toolbar-button-hover');
+            }
         }
       });
 
