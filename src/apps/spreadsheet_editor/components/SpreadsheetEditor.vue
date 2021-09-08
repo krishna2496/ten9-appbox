@@ -20,6 +20,7 @@ import luckysheet from '../lib/luckysheet';
 import imageCtrl from '../lib/luckysheet/controllers/imageCtrl';
 import sheetmanage from '../lib/luckysheet/controllers/sheetmanage';
 import Store from '../lib/luckysheet/store/index';
+import { exitEditMode } from '../lib/luckysheet/global/api';
 import {
   canLoadFile as canLoadFileHelper,
   CommonAppProps,
@@ -113,6 +114,7 @@ export default defineComponent<SpreadsheetEditorProps>({
     }
 
     function getContent() {
+      exitEditMode();
       const allSheetData = luckysheet.getluckysheetfile();
       return JSON.stringify(allSheetData);
     }
@@ -213,6 +215,7 @@ export default defineComponent<SpreadsheetEditorProps>({
 
     const resize = () => {
       try {
+        exitEditMode();
         luckysheet.resize();
       } catch (e) {
         // eat errors during resize
@@ -279,7 +282,7 @@ export default defineComponent<SpreadsheetEditorProps>({
       () => props.isEditing,
       (val) => {
         // cancelActiveImgItem
-        if (!val && imageCtrl.images) {
+        if (!val && imageCtrl.images !== null && imageCtrl.currentImgId !== null) {
           imageCtrl.cancelActiveImgItem();
         }
         luckysheet.setReadOnlyMode(!val);
