@@ -15,7 +15,7 @@
 -->
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from '@vue/composition-api';
+import { defineComponent, onBeforeUnmount, onMounted, ref } from '@vue/composition-api';
 import { codemirror } from 'vue-codemirror';
 
 import 'codemirror/lib/codemirror.css';
@@ -91,7 +91,7 @@ export default defineComponent({
       props.editorUi.addListener('openEditDiagram', openEditDiagram);
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
       props.editorUi.removeListener(openEditDiagram);
     });
 
@@ -126,8 +126,8 @@ b-modal(
   .textarea-container
     codemirror(v-model='xml', ref='cmRef', :options='cmOptions')
   template(v-slot:modal-footer)
-    button.btn.btn-grey(@click='closeModal') Cancel
-    button.btn.btn-primary(@click='setGraphData(xml)') OK
+    b-button.btn.btn-grey(@click='closeModal') Cancel
+    b-button.btn.btn-primary(@click='setGraphData(xml)') OK
 </template>
 
 <style lang="scss" scoped>

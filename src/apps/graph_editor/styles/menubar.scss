@@ -183,7 +183,7 @@
   }
 
   #menu-padding a {
-    padding: 0;
+    padding: 8px 1px 7px;
   }
 
   .icon-color {
@@ -320,7 +320,7 @@
   }
 
   .dropdown-menu-nav li,
-  .dropdown-menu li {
+  .dropdown-menu li.no-hover {
     padding: 8px 1px 7px;
   }
 

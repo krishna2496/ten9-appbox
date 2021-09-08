@@ -528,7 +528,8 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
             topv = scrollHeight + drawHeight / 2;
         }
 
-        $("#luckysheet-row-count-show").css({ "left": leftv, "top": topv, "display": "block", "width": "11px" }).html("<div>" + rowl.toString().split("").join("</div><div>") + "</div><div>" + locale_info.row + "</div>");
+        // TEN9: Disable row counter from showing to better match Google
+        // $("#luckysheet-row-count-show").css({ "left": leftv, "top": topv, "display": "block", "width": "11px" }).html("<div>" + rowl.toString().split("").join("</div><div>") + "</div><div>" + locale_info.row + "</div>");
     }
     else {
         $("#luckysheet-row-count-show").hide();
@@ -566,7 +567,8 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
             leftv = scrollWidth + drawWidth / 2;
         }
 
-        $("#luckysheet-column-count-show").css({ "left": leftv, "top": topv, "display": "block" }).text(coll + locale_info.column);
+        // TEN9: Disable column counter from showing to better match Google
+        // $("#luckysheet-column-count-show").css({ "left": leftv, "top": topv, "display": "block" }).text(coll + locale_info.column);
     }
     else {
         $("#luckysheet-column-count-show").hide();
