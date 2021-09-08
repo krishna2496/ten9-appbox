@@ -3250,7 +3250,9 @@ const menuButton = {
         });
         
         //sheet protection
-        $("#luckysheet-icon-protection").click(function(){
+        // TEN9 : Protection sheet added  
+        // $("#luckysheet-icon-protection").click(function () {
+        $("#luckysheetProtect").click(function () {
             /* TEN9 : Background changes  */
             _this.changeBackgroundColor("#luckysheet-icon-protection");
             let sheetFile = sheetmanage.getSheetByIndex();

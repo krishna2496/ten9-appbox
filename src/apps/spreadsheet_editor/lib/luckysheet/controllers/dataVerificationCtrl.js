@@ -225,7 +225,9 @@ const dataVerificationCtrl = {
         $("body").append(replaceHtml(modelHTML, { 
             "id": "luckysheet-dataVerification-dialog", 
             "addclass": "luckysheet-dataVerification-dialog", 
-            "title": toolbarText.dataVerification, 
+            /* TEN9 : Title changes
+            "title": toolbarText.dataVerification, */
+            "title" : toolbarText.dataValidation,
             "content": content, 
             "botton":  `<button id="luckysheet-dataVerification-dialog-confirm" class="btn btn-primary">${buttonText.confirm}</button>
                         <button id="luckysheet-dataVerification-dialog-delete" class="btn btn-default">${dvText.deleteVerification}</button>

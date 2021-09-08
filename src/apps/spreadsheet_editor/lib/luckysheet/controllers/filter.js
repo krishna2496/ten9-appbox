@@ -310,6 +310,7 @@ function initialFilterHandler(){
             let top = offset.top, left = offset.left + menuW;
 
             if (left + attrW > winW) {
+                // ten9 : delete cell sub
                 left = offset.left - attrW;
             }
 

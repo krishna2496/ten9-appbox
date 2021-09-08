@@ -1682,8 +1682,18 @@ function luckysheetdeletetable(type, st, ed, sheetIndex) {
         //删除多少行，增加多少行空白行                
         for (let r = 0; r < slen; r++) {
             let row = [];
-            for (let c = 0; c < d[0].length; c++) {
-                row.push(null);
+            // TEN9 : Condition added to resolve console error
+            // for (let c = 0; c < d[0].length; c++) {
+            //     row.push(null);
+            // }
+            if (d.length) {
+                for (let c = 0; c < d[0].length; c++) {
+                    row.push(null);
+                }
+            } else {
+                for (let c = 0; c < Store.defaultcolumnNum; c++) {
+                    row.push(null);
+                }
             }
             d.push(row);
         }

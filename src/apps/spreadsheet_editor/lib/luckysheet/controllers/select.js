@@ -9,6 +9,7 @@ import Store from '../store';
 import method from '../global/method';
 import locale from '../locale/locale';
 import { refreshMenuButtonFocus } from "../global/api";
+import { columeHeader_word } from './constant';
 
 //公式函数 选区实体框
 function seletedHighlistByindex(id, r1, r2, c1, c2) {
@@ -494,6 +495,23 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
 
     const _locale = locale();
     const locale_info = _locale.info;
+    
+    /* TEN9 : N Row added */
+    if (rowl > 1) {
+        $("#insertNRow").show();
+        $("#insertNRow").html(rowl);
+    } else {
+        $("#insertNRow").hide();
+    }
+
+    if (rowseleted[0] != rowseleted[1]) {
+        $("#deleteNRow").show();
+        const firstRow = parseInt(rowseleted[0])+1;
+        const lastRow = parseInt(rowseleted[1]) + 1;
+        $("#deleteNRow").html(firstRow+' - '+lastRow);
+    } else {
+        $("#deleteNRow").hide();
+    }
 
     if (rowl >= 4) {
         let leftv = left - 25;
@@ -510,10 +528,28 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
             topv = scrollHeight + drawHeight / 2;
         }
 
-        $("#luckysheet-row-count-show").css({ "left": leftv, "top": topv, "display": "block", "width": "11px" }).html("<div>" + rowl.toString().split("").join("</div><div>") + "</div><div>" + locale_info.row + "</div>");
+        // TEN9: Disable row counter from showing to better match Google
+        // $("#luckysheet-row-count-show").css({ "left": leftv, "top": topv, "display": "block", "width": "11px" }).html("<div>" + rowl.toString().split("").join("</div><div>") + "</div><div>" + locale_info.row + "</div>");
     }
     else {
         $("#luckysheet-row-count-show").hide();
+    }
+
+    /* TEN9 : N Column added */
+    if (coll > 1) {
+        $("#insertNColumn").show();
+        $("#insertNColumn").html(coll);
+    } else {
+        $("#insertNColumn").hide();
+    }
+
+    if (columnseleted[0] != columnseleted[1]) {
+        $("#deleteNColumn").show();
+        const firstRow = parseInt(rowseleted[0])+1;
+        const lastRow = parseInt(rowseleted[1]) + 1;
+        $("#deleteNColumn").html(columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
+    } else {
+        $("#deleteNColumn").hide();
     }
 
     if (coll >= 4) {
@@ -531,7 +567,8 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
             leftv = scrollWidth + drawWidth / 2;
         }
 
-        $("#luckysheet-column-count-show").css({ "left": leftv, "top": topv, "display": "block" }).text(coll + locale_info.column);
+        // TEN9: Disable column counter from showing to better match Google
+        // $("#luckysheet-column-count-show").css({ "left": leftv, "top": topv, "display": "block" }).text(coll + locale_info.column);
     }
     else {
         $("#luckysheet-column-count-show").hide();

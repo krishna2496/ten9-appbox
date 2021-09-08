@@ -322,6 +322,7 @@ export default function luckysheetHandler() {
 
     //表格mousedown
     $("#luckysheet-cell-main, #luckysheetTableContent").mousedown(function (event) {
+      
         if($(event.target).hasClass('luckysheet-mousedown-cancel')){
             return;
         }
@@ -1199,7 +1200,7 @@ export default function luckysheetHandler() {
             if (obj_s["row"] != null && obj_s["row"][0] == 0 && obj_s["row"][1] == Store.flowdata.length - 1) {
 
                 // 如果全部按钮都隐藏，则整个菜单容器也要隐藏
-                if(!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste && !cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.hideColumn && !cellRightClickConfig.columnWidth && !cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat){
+                if (!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste && !cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.hideColumn && !cellRightClickConfig.columnWidth && !cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat) {
                     return;
                 }
 
@@ -1212,7 +1213,8 @@ export default function luckysheetHandler() {
 
                 $("#luckysheet-cols-rows-add").show();
                 // $("#luckysheet-cols-rows-data").show();
-                $("#luckysheet-cols-rows-shift").hide();
+                // TEN9 : Display shift option
+                $("#luckysheet-cols-rows-shift").show();
                 $("#luckysheet-cols-rows-handleincell").hide();
                 Store.luckysheet_cols_menu_status = true;
 
@@ -1227,17 +1229,17 @@ export default function luckysheetHandler() {
                 $$('#luckysheet-column-row-width-selected').style.display = cellRightClickConfig.columnWidth ? 'block' : 'none';
 
                 // 1. 当一个功能菜单块上方的功能块按钮都隐藏的时候，下方的功能块的顶部分割线也需要隐藏
-                if(!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste){
+                if (!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste) {
                     $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'none';
 
-                    if(!cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.hideColumn && !cellRightClickConfig.columnWidth){
+                    if (!cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.hideColumn && !cellRightClickConfig.columnWidth) {
                         $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
                     }
 
                 }
 
                 // 2.当一个功能菜单块内所有的按钮都隐藏的时候，它顶部的分割线也需要隐藏掉
-                if(!cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.hideColumn && !cellRightClickConfig.columnWidth){
+                if (!cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.hideColumn && !cellRightClickConfig.columnWidth) {
                     $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'none';
                 }
 
@@ -1274,7 +1276,7 @@ export default function luckysheetHandler() {
             else if (obj_s["column"] != null && obj_s["column"][0] == 0 && obj_s["column"][1] == Store.flowdata[0].length - 1) {
 
                 // 如果全部按钮都隐藏，则整个菜单容器也要隐藏
-                if(!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste && !cellRightClickConfig.insertRow && !cellRightClickConfig.deleteRow && !cellRightClickConfig.hideRow && !cellRightClickConfig.rowHeight && !cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat){
+                if (!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste && !cellRightClickConfig.insertRow && !cellRightClickConfig.deleteRow && !cellRightClickConfig.hideRow && !cellRightClickConfig.rowHeight && !cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat) {
                     return;
                 }
 
@@ -1286,7 +1288,9 @@ export default function luckysheetHandler() {
                 $("#luckysheet-rightclick-menu .luckysheet-cols-rows-shift-right").text(locale().rightclick.bottom);
                 $("#luckysheet-cols-rows-add").show();
                 // $("#luckysheet-cols-rows-data").show();
-                $("#luckysheet-cols-rows-shift").hide();
+                // TEN9 : Show shift column
+                // $("#luckysheet-cols-rows-shift").hide();
+                $("#luckysheet-cols-rows-shift").show();
                 $("#luckysheet-cols-rows-handleincell").hide();
                 Store.luckysheet_cols_menu_status = true;
 
@@ -1301,17 +1305,17 @@ export default function luckysheetHandler() {
                 $$('#luckysheet-column-row-width-selected').style.display = cellRightClickConfig.rowHeight ? 'block' : 'none';
 
                 // 1. 当一个功能菜单块上方的功能块按钮都隐藏的时候，下方的功能块的顶部分割线也需要隐藏
-                if(!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste){
+                if (!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste) {
                     $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'none';
 
-                    if(!cellRightClickConfig.insertRow && !cellRightClickConfig.deleteRow && !cellRightClickConfig.hideRow && !cellRightClickConfig.rowHeight){
+                    if (!cellRightClickConfig.insertRow && !cellRightClickConfig.deleteRow && !cellRightClickConfig.hideRow && !cellRightClickConfig.rowHeight) {
                         $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
                     }
 
                 }
 
                 // 2. 当一个功能菜单块内所有的按钮都隐藏的时候，它顶部的分割线也需要隐藏掉
-                if(!cellRightClickConfig.insertRow && !cellRightClickConfig.deleteRow && !cellRightClickConfig.hideRow && !cellRightClickConfig.rowHeight){
+                if (!cellRightClickConfig.insertRow && !cellRightClickConfig.deleteRow && !cellRightClickConfig.hideRow && !cellRightClickConfig.rowHeight) {
                     $$('#luckysheet-cols-rows-add .luckysheet-menuseparator').style.display = 'none';
                 }
 
@@ -1344,32 +1348,57 @@ export default function luckysheetHandler() {
                 else {
                     $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val("");
                 }
-            }else{
+            } else {
                 // 如果全部按钮都隐藏，则整个菜单容器也要隐藏
-                if(!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste && !cellRightClickConfig.insertRow && !cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteRow && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.deleteCell && !cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat){
+                if (!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste && !cellRightClickConfig.insertRow && !cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteRow && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.deleteCell && !cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat) {
                     return;
                 }
 
                 // 当一个功能菜单块上方的功能块按钮都隐藏的时候，下方的功能块的顶部分割线也需要隐藏
-                if(!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste){
+                if (!cellRightClickConfig.copy && !cellRightClickConfig.copyAs && !cellRightClickConfig.paste) {
                     $$('#luckysheet-cols-rows-handleincell .luckysheet-menuseparator').style.display = 'none';
 
-                    if(!cellRightClickConfig.insertRow && !cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteRow && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.deleteCell){
+                    if (!cellRightClickConfig.insertRow && !cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteRow && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.deleteCell) {
                         $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
                     }
 
                 }
 
-                if(!cellRightClickConfig.insertRow && !cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteRow && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.deleteCell){
+                if (!cellRightClickConfig.insertRow && !cellRightClickConfig.insertColumn && !cellRightClickConfig.deleteRow && !cellRightClickConfig.deleteColumn && !cellRightClickConfig.deleteCell) {
                     $$('#luckysheet-cols-rows-handleincell .luckysheet-menuseparator').style.display = 'none';
                 }
             }
 
             // 当一个功能菜单块内所有的按钮都隐藏的时候，它顶部的分割线也需要隐藏掉
-            if(!cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat){
-                    $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
+            if (!cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat) {
+                $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
+            }
+            // TEN9 : check if it's single cell selection or not
+            if (obj_s["row"]) {
+                if (obj_s["row"][0] !== obj_s["row"][1]) {
+                    $("#luckysheet-cols-rows-shift").show();
+                }
             }
 
+            // TEN9 : check for edit or insert link
+            let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+            let rowIndex = last.row_focus || last.row[0];
+            let colIndex = last.column_focus || last.column[0];
+
+            let hyperlink = hyperlinkCtrl.hyperlink || {};
+            let item = hyperlink[rowIndex + "_" + colIndex] || '';
+
+            if (item) {
+                $(".rightClickInsertLink").hide();
+                $(".rightClickEditLink").show();
+                $("#insertLink").hide();
+                $("#editLink").show();
+            } else { 
+                $(".rightClickInsertLink").show();
+                $(".rightClickEditLink").hide();
+                $("#insertLink").show();
+                $("#editLink").hide();
+            }
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
 
@@ -4588,6 +4617,108 @@ export default function luckysheetHandler() {
         $("#luckysheet-scrollbar-y").scrollTop(0);
     });
 
+    $("#luckysheet-cut-btn, #luckysheet-cols-cut-btn, #luckysheet-paste-btn-title").click(function (event) {
+        $(this).parent().hide();
+        //复制范围内包含部分合并单元格，提示
+        if (Store.config["merge"] != null) {
+            let has_PartMC = false;
+
+            for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
+                let r1 = Store.luckysheet_select_save[s].row[0],
+                    r2 = Store.luckysheet_select_save[s].row[1];
+                let c1 = Store.luckysheet_select_save[s].column[0],
+                    c2 = Store.luckysheet_select_save[s].column[1];
+
+                has_PartMC = hasPartMC(Store.config, r1, r2, c1, c2);
+
+                if (has_PartMC) {
+                    break;
+                }
+            }
+
+            if (has_PartMC) {
+                if (isEditMode()) {
+                    alert(locale_drag.noPartMerge);
+                }
+                else {
+                    tooltip.info(locale_drag.noPartMerge, "");
+                }
+                return;
+            }
+        }
+
+        //多重选区 有条件格式时 提示
+        let cdformat = Store.luckysheetfile[getSheetIndex(Store.currentSheetIndex)].luckysheet_conditionformat_save;
+        if (Store.luckysheet_select_save.length > 1 && cdformat != null && cdformat.length > 0) {
+            let hasCF = false;
+
+            let cf_compute = conditionformat.getComputeMap();
+
+            label:
+            for (let s = 0; s < Store.luckysheet_select_save.length; s++) {
+                if (hasCF) {
+                    break;
+                }
+
+                let r1 = Store.luckysheet_select_save[s].row[0],
+                    r2 = Store.luckysheet_select_save[s].row[1];
+                let c1 = Store.luckysheet_select_save[s].column[0],
+                    c2 = Store.luckysheet_select_save[s].column[1];
+
+                for (let r = r1; r <= r2; r++) {
+                    for (let c = c1; c <= c2; c++) {
+                        if (conditionformat.checksCF(r, c, cf_compute) != null) {
+                            hasCF = true;
+                            continue label;
+                        }
+                    }
+                }
+            }
+
+            if (hasCF) {
+                if (isEditMode()) {
+                    alert(locale_drag.noMulti);
+                }
+                else {
+                    tooltip.info(locale_drag.noMulti, "");
+                }
+                return;
+            }
+        }
+
+        //多重选区 行不一样且列不一样时 提示
+        if (Store.luckysheet_select_save.length > 1) {
+            let isSameRow = true,
+                str_r = Store.luckysheet_select_save[0].row[0],
+                end_r = Store.luckysheet_select_save[0].row[1];
+            let isSameCol = true,
+                str_c = Store.luckysheet_select_save[0].column[0],
+                end_c = Store.luckysheet_select_save[0].column[1];
+
+            for (let s = 1; s < Store.luckysheet_select_save.length; s++) {
+                if (Store.luckysheet_select_save[s].row[0] != str_r || Store.luckysheet_select_save[s].row[1] != end_r) {
+                    isSameRow = false;
+                }
+                if (Store.luckysheet_select_save[s].column[0] != str_c || Store.luckysheet_select_save[s].column[1] != end_c) {
+                    isSameCol = false;
+                }
+            }
+
+            if ((!isSameRow && !isSameCol) || selectIsOverlap()) {
+                if (isEditMode()) {
+                    alert(locale_drag.noMulti);
+                }
+                else {
+                    tooltip.info(locale_drag.noMulti, "");
+                }
+                return;
+            }
+        }
+
+        selection.cut(event);
+    });
+
+
     //右键菜单 复制按钮
     $("#luckysheet-copy-btn, #luckysheet-cols-copy-btn, #luckysheet-paste-btn-title").click(function (event) {
         $(this).parent().hide();
@@ -4964,7 +5095,9 @@ export default function luckysheetHandler() {
     })
 
     //菜单栏 数据验证按钮
-    $("#luckysheet-dataVerification-btn-title").click(function () {
+    // TEN9 : dataverification modal click event replaced with function
+    // $("#luckysheet-dataVerification-btn-title").click(function () {
+    function showProtectionModal() {
         if(!checkProtectionNotEnable(Store.currentSheetIndex)){
             return;
         }
@@ -4975,11 +5108,33 @@ export default function luckysheetHandler() {
 
         dataVerificationCtrl.createDialog();
         dataVerificationCtrl.init();
-    });
+    };
     $("#luckysheetDataVerification").click(function () {
-        $("#luckysheet-dataVerification-btn-title").click();
+        // TEN9 : Show protection modal
+        // $("#luckysheet-dataVerification-btn-title").click();
+        showProtectionModal();
         $("#luckysheet-rightclick-menu").hide();
     });
+
+    $("#luckysheetComment").click(function () {
+            const locale_comment = locale().comment;
+            luckysheetPostil.removeActivePs();
+
+            let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+            
+            let row_index = last["row_focus"];
+            if(row_index == null){
+                row_index = last["row"][0];
+            }
+
+            let col_index = last["column_focus"];
+            if(col_index == null){
+                col_index = last["column"][0];
+            }
+            luckysheetContainerFocus();
+            luckysheetPostil.newPs(row_index, col_index);
+            $("#luckysheet-rightclick-menu").css('display', 'none');
+    })
 
     //Cell format
     $("#luckysheetCellFormatRightClickMenu").click(function () {

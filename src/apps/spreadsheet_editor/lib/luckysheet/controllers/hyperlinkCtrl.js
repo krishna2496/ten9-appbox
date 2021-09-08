@@ -37,7 +37,6 @@ const hyperlinkCtrl = {
         Store.luckysheetfile.forEach(item => {
             sheetListOption += `<option value="${item.name}">${item.name}</option>`;
         })
-
         let content =  `<div class="box">
                             <div class="box-item">
                                 <label for="luckysheet-insertLink-dialog-linkText">${hyperlinkText.linkText}：</label>
@@ -150,6 +149,8 @@ const hyperlinkCtrl = {
             }
 
             let item = {
+                /* TEN9 : link text added */
+                linkText : linkText,
                 linkType: linkType,
                 linkAddress: linkAddress,
                 linkTooltip: linkTooltip,
@@ -187,7 +188,6 @@ const hyperlinkCtrl = {
     },
     dataAllocation: function(){
         let _this = this;
-
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
         let rowIndex = last.row_focus || last.row[0];
         let colIndex = last.column_focus || last.column[0];
@@ -224,7 +224,14 @@ const hyperlinkCtrl = {
 
         //提示
         let linkTooltip = item.linkTooltip || '';
+        let linkText = item.linkText || '';
         $("#luckysheet-insertLink-dialog-linkTooltip").val(linkTooltip);
+        /* TEN9 : link text dispaly on modal */
+        $("#luckysheet-insertLink-dialog-linkText").val(linkText);
+        if (linkText) {
+            $(".luckysheet-modal-dialog-title-text").html('Edit Link');
+        }
+        
     },
     cellFocus: function(r, c){
         let _this = this;

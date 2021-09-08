@@ -96,6 +96,13 @@ const selection = {
         return style + color + ";";
     },
     copy: function (e) {//copy事件
+       this.cutPaste(e);
+    },
+    cut: function (e) {//copy事件
+        Store.luckysheet_paste_iscut = true;
+        this.cutPaste(e);
+    },
+    cutPaste: function(e) {
         let clipboardData = window.clipboardData; //for IE
         if (!clipboardData) { // for chrome
             clipboardData = e.originalEvent.clipboardData;
@@ -513,7 +520,6 @@ const selection = {
         cpdata = '<table data-type="luckysheet_copy_action_table">' + colgroup + cpdata + '</table>';
 
         Store.iscopyself = true;
-
         if (!clipboardData) {
             let textarea = $("#luckysheet-copy-content");
             textarea.html(cpdata);
@@ -570,7 +576,6 @@ const selection = {
     },
     isPasteAction: false,
     paste: function (e, triggerType) {//paste事件
-
         let _this = this;
 
         if(Store.allowEdit===false){
@@ -589,7 +594,7 @@ const selection = {
             let data = textarea.html();
 
             if (data.indexOf("luckysheet_copy_action_table") >- 1 && Store.luckysheet_copy_save["copyRange"] != null && Store.luckysheet_copy_save["copyRange"].length > 0) {
-                if(Store.luckysheet_paste_iscut){
+                if (Store.luckysheet_paste_iscut) {
                     Store.luckysheet_paste_iscut = false;
                     _this.pasteHandlerOfCutPaste(Store.luckysheet_copy_save);
                     _this.clearcopy(e);

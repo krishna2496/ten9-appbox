@@ -8879,7 +8879,10 @@ export default {
         splitColumn: 'Split text',
         insertImage: 'Insert image',
         insertLink: 'Insert link',
-        dataVerification: 'Data verification',
+        /* TEN9 : lang label added 
+        dataVerification: 'Data verification', */
+        conditionalFormatting : "Conditional formatting",
+        dataValidation: 'Data validation',
         protection:"Protect the sheet",
 
         clearText:"Clear color",
@@ -9347,23 +9350,37 @@ export default {
         deleteSelected: 'Delete selected ',
         hide: 'Hide',
         hideSelected: 'Hide selected ',
-        showHide: 'Show hidden ',
+        /* TEN9 : Text changes
+         showHide: 'Show hidden ',
+        */
+        showHide: 'Unhide',
         to: 'Towards',
         left: 'Left',
         right: 'Right',
         top: 'Top',
         bottom: 'Bottom',
-        moveLeft: 'Move left',
-        moveUp: 'Move up',
+        /* TEN9 : text changes 
+        moveLeft: 'Move left', */
+        moveLeft: 'Shift left',
+        /* TEN9 : text changes 
+        moveUp: 'Move up', */
+        moveUp: 'Shift up',
         add: 'Add',
-        row: 'Row',
-        column: 'Column',
+        /* TEN9 : Text changes 
+        row: 'Row', */
+        row: 'row',
+        /* TEN9 : Text changes 
+        column: 'Column', */
+        columns: 'columns',
+        column: 'column',
         width: 'Width',
         height: 'Height',
         number: 'Number',
         confirm: 'Confirm',
-        orderAZ: 'A-Z order',
-        orderZA: 'Z-A order',
+        /* orderAZ: 'A-Z order',
+        orderZA: 'Z-A order', */
+        orderAZ: 'Sort sheet A → Z',
+        orderZA: 'Sort sheet Z → A',
         clearContent: 'Clear content',
         matrix: 'Matrix operation',
         sortSelection: 'Sort',
