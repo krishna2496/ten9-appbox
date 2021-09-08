@@ -9350,7 +9350,10 @@ export default {
         deleteSelected: 'Delete selected ',
         hide: 'Hide',
         hideSelected: 'Hide selected ',
-        showHide: 'Show hidden ',
+        /* TEN9 : Text changes
+         showHide: 'Show hidden ',
+        */
+        showHide: 'Unhide',
         to: 'Towards',
         left: 'Left',
         right: 'Right',
