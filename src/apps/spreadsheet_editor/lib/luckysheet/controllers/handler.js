@@ -252,10 +252,22 @@ export default function luckysheetHandler() {
 
             // TEN9 : Made Scrolling with mousewheel faster
             if (event.originalEvent.wheelDelta < 0) {
-                rowscroll = rowscroll + 180;
+                if (window.screen.height > 1080) {
+                    rowscroll = rowscroll + 180;
+                } else if (window.screen.height <= 1080 && window.screen.height > 780) {
+                    rowscroll = rowscroll + 100;
+                } else {
+                    rowscroll = rowscroll + 50;
+                }
             }
             if (event.originalEvent.wheelDelta > 0) {
-                rowscroll = rowscroll - 180;
+                if (window.screen.height > 1080) {
+                    rowscroll = rowscroll - 180;
+                } else if (window.screen.height <= 1080 && window.screen.height > 780) {
+                    rowscroll = rowscroll - 100;
+                } else {
+                    rowscroll = rowscroll - 50;
+                }
             }
 
             $("#luckysheet-scrollbar-y").scrollTop(rowscroll);
