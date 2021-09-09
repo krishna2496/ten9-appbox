@@ -1229,7 +1229,6 @@ const luckysheetformula = {
         });
     },
     updatecell: function (r, c, value, isRefresh = true) {
-
         let _this = this;
 
         let $input = $("#luckysheet-rich-text-editor");

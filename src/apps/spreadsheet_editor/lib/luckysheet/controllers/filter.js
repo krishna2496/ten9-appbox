@@ -310,15 +310,20 @@ function initialFilterHandler(){
             let top = offset.top, left = offset.left + menuW;
 
             if (left + attrW > winW) {
-                // ten9 : delete cell sub
                 left = offset.left - attrW;
             }
 
             if (top + attrH > winH) {
                 top = winH - attrH;
             }
-
-            $attr.css({ "top": top, "left": left }).show();
+            
+            // TEN9 : Fixed delete submenu position issue
+            if (attrid == 'luckysheetCellsHandleDel') {
+                $attr.css({ "top": 338, "left": 250 }).show();
+            } else {
+                $attr.css({ "top": top, "left": left }).show();
+            }
+            
             rightclickmenu = $t;
         },
         function () {

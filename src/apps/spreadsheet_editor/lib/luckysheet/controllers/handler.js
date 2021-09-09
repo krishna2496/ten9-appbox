@@ -1387,7 +1387,6 @@ export default function luckysheetHandler() {
 
             let hyperlink = hyperlinkCtrl.hyperlink || {};
             let item = hyperlink[rowIndex + "_" + colIndex] || '';
-
             if (item) {
                 $(".rightClickInsertLink").hide();
                 $(".rightClickEditLink").show();

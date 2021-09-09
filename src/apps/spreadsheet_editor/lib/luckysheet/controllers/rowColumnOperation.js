@@ -436,6 +436,7 @@ export function rowColumnOperationInitial() {
             if(!cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat){
                 $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
             }
+
             showrightclickmenu($("#luckysheet-rightclick-menu"), $(this).offset().left + 46, event.pageY);
             Store.luckysheet_cols_menu_status = true;
 
@@ -461,6 +462,10 @@ export function rowColumnOperationInitial() {
                     }
                 }
             }
+
+            // TEN9 : Hide Edit link option
+            $(".rightClickEditLink").css('display','none');
+            $(".rightClickInsertLink").css('display','block');
 
             if(isSame){
                 $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val(first_rowlen);
@@ -871,6 +876,11 @@ export function rowColumnOperationInitial() {
             if(!cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat){
                 $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
             }
+
+            // TEN9 : Hide Edit link option
+            $(".rightClickEditLink").css('display','none');
+            $(".rightClickInsertLink").css('display','block');
+
             showrightclickmenu($("#luckysheet-rightclick-menu"), event.pageX, $(this).offset().top + 18);
             Store.luckysheet_cols_menu_status = true;
 

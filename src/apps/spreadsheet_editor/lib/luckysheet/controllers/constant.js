@@ -401,13 +401,13 @@ function rightclickHTML() {
                     <div id="luckysheet-delRows" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteRow ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                         ${ /* TEN9 :Delete N row */'' }
-                        ${rightclick.delete} ${rightclick.row} <span id='deleteNRow'></span><span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        ${rightclick.delete} ${rightclick.row}<span id='deleteNRow'></span><span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
                     <div id="luckysheet-delCols" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteColumn ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                         ${ /* TEN9 :Delete N column */'' }
-                        ${rightclick.delete} ${rightclick.column} <span id='deleteNColumn'></span><span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        ${rightclick.delete} ${rightclick.column}<span id='deleteNColumn'></span><span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
                     <div id="luckysheet-hide-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
@@ -418,8 +418,8 @@ function rightclickHTML() {
                     </div>
                     <div id="luckysheet-show-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.showHide} 
-                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                            ${rightclick.showHide}
+                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}<span>s</span></span>
                         </div> 
                     </div>
                     <!-- cell right click remove hide button
