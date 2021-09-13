@@ -1131,10 +1131,17 @@ export function rowColumnOperationInitial() {
             return;
         }
 
+        // TEN9 : Insert N rows
+        let insertNRow = 1;
+        if ($("#insertNRow")) {
+            insertNRow = $("#insertNRow").html();
+        }
+
         let st_index = Store.luckysheet_select_save[0].row[0];
-        luckysheetextendtable('row', st_index, 1, "lefttop");
 
-
+        // TEN9 : Insert N rows
+        // luckysheetextendtable('row', st_index, 1, "lefttop");
+        luckysheetextendtable('row', st_index, insertNRow, "lefttop");
     })
     $("#luckysheetColsRowsHandleAdd_column").click(function (event) {
         $("#luckysheet-rightclick-menu").hide();
@@ -1144,8 +1151,14 @@ export function rowColumnOperationInitial() {
             return;
         }
 
+        // TEN9 : Insert N rows
+        let insertNColumn = 1;
+        if ($("#insertNColumn")) {
+            insertNColumn = $("#insertNColumn").html();
+        }
+
         let st_index = Store.luckysheet_select_save[0].column[0];
-        luckysheetextendtable('column', st_index, 1, "lefttop");
+        luckysheetextendtable('column', st_index, insertNColumn, "lefttop");
 
 
     })
