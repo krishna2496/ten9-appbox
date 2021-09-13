@@ -500,8 +500,10 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
     if (rowl > 1) {
         $("#insertNRow").show();
         $("#insertNRow").html(rowl);
+        $("#insertNRows").show();
     } else {
         $("#insertNRow").hide();
+        $("#insertNRows").hide();
     }
 
     if (rowseleted[0] != rowseleted[1]) {
@@ -539,17 +541,22 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
     if (coll > 1) {
         $("#insertNColumn").show();
         $("#insertNColumn").html(coll);
+        $("#insertNColumns").show();
     } else {
         $("#insertNColumn").hide();
+        $("#insertNColumns").hide();
     }
 
     if (columnseleted[0] != columnseleted[1]) {
         $("#deleteNColumn").show();
+        $("#hideNColumn").show();
         const firstRow = parseInt(rowseleted[0])+1;
         const lastRow = parseInt(rowseleted[1]) + 1;
         $("#deleteNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
+        $("#hideNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
     } else {
         $("#deleteNColumn").hide();
+        $("#hideNColumn").hide();
     }
 
     if (coll >= 4) {

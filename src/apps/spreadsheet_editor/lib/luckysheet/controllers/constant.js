@@ -328,13 +328,13 @@ function rightclickHTML() {
                     <div id="luckysheetColsRowsHandleAdd_row" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.insertRow ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                             ${/* TEN9 : N rows added */'' }
-                            ${rightclick.insert} <span id='insertNRow'></span> ${rightclick.row}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                            ${rightclick.insert} <span id='insertNRow'></span> ${rightclick.row}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span><span id='insertNRows'>s</span>
                         </div>
                     </div>
                     <div id="luckysheetColsRowsHandleAdd_column" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.insertColumn ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                         ${/* TEN9 : N Column added */'' }
-                            ${rightclick.insert} <span id='insertNColumn'></span> ${rightclick.column}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                            ${rightclick.insert} <span id='insertNColumn'></span> ${rightclick.column}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span><span id='insertNColumns'>s</span>
                         </div>
                     </div>
                 </div> 
@@ -413,7 +413,7 @@ function rightclickHTML() {
                     <div id="luckysheet-hide-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                         ${rightclick.hide}
-                        <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                        <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span><span id="hideNColumn"></span>
                         </div> 
                     </div>
                     <div id="luckysheet-show-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
