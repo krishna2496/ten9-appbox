@@ -175,7 +175,7 @@ export default function luckysheetHandler() {
     const locale_drag = _locale.drag;
     const locale_info = _locale.info;
     let prev, mousewheelArrayUniqueTimeout;
-    $("#luckysheet-grid-window-1").mousewheel(function (event, delta) {
+    $("#luckysheet-grid-window-1").mousewheel(function (event, delta) { 
         let scrollLeft = $("#luckysheet-scrollbar-x").scrollLeft(),
             scrollTop = $("#luckysheet-scrollbar-y").scrollTop();
         let visibledatacolumn_c = Store.visibledatacolumn,
@@ -249,25 +249,13 @@ export default function luckysheetHandler() {
             if (luckysheetFreezen.freezenhorizontaldata != null) {
                 rowscroll -= luckysheetFreezen.freezenhorizontaldata[0];
             }
-
+            let scrollAmount = Store.visibledatarow.length/5;
             // TEN9 : Made Scrolling with mousewheel faster
             if (event.originalEvent.wheelDelta < 0) {
-                if (window.screen.height > 1080) {
-                    rowscroll = rowscroll + 180;
-                } else if (window.screen.height <= 1080 && window.screen.height > 780) {
-                    rowscroll = rowscroll + 100;
-                } else {
-                    rowscroll = rowscroll + 50;
-                }
+                rowscroll = rowscroll + scrollAmount;
             }
             if (event.originalEvent.wheelDelta > 0) {
-                if (window.screen.height > 1080) {
-                    rowscroll = rowscroll - 180;
-                } else if (window.screen.height <= 1080 && window.screen.height > 780) {
-                    rowscroll = rowscroll - 100;
-                } else {
-                    rowscroll = rowscroll - 50;
-                }
+                rowscroll = rowscroll - scrollAmount;
             }
 
             $("#luckysheet-scrollbar-y").scrollTop(rowscroll);
