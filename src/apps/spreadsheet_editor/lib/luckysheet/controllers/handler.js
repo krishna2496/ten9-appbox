@@ -5246,7 +5246,7 @@ export default function luckysheetHandler() {
         event.stopPropagation();
     });
 
-    $(".luckysheet-grid-container, #luckysheet-left-top").on("contextmenu", function (e) {
+    $("#luckysheet-left-top").on("contextmenu", function (e) {
         // TEN9 : Missing context menu when you right-click on left-top corner of the sheet.
         if (e.which == 3) {
             let x = document.getElementById("luckysheet-left-top").getBoundingClientRect().x + 10;
