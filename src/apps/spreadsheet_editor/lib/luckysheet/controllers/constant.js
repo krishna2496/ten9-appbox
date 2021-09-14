@@ -344,7 +344,7 @@ function rightclickHTML() {
                     <div id="luckysheet-top-left-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                             ${rightclick.insert}
-                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="margin-left: 1px;width: 14px;"/>                            
+                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width: 10px;margin-left:-2px"/>                            
                             <span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>
                         </div>  
                     </div>
@@ -364,7 +364,7 @@ function rightclickHTML() {
                     <div id="luckysheet-bottom-right-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                             ${rightclick.insert}
-                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:14px;height:20px;box-sizing:border-box;text-align: center;"/>
+                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:10px;height:20px;box-sizing:border-box;text-align: center;margin-left:-2px"/>
                             <span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
                         </div>
                     </div>
