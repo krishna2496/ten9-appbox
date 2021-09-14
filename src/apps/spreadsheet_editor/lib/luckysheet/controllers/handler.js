@@ -1398,6 +1398,8 @@ export default function luckysheetHandler() {
                 $("#insertLink").show();
                 $("#editLink").hide();
             }
+            // TEN9 : Delete rows option added
+            $("#luckysheet-delRows").css('display','block');
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
 
