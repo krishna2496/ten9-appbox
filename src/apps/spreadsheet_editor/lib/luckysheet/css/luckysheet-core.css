@@ -7687,3 +7687,8 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 .luckysheet-wa-calculate-help-tool .fa {
     cursor: default;
 }
+.disableSheet {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+}

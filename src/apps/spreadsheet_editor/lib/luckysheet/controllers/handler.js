@@ -1391,7 +1391,6 @@ export default function luckysheetHandler() {
 
             let hyperlink = hyperlinkCtrl.hyperlink || {};
             let item = hyperlink[rowIndex + "_" + colIndex] || '';
-
             if (item) {
                 $(".rightClickInsertLink").hide();
                 $(".rightClickEditLink").show();
@@ -1403,6 +1402,12 @@ export default function luckysheetHandler() {
                 $("#insertLink").show();
                 $("#editLink").hide();
             }
+            // TEN9 : Delete rows option added
+            $("#luckysheet-delRows").css('display','block');
+
+            // TEN9 : Remove Hide Column.
+            $("#luckysheet-hide-selected").css('display','none');
+            $("#luckysheet-show-selected").css('display','none');
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
 
@@ -5249,6 +5254,16 @@ export default function luckysheetHandler() {
         server.saveParam("mv", Store.currentSheetIndex, Store.luckysheet_select_save);
 
         event.stopPropagation();
+    });
+
+    $("#luckysheet-left-top").on("contextmenu", function (e) {
+        // TEN9 : Missing context menu when you right-click on left-top corner of the sheet.
+        if (e.which == 3) {
+            let x = document.getElementById("luckysheet-left-top").getBoundingClientRect().x + 10;
+            let y = document.getElementById("luckysheet-left-top").getBoundingClientRect().y + 10;
+            showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
+        }
+        e.preventDefault();
     });
 
 

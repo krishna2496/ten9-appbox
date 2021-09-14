@@ -9355,10 +9355,10 @@ export default {
         */
         showHide: 'Unhide',
         to: 'Towards',
-        left: 'Left',
-        right: 'Right',
-        top: 'Top',
-        bottom: 'Bottom',
+        left: 'left',
+        right: 'right',
+        top: 'top',
+        bottom: 'bottom',
         /* TEN9 : text changes 
         moveLeft: 'Move left', */
         moveLeft: 'Shift left',

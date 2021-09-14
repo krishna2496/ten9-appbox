@@ -328,13 +328,13 @@ function rightclickHTML() {
                     <div id="luckysheetColsRowsHandleAdd_row" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.insertRow ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                             ${/* TEN9 : N rows added */'' }
-                            ${rightclick.insert} <span id='insertNRow'></span> ${rightclick.row}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                            ${rightclick.insert} <span id='insertNRow'></span> ${rightclick.row}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span><span id='insertNRows'>s</span>
                         </div>
                     </div>
                     <div id="luckysheetColsRowsHandleAdd_column" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.insertColumn ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                         ${/* TEN9 : N Column added */'' }
-                            ${rightclick.insert} <span id='insertNColumn'></span> ${rightclick.column}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                            ${rightclick.insert} <span id='insertNColumn'></span> ${rightclick.column}<span class="luckysheet-submenu-arrow" style="user-select: none;"></span><span id='insertNColumns'>s</span>
                         </div>
                     </div>
                 </div> 
@@ -344,7 +344,7 @@ function rightclickHTML() {
                     <div id="luckysheet-top-left-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                             ${rightclick.insert}
-                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="margin-left: 1px;width: 14px;"/>                            
+                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width: 10px;margin-left:-2px"/>                            
                             <span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>
                         </div>  
                     </div>
@@ -364,7 +364,7 @@ function rightclickHTML() {
                     <div id="luckysheet-bottom-right-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                             ${rightclick.insert}
-                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:14px;height:20px;box-sizing:border-box;text-align: center;"/>
+                            <input type="text" class="luckysheet-mousedown-cancel" placeholder="${rightclick.number}" value="1" style="width:10px;height:20px;box-sizing:border-box;text-align: center;margin-left:-2px"/>
                             <span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
                         </div>
                     </div>
@@ -401,25 +401,25 @@ function rightclickHTML() {
                     <div id="luckysheet-delRows" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteRow ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                         ${ /* TEN9 :Delete N row */'' }
-                        ${rightclick.delete} ${rightclick.row} <span id='deleteNRow'></span><span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        ${rightclick.delete} ${rightclick.row}<span id='deleteNRow'></span><span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
                     <div id="luckysheet-delCols" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.deleteColumn ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                         ${ /* TEN9 :Delete N column */'' }
-                        ${rightclick.delete} ${rightclick.column} <span id='deleteNColumn'></span><span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
+                        ${rightclick.delete} ${rightclick.column}<span id='deleteNColumn'></span><span class="luckysheet-submenu-arrow" style="user-select: none;"></span>
                         </div>
                     </div>
                     <div id="luckysheet-hide-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                     <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                         ${rightclick.hide}
-                        <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                        <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span><span id="hideNColumn"></span>
                         </div> 
                     </div>
                     <div id="luckysheet-show-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
-                            ${rightclick.showHide} 
-                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}</span>
+                            ${rightclick.showHide}
+                            <span class="luckysheet-cols-rows-shift-word luckysheet-mousedown-cancel">${rightclick.column}<span>s</span></span>
                         </div> 
                     </div>
                     <!-- cell right click remove hide button

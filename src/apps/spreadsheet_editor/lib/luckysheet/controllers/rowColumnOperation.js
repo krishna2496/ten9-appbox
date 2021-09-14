@@ -436,6 +436,7 @@ export function rowColumnOperationInitial() {
             if(!cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat){
                 $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
             }
+
             showrightclickmenu($("#luckysheet-rightclick-menu"), $(this).offset().left + 46, event.pageY);
             Store.luckysheet_cols_menu_status = true;
 
@@ -461,6 +462,10 @@ export function rowColumnOperationInitial() {
                     }
                 }
             }
+
+            // TEN9 : Hide Edit link option
+            $(".rightClickEditLink").css('display','none');
+            $(".rightClickInsertLink").css('display','block');
 
             if(isSame){
                 $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val(first_rowlen);
@@ -871,6 +876,11 @@ export function rowColumnOperationInitial() {
             if(!cellRightClickConfig.clear && !cellRightClickConfig.matrix && !cellRightClickConfig.sort && !cellRightClickConfig.filter && !cellRightClickConfig.chart && !cellRightClickConfig.image && !cellRightClickConfig.link && !cellRightClickConfig.data && !cellRightClickConfig.cellFormat){
                 $$('#luckysheet-cols-rows-data .luckysheet-menuseparator').style.display = 'none';
             }
+
+            // TEN9 : Hide Edit link option
+            $(".rightClickEditLink").css('display','none');
+            $(".rightClickInsertLink").css('display','block');
+
             showrightclickmenu($("#luckysheet-rightclick-menu"), event.pageX, $(this).offset().top + 18);
             Store.luckysheet_cols_menu_status = true;
 
@@ -1121,10 +1131,17 @@ export function rowColumnOperationInitial() {
             return;
         }
 
+        // TEN9 : Insert N rows
+        let insertNRow = 1;
+        if ($("#insertNRow")) {
+            insertNRow = $("#insertNRow").html();
+        }
+
         let st_index = Store.luckysheet_select_save[0].row[0];
-        luckysheetextendtable('row', st_index, 1, "lefttop");
 
-
+        // TEN9 : Insert N rows
+        // luckysheetextendtable('row', st_index, 1, "lefttop");
+        luckysheetextendtable('row', st_index, insertNRow, "lefttop");
     })
     $("#luckysheetColsRowsHandleAdd_column").click(function (event) {
         $("#luckysheet-rightclick-menu").hide();
@@ -1134,8 +1151,14 @@ export function rowColumnOperationInitial() {
             return;
         }
 
+        // TEN9 : Insert N rows
+        let insertNColumn = 1;
+        if ($("#insertNColumn")) {
+            insertNColumn = $("#insertNColumn").html();
+        }
+
         let st_index = Store.luckysheet_select_save[0].column[0];
-        luckysheetextendtable('column', st_index, 1, "lefttop");
+        luckysheetextendtable('column', st_index, insertNColumn, "lefttop");
 
 
     })
