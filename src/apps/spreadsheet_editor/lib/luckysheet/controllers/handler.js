@@ -4360,6 +4360,11 @@ export default function luckysheetHandler() {
 
     //禁止浏览器 右键默认菜单
     $(".luckysheet-grid-container, #luckysheet-rightclick-menu").on("contextmenu", function (e) {
+        if (e.which == 3) {
+            let x = document.getElementById("luckysheet-left-top").getBoundingClientRect().x + 10;
+            let y = document.getElementById("luckysheet-left-top").getBoundingClientRect().y + 10;
+            showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
+        }
         e.preventDefault();
     });
 
