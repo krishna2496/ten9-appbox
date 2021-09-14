@@ -131,7 +131,14 @@ function showsheetconfigmenu() {
         } else {
             $("#luckysheetsheetconfigmoveleft").removeClass("disableSheet");
         }
-        
+
+        // TEN9 : Disable Delete menu item if there is only 1 page.
+        if ($("#luckysheet-sheet-container-c .luckysheet-sheets-item:visible").length == 1) {
+            $("#luckysheetsheetconfigdelete").addClass("disableSheet");
+        } else {
+            $("#luckysheetsheetconfigdelete").removeClass("disableSheet");
+        }
+
         mouseclickposition($("#luckysheet-rightclick-sheet-menu"), luckysheetcurrentSheetitem.offset().left + luckysheetcurrentSheetitem.width(), luckysheetcurrentSheetitem.offset().top - 18, "leftbottom");
     },1);
 }
