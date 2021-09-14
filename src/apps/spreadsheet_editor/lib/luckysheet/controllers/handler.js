@@ -249,7 +249,9 @@ export default function luckysheetHandler() {
             if (luckysheetFreezen.freezenhorizontaldata != null) {
                 rowscroll -= luckysheetFreezen.freezenhorizontaldata[0];
             }
-            let scrollAmount = Store.visibledatarow.length/5;
+            let scrollAmount = parseInt(Store.visibledatarow.length/5) + 6;
+            console.log("scrollAmount",scrollAmount);
+            console.log("rowscroll",rowscroll);
             // TEN9 : Made Scrolling with mousewheel faster
             if (event.originalEvent.wheelDelta < 0) {
                 rowscroll = rowscroll + scrollAmount;
