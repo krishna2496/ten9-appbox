@@ -249,15 +249,17 @@ export default function luckysheetHandler() {
             if (luckysheetFreezen.freezenhorizontaldata != null) {
                 rowscroll -= luckysheetFreezen.freezenhorizontaldata[0];
             }
-            let scrollAmount = parseInt(Store.visibledatarow.length/5) + 6;
-            console.log("scrollAmount",scrollAmount);
-            console.log("rowscroll",rowscroll);
+
+            // This scrollAmount gives best rate of scrolling and alignment
+            // for rows.
+            const scrollAmount = 66;
+
             // TEN9 : Made Scrolling with mousewheel faster
             if (event.originalEvent.wheelDelta < 0) {
-                rowscroll = rowscroll + scrollAmount;
+                rowscroll += scrollAmount;
             }
             if (event.originalEvent.wheelDelta > 0) {
-                rowscroll = rowscroll - scrollAmount;
+                rowscroll -= scrollAmount;
             }
 
             $("#luckysheet-scrollbar-y").scrollTop(rowscroll);
