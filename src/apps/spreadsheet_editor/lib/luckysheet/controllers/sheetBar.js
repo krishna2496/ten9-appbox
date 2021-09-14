@@ -118,6 +118,20 @@ function showsheetconfigmenu() {
     }
 
     setTimeout(function(){
+
+        // TEN9 : Disable "Move left" and "Move right" if they don't apply
+        if (luckysheetcurrentSheetitem.nextAll(":visible").length <= 0) {
+            $("#luckysheetsheetconfigmoveright").addClass("disableSheet");
+        } else {
+            $("#luckysheetsheetconfigmoveright").removeClass("disableSheet");
+        }
+        
+        if (luckysheetcurrentSheetitem.prevAll(":visible").length <= 0) {
+            $("#luckysheetsheetconfigmoveleft").addClass("disableSheet");
+        } else {
+            $("#luckysheetsheetconfigmoveleft").removeClass("disableSheet");
+        }
+        
         mouseclickposition($("#luckysheet-rightclick-sheet-menu"), luckysheetcurrentSheetitem.offset().left + luckysheetcurrentSheetitem.width(), luckysheetcurrentSheetitem.offset().top - 18, "leftbottom");
     },1);
 }
