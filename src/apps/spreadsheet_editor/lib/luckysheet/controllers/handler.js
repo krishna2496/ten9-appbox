@@ -1400,6 +1400,10 @@ export default function luckysheetHandler() {
             }
             // TEN9 : Delete rows option added
             $("#luckysheet-delRows").css('display','block');
+
+            // TEN9 : Remove Hide Column.
+            $("#luckysheet-hide-selected").css('display','none');
+            $("#luckysheet-show-selected").css('display','none');
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
 
