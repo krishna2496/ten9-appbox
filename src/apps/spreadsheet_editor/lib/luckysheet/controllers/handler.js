@@ -4360,12 +4360,6 @@ export default function luckysheetHandler() {
 
     //禁止浏览器 右键默认菜单
     $(".luckysheet-grid-container, #luckysheet-rightclick-menu").on("contextmenu", function (e) {
-        // TEN9 : Missing context menu when you right-click on left-top corner of the sheet.
-        if (e.which == 3) {
-            let x = document.getElementById("luckysheet-left-top").getBoundingClientRect().x + 10;
-            let y = document.getElementById("luckysheet-left-top").getBoundingClientRect().y + 10;
-            showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
-        }
         e.preventDefault();
     });
 
@@ -5250,6 +5244,16 @@ export default function luckysheetHandler() {
         server.saveParam("mv", Store.currentSheetIndex, Store.luckysheet_select_save);
 
         event.stopPropagation();
+    });
+
+    $(".luckysheet-grid-container, #luckysheet-left-top").on("contextmenu", function (e) {
+        // TEN9 : Missing context menu when you right-click on left-top corner of the sheet.
+        if (e.which == 3) {
+            let x = document.getElementById("luckysheet-left-top").getBoundingClientRect().x + 10;
+            let y = document.getElementById("luckysheet-left-top").getBoundingClientRect().y + 10;
+            showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
+        }
+        e.preventDefault();
     });
 
 

@@ -552,8 +552,13 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
         $("#hideNColumn").show();
         const firstRow = parseInt(rowseleted[0])+1;
         const lastRow = parseInt(rowseleted[1]) + 1;
-        $("#deleteNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
-        $("#hideNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
+        if (columeHeader_word[columnseleted[1]]) {
+            $("#deleteNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
+            $("#hideNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
+        } else {
+            $("#deleteNColumn").html("s");
+            $("#hideNColumn").html("s");
+        }
     } else {
         $("#deleteNColumn").hide();
         $("#hideNColumn").hide();
