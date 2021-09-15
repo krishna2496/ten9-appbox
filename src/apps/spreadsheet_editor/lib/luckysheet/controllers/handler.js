@@ -175,7 +175,7 @@ export default function luckysheetHandler() {
     const locale_drag = _locale.drag;
     const locale_info = _locale.info;
     let prev, mousewheelArrayUniqueTimeout;
-    $("#luckysheet-grid-window-1").mousewheel(function (event, delta) {
+    $("#luckysheet-grid-window-1").mousewheel(function (event, delta) { 
         let scrollLeft = $("#luckysheet-scrollbar-x").scrollLeft(),
             scrollTop = $("#luckysheet-scrollbar-y").scrollTop();
         let visibledatacolumn_c = Store.visibledatacolumn,
@@ -250,12 +250,16 @@ export default function luckysheetHandler() {
                 rowscroll -= luckysheetFreezen.freezenhorizontaldata[0];
             }
 
+            // This scrollAmount gives best rate of scrolling and alignment
+            // for rows.
+            const scrollAmount = 66;
+
             // TEN9 : Made Scrolling with mousewheel faster
             if (event.originalEvent.wheelDelta < 0) {
-                rowscroll = rowscroll + 180;
+                rowscroll += scrollAmount;
             }
             if (event.originalEvent.wheelDelta > 0) {
-                rowscroll = rowscroll - 180;
+                rowscroll -= scrollAmount;
             }
 
             $("#luckysheet-scrollbar-y").scrollTop(rowscroll);
