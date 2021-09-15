@@ -1398,12 +1398,25 @@ export default function luckysheetHandler() {
                 $("#insertLink").show();
                 $("#editLink").hide();
             }
+            
+            // TEN9 : Hide unhide option when all rows and columns selected
+            let checkTotalRowSelected = last.row[1] - last.row[0] + 1;
+            let checkTotalColumnSelected = last.column[1] - last.column[0] + 1;
+
+            if (checkTotalRowSelected == Store.visibledatarow.length && checkTotalColumnSelected == Store.visibledatacolumn.length) {
+                $("#luckysheet-show-selected").css("display","none");
+            }
+
             // TEN9 : Delete rows option added
             $("#luckysheet-delRows").css('display','block');
-
+            if (rowIndex == 0 || colIndex == 0) {
+                $("#luckysheet-hide-selected").css('display','block');
+                $("#luckysheet-show-selected").css('display','block');
+            } else {
             // TEN9 : Remove Hide Column.
-            $("#luckysheet-hide-selected").css('display','none');
-            $("#luckysheet-show-selected").css('display','none');
+                $("#luckysheet-hide-selected").css('display','none');
+                $("#luckysheet-show-selected").css('display','none');
+            }
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
 
@@ -5257,6 +5270,8 @@ export default function luckysheetHandler() {
         if (e.which == 3) {
             let x = document.getElementById("luckysheet-left-top").getBoundingClientRect().x + 10;
             let y = document.getElementById("luckysheet-left-top").getBoundingClientRect().y + 10;
+            // TEN9 : Hide column when all rows and column
+            $("#luckysheet-show-selected").css('display','none');
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
         e.preventDefault();

@@ -555,9 +555,6 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
         if (columeHeader_word[columnseleted[1]]) {
             $("#deleteNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
             $("#hideNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
-        } else {
-            $("#deleteNColumn").html("s");
-            $("#hideNColumn").html("s");
         }
     } else {
         $("#deleteNColumn").hide();

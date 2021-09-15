@@ -3442,6 +3442,8 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     /* TEN9 : Margin 10px changed to 20px */
     /* margin-top: 10px; */
     margin-top: 20px;
+    /* TEN9 : Modal styling changes */
+    float: right;
 }
 
 .luckysheet-modal-dialog-buttons button {

@@ -39,6 +39,8 @@ import {isInlineStringCell} from './inlineString';
 import {checkProtectionLockedRangeList, checkProtectionAllSelected,checkProtectionAuthorityNormal  } from './protection';
 import Store from '../store';
 import luckysheetConfigsetting from './luckysheetConfigsetting';
+import { modelHTML } from './constant';
+import { replaceHtml } from '../utils/chartUtil';
 
 export function rowColumnOperationInitial() {
     //表格行标题 mouse事件
@@ -466,7 +468,8 @@ export function rowColumnOperationInitial() {
             // TEN9 : Hide Edit link option
             $(".rightClickEditLink").css('display','none');
             $(".rightClickInsertLink").css('display','block');
-
+            $("#luckysheet-hide-selected").css('display','block');
+            $("#luckysheet-show-selected").css('display','block');
             if(isSame){
                 $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val(first_rowlen);
             }
@@ -906,7 +909,8 @@ export function rowColumnOperationInitial() {
                     }
                 }
             }
-
+            $("#luckysheet-hide-selected").css('display','block');
+            $("#luckysheet-show-selected").css('display','block');
             if(isSame){
                 $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val(first_collen);
             }
@@ -1483,7 +1487,41 @@ export function rowColumnOperationInitial() {
             ed_index = Store.luckysheet_select_save[0][Store.luckysheetRightHeadClickIs][1];
         luckysheetdeletetable(Store.luckysheetRightHeadClickIs, st_index, ed_index);
     });
+
+    function displayErrorModal(data) {
+        $("body").append(replaceHtml(modelHTML, { 
+            "id": "luckysheet-error-dialog", 
+            "addclass": "luckysheet-error-dialog", 
+            "title": 'There was a problem', 
+            "content": data, 
+            "botton":  `<button class="btn btn-success luckysheet-model-close-btn error-cancle">Ok</button>`, 
+            "style": "z-index:100003" 
+        }));
+
+        let $t = $("#luckysheet-error-dialog").find(".luckysheet-modal-dialog-content").css("min-width", 350).end(), 
+        myh = $t.outerHeight(), 
+        myw = $t.outerWidth();
+        let winw = $(window).width(), 
+            winh = $(window).height();
+        let scrollLeft = $(document).scrollLeft(), 
+            scrollTop = $(document).scrollTop();
+        $("#luckysheet-error-dialog").css({ 
+            "left": (winw + scrollLeft - myw) / 2, 
+            "top": (winh + scrollTop - myh) / 3 
+        }).show();
+    }
     $("#luckysheet-delRows").click(function (event) {
+        // TEN9 : Display error modal when all row selected
+        let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+        let checkTotalRowSelected = last.row[1] - last.row[0] + 1;
+        let checkTotalColumnSelected = last.column[1] - last.column[0] + 1;
+
+        if (checkTotalRowSelected == Store.visibledatarow.length && checkTotalColumnSelected == Store.visibledatacolumn.length) {
+            const message = 'You can\'t delete all the rows on the sheet.';
+            displayErrorModal(message);
+            return;
+        }
+
         $("#luckysheet-rightclick-menu").hide();
         luckysheetContainerFocus();
 
@@ -1514,6 +1552,16 @@ export function rowColumnOperationInitial() {
         luckysheetdeletetable('row', st_index, ed_index);
     })
     $("#luckysheet-delCols").click(function (event) {
+        // TEN9 : Display error modal when all row selected
+        let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+        let checkTotalRowSelected = last.row[1] - last.row[0] + 1;
+        let checkTotalColumnSelected = last.column[1] - last.column[0] + 1;
+
+        if (checkTotalRowSelected == Store.visibledatarow.length && checkTotalColumnSelected == Store.visibledatacolumn.length) {
+            const message = 'You can\'t delete all the columns on the sheet.';
+            displayErrorModal(message);
+            return;
+        }
         $("#luckysheet-rightclick-menu").hide();
         luckysheetContainerFocus();
 
@@ -1546,7 +1594,6 @@ export function rowColumnOperationInitial() {
 
     //隐藏选中行列
     $("#luckysheet-hide-selected").click(function (event) {
-
        
         $("#luckysheet-rightclick-menu").hide();
         luckysheetContainerFocus();
