@@ -5278,6 +5278,7 @@ export default function luckysheetHandler() {
             $("#luckysheet-show-selected").css('display','none');
             $("#luckysheet-hide-selected").css("display","none");
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
+            $("#luckysheet-left-top").click();
         }
         e.preventDefault();
     });
