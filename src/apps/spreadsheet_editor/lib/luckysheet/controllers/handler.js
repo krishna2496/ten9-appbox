@@ -1411,11 +1411,9 @@ export default function luckysheetHandler() {
             $("#luckysheet-delRows").css('display','block');
             if (rowIndex == 0 || colIndex == 0) {
                 $("#luckysheet-hide-selected").css('display','block');
-                $("#luckysheet-show-selected").css('display','block');
             } else {
             // TEN9 : Remove Hide Column.
                 $("#luckysheet-hide-selected").css('display','none');
-                $("#luckysheet-show-selected").css('display','none');
             }
 
             if (checkTotalRowSelected == Store.visibledatarow.length && checkTotalColumnSelected == Store.visibledatacolumn.length) {

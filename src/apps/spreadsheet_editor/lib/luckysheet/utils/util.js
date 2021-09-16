@@ -456,6 +456,44 @@ function luckysheetfontformat(format) {
 
 //右键菜单
 function showrightclickmenu($menu, x, y) {
+    // TEN9 : Unhide option when no rows or columns hidden
+    if ($menu.selector == '#luckysheet-rightclick-menu') {
+        $("#luckysheet-show-selected").css('display','none');
+        let cfg = $.extend(true, {}, Store.config);
+        let c1 = 0;
+        let c2 = 0;
+        let r1 = 0;
+        let r2 = 0;
+        for(let s = 0; s < Store.luckysheet_select_save.length; s++){
+            let c1 = Store.luckysheet_select_save[s].column[0],
+                c2 = Store.luckysheet_select_save[s].column[1];
+            let r1 = Store.luckysheet_select_save[s].row[0],
+                r2 = Store.luckysheet_select_save[s].row[1];
+        }
+
+        if (Object.keys(cfg).length) {
+            if(cfg["colhidden"]){
+                let hiddenColumn = Object.keys(cfg["colhidden"]);
+                hiddenColumn.forEach((data) => {
+                    if (c1 < data && data > c2) {alert("Dsf");
+                        $("#luckysheet-show-selected").css('display','block');
+                    } 
+                })
+            }
+
+            if(cfg["rowhidden"]){
+                let rowColumn = Object.keys(cfg["rowhidden"]);
+                rowColumn.forEach((data) => {
+                    if (r1 < data && data > r2) {alert("Dsf");
+                        $("#luckysheet-show-selected").css('display','block');
+                    } 
+                })
+            }
+        } else {
+            $("#luckysheet-show-selected").css('display','none');
+        }
+    }
+
     let winH = $(window).height(), winW = $(window).width();
     let menuW = $menu.width(), menuH = $menu.height();
     let top = y, left = x;
