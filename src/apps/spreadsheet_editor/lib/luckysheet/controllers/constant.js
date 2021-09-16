@@ -447,10 +447,11 @@ function rightclickHTML() {
                 </div>
                 <div id="luckysheet-cols-rows-data">
                     <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator" style="display:${dataMenuseparator ? 'block' : 'none'};"></div>
-                    ${ /* <div id="luckysheet-delete-text" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.clear ? 'block' : 'none'};">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.clearContent}</div>
+                    ${ /*  <div id="luckysheet-delete-text" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel" style="display:${config.clear ? 'block' : 'none'};"> */'' }
+                    <div id="luckysheet-delete-text" class="" style="display:${config.clear ? 'block' : 'none'};">
+                    ${ /*  <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.clearContent}</div> */'' }
                     </div>
-                    <div id="luckysheetmatrix" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.matrix ? 'block' : 'none'};">
+                    ${ /* <div id="luckysheetmatrix" class="luckysheet-cols-menuitem luckysheet-cols-submenu luckysheet-mousedown-cancel" style="display:${config.matrix ? 'block' : 'none'};">
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">
                             ${rightclick.matrix}<span class="luckysheet-submenu-arrow iconfont luckysheet-iconfont-youjiantou" style="user-select: none;"></span>
                         </div>
