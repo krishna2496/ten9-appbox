@@ -1505,6 +1505,7 @@ export function rowColumnOperationInitial() {
             winh = $(window).height();
         let scrollLeft = $(document).scrollLeft(), 
             scrollTop = $(document).scrollTop();
+        $(".luckysheet-modal-dialog-content").html(data);
         $("#luckysheet-error-dialog").css({ 
             "left": (winw + scrollLeft - myw) / 2, 
             "top": (winh + scrollTop - myh) / 3 
@@ -1750,6 +1751,21 @@ export function rowColumnOperationInitial() {
             for(let s = 0; s < Store.luckysheet_select_save.length; s++){
                 let r1 = Store.luckysheet_select_save[s].row[0],
                     r2 = Store.luckysheet_select_save[s].row[1];
+                    const hiddenRow = Object.keys(cfg["rowhidden"]);
+                // TEN9 : When rows to the very top are hidden,It should unhide all rows to the top when selected from the context menu.
+                let leftSideHiddenRow =  [];
+                hiddenRow.forEach(element => {
+                    if (element <= r1) {
+                        leftSideHiddenRow.push(element);
+                    }
+                });
+
+                if (leftSideHiddenRow.length > 0) {
+                    leftSideHiddenRow.push(r1);
+                    if ((r1 -1) == hiddenRow[hiddenRow.length - 1]) {
+                        r1 = leftSideHiddenRow[0];
+                    }
+                }
     
                 for(let r = r1; r <= r2; r++){
                     delete cfg["rowhidden"][r];
@@ -1786,16 +1802,30 @@ export function rowColumnOperationInitial() {
             if(cfg["colhidden"] == null){
                 return;
             }
-    
             for(let s = 0; s < Store.luckysheet_select_save.length; s++){
+                console.log("select",Store.luckysheet_select_save[s]);
                 let c1 = Store.luckysheet_select_save[s].column[0],
                     c2 = Store.luckysheet_select_save[s].column[1];
-    
+                    const hiddenColumn = Object.keys(cfg["colhidden"]);
+                
+                // TEN9 : When columns to the very left are hidden,It should unhide all columns to the left when selected from the context menu.
+                let leftSideHiddenCol =  [];
+                hiddenColumn.forEach(element => {
+                    if (element <= c1) {
+                        leftSideHiddenCol.push(element);
+                    }
+                });
+                if (leftSideHiddenCol.length > 0) {
+                    leftSideHiddenCol.push(c1);
+                    if ((c1 -1) == hiddenColumn[hiddenColumn.length - 1]) {
+                        c1 = leftSideHiddenCol[0];
+                    }
+                }
+
                 for(let c = c1; c <= c2; c++){
                     delete cfg["colhidden"][c];
                 }
             }
-        
             //保存撤销
             if(Store.clearjfundo){
                 let redo = {};
