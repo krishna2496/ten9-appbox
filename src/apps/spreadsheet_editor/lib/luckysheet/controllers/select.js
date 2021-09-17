@@ -505,18 +505,19 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
         $("#insertNRow").hide();
         $("#insertNRows").hide();
     }
-    console.log(rowseleted);
     if (rowseleted[0] != rowseleted[1]) {
         $("#deleteNRow").show();
         $("#hideNColumn").show();
+        $("#clearRow").show();
         const firstRow = parseInt(rowseleted[0])+1;
         const lastRow = parseInt(rowseleted[1]) + 1;
         $("#deleteNRow").html("s  "+firstRow+' - '+lastRow);
-        $("#hideNColumn").html("s  "+firstRow+' - '+lastRow);  
+        $("#hideNColumn").html("s  "+firstRow+' - '+lastRow);
+        $("#clearRow").html("s  "+firstRow+' - '+lastRow);
     } else {
-        console.log("in");
         $("#deleteNRow").hide();
         $("#hideNColumn").hide();
+        $("#clearRow").hide();
     }
 
     if (rowl >= 4) {
@@ -559,10 +560,12 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
             $("#hideNColumn").show();
             $("#deleteNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
             $("#hideNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
+            $("#clearRow").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
         }
     } else {
         $("#deleteNColumn").hide();
         $("#hideNColumn").hide();
+        $("#clearRow").hide();
     }
 
     if (coll >= 4) {

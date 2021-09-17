@@ -8884,7 +8884,6 @@ export default {
         conditionalFormatting : "Conditional formatting",
         dataValidation: 'Data validation',
         protection:"Protect the sheet",
-
         clearText:"Clear color",
         noColorSelectedText:"No color is selected",
 
@@ -9357,8 +9356,11 @@ export default {
         to: 'Towards',
         left: 'left',
         right: 'right',
+        /* TEN9 : Text changes
         top: 'top',
-        bottom: 'bottom',
+        bottom: 'bottom', */
+        top: 'above',
+        bottom: 'below',
         /* TEN9 : text changes 
         moveLeft: 'Move left', */
         moveLeft: 'Shift left',
@@ -9381,6 +9383,8 @@ export default {
         orderZA: 'Z-A order', */
         orderAZ: 'Sort sheet A → Z',
         orderZA: 'Sort sheet Z → A',
+        /* TEN9 : Clear text added */
+        clear: "Clear",
         clearContent: 'Clear content',
         matrix: 'Matrix operation',
         sortSelection: 'Sort',

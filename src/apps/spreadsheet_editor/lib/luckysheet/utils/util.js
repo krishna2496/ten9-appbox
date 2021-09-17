@@ -457,8 +457,22 @@ function luckysheetfontformat(format) {
 
 //右键菜单
 function showrightclickmenu($menu, x, y) {
+    console.log("store",Store);
     // TEN9 : Unhide option when no rows or columns hidden
     if ($menu.selector == '#luckysheet-rightclick-menu') {
+
+        const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+        let insertN = 1;
+
+        if (Store.luckysheetRightHeadClickIs == 'row') {
+            const selectSaveRow = Store.luckysheet_select_save[index].row;
+            insertN = selectSaveRow[1] - selectSaveRow[0] + 1;
+        } else {
+            const selectSaveColumn = Store.luckysheet_select_save[index].column;
+            insertN = selectSaveColumn[1] - selectSaveColumn[0] + 1;
+        }
+        $(".insertN").val(insertN);
+
         $("#luckysheet-show-selected").css('display','none');
         let cfg = $.extend(true, {}, Store.config);
         let c1 = 0;
@@ -473,7 +487,6 @@ function showrightclickmenu($menu, x, y) {
         }
 
         if (Object.keys(cfg).length) {
-            const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
             if(cfg["colhidden"]){
                 let hiddenColumn = Object.keys(cfg["colhidden"]);
                 
