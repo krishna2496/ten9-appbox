@@ -5,6 +5,7 @@ import { hasChinaword,isRealNum } from '../global/validate';
 import Store from '../store';
 import locale from '../locale/locale';
 import numeral from 'numeral';
+import sheetmanage from '../controllers/sheetmanage';
 // import method from '../global/method';
 
 /**
@@ -465,29 +466,76 @@ function showrightclickmenu($menu, x, y) {
         let r1 = 0;
         let r2 = 0;
         for(let s = 0; s < Store.luckysheet_select_save.length; s++){
-            let c1 = Store.luckysheet_select_save[s].column[0],
-                c2 = Store.luckysheet_select_save[s].column[1];
-            let r1 = Store.luckysheet_select_save[s].row[0],
-                r2 = Store.luckysheet_select_save[s].row[1];
+            c1 = Store.luckysheet_select_save[s].column[0];
+            c2 = Store.luckysheet_select_save[s].column[1];
+            r1 = Store.luckysheet_select_save[s].row[0];
+            r2 = Store.luckysheet_select_save[s].row[1];
         }
 
         if (Object.keys(cfg).length) {
+            const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
             if(cfg["colhidden"]){
                 let hiddenColumn = Object.keys(cfg["colhidden"]);
-                hiddenColumn.forEach((data) => {
-                    if (c1 < data && data > c2) {alert("Dsf");
+                
+                // TEN9 : When columns to the very left are hidden,It should unhide all columns to the left when selected from the context menu.
+                let leftSideHiddenCol =  [];
+                hiddenColumn.forEach(element => {
+                    if (element <= c1) {
+                        leftSideHiddenCol.push(element);
+                    }
+                });
+                if (leftSideHiddenCol.length > 0) {
+                    leftSideHiddenCol.push(c1);
+                    if ((c1 -1) == hiddenColumn[0]) {
+                        c1 = leftSideHiddenCol[0];
+                    }
+                }
+                
+                const array = Store.luckysheetfile[index].visibledatacolumn;
+                var firstVisbileColumn = array.findIndex(function (val) {
+                    return val > 0
+                });
+                for(let i=0;i<hiddenColumn.length;i++) {
+                    
+                    if (c1 <= hiddenColumn[i] &&  c2 > hiddenColumn[i]) {
                         $("#luckysheet-show-selected").css('display','block');
                     } 
-                })
+                    if ((c1 == c2) && ((c1-1) == hiddenColumn[i]) && (c1 == firstVisbileColumn)) {
+                        $("#luckysheet-show-selected").css('display','block');
+                    }
+               }
             }
 
             if(cfg["rowhidden"]){
-                let rowColumn = Object.keys(cfg["rowhidden"]);
-                rowColumn.forEach((data) => {
-                    if (r1 < data && data > r2) {alert("Dsf");
+                let hiddenRow = Object.keys(cfg["rowhidden"]);
+                
+                // TEN9 : When columns to the very left are hidden,It should unhide all columns to the left when selected from the context menu.
+                let leftSideHiddenRow =  [];
+                hiddenRow.forEach(element => {
+                    if (element <= c1) {
+                        leftSideHiddenRow.push(element);
+                    }
+                });
+                if (leftSideHiddenRow.length > 0) {
+                    leftSideHiddenRow.push(c1);
+                    if ((c1 -1) == hiddenRow[0]) {
+                        c1 = leftSideHiddenRow[0];
+                    }
+                }
+                
+                const array = Store.luckysheetfile[index].visibledatarow;
+                var firstVisbileRow = array.findIndex(function (val) {
+                    return val > 0
+                });
+                for(let i=0;i<hiddenRow.length;i++) {
+                    
+                    if (r1 <= hiddenRow[i] &&  r2 > hiddenRow[i]) {
                         $("#luckysheet-show-selected").css('display','block');
                     } 
-                })
+                    if ((r1 == r2) && ((r1-1) == hiddenRow[i]) && (r1 == firstVisbileRow)) {
+                        $("#luckysheet-show-selected").css('display','block');
+                    }
+               }
             }
         } else {
             $("#luckysheet-show-selected").css('display','none');

@@ -41,6 +41,7 @@ import Store from '../store';
 import luckysheetConfigsetting from './luckysheetConfigsetting';
 import { modelHTML } from './constant';
 import { replaceHtml } from '../utils/chartUtil';
+import sheetmanage from './sheetmanage';
 
 export function rowColumnOperationInitial() {
     //表格行标题 mouse事件
@@ -1745,24 +1746,27 @@ export function rowColumnOperationInitial() {
             if(cfg["rowhidden"] == null){
                 return;
             }
+
+            const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+            let array = Store.luckysheetfile[index].visibledatarow;
+            var firstVisbileRow = array.findIndex(function (val) {
+                return val > 0
+            });
     
             for(let s = 0; s < Store.luckysheet_select_save.length; s++){
                 let r1 = Store.luckysheet_select_save[s].row[0],
                     r2 = Store.luckysheet_select_save[s].row[1];
                     const hiddenRow = Object.keys(cfg["rowhidden"]);
-                // TEN9 : When rows to the very top are hidden,It should unhide all rows to the top when selected from the context menu.
+
+                // TEN9 : When columns to the very left are hidden,It should unhide all columns to the left when selected from the context menu.
                 let leftSideHiddenRow =  [];
                 hiddenRow.forEach(element => {
-                    if (element <= r1) {
+                    if (element <= r1 && firstVisbileRow == r1) {
                         leftSideHiddenRow.push(element);
                     }
                 });
-
                 if (leftSideHiddenRow.length > 0) {
-                    leftSideHiddenRow.push(r1);
-                    if ((r1 -1) == hiddenRow[hiddenRow.length - 1]) {
-                        r1 = leftSideHiddenRow[0];
-                    }
+                    r1 = leftSideHiddenRow[0];
                 }
     
                 for(let r = r1; r <= r2; r++){
@@ -1800,8 +1804,14 @@ export function rowColumnOperationInitial() {
             if(cfg["colhidden"] == null){
                 return;
             }
+
+            const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+            let array = Store.luckysheetfile[index].visibledatacolumn;
+            var firstVisbileColumn = array.findIndex(function (val) {
+                return val > 0
+            });
+
             for(let s = 0; s < Store.luckysheet_select_save.length; s++){
-                console.log("select",Store.luckysheet_select_save[s]);
                 let c1 = Store.luckysheet_select_save[s].column[0],
                     c2 = Store.luckysheet_select_save[s].column[1];
                     const hiddenColumn = Object.keys(cfg["colhidden"]);
@@ -1809,15 +1819,12 @@ export function rowColumnOperationInitial() {
                 // TEN9 : When columns to the very left are hidden,It should unhide all columns to the left when selected from the context menu.
                 let leftSideHiddenCol =  [];
                 hiddenColumn.forEach(element => {
-                    if (element <= c1) {
+                    if (element <= c1 && firstVisbileColumn == c1) {
                         leftSideHiddenCol.push(element);
                     }
                 });
                 if (leftSideHiddenCol.length > 0) {
-                    leftSideHiddenCol.push(c1);
-                    if ((c1 -1) == hiddenColumn[hiddenColumn.length - 1]) {
-                        c1 = leftSideHiddenCol[0];
-                    }
+                   c1 = leftSideHiddenCol[0];
                 }
 
                 for(let c = c1; c <= c2; c++){

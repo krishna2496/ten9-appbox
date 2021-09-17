@@ -508,11 +508,14 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
 
     if (rowseleted[0] != rowseleted[1]) {
         $("#deleteNRow").show();
+        $("#hideNColumn").show();
         const firstRow = parseInt(rowseleted[0])+1;
         const lastRow = parseInt(rowseleted[1]) + 1;
         $("#deleteNRow").html("s  "+firstRow+' - '+lastRow);
+        $("#hideNColumn").html("s  "+firstRow+' - '+lastRow);  
     } else {
         $("#deleteNRow").hide();
+        $("#hideNColumn").hide();
     }
 
     if (rowl >= 4) {
