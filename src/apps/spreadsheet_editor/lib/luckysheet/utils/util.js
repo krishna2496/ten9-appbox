@@ -457,21 +457,37 @@ function luckysheetfontformat(format) {
 
 //右键菜单
 function showrightclickmenu($menu, x, y) {
-    console.log("store",Store);
+   
     // TEN9 : Unhide option when no rows or columns hidden
     if ($menu.selector == '#luckysheet-rightclick-menu') {
-
         const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+        // TEN9 : Check for remove link option
+        if (Store.luckysheetfile[index].hyperlink) {
+            const hyperLinkCell = Object.keys(Store.luckysheetfile[index].hyperlink);
+            hyperLinkCell.forEach((data) => {
+                const hyperlinkKey = data.split("_");
+                const row = hyperlinkKey[0];
+                const column = hyperlinkKey[1];
+                if (Store.luckysheet_select_save[index].row[0] <= row && Store.luckysheet_select_save[index].row[1] >= row && 
+                    Store.luckysheet_select_save[index].column[0] <= column && Store.luckysheet_select_save[index].column[1] >= column
+                ) {
+                    // deleteLinkList.push(data);
+                    delete Store.luckysheetfile[index].hyperlink[data]; 
+                }
+            });
+        }
+
         let insertN = 1;
 
         if (Store.luckysheetRightHeadClickIs == 'row') {
-            const selectSaveRow = Store.luckysheet_select_save[index].row;
-            insertN = selectSaveRow[1] - selectSaveRow[0] + 1;
+            insertN = $("#insertNRow").html();
         } else {
-            const selectSaveColumn = Store.luckysheet_select_save[index].column;
-            insertN = selectSaveColumn[1] - selectSaveColumn[0] + 1;
+            insertN = $("#insertNColumn").html();
         }
+        
+
         $(".insertN").val(insertN);
+        $(".insertN").css('width',$(".insertN").val().length * 11+'px');
 
         $("#luckysheet-show-selected").css('display','none');
         let cfg = $.extend(true, {}, Store.config);

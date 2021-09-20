@@ -470,6 +470,8 @@ export function rowColumnOperationInitial() {
             $(".rightClickEditLink").css('display','none');
             $(".rightClickInsertLink").css('display','block');
             $("#luckysheet-hide-selected").css('display','block');
+            $("#luckysheet-delCols").removeClass('disableSheet');
+            $("#luckysheet-delRows").removeClass('disableSheet');
             if(isSame){
                 $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val(first_rowlen);
             }

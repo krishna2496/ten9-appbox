@@ -1419,6 +1419,15 @@ export default function luckysheetHandler() {
             if (checkTotalRowSelected == Store.visibledatarow.length && checkTotalColumnSelected == Store.visibledatacolumn.length) {
                 $("#luckysheet-show-selected").css("display","none");
                 $("#luckysheet-hide-selected").css("display","none");
+                $("#luckysheetColsRowsHandleAdd_column").css("display","none");
+                $("#luckysheet-delCols").css("display","none");
+                $("#luckysheet-delRows").addClass("disableSheet");
+                $("#luckysheetCellsHandleDel").css("display",'none');
+                $(".luckysheet-cols-rows-shift-left").html("above");
+                $(".luckysheet-cols-rows-shift-right").html("below");
+                $("#luckysheet-cols-rows-handleincell").css("display",'none');
+                $("#luckysheet-left-top").click();
+                $(".luckysheet-cols-rows-shift-word").html("row");
             }
             
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
@@ -5272,13 +5281,24 @@ export default function luckysheetHandler() {
     $("#luckysheet-left-top").on("contextmenu", function (e) {
         // TEN9 : Missing context menu when you right-click on left-top corner of the sheet.
         if (e.which == 3) {
+           
+            Store.luckysheetRightHeadClickIs = "row";
+            
             let x = document.getElementById("luckysheet-left-top").getBoundingClientRect().x + 10;
             let y = document.getElementById("luckysheet-left-top").getBoundingClientRect().y + 10;
             // TEN9 : Hide column when all rows and column
             $("#luckysheet-show-selected").css('display','none');
             $("#luckysheet-hide-selected").css("display","none");
-            showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
+            $("#luckysheetColsRowsHandleAdd_column").css("display","none");
+            $("#luckysheet-delCols").css("display","none");
+            $("#luckysheet-delRows").addClass("disableSheet");
+            $("#luckysheetCellsHandleDel").css("display",'none');
+            $(".luckysheet-cols-rows-shift-left").html("above");
+            $(".luckysheet-cols-rows-shift-right").html("below");
+            $("#luckysheet-cols-rows-handleincell").css("display",'none');
             $("#luckysheet-left-top").click();
+            $(".luckysheet-cols-rows-shift-word").html("row");
+            showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
         e.preventDefault();
     });
