@@ -1426,14 +1426,15 @@ export default function luckysheetHandler() {
                 $(".luckysheet-cols-rows-shift-left").html("above");
                 $(".luckysheet-cols-rows-shift-right").html("below");
                 $("#luckysheet-cols-rows-handleincell").css("display",'none');
+                $("#luckysheet-delete-text").css('display','block');
             } else {
                 $("#luckysheetColsRowsHandleAdd_column").css("display","block");
                 $("#luckysheet-delCols").css("display","block");
                 $("#luckysheetCellsHandleDel").css("display",'block');
                 $("#luckysheet-cols-rows-handleincell").css("display",'block');
                 $("#luckysheet-delRows").removeClass("disableSheet");
+                $("#luckysheet-delete-text").css('display','none');
             }
-            $("#luckysheet-delete-text").css('display','none');
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
 
@@ -5302,6 +5303,8 @@ export default function luckysheetHandler() {
             $("#luckysheet-cols-rows-handleincell").css("display",'none');
             $("#luckysheet-left-top").click();
             $(".luckysheet-cols-rows-shift-word").html("row");
+            $("#luckysheet-cols-rows-add").css('display','block');
+            $("#luckysheet-delete-text").css('display','block');
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
         e.preventDefault();

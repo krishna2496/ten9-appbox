@@ -6,6 +6,7 @@ import Store from '../store';
 import locale from '../locale/locale';
 import numeral from 'numeral';
 import sheetmanage from '../controllers/sheetmanage';
+import { jfrefreshgrid, luckysheetrefreshgrid } from '../global/refresh';
 // import method from '../global/method';
 
 /**
@@ -471,10 +472,11 @@ function showrightclickmenu($menu, x, y) {
                 if (Store.luckysheet_select_save[index].row[0] <= row && Store.luckysheet_select_save[index].row[1] >= row && 
                     Store.luckysheet_select_save[index].column[0] <= column && Store.luckysheet_select_save[index].column[1] >= column
                 ) {
-                    // deleteLinkList.push(data);
                     delete Store.luckysheetfile[index].hyperlink[data]; 
                 }
             });
+            luckysheetrefreshgrid();
+            console.log("Store",Store);
         }
 
         let insertN = 1;

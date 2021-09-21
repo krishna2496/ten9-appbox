@@ -472,6 +472,7 @@ export function rowColumnOperationInitial() {
             $("#luckysheet-hide-selected").css('display','block');
             $("#luckysheet-delCols").removeClass('disableSheet');
             $("#luckysheet-delRows").removeClass('disableSheet');
+            $("#luckysheet-delete-text").css('display','block');
             if(isSame){
                 $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val(first_rowlen);
             }
@@ -912,6 +913,7 @@ export function rowColumnOperationInitial() {
                 }
             }
             $("#luckysheet-hide-selected").css('display','block');
+            $("#luckysheet-delete-text").css('display','block');
             if(isSame){
                 $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val(first_collen);
             }
