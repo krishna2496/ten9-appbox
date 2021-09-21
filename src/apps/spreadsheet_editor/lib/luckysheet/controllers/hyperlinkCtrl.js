@@ -187,6 +187,7 @@ const hyperlinkCtrl = {
         })
     },
     dataAllocation: function(){
+        console.log("dataAllocation");
         let _this = this;
         let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
         let rowIndex = last.row_focus || last.row[0];
@@ -194,7 +195,7 @@ const hyperlinkCtrl = {
 
         let hyperlink = _this.hyperlink || {};
         let item = hyperlink[rowIndex + "_" + colIndex] || {};
-
+        console.log("item",Store);
         //文本
         let text = getcellvalue(rowIndex, colIndex, null, 'm');
         $("#luckysheet-insertLink-dialog-linkText").val(text);

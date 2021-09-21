@@ -458,7 +458,6 @@ function luckysheetfontformat(format) {
 
 //右键菜单
 function showrightclickmenu($menu, x, y) {
-   
     // TEN9 : Unhide option when no rows or columns hidden
     if ($menu.selector == '#luckysheet-rightclick-menu') {
         const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
@@ -472,23 +471,23 @@ function showrightclickmenu($menu, x, y) {
                 if (Store.luckysheet_select_save[index].row[0] <= row && Store.luckysheet_select_save[index].row[1] >= row && 
                     Store.luckysheet_select_save[index].column[0] <= column && Store.luckysheet_select_save[index].column[1] >= column
                 ) {
-                    delete Store.luckysheetfile[index].hyperlink[data]; 
+                    delete Store.luckysheetfile[index].hyperlink[data];
+                    delete Store.luckysheetfile[index].hyperlink; 
                 }
             });
             luckysheetrefreshgrid();
-            console.log("Store",Store);
+            
         }
-
         let insertN = 1;
 
         if (Store.luckysheetRightHeadClickIs == 'row') {
-            insertN = $("#insertNRow").html();
-        } else {
-            insertN = $("#insertNColumn").html();
+            insertN = Store.luckysheet_select_save[index].row[1] - Store.luckysheet_select_save[index].row[0] + 1;
         }
-        
-
-        $(".insertN").val(insertN);
+        if (Store.luckysheetRightHeadClickIs == 'column') {
+            insertN = Store.luckysheet_select_save[index].column[1] - Store.luckysheet_select_save[index].column[0] + 1;
+        }
+       
+        $(".insertN").html(insertN);
         $(".insertN").css('width',$(".insertN").val().length * 11+'px');
 
         $("#luckysheet-show-selected").css('display','none');
@@ -572,7 +571,7 @@ function showrightclickmenu($menu, x, y) {
             $("#luckysheet-show-selected").css('display','none');
         }
     }
-
+  
     let winH = $(window).height(), winW = $(window).width();
     let menuW = $menu.width(), menuH = $menu.height();
     let top = y, left = x;

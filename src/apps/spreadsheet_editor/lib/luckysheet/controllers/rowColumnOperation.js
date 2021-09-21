@@ -465,7 +465,6 @@ export function rowColumnOperationInitial() {
                     }
                 }
             }
-
             // TEN9 : Hide Edit link option
             $(".rightClickEditLink").css('display','none');
             $(".rightClickInsertLink").css('display','block');
@@ -1099,8 +1098,9 @@ export function rowColumnOperationInitial() {
         }
 
         
-
-        let $t = $(this), value = $t.find("input").val();
+        // TEN9 : Input type changed to span
+        // value = $t.find("input").val();
+        let $t = $(this), value = $t.find("span").html();
         if (!isRealNum(value)) {
             if(isEditMode()){
                 alert(locale_info.tipInputNumber);
@@ -1316,7 +1316,8 @@ export function rowColumnOperationInitial() {
             return;
         }
 
-        let $t = $(this), value = $t.find("input").val();
+        // TEN9 : value = $t.find("input").val();
+        let $t = $(this), value = $t.find("span").html();
         if (!isRealNum(value)) {
             if(isEditMode()){
                 alert(locale_info.tipInputNumber);

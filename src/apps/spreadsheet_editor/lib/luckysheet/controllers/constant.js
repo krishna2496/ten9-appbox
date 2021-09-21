@@ -342,8 +342,10 @@ function rightclickHTML() {
                 <div id="luckysheet-cols-rows-add">
                     <div class="luckysheet-menuseparator luckysheet-mousedown-cancel" role="separator"></div>
                     <div id="luckysheet-top-left-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                   <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.insert}<input type="text" class="luckysheet-mousedown-cancel insertN" placeholder="${rightclick.number}" value="1" style="width:15px;height:20px;box-sizing:border-box;text-align: center;margin-left:2px;margin-right:2px"/><span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>
-                        </div>  
+                    ${ /* TEN9 :<div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.insert}<input type="text" class="luckysheet-mousedown-cancel insertN" placeholder="${rightclick.number}" value="1" style="width:15px;height:20px;box-sizing:border-box;text-align: center;margin-left:2px;margin-right:2px"/><span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>
+                    </div>  */''}
+                    <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.insert}<span class="luckysheet-mousedown-cancel insertN" placeholder="${rightclick.number}" value="1" style="width:15px;height:20px;box-sizing:border-box;text-align: center;margin-left:2px;margin-right:2px"></span><span class="luckysheet-cols-rows-shift-left">${rightclick.left}</span>
+                    </div>  
                     </div>
                     ${ /* TEN9 :
                     <div id="luckysheet-bottom-right-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
@@ -359,7 +361,9 @@ function rightclickHTML() {
                     </div> */'' }
 
                     <div id="luckysheet-bottom-right-add-selected" class="luckysheet-cols-menuitem luckysheet-mousedown-cancel">
-                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.insert}<input type="text" class="luckysheet-mousedown-cancel insertN" placeholder="${rightclick.number}" value="1" style="width:15px;height:20px;box-sizing:border-box;text-align: center;margin-left:2px;margin-right:2px"/><span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
+                        ${ /* TEN9 : <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.insert}<input type="text" class="luckysheet-mousedown-cancel insertN" placeholder="${rightclick.number}" value="1" style="width:15px;height:20px;box-sizing:border-box;text-align: center;margin-left:2px;margin-right:2px;cursor:pointer"/><span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
+                        </div> */'' }
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">${rightclick.insert}<span class="luckysheet-mousedown-cancel insertN" placeholder="${rightclick.number}" value="1" style="width:15px;height:20px;box-sizing:border-box;text-align: center;margin-left:2px;margin-right:2px;cursor:pointer"></span><span class="luckysheet-cols-rows-shift-right">${rightclick.right}</span>
                         </div>
                     </div>
 
