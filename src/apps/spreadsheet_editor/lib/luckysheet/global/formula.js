@@ -1234,7 +1234,6 @@ const luckysheetformula = {
         let $input = $("#luckysheet-rich-text-editor");
         let inputText = $input.text(), inputHtml = $input.html();
 
-
         if (_this.rangetosheet != null && _this.rangetosheet != Store.currentSheetIndex) {
             sheetmanage.changeSheetExec(_this.rangetosheet);
         }

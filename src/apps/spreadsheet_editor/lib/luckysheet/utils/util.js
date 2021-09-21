@@ -6,7 +6,9 @@ import Store from '../store';
 import locale from '../locale/locale';
 import numeral from 'numeral';
 import sheetmanage from '../controllers/sheetmanage';
+import formula from '../global/formula';
 import { jfrefreshgrid, luckysheetrefreshgrid } from '../global/refresh';
+import { clearCell } from '../global/api';
 // import method from '../global/method';
 
 /**
@@ -472,12 +474,24 @@ function showrightclickmenu($menu, x, y) {
                     Store.luckysheet_select_save[index].column[0] <= column && Store.luckysheet_select_save[index].column[1] >= column
                 ) {
                     delete Store.luckysheetfile[index].hyperlink[data];
-                    delete Store.luckysheetfile[index].hyperlink; 
                 }
             });
-            luckysheetrefreshgrid();
-            
+            clearCell(1,1);
+            // clearCell.updatecell(1,1);
+            // formula.updatecell(1,1,'gggg');
+            // luckysheetrefreshgrid();
+            // formula.updatecell(1,1)
         }
+        // let data = Store.luckysheetfile[index].data;
+        // let fixedData = [];
+        // let fix = data.map(dataN => {
+        //     dataN.forEach((data,key) => {
+        //         if (data) {
+        //             fixedData.insert(key, data);
+        //         }
+        //     })
+        // });
+        // console.log("fixedData",fixedData);
         let insertN = 1;
 
         if (Store.luckysheetRightHeadClickIs == 'row') {
