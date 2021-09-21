@@ -319,7 +319,7 @@ function initialFilterHandler(){
             
             // TEN9 : Fixed delete submenu position issue
             if (attrid == 'luckysheetCellsHandleDel') {
-                $attr.css({ "top": 338, "left": 250 }).show();
+                $attr.css({ "top": 305, "left": 250 }).show();
             } else {
                 $attr.css({ "top": top, "left": left }).show();
             }
