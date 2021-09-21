@@ -5296,6 +5296,7 @@ export default function luckysheetHandler() {
             $("#luckysheet-hide-selected").css("display","none");
             $("#luckysheetColsRowsHandleAdd_column").css("display","none");
             $("#luckysheet-delCols").css("display","none");
+            $("#luckysheet-delRows").css("display","block");
             $("#luckysheet-delRows").addClass("disableSheet");
             $("#luckysheetCellsHandleDel").css("display",'none');
             $(".luckysheet-cols-rows-shift-left").html("above");
