@@ -466,7 +466,6 @@ function showrightclickmenu($menu, x, y) {
         const rowseleted = Store.luckysheet_select_save[index].row;
         const noRowSelected = Store.luckysheet_select_save[index].row[1] - Store.luckysheet_select_save[index].row[0] + 1;
         const noColumnSelected = Store.luckysheet_select_save[index].column[1] - Store.luckysheet_select_save[index].column[0] + 1;
-        
         const columnseleted = Store.luckysheet_select_save[index].column;
         $("#insertNRow").html(noRowSelected);
         if (noRowSelected > 1) {
@@ -478,17 +477,33 @@ function showrightclickmenu($menu, x, y) {
             $("#insertNRows").hide();
             $("#deleteNRow").hide();
         }
+         
+        if (columnseleted[0] != columnseleted[1]) {
+            $("#deleteNColumn").show();
+            $("#deleteNColumn").html("s  "+chatatABC(columnseleted[0])+' - '+chatatABC(columnseleted[1]));
+        } else {
+            $("#deleteNColumn").hide();
+            $("#clearRow").hide();
+        }
        
         $("#insertNColumn").html(noColumnSelected);
-            if (noColumnSelected > 1) {
-                $("#insertNColumn").show();
-                $("#insertNColumns").show();
-                $("#deleteNColumn").show();
-            } else {
-                $("#insertNColumn").show();
-                $("#insertNColumns").hide();
-                $("#deleteNColumn").hide();
-            }
+        if (noColumnSelected > 1) {
+            $("#insertNColumn").show();
+            $("#insertNColumns").show();
+            $("#deleteNColumn").show();
+        } else {
+            $("#insertNColumn").show();
+            $("#insertNColumns").hide();
+            $("#deleteNColumn").hide();
+        }
+        const firstRow = parseInt(rowseleted[0])+1;
+        const lastRow = parseInt(rowseleted[1]) + 1;
+        if (rowseleted[0] != rowseleted[1]) {
+            $("#deleteNRow").show();
+            $("#deleteNRow").html("s  "+firstRow+' - '+lastRow);
+        } else {
+            $("#clearRow").hide();
+        }
             
             
         if (Store.luckysheetRightHeadClickIs == 'row') {
@@ -496,36 +511,26 @@ function showrightclickmenu($menu, x, y) {
                 $("#luckysheet-delRows").css("display","none");
                 $("#luckysheet-hide-selected").css('display','none');
             } 
-           
             if (rowseleted[0] != rowseleted[1]) {
-                $("#deleteNRow").show();
                 $("#hideNColumn").show();
                 $("#clearRow").show();
-                const firstRow = parseInt(rowseleted[0])+1;
-                const lastRow = parseInt(rowseleted[1]) + 1;
-                $("#deleteNRow").html("s  "+firstRow+' - '+lastRow);
                 $("#hideNColumn").html("s  "+firstRow+' - '+lastRow);
                 $("#clearRow").html("s  "+firstRow+' - '+lastRow);
             } else {
                 $("#hideNColumn").hide();
-                $("#clearRow").hide();
             }
         } else {
             if (Store.luckysheetfile[index].visibledatacolumn.length == noColumnSelected) {
                 $("#luckysheet-delCols").css("display","none");
                 $("#luckysheet-hide-selected").css('display','none');
             } 
-            
             if (columnseleted[0] != columnseleted[1]) {
-                $("#deleteNColumn").show();
                 $("#hideNColumn").show();
-                $("#deleteNColumn").html("s  "+chatatABC(columnseleted[0])+' - '+chatatABC(columnseleted[1]));
+                $("#clearRow").show();
                 $("#hideNColumn").html("s  "+chatatABC(columnseleted[0])+' - '+chatatABC(columnseleted[1]));
                 $("#clearRow").html("s  "+chatatABC(columnseleted[0])+' - '+chatatABC(columnseleted[1]));
             } else {
-                $("#deleteNColumn").hide();
                 $("#hideNColumn").hide();
-                $("#clearRow").hide();
             }
         }
   
