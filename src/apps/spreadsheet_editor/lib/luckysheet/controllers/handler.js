@@ -1435,6 +1435,10 @@ export default function luckysheetHandler() {
                 $("#luckysheet-delRows").removeClass("disableSheet");
                 $("#luckysheet-delete-text").css('display','none');
             }
+            $("insertNRow").show();
+            $("#insertNRow").html(checkTotalRowSelected);
+            $("#insertNColumn").show();
+            $("#insertNColumn").html(checkTotalColumnSelected);
             showrightclickmenu($("#luckysheet-rightclick-menu"), x, y);
         }
 

@@ -462,18 +462,41 @@ function luckysheetfontformat(format) {
 function showrightclickmenu($menu, x, y) {
     // TEN9 : Unhide option when no rows or columns hidden
     if ($menu.selector == '#luckysheet-rightclick-menu') {
-         index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
-        let rowseleted = Store.luckysheet_select_save[index].row;
-        let columnseleted = Store.luckysheet_select_save[index].column;
-        if (Store.luckysheetRightHeadClickIs == 'row') {
-            if (Store.visibledatarow > 1) {
-                $("#insertNRow").show();
-                $("#insertNRow").html(rowl);
-                $("#insertNRows").show();
+        const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+        const rowseleted = Store.luckysheet_select_save[index].row;
+        const noRowSelected = Store.luckysheet_select_save[index].row[1] - Store.luckysheet_select_save[index].row[0] + 1;
+        const noColumnSelected = Store.luckysheet_select_save[index].column[1] - Store.luckysheet_select_save[index].column[0] + 1;
+        
+        const columnseleted = Store.luckysheet_select_save[index].column;
+        $("#insertNRow").html(noRowSelected);
+        if (noRowSelected > 1) {
+            $("#insertNRow").show();
+            $("#insertNRows").show();
+            $("#deleteNRow").show();
+        } else {
+            $("#insertNRow").show();
+            $("#insertNRows").hide();
+            $("#deleteNRow").hide();
+        }
+       
+        $("#insertNColumn").html(noColumnSelected);
+            if (noColumnSelected > 1) {
+                $("#insertNColumn").show();
+                $("#insertNColumns").show();
+                $("#deleteNColumn").show();
             } else {
-                $("#insertNRow").hide();
-                $("#insertNRows").hide();
+                $("#insertNColumn").show();
+                $("#insertNColumns").hide();
+                $("#deleteNColumn").hide();
             }
+            
+            
+        if (Store.luckysheetRightHeadClickIs == 'row') {
+            if (Store.luckysheetfile[index].visibledatarow.length == noRowSelected) {
+                $("#luckysheet-delRows").css("display","none");
+                $("#luckysheet-hide-selected").css('display','none');
+            } 
+           
             if (rowseleted[0] != rowseleted[1]) {
                 $("#deleteNRow").show();
                 $("#hideNColumn").show();
@@ -484,19 +507,14 @@ function showrightclickmenu($menu, x, y) {
                 $("#hideNColumn").html("s  "+firstRow+' - '+lastRow);
                 $("#clearRow").html("s  "+firstRow+' - '+lastRow);
             } else {
-                $("#deleteNRow").hide();
                 $("#hideNColumn").hide();
                 $("#clearRow").hide();
             }
         } else {
-            if (Store.visibledatacolumn > 1) {
-                $("#insertNColumn").show();
-                $("#insertNColumn").html(coll);
-                $("#insertNColumns").show();
-            } else {
-                $("#insertNColumn").hide();
-                $("#insertNColumns").hide();
-            }
+            if (Store.luckysheetfile[index].visibledatacolumn.length == noColumnSelected) {
+                $("#luckysheet-delCols").css("display","none");
+                $("#luckysheet-hide-selected").css('display','none');
+            } 
             
             if (columnseleted[0] != columnseleted[1]) {
                 $("#deleteNColumn").show();
@@ -548,7 +566,7 @@ function showrightclickmenu($menu, x, y) {
         if (Store.luckysheetRightHeadClickIs == 'column') {
             insertN = Store.luckysheet_select_save[index].column[1] - Store.luckysheet_select_save[index].column[0] + 1;
         }
-       
+      
         $(".insertN").html(insertN);
         $(".insertN").css('width',$(".insertN").val().length * 11+'px');
 

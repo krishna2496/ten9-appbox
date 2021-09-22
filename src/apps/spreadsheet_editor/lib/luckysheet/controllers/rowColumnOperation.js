@@ -468,7 +468,7 @@ export function rowColumnOperationInitial() {
             // TEN9 : Hide Edit link option
             $(".rightClickEditLink").css('display','none');
             $(".rightClickInsertLink").css('display','block');
-            $("#luckysheet-hide-selected").css('display','block');
+            // $("#luckysheet-hide-selected").css('display','block');
             $("#luckysheet-delCols").removeClass('disableSheet');
             $("#luckysheet-delRows").removeClass('disableSheet');
             $("#luckysheet-delete-text").css('display','block');
@@ -911,7 +911,7 @@ export function rowColumnOperationInitial() {
                     }
                 }
             }
-            $("#luckysheet-hide-selected").css('display','block');
+            // $("#luckysheet-hide-selected").css('display','block');
             $("#luckysheet-delete-text").css('display','block');
             if(isSame){
                 $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val(first_collen);
