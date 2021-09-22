@@ -1113,16 +1113,16 @@ export function rowColumnOperationInitial() {
         }
 
         value = parseInt(value);
-
-        if (value < 1 || value > 100) {
-            if(isEditMode()){
-                alert(locale_info.tipInputNumberLimit);
-            }
-            else{
-                tooltip.info(locale_info.tipInputNumberLimit, ""); 
-            }
-            return;
-        }
+        // TEN9 : Limit validation removed
+        // if (value < 1 || value > 100) {
+        //     if(isEditMode()){
+        //         alert(locale_info.tipInputNumberLimit);
+        //     }
+        //     else{
+        //         tooltip.info(locale_info.tipInputNumberLimit, ""); 
+        //     }
+        //     return;
+        // }
 
         let st_index = Store.luckysheet_select_save[0][Store.luckysheetRightHeadClickIs][0];
         luckysheetextendtable(Store.luckysheetRightHeadClickIs, st_index, value, "lefttop");
@@ -1331,16 +1331,17 @@ export function rowColumnOperationInitial() {
 
         value = parseInt(value);
 
-        if (value < 1 || value > 100) {
-            if(isEditMode()){
-                alert(locale_info.tipInputNumberLimit);
-            }
-            else{
-                tooltip.info(locale_info.tipInputNumberLimit, "");
-            }
+        // TEN9 : Limit validation removed
+        // if (value < 1 || value > 100) {
+        //     if(isEditMode()){
+        //         alert(locale_info.tipInputNumberLimit);
+        //     }
+        //     else{
+        //         tooltip.info(locale_info.tipInputNumberLimit, "");
+        //     }
 
-            return;
-        }
+        //     return;
+        // }
 
         let st_index = Store.luckysheet_select_save[0][Store.luckysheetRightHeadClickIs][1];
         luckysheetextendtable(Store.luckysheetRightHeadClickIs, st_index, value, "rightbottom");
