@@ -259,7 +259,7 @@ function chatatABC(n) {
         n = Math.floor(n / len) - 1; 
    
     } 
-   
+    
     return s.toUpperCase(); 
 };
 
@@ -462,7 +462,55 @@ function luckysheetfontformat(format) {
 function showrightclickmenu($menu, x, y) {
     // TEN9 : Unhide option when no rows or columns hidden
     if ($menu.selector == '#luckysheet-rightclick-menu') {
-        const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+         index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+        let rowseleted = Store.luckysheet_select_save[index].row;
+        let columnseleted = Store.luckysheet_select_save[index].column;
+        if (Store.luckysheetRightHeadClickIs == 'row') {
+            if (Store.visibledatarow > 1) {
+                $("#insertNRow").show();
+                $("#insertNRow").html(rowl);
+                $("#insertNRows").show();
+            } else {
+                $("#insertNRow").hide();
+                $("#insertNRows").hide();
+            }
+            if (rowseleted[0] != rowseleted[1]) {
+                $("#deleteNRow").show();
+                $("#hideNColumn").show();
+                $("#clearRow").show();
+                const firstRow = parseInt(rowseleted[0])+1;
+                const lastRow = parseInt(rowseleted[1]) + 1;
+                $("#deleteNRow").html("s  "+firstRow+' - '+lastRow);
+                $("#hideNColumn").html("s  "+firstRow+' - '+lastRow);
+                $("#clearRow").html("s  "+firstRow+' - '+lastRow);
+            } else {
+                $("#deleteNRow").hide();
+                $("#hideNColumn").hide();
+                $("#clearRow").hide();
+            }
+        } else {
+            if (Store.visibledatacolumn > 1) {
+                $("#insertNColumn").show();
+                $("#insertNColumn").html(coll);
+                $("#insertNColumns").show();
+            } else {
+                $("#insertNColumn").hide();
+                $("#insertNColumns").hide();
+            }
+            
+            if (columnseleted[0] != columnseleted[1]) {
+                $("#deleteNColumn").show();
+                $("#hideNColumn").show();
+                $("#deleteNColumn").html("s  "+chatatABC(columnseleted[0])+' - '+chatatABC(columnseleted[1]));
+                $("#hideNColumn").html("s  "+chatatABC(columnseleted[0])+' - '+chatatABC(columnseleted[1]));
+                $("#clearRow").html("s  "+chatatABC(columnseleted[0])+' - '+chatatABC(columnseleted[1]));
+            } else {
+                $("#deleteNColumn").hide();
+                $("#hideNColumn").hide();
+                $("#clearRow").hide();
+            }
+        }
+  
         // TEN9 : Check for remove link option
         if (Store.luckysheetfile[index].hyperlink) {
             const hyperLinkCell = Object.keys(Store.luckysheetfile[index].hyperlink);
@@ -585,7 +633,7 @@ function showrightclickmenu($menu, x, y) {
             $("#luckysheet-show-selected").css('display','none');
         }
     }
-  
+
     let winH = $(window).height(), winW = $(window).width();
     let menuW = $menu.width(), menuH = $menu.height();
     let top = y, left = x;
