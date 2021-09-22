@@ -337,7 +337,10 @@ export function deleteCell(move, row, column, options = {}) {
  * @param {Number} options.order 工作表索引；默认值为当前工作表索引
  * @param {Function} options.success 操作结束的回调函数, callback参数为改变后的cell对象
  */
-export function setCellFormat(row, column, attr, value, options = {}) {
+export function setCellFormat(row, column, attr, value, options = {}) {debugger;
+    console.log("row",row);
+    console.log("column",column);
+    console.log(attr);
     if (!isRealNum(row) || !isRealNum(column)) {
         return tooltip.info('Arguments row or column cannot be null or undefined.', '')
     }

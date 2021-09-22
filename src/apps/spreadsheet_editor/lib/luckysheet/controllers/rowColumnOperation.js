@@ -42,6 +42,7 @@ import luckysheetConfigsetting from './luckysheetConfigsetting';
 import { modelHTML } from './constant';
 import { replaceHtml } from '../utils/chartUtil';
 import sheetmanage from './sheetmanage';
+import hyperlinkCtrl from './hyperlinkCtrl';
 
 export function rowColumnOperationInitial() {
     //表格行标题 mouse事件
@@ -1128,6 +1129,10 @@ export function rowColumnOperationInitial() {
         luckysheetextendtable(Store.luckysheetRightHeadClickIs, st_index, value, "lefttop");
     });
 
+    $(".rightClickRemoveLink").click(function (event) { 
+        const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+        hyperlinkCtrl.removeLink(index);
+    });
 
     // When you right-click a cell, a row is inserted before the row by default
     $("#luckysheetColsRowsHandleAdd_row").click(function (event) {

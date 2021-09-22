@@ -473,6 +473,9 @@ function rightclickHTML() {
                         <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel rightClickInsertLink">${toolbar.insertLink}</div>
                         <div class="rightClickEditLink luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">Edit Link</div>
                     </div>
+                    <div class="luckysheet-cols-menuitem luckysheet-mousedown-cancel rightClickRemoveLink">
+                        <div class="luckysheet-cols-menuitem-content luckysheet-mousedown-cancel">Remove link</div>
+                    </div>
                 </div>
                 <div >
                 ${ /* TEN9 : Protect option added */'' }

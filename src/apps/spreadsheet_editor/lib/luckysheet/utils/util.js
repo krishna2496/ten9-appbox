@@ -9,6 +9,8 @@ import sheetmanage from '../controllers/sheetmanage';
 import formula from '../global/formula';
 import { jfrefreshgrid, luckysheetrefreshgrid } from '../global/refresh';
 import { clearCell } from '../global/api';
+import hyperlinkCtrl from '../controllers/hyperlinkCtrl';
+import editor from '../global/editor';
 // import method from '../global/method';
 
 /**
@@ -462,6 +464,7 @@ function luckysheetfontformat(format) {
 function showrightclickmenu($menu, x, y) {
     // TEN9 : Unhide option when no rows or columns hidden
     if ($menu.selector == '#luckysheet-rightclick-menu') {
+        // hyperlinkCtrl.removeLink(index);
         const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
         const rowseleted = Store.luckysheet_select_save[index].row;
         const noRowSelected = Store.luckysheet_select_save[index].row[1] - Store.luckysheet_select_save[index].row[0] + 1;
@@ -536,33 +539,10 @@ function showrightclickmenu($menu, x, y) {
   
         // TEN9 : Check for remove link option
         if (Store.luckysheetfile[index].hyperlink) {
-            const hyperLinkCell = Object.keys(Store.luckysheetfile[index].hyperlink);
-            hyperLinkCell.forEach((data) => {
-                const hyperlinkKey = data.split("_");
-                const row = hyperlinkKey[0];
-                const column = hyperlinkKey[1];
-                if (Store.luckysheet_select_save[index].row[0] <= row && Store.luckysheet_select_save[index].row[1] >= row && 
-                    Store.luckysheet_select_save[index].column[0] <= column && Store.luckysheet_select_save[index].column[1] >= column
-                ) {
-                    delete Store.luckysheetfile[index].hyperlink[data];
-                }
-            });
-            clearCell(1,1);
-            // clearCell.updatecell(1,1);
-            // formula.updatecell(1,1,'gggg');
-            // luckysheetrefreshgrid();
-            // formula.updatecell(1,1)
+            $(".rightClickRemoveLink").css("display",'block');
+        } else {
+            $(".rightClickRemoveLink").css("display",'none');
         }
-        // let data = Store.luckysheetfile[index].data;
-        // let fixedData = [];
-        // let fix = data.map(dataN => {
-        //     dataN.forEach((data,key) => {
-        //         if (data) {
-        //             fixedData.insert(key, data);
-        //         }
-        //     })
-        // });
-        // console.log("fixedData",fixedData);
         let insertN = 1;
 
         if (Store.luckysheetRightHeadClickIs == 'row') {

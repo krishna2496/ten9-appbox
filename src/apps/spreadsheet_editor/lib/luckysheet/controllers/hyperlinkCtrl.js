@@ -368,6 +368,36 @@ const hyperlinkCtrl = {
         setTimeout(function () {
             luckysheetrefreshgrid();
         }, 1);
+    },
+    removeLink: function(index) {
+        const hyperLinkCell = Object.keys(Store.luckysheetfile[index].hyperlink);
+        const hyperLinkVal = Object.values(Store.luckysheetfile[index].hyperlink);
+        hyperLinkCell.forEach((data,key) => {
+            const hyperlinkKey = data.split("_");
+            const row = hyperlinkKey[0];
+            const column = hyperlinkKey[1];
+            if (Store.luckysheet_select_save[index].row[0] <= row && Store.luckysheet_select_save[index].row[1] >= row && 
+                Store.luckysheet_select_save[index].column[0] <= column && Store.luckysheet_select_save[index].column[1] >= column
+            ) {
+                delete Store.luckysheetfile[index].hyperlink[data];
+                let rowIndex = row;
+                let colIndex = column;
+                let d = editor.deepCopyFlowData(Store.flowdata);
+                let cell = {};
+                cell.ct = {fa: 'General', t: 'g'};
+                cell.m = hyperLinkVal[key].linkText;
+                cell.v = hyperLinkVal[key].linkText;
+                d[rowIndex][colIndex] = cell;
+                
+                this.ref(
+                    '', 
+                    '', 
+                    Store.currentSheetIndex, 
+                    d, 
+                    { row: [rowIndex, rowIndex], column: [colIndex, colIndex] }
+                );
+            }
+        });
     }
 }
 
