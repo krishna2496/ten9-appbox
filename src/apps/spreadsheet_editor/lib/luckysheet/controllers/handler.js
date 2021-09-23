@@ -224,7 +224,10 @@ export default function luckysheetHandler() {
         let colscroll = 0;
         let rowscroll = 0;
 
-        let scrollNum = event.deltaFactor<40?1:(event.deltaFactor<80?2:3);
+        // TEN9: Use deltaY instead of deltaFactor for better scrolling
+        let scrollNum = Math.max(3, Math.trunc(Math.abs(event.deltaY) / 40) + 1);
+        // let scrollNum = event.deltaFactor<40?1:(event.deltaFactor<80?2:3);
+
         //一次滚动三行或三列
         if(event.deltaY != 0){
             let row_ed,step=Math.round(scrollNum/Store.zoomRatio);
@@ -248,18 +251,6 @@ export default function luckysheetHandler() {
 
             if (luckysheetFreezen.freezenhorizontaldata != null) {
                 rowscroll -= luckysheetFreezen.freezenhorizontaldata[0];
-            }
-
-            // This scrollAmount gives best rate of scrolling and alignment
-            // for rows.
-            const scrollAmount = 66;
-
-            // TEN9 : Made Scrolling with mousewheel faster
-            if (event.originalEvent.wheelDelta < 0) {
-                rowscroll += scrollAmount;
-            }
-            if (event.originalEvent.wheelDelta > 0) {
-                rowscroll -= scrollAmount;
             }
 
             $("#luckysheet-scrollbar-y").scrollTop(rowscroll);
