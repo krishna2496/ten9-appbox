@@ -1129,6 +1129,7 @@ export function rowColumnOperationInitial() {
         luckysheetextendtable(Store.luckysheetRightHeadClickIs, st_index, value, "lefttop");
     });
 
+    /* TEN9 : Remove link option added */
     $(".rightClickRemoveLink").click(function (event) { 
         const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
         hyperlinkCtrl.removeLink(index);

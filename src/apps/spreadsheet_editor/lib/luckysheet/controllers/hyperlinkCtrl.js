@@ -158,7 +158,7 @@ const hyperlinkCtrl = {
 
             let historyHyperlink = $.extend(true, {}, _this.hyperlink);
             let currentHyperlink = $.extend(true, {}, _this.hyperlink);
-
+           
             currentHyperlink[rowIndex + "_" + colIndex] = item;
 
             let d = editor.deepCopyFlowData(Store.flowdata);
@@ -367,7 +367,9 @@ const hyperlinkCtrl = {
             luckysheetrefreshgrid();
         }, 1);
     },
+    /* TEN9 : Remove link option added */
     removeLink: function(index) {
+        let _this = this;
         const hyperLinkCell = Object.keys(Store.luckysheetfile[index].hyperlink);
         const hyperLinkVal = Object.values(Store.luckysheetfile[index].hyperlink);
         hyperLinkCell.forEach((data,key) => {
@@ -382,14 +384,15 @@ const hyperlinkCtrl = {
                 let colIndex = column;
                 let d = editor.deepCopyFlowData(Store.flowdata);
                 let cell = {};
+                let historyHyperlink = $.extend(true, {}, _this.hyperlink);
+                let currentHyperlink = Store.luckysheetfile[index].hyperlink;
                 cell.ct = {fa: 'General', t: 'g'};
                 cell.m = hyperLinkVal[key].linkText;
                 cell.v = hyperLinkVal[key].linkText;
                 d[rowIndex][colIndex] = cell;
-                
                 this.ref(
-                    '', 
-                    '', 
+                    historyHyperlink, 
+                    currentHyperlink, 
                     Store.currentSheetIndex, 
                     d, 
                     { row: [rowIndex, rowIndex], column: [colIndex, colIndex] }

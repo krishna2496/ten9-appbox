@@ -11,6 +11,7 @@ import { jfrefreshgrid, luckysheetrefreshgrid } from '../global/refresh';
 import { clearCell } from '../global/api';
 import hyperlinkCtrl from '../controllers/hyperlinkCtrl';
 import editor from '../global/editor';
+import { inRange } from 'lodash';
 // import method from '../global/method';
 
 /**
@@ -464,7 +465,6 @@ function luckysheetfontformat(format) {
 function showrightclickmenu($menu, x, y) {
     // TEN9 : Unhide option when no rows or columns hidden
     if ($menu.selector == '#luckysheet-rightclick-menu') {
-        // hyperlinkCtrl.removeLink(index);
         const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
         const rowseleted = Store.luckysheet_select_save[index].row;
         const noRowSelected = Store.luckysheet_select_save[index].row[1] - Store.luckysheet_select_save[index].row[0] + 1;
@@ -536,10 +536,24 @@ function showrightclickmenu($menu, x, y) {
                 $("#hideNColumn").hide();
             }
         }
-  
-        // TEN9 : Check for remove link option
+        let inRange = false;
         if (Store.luckysheetfile[index].hyperlink) {
-            $(".rightClickRemoveLink").css("display",'block');
+            const hyperLinkCell = Object.keys(Store.luckysheetfile[index].hyperlink);
+            hyperLinkCell.forEach((data,key) => {
+                const hyperlinkKey = data.split("_");
+                const row = hyperlinkKey[0];
+                const column = hyperlinkKey[1];
+                if (Store.luckysheet_select_save[index].row[0] <= row && Store.luckysheet_select_save[index].row[1] >= row && 
+                    Store.luckysheet_select_save[index].column[0] <= column && Store.luckysheet_select_save[index].column[1] >= column
+                ) {
+                    inRange = true;
+                }
+            });
+        }
+
+        // TEN9 : Check for remove link option
+        if (inRange) {
+            $(".rightClickRemoveLink").css("display",'flex');
         } else {
             $(".rightClickRemoveLink").css("display",'none');
         }
