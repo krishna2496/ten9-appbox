@@ -188,8 +188,6 @@ const hyperlinkCtrl = {
             // TEN9 : Update value of cell on insert link
             cell.m = linkText;
 
-            console.log("cell",cell);
-
             d[rowIndex][colIndex] = cell;
 
             _this.ref(
