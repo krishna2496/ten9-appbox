@@ -1131,6 +1131,7 @@ export function rowColumnOperationInitial() {
 
     /* TEN9 : Remove link option added */
     $(".rightClickRemoveLink").click(function (event) { 
+        $("#luckysheet-rightclick-menu").hide();
         const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
         hyperlinkCtrl.removeLink(index);
     });
