@@ -24,7 +24,7 @@ const hyperlinkCtrl = {
     hyperlink: null,
     createDialog: function(){
         let _this = this;
-
+        
         const _locale = locale();
         const hyperlinkText = _locale.insertLink;
         const toolbarText = _locale.toolbar;
@@ -95,6 +95,20 @@ const hyperlinkCtrl = {
         }).show();
 
         _this.dataAllocation();
+
+    // TEN9 : Update value of link text if selected cell has value
+        const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+        if ((Store.luckysheet_select_save[index].row[0] == Store.luckysheet_select_save[index].row[1]) && 
+            (Store.luckysheet_select_save[index].column[0] == Store.luckysheet_select_save[index].column[1])
+        ) {
+            const rowIndex = Store.luckysheet_select_save[index].row[0];
+            const colIndex = Store.luckysheet_select_save[index].column[0];
+            let d = editor.deepCopyFlowData(Store.flowdata);
+            if (d[rowIndex][colIndex]) {
+                const text = d[rowIndex][colIndex].m;
+                $("#luckysheet-insertLink-dialog-linkText").val(text);
+            }
+        }
     },
     init: function (){
         let _this = this;
@@ -171,6 +185,10 @@ const hyperlinkCtrl = {
             cell.fc = 'rgb(0, 0, 255)';
             cell.un = 1;
             cell.v = linkText;
+            // TEN9 : Update value of cell on insert link
+            cell.m = linkText;
+
+            console.log("cell",cell);
 
             d[rowIndex][colIndex] = cell;
 
