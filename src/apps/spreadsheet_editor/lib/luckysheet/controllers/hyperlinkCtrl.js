@@ -96,18 +96,14 @@ const hyperlinkCtrl = {
 
         _this.dataAllocation();
 
-    // TEN9 : Update value of link text if selected cell has value
+        // TEN9 : Update value of link text if selected cell has value
         const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
-        if ((Store.luckysheet_select_save[index].row[0] == Store.luckysheet_select_save[index].row[1]) && 
-            (Store.luckysheet_select_save[index].column[0] == Store.luckysheet_select_save[index].column[1])
-        ) {
-            const rowIndex = Store.luckysheet_select_save[index].row[0];
-            const colIndex = Store.luckysheet_select_save[index].column[0];
-            let d = editor.deepCopyFlowData(Store.flowdata);
-            if (d[rowIndex][colIndex]) {
-                const text = d[rowIndex][colIndex].m;
-                $("#luckysheet-insertLink-dialog-linkText").val(text);
-            }
+        const rowIndex = Store.luckysheet_select_save[index].row_focus;
+        const colIndex = Store.luckysheet_select_save[index].column_focus;
+        let d = editor.deepCopyFlowData(Store.flowdata);
+        if (d[rowIndex][colIndex]) {
+            const text = d[rowIndex][colIndex].m;
+            $("#luckysheet-insertLink-dialog-linkText").val(text);
         }
     },
     init: function (){
@@ -119,7 +115,6 @@ const hyperlinkCtrl = {
         //链接类型
         $(document).off("change.linkType").on("change.linkType", "#luckysheet-insertLink-dialog-linkType", function(e){
             let value = this.value;
-
             $("#luckysheet-insertLink-dialog .show-box").hide();
             $("#luckysheet-insertLink-dialog .show-box-" + value).show();
         })
