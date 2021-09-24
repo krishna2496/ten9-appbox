@@ -24,7 +24,7 @@ const hyperlinkCtrl = {
     hyperlink: null,
     createDialog: function(){
         let _this = this;
-
+        
         const _locale = locale();
         const hyperlinkText = _locale.insertLink;
         const toolbarText = _locale.toolbar;
@@ -95,6 +95,16 @@ const hyperlinkCtrl = {
         }).show();
 
         _this.dataAllocation();
+
+        // TEN9 : Update value of link text if selected cell has value
+        const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+        const rowIndex = Store.luckysheet_select_save[index].row_focus;
+        const colIndex = Store.luckysheet_select_save[index].column_focus;
+        let d = editor.deepCopyFlowData(Store.flowdata);
+        if (d[rowIndex][colIndex]) {
+            const text = d[rowIndex][colIndex].m;
+            $("#luckysheet-insertLink-dialog-linkText").val(text);
+        }
     },
     init: function (){
         let _this = this;
@@ -105,7 +115,6 @@ const hyperlinkCtrl = {
         //链接类型
         $(document).off("change.linkType").on("change.linkType", "#luckysheet-insertLink-dialog-linkType", function(e){
             let value = this.value;
-
             $("#luckysheet-insertLink-dialog .show-box").hide();
             $("#luckysheet-insertLink-dialog .show-box-" + value).show();
         })
@@ -158,7 +167,7 @@ const hyperlinkCtrl = {
 
             let historyHyperlink = $.extend(true, {}, _this.hyperlink);
             let currentHyperlink = $.extend(true, {}, _this.hyperlink);
-
+           
             currentHyperlink[rowIndex + "_" + colIndex] = item;
 
             let d = editor.deepCopyFlowData(Store.flowdata);
@@ -171,6 +180,8 @@ const hyperlinkCtrl = {
             cell.fc = 'rgb(0, 0, 255)';
             cell.un = 1;
             cell.v = linkText;
+            // TEN9 : Update value of cell on insert link
+            cell.m = linkText;
 
             d[rowIndex][colIndex] = cell;
 
@@ -194,7 +205,6 @@ const hyperlinkCtrl = {
 
         let hyperlink = _this.hyperlink || {};
         let item = hyperlink[rowIndex + "_" + colIndex] || {};
-
         //文本
         let text = getcellvalue(rowIndex, colIndex, null, 'm');
         $("#luckysheet-insertLink-dialog-linkText").val(text);
@@ -367,6 +377,39 @@ const hyperlinkCtrl = {
         setTimeout(function () {
             luckysheetrefreshgrid();
         }, 1);
+    },
+    /* TEN9 : Remove link option added */
+    removeLink: function(index) {
+        let _this = this;
+        const hyperLinkCell = Object.keys(Store.luckysheetfile[index].hyperlink);
+        const hyperLinkVal = Object.values(Store.luckysheetfile[index].hyperlink);
+        hyperLinkCell.forEach((data,key) => {
+            const hyperlinkKey = data.split("_");
+            const row = hyperlinkKey[0];
+            const column = hyperlinkKey[1];
+            if (Store.luckysheet_select_save[index].row[0] <= row && Store.luckysheet_select_save[index].row[1] >= row && 
+                Store.luckysheet_select_save[index].column[0] <= column && Store.luckysheet_select_save[index].column[1] >= column
+            ) {
+                delete Store.luckysheetfile[index].hyperlink[data];
+                let rowIndex = row;
+                let colIndex = column;
+                let d = editor.deepCopyFlowData(Store.flowdata);
+                let cell = {};
+                let historyHyperlink = $.extend(true, {}, _this.hyperlink);
+                let currentHyperlink = Store.luckysheetfile[index].hyperlink;
+                cell.ct = {fa: 'General', t: 'g'};
+                cell.m = hyperLinkVal[key].linkText;
+                cell.v = hyperLinkVal[key].linkText;
+                d[rowIndex][colIndex] = cell;
+                this.ref(
+                    historyHyperlink, 
+                    currentHyperlink, 
+                    Store.currentSheetIndex, 
+                    d, 
+                    { row: [rowIndex, rowIndex], column: [colIndex, colIndex] }
+                );
+            }
+        });
     }
 }
 

@@ -5,6 +5,13 @@ import { hasChinaword,isRealNum } from '../global/validate';
 import Store from '../store';
 import locale from '../locale/locale';
 import numeral from 'numeral';
+import sheetmanage from '../controllers/sheetmanage';
+import formula from '../global/formula';
+import { jfrefreshgrid, luckysheetrefreshgrid } from '../global/refresh';
+import { clearCell } from '../global/api';
+import hyperlinkCtrl from '../controllers/hyperlinkCtrl';
+import editor from '../global/editor';
+import { inRange } from 'lodash';
 // import method from '../global/method';
 
 /**
@@ -255,7 +262,7 @@ function chatatABC(n) {
         n = Math.floor(n / len) - 1; 
    
     } 
-   
+    
     return s.toUpperCase(); 
 };
 
@@ -456,6 +463,194 @@ function luckysheetfontformat(format) {
 
 //右键菜单
 function showrightclickmenu($menu, x, y) {
+    // TEN9 : Unhide option when no rows or columns hidden
+    if ($menu.selector == '#luckysheet-rightclick-menu') {
+        const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+        const rowseleted = Store.luckysheet_select_save[index].row;
+        const noRowSelected = Store.luckysheet_select_save[index].row[1] - Store.luckysheet_select_save[index].row[0] + 1;
+        const noColumnSelected = Store.luckysheet_select_save[index].column[1] - Store.luckysheet_select_save[index].column[0] + 1;
+        const columnseleted = Store.luckysheet_select_save[index].column;
+        $("#insertNRow").html(noRowSelected);
+        if (noRowSelected > 1) {
+            $("#insertNRow").show();
+            $("#insertNRows").show();
+            $("#deleteNRow").show();
+        } else {
+            $("#insertNRow").show();
+            $("#insertNRows").hide();
+            $("#deleteNRow").hide();
+        }
+         
+        if (columnseleted[0] != columnseleted[1]) {
+            $("#deleteNColumn").show();
+            $("#deleteNColumn").html("s  "+chatatABC(columnseleted[0])+' - '+chatatABC(columnseleted[1]));
+        } else {
+            $("#deleteNColumn").hide();
+            $("#clearRow").hide();
+        }
+       
+        $("#insertNColumn").html(noColumnSelected);
+        if (noColumnSelected > 1) {
+            $("#insertNColumn").show();
+            $("#insertNColumns").show();
+            $("#deleteNColumn").show();
+        } else {
+            $("#insertNColumn").show();
+            $("#insertNColumns").hide();
+            $("#deleteNColumn").hide();
+        }
+        const firstRow = parseInt(rowseleted[0])+1;
+        const lastRow = parseInt(rowseleted[1]) + 1;
+        if (rowseleted[0] != rowseleted[1]) {
+            $("#deleteNRow").show();
+            $("#deleteNRow").html("s  "+firstRow+' - '+lastRow);
+        } else {
+            $("#clearRow").hide();
+        }
+            
+            
+        if (Store.luckysheetRightHeadClickIs == 'row') {
+            if (Store.luckysheetfile[index].visibledatarow.length == noRowSelected) {
+                $("#luckysheet-delRows").css("display","none");
+                $("#luckysheet-hide-selected").css('display','none');
+            } 
+            if (rowseleted[0] != rowseleted[1]) {
+                $("#hideNColumn").show();
+                $("#clearRow").show();
+                $("#hideNColumn").html("s  "+firstRow+' - '+lastRow);
+                $("#clearRow").html("s  "+firstRow+' - '+lastRow);
+            } else {
+                $("#hideNColumn").hide();
+            }
+        } else {
+            if (Store.luckysheetfile[index].visibledatacolumn.length == noColumnSelected) {
+                $("#luckysheet-delCols").css("display","none");
+                $("#luckysheet-hide-selected").css('display','none');
+            } 
+            if (columnseleted[0] != columnseleted[1]) {
+                $("#hideNColumn").show();
+                $("#clearRow").show();
+                $("#hideNColumn").html("s  "+chatatABC(columnseleted[0])+' - '+chatatABC(columnseleted[1]));
+                $("#clearRow").html("s  "+chatatABC(columnseleted[0])+' - '+chatatABC(columnseleted[1]));
+            } else {
+                $("#hideNColumn").hide();
+            }
+        }
+        let inRange = false;
+        if (Store.luckysheetfile[index].hyperlink) {
+            const hyperLinkCell = Object.keys(Store.luckysheetfile[index].hyperlink);
+            hyperLinkCell.forEach((data,key) => {
+                const hyperlinkKey = data.split("_");
+                const row = hyperlinkKey[0];
+                const column = hyperlinkKey[1];
+                if (Store.luckysheet_select_save[index].row[0] <= row && Store.luckysheet_select_save[index].row[1] >= row && 
+                    Store.luckysheet_select_save[index].column[0] <= column && Store.luckysheet_select_save[index].column[1] >= column
+                ) {
+                    inRange = true;
+                }
+            });
+        }
+
+        // TEN9 : Check for remove link option
+        if (inRange) {
+            $(".rightClickRemoveLink").css("display",'flex');
+        } else {
+            $(".rightClickRemoveLink").css("display",'none');
+        }
+        let insertN = 1;
+
+        if (Store.luckysheetRightHeadClickIs == 'row') {
+            insertN = Store.luckysheet_select_save[index].row[1] - Store.luckysheet_select_save[index].row[0] + 1;
+        }
+        if (Store.luckysheetRightHeadClickIs == 'column') {
+            insertN = Store.luckysheet_select_save[index].column[1] - Store.luckysheet_select_save[index].column[0] + 1;
+        }
+      
+        $(".insertN").html(insertN);
+        $(".insertN").css('width',$(".insertN").val().length * 11+'px');
+
+        $("#luckysheet-show-selected").css('display','none');
+        let cfg = $.extend(true, {}, Store.config);
+        let c1 = 0;
+        let c2 = 0;
+        let r1 = 0;
+        let r2 = 0;
+        for(let s = 0; s < Store.luckysheet_select_save.length; s++){
+            c1 = Store.luckysheet_select_save[s].column[0];
+            c2 = Store.luckysheet_select_save[s].column[1];
+            r1 = Store.luckysheet_select_save[s].row[0];
+            r2 = Store.luckysheet_select_save[s].row[1];
+        }
+
+        if (Object.keys(cfg).length) {
+            if(cfg["colhidden"]){
+                let hiddenColumn = Object.keys(cfg["colhidden"]);
+                
+                // TEN9 : When columns to the very left are hidden,It should unhide all columns to the left when selected from the context menu.
+                let leftSideHiddenCol =  [];
+                hiddenColumn.forEach(element => {
+                    if (element <= c1) {
+                        leftSideHiddenCol.push(element);
+                    }
+                });
+                if (leftSideHiddenCol.length > 0) {
+                    leftSideHiddenCol.push(c1);
+                    if ((c1 -1) == hiddenColumn[0]) {
+                        c1 = leftSideHiddenCol[0];
+                    }
+                }
+                
+                const array = Store.luckysheetfile[index].visibledatacolumn;
+                var firstVisbileColumn = array.findIndex(function (val) {
+                    return val > 0
+                });
+                for(let i=0;i<hiddenColumn.length;i++) {
+                    
+                    if (c1 <= hiddenColumn[i] &&  c2 > hiddenColumn[i]) {
+                        $("#luckysheet-show-selected").css('display','block');
+                    } 
+                    if ((c1 == c2) && ((c1-1) == hiddenColumn[i]) && (c1 == firstVisbileColumn)) {
+                        $("#luckysheet-show-selected").css('display','block');
+                    }
+               }
+            }
+
+            if(cfg["rowhidden"]){
+                let hiddenRow = Object.keys(cfg["rowhidden"]);
+                
+                // TEN9 : When columns to the very left are hidden,It should unhide all columns to the left when selected from the context menu.
+                let leftSideHiddenRow =  [];
+                hiddenRow.forEach(element => {
+                    if (element <= c1) {
+                        leftSideHiddenRow.push(element);
+                    }
+                });
+                if (leftSideHiddenRow.length > 0) {
+                    leftSideHiddenRow.push(c1);
+                    if ((c1 -1) == hiddenRow[0]) {
+                        c1 = leftSideHiddenRow[0];
+                    }
+                }
+                
+                const array = Store.luckysheetfile[index].visibledatarow;
+                var firstVisbileRow = array.findIndex(function (val) {
+                    return val > 0
+                });
+                for(let i=0;i<hiddenRow.length;i++) {
+                    
+                    if (r1 <= hiddenRow[i] &&  r2 > hiddenRow[i]) {
+                        $("#luckysheet-show-selected").css('display','block');
+                    } 
+                    if ((r1 == r2) && ((r1-1) == hiddenRow[i]) && (r1 == firstVisbileRow)) {
+                        $("#luckysheet-show-selected").css('display','block');
+                    }
+               }
+            }
+        } else {
+            $("#luckysheet-show-selected").css('display','none');
+        }
+    }
+
     let winH = $(window).height(), winW = $(window).width();
     let menuW = $menu.width(), menuH = $menu.height();
     let top = y, left = x;

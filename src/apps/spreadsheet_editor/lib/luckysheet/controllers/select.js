@@ -9,7 +9,6 @@ import Store from '../store';
 import method from '../global/method';
 import locale from '../locale/locale';
 import { refreshMenuButtonFocus } from "../global/api";
-import { columeHeader_word } from './constant';
 
 //公式函数 选区实体框
 function seletedHighlistByindex(id, r1, r2, c1, c2) {
@@ -495,25 +494,6 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
 
     const _locale = locale();
     const locale_info = _locale.info;
-    
-    /* TEN9 : N Row added */
-    if (rowl > 1) {
-        $("#insertNRow").show();
-        $("#insertNRow").html(rowl);
-        $("#insertNRows").show();
-    } else {
-        $("#insertNRow").hide();
-        $("#insertNRows").hide();
-    }
-
-    if (rowseleted[0] != rowseleted[1]) {
-        $("#deleteNRow").show();
-        const firstRow = parseInt(rowseleted[0])+1;
-        const lastRow = parseInt(rowseleted[1]) + 1;
-        $("#deleteNRow").html("s  "+firstRow+' - '+lastRow);
-    } else {
-        $("#deleteNRow").hide();
-    }
 
     if (rowl >= 4) {
         let leftv = left - 25;
@@ -535,33 +515,6 @@ function luckysheet_count_show(left, top, width, height, rowseleted, columnselet
     }
     else {
         $("#luckysheet-row-count-show").hide();
-    }
-
-    /* TEN9 : N Column added */
-    if (coll > 1) {
-        $("#insertNColumn").show();
-        $("#insertNColumn").html(coll);
-        $("#insertNColumns").show();
-    } else {
-        $("#insertNColumn").hide();
-        $("#insertNColumns").hide();
-    }
-
-    if (columnseleted[0] != columnseleted[1]) {
-        $("#deleteNColumn").show();
-        $("#hideNColumn").show();
-        const firstRow = parseInt(rowseleted[0])+1;
-        const lastRow = parseInt(rowseleted[1]) + 1;
-        if (columeHeader_word[columnseleted[1]]) {
-            $("#deleteNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
-            $("#hideNColumn").html("s  "+columeHeader_word[columnseleted[0]]+' - '+columeHeader_word[columnseleted[1]]);
-        } else {
-            $("#deleteNColumn").html("s");
-            $("#hideNColumn").html("s");
-        }
-    } else {
-        $("#deleteNColumn").hide();
-        $("#hideNColumn").hide();
     }
 
     if (coll >= 4) {

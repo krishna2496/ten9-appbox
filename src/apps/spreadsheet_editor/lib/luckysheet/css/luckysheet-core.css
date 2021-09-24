@@ -1363,7 +1363,9 @@ div.luckysheet-sheets-m:hover {
 }
 
 .luckysheet-left-top {
-    width: 44.5px;
+    /* TEN9 : top left corner width changes for better layout */
+    /* width: 44.5px; */
+    width: 45.5px;
     height: 18.5px;
     /* TEN9 : Border changes 
     border: solid 0 #dfdfdf; */
@@ -3442,6 +3444,8 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
     /* TEN9 : Margin 10px changed to 20px */
     /* margin-top: 10px; */
     margin-top: 20px;
+    /* TEN9 : Modal styling changes */
+    float: right;
 }
 
 .luckysheet-modal-dialog-buttons button {

@@ -39,6 +39,10 @@ import {isInlineStringCell} from './inlineString';
 import {checkProtectionLockedRangeList, checkProtectionAllSelected,checkProtectionAuthorityNormal  } from './protection';
 import Store from '../store';
 import luckysheetConfigsetting from './luckysheetConfigsetting';
+import { modelHTML } from './constant';
+import { replaceHtml } from '../utils/chartUtil';
+import sheetmanage from './sheetmanage';
+import hyperlinkCtrl from './hyperlinkCtrl';
 
 export function rowColumnOperationInitial() {
     //表格行标题 mouse事件
@@ -462,11 +466,13 @@ export function rowColumnOperationInitial() {
                     }
                 }
             }
-
             // TEN9 : Hide Edit link option
             $(".rightClickEditLink").css('display','none');
             $(".rightClickInsertLink").css('display','block');
-
+            // $("#luckysheet-hide-selected").css('display','block');
+            $("#luckysheet-delCols").removeClass('disableSheet');
+            $("#luckysheet-delRows").removeClass('disableSheet');
+            $("#luckysheet-delete-text").css('display','block');
             if(isSame){
                 $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val(first_rowlen);
             }
@@ -906,7 +912,8 @@ export function rowColumnOperationInitial() {
                     }
                 }
             }
-
+            // $("#luckysheet-hide-selected").css('display','block');
+            $("#luckysheet-delete-text").css('display','block');
             if(isSame){
                 $("#luckysheet-cols-rows-add").find("input[type='number'].rcsize").val(first_collen);
             }
@@ -1092,8 +1099,9 @@ export function rowColumnOperationInitial() {
         }
 
         
-
-        let $t = $(this), value = $t.find("input").val();
+        // TEN9 : Input type changed to span
+        // value = $t.find("input").val();
+        let $t = $(this), value = $t.find("span").html();
         if (!isRealNum(value)) {
             if(isEditMode()){
                 alert(locale_info.tipInputNumber);
@@ -1106,21 +1114,27 @@ export function rowColumnOperationInitial() {
         }
 
         value = parseInt(value);
-
-        if (value < 1 || value > 100) {
-            if(isEditMode()){
-                alert(locale_info.tipInputNumberLimit);
-            }
-            else{
-                tooltip.info(locale_info.tipInputNumberLimit, ""); 
-            }
-            return;
-        }
+        // TEN9 : Limit validation removed
+        // if (value < 1 || value > 100) {
+        //     if(isEditMode()){
+        //         alert(locale_info.tipInputNumberLimit);
+        //     }
+        //     else{
+        //         tooltip.info(locale_info.tipInputNumberLimit, ""); 
+        //     }
+        //     return;
+        // }
 
         let st_index = Store.luckysheet_select_save[0][Store.luckysheetRightHeadClickIs][0];
         luckysheetextendtable(Store.luckysheetRightHeadClickIs, st_index, value, "lefttop");
     });
 
+    /* TEN9 : Remove link option added */
+    $(".rightClickRemoveLink").click(function (event) { 
+        $("#luckysheet-rightclick-menu").hide();
+        const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+        hyperlinkCtrl.removeLink(index);
+    });
 
     // When you right-click a cell, a row is inserted before the row by default
     $("#luckysheetColsRowsHandleAdd_row").click(function (event) {
@@ -1309,7 +1323,8 @@ export function rowColumnOperationInitial() {
             return;
         }
 
-        let $t = $(this), value = $t.find("input").val();
+        // TEN9 : value = $t.find("input").val();
+        let $t = $(this), value = $t.find("span").html();
         if (!isRealNum(value)) {
             if(isEditMode()){
                 alert(locale_info.tipInputNumber);
@@ -1323,16 +1338,17 @@ export function rowColumnOperationInitial() {
 
         value = parseInt(value);
 
-        if (value < 1 || value > 100) {
-            if(isEditMode()){
-                alert(locale_info.tipInputNumberLimit);
-            }
-            else{
-                tooltip.info(locale_info.tipInputNumberLimit, "");
-            }
+        // TEN9 : Limit validation removed
+        // if (value < 1 || value > 100) {
+        //     if(isEditMode()){
+        //         alert(locale_info.tipInputNumberLimit);
+        //     }
+        //     else{
+        //         tooltip.info(locale_info.tipInputNumberLimit, "");
+        //     }
 
-            return;
-        }
+        //     return;
+        // }
 
         let st_index = Store.luckysheet_select_save[0][Store.luckysheetRightHeadClickIs][1];
         luckysheetextendtable(Store.luckysheetRightHeadClickIs, st_index, value, "rightbottom");
@@ -1483,7 +1499,42 @@ export function rowColumnOperationInitial() {
             ed_index = Store.luckysheet_select_save[0][Store.luckysheetRightHeadClickIs][1];
         luckysheetdeletetable(Store.luckysheetRightHeadClickIs, st_index, ed_index);
     });
+
+    function displayErrorModal(data) {
+        $("body").append(replaceHtml(modelHTML, { 
+            "id": "luckysheet-error-dialog", 
+            "addclass": "luckysheet-error-dialog", 
+            "title": 'There was a problem', 
+            "content": data, 
+            "botton":  `<button class="btn btn-success luckysheet-model-close-btn error-cancle">Ok</button>`, 
+            "style": "z-index:100003" 
+        }));
+
+        let $t = $("#luckysheet-error-dialog").find(".luckysheet-modal-dialog-content").css("min-width", 350).end(), 
+        myh = $t.outerHeight(), 
+        myw = $t.outerWidth();
+        let winw = $(window).width(), 
+            winh = $(window).height();
+        let scrollLeft = $(document).scrollLeft(), 
+            scrollTop = $(document).scrollTop();
+        $(".luckysheet-modal-dialog-content").html(data);
+        $("#luckysheet-error-dialog").css({ 
+            "left": (winw + scrollLeft - myw) / 2, 
+            "top": (winh + scrollTop - myh) / 3 
+        }).show();
+    }
     $("#luckysheet-delRows").click(function (event) {
+        // TEN9 : Display error modal when all row selected
+        let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+        let checkTotalRowSelected = last.row[1] - last.row[0] + 1;
+        let checkTotalColumnSelected = last.column[1] - last.column[0] + 1;
+
+        if (checkTotalRowSelected == Store.visibledatarow.length && checkTotalColumnSelected == Store.visibledatacolumn.length) {
+            const message = 'You can\'t delete all the rows on the sheet.';
+            displayErrorModal(message);
+            return;
+        }
+
         $("#luckysheet-rightclick-menu").hide();
         luckysheetContainerFocus();
 
@@ -1514,6 +1565,16 @@ export function rowColumnOperationInitial() {
         luckysheetdeletetable('row', st_index, ed_index);
     })
     $("#luckysheet-delCols").click(function (event) {
+        // TEN9 : Display error modal when all row selected
+        let last = Store.luckysheet_select_save[Store.luckysheet_select_save.length - 1];
+        let checkTotalRowSelected = last.row[1] - last.row[0] + 1;
+        let checkTotalColumnSelected = last.column[1] - last.column[0] + 1;
+
+        if (checkTotalRowSelected == Store.visibledatarow.length && checkTotalColumnSelected == Store.visibledatacolumn.length) {
+            const message = 'You can\'t delete all the columns on the sheet.';
+            displayErrorModal(message);
+            return;
+        }
         $("#luckysheet-rightclick-menu").hide();
         luckysheetContainerFocus();
 
@@ -1546,7 +1607,6 @@ export function rowColumnOperationInitial() {
 
     //隐藏选中行列
     $("#luckysheet-hide-selected").click(function (event) {
-
        
         $("#luckysheet-rightclick-menu").hide();
         luckysheetContainerFocus();
@@ -1699,10 +1759,28 @@ export function rowColumnOperationInitial() {
             if(cfg["rowhidden"] == null){
                 return;
             }
+
+            const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+            let array = Store.luckysheetfile[index].visibledatarow;
+            var firstVisbileRow = array.findIndex(function (val) {
+                return val > 0
+            });
     
             for(let s = 0; s < Store.luckysheet_select_save.length; s++){
                 let r1 = Store.luckysheet_select_save[s].row[0],
                     r2 = Store.luckysheet_select_save[s].row[1];
+                    const hiddenRow = Object.keys(cfg["rowhidden"]);
+
+                // TEN9 : When columns to the very left are hidden,It should unhide all columns to the left when selected from the context menu.
+                let leftSideHiddenRow =  [];
+                hiddenRow.forEach(element => {
+                    if (element <= r1 && firstVisbileRow == r1) {
+                        leftSideHiddenRow.push(element);
+                    }
+                });
+                if (leftSideHiddenRow.length > 0) {
+                    r1 = leftSideHiddenRow[0];
+                }
     
                 for(let r = r1; r <= r2; r++){
                     delete cfg["rowhidden"][r];
@@ -1739,16 +1817,33 @@ export function rowColumnOperationInitial() {
             if(cfg["colhidden"] == null){
                 return;
             }
-    
+
+            const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+            let array = Store.luckysheetfile[index].visibledatacolumn;
+            var firstVisbileColumn = array.findIndex(function (val) {
+                return val > 0
+            });
+
             for(let s = 0; s < Store.luckysheet_select_save.length; s++){
                 let c1 = Store.luckysheet_select_save[s].column[0],
                     c2 = Store.luckysheet_select_save[s].column[1];
-    
+                    const hiddenColumn = Object.keys(cfg["colhidden"]);
+                
+                // TEN9 : When columns to the very left are hidden,It should unhide all columns to the left when selected from the context menu.
+                let leftSideHiddenCol =  [];
+                hiddenColumn.forEach(element => {
+                    if (element <= c1 && firstVisbileColumn == c1) {
+                        leftSideHiddenCol.push(element);
+                    }
+                });
+                if (leftSideHiddenCol.length > 0) {
+                   c1 = leftSideHiddenCol[0];
+                }
+
                 for(let c = c1; c <= c2; c++){
                     delete cfg["colhidden"][c];
                 }
             }
-        
             //保存撤销
             if(Store.clearjfundo){
                 let redo = {};
