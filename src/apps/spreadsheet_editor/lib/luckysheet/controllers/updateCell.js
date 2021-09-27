@@ -83,7 +83,8 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         "max-width": winW + scrollLeft - col_pre - 20 - Store.rowHeaderWidth, 
         "max-height": winH + scrollTop - row_pre - 20 - 15 - Store.toolbarHeight - Store.infobarHeight - Store.calculatebarHeight - Store.sheetBarHeight - Store.statisticBarHeight, 
         "left": left, 
-        "top": top, 
+        // TEN:9 : Fixed position from "top": top + 5, 
+        "top": top + 5, 
     }
 
     let inputContentScale = {
@@ -247,6 +248,8 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
     }
 
     $("#luckysheet-input-box").css(input_postition);
+    /* TEN9 : Font size changes to match cell style */
+    inputContentScale['font-size'] = '11px';
     $("#luckysheet-rich-text-editor").css(inputContentScale);
 
     //日期
