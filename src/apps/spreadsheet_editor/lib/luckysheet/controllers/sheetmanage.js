@@ -1186,11 +1186,16 @@ const sheetmanage = {
             _this.setSheetParam(true);
             _this.showSheet();
 
-            setTimeout(function () {
-                formula.execFunctionGroup();
-                luckysheetrefreshgrid();
-                server.saveParam("shs", null, Store.currentSheetIndex);
-            }, 1);
+            // TEN9 : Resolved flicker issue on tab switch
+            formula.execFunctionGroup();
+            luckysheetrefreshgrid();
+            server.saveParam("shs", null, Store.currentSheetIndex);
+
+            // setTimeout(function () {
+            //     formula.execFunctionGroup();
+            //     luckysheetrefreshgrid();
+            //     server.saveParam("shs", null, Store.currentSheetIndex);
+            // }, 1);
         }
         else {
             let loadSheetUrl = server.loadSheetUrl;
@@ -1228,12 +1233,13 @@ const sheetmanage = {
                 _this.setSheetParam();
                 _this.showSheet();
 
-                setTimeout(function () {
+                // TEN9 : Resolved flicker issue on tab switch
+                // setTimeout(function () {
                     _this.restoreCache();
                     formula.execFunctionGroupForce(luckysheetConfigsetting.forceCalculation);
                     _this.restoreSheetAll(Store.currentSheetIndex);
                     luckysheetrefreshgrid();
-                }, 1);
+                // }, 1);
 
                 server.saveParam("shs", null, Store.currentSheetIndex);
             }
