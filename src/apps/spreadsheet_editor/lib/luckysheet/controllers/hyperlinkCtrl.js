@@ -394,9 +394,13 @@ const hyperlinkCtrl = {
                 let rowIndex = row;
                 let colIndex = column;
                 let d = editor.deepCopyFlowData(Store.flowdata);
-                let cell = {};
+                let cell = d[rowIndex][colIndex];
                 let historyHyperlink = $.extend(true, {}, _this.hyperlink);
                 let currentHyperlink = Store.luckysheetfile[index].hyperlink;
+                if (cell.fc == 'rgb(0, 0, 255)') {
+                    delete cell.fc;
+                }
+                delete cell.un;
                 cell.ct = {fa: 'General', t: 'g'};
                 cell.m = hyperLinkVal[key].linkText;
                 cell.v = hyperLinkVal[key].linkText;
