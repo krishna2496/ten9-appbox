@@ -3125,7 +3125,7 @@ body:not(.ewa-ipad) .luckysheet-rows-h-cell-sel:hover {
 .luckysheet-input-box {
     position: absolute;
     /* TEN9 : Font changes font: normal normal 400 13px arial, sans, sans-serif; */
-    font: normal normal 400 13px Arial;
+    font: normal normal 520 13px Arial;
     text-align: left;
     top: -10000px;
     max-height: 9900px;

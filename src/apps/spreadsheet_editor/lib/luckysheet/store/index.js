@@ -136,7 +136,8 @@ const Store = {
 
     fontList:[],
     defaultFontSize: 10,
-
+    // TEN9 : Default font Size Column And row added
+    defaultFontSizeColumnRow:8,
     currentSheetView:"viewNormal",
 
     // cooperative editing
