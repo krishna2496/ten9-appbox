@@ -4,7 +4,7 @@ import alternateformat from '../controllers/alternateformat';
 import luckysheetSparkline from '../controllers/sparkline';
 import menuButton from '../controllers/menuButton';
 import dataVerificationCtrl from '../controllers/dataVerificationCtrl';
-import { luckysheetdefaultstyle, luckysheet_CFiconsImg,luckysheetdefaultFont } from '../controllers/constant';
+import { luckysheetdefaultstyle, luckysheet_CFiconsImg,luckysheetdefaultFont, luckysheetdefaultFontColumnRow } from '../controllers/constant';
 import { luckysheet_searcharray } from '../controllers/sheetSearch';
 import { dynamicArrayCompute } from './dynamicArray';
 import browser from './browser';
@@ -44,7 +44,7 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
         drawHeight
     );
 
-    luckysheetTableContent.font = luckysheetdefaultFont();
+    luckysheetTableContent.font = luckysheetdefaultFontColumnRow();
     luckysheetTableContent.textBaseline = luckysheetdefaultstyle.textBaseline; //基准线 垂直居中
     luckysheetTableContent.fillStyle = luckysheetdefaultstyle.fillStyle;
 
@@ -258,7 +258,7 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
     );
 
 
-    luckysheetTableContent.font = luckysheetdefaultFont();
+    luckysheetTableContent.font = luckysheetdefaultFontColumnRow();
     luckysheetTableContent.textBaseline = luckysheetdefaultstyle.textBaseline; //基准线 垂直居中
     luckysheetTableContent.fillStyle = luckysheetdefaultstyle.fillStyle;
 

@@ -83,7 +83,8 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         "max-width": winW + scrollLeft - col_pre - 20 - Store.rowHeaderWidth, 
         "max-height": winH + scrollTop - row_pre - 20 - 15 - Store.toolbarHeight - Store.infobarHeight - Store.calculatebarHeight - Store.sheetBarHeight - Store.statisticBarHeight, 
         "left": left, 
-        "top": top, 
+        // TEN9: Fixed position from "top": top + 5, 
+        "top": top + 5, 
     }
 
     let inputContentScale = {
@@ -106,6 +107,7 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         "overflow-y": "auto",
         "box-sizing": "initial",
         "display":"flex",
+        "padding-left": "4px"
     });
 
     if(luckysheetFreezen.freezenverticaldata != null || luckysheetFreezen.freezenhorizontaldata != null){
@@ -247,6 +249,8 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
     }
 
     $("#luckysheet-input-box").css(input_postition);
+    inputContentScale['margin-left'] = '-1px';
+    inputContentScale['margin-top'] = '3px';
     $("#luckysheet-rich-text-editor").css(inputContentScale);
 
     //日期

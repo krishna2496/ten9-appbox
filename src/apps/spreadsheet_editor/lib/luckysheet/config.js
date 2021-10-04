@@ -65,7 +65,7 @@
     defaultRowHeight: 21,
     // TEN9 : Default col width changes 
     // defaultFontSize:10,
-    defaultFontSize:8,
+    defaultFontSize:10,
     limitSheetNameLength:true,    //是否限制工作表名的长度
     defaultSheetNameMaxLength:31,  //默认工作表名称的最大长度
     sheetFormulaBar:true, //是否显示公式栏
