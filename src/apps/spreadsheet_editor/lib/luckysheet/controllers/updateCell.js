@@ -83,7 +83,7 @@ export function luckysheetupdateCell(row_index1, col_index1, d, cover, isnotfocu
         "max-width": winW + scrollLeft - col_pre - 20 - Store.rowHeaderWidth, 
         "max-height": winH + scrollTop - row_pre - 20 - 15 - Store.toolbarHeight - Store.infobarHeight - Store.calculatebarHeight - Store.sheetBarHeight - Store.statisticBarHeight, 
         "left": left, 
-        // TEN:9 : Fixed position from "top": top + 5, 
+        // TEN9: Fixed position from "top": top + 5, 
         "top": top + 5, 
     }
 
