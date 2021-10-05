@@ -2102,6 +2102,10 @@ export function rowColumnOperationInitial() {
             return;
         }
 
+        // TEN9 : Link is not removed after clearing cell contents
+        const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
+        hyperlinkCtrl.removeLink(index);
+
         if(Store.luckysheet_select_save.length > 0){
             let d = editor.deepCopyFlowData(Store.flowdata);
 
