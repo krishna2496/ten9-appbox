@@ -2141,10 +2141,7 @@ export function rowColumnOperationInitial() {
                     r2 = Store.luckysheet_select_save[s].row[1];
                 let c1 = Store.luckysheet_select_save[s].column[0], 
                     c2 = Store.luckysheet_select_save[s].column[1];
-                console.log("r1",r1);
-                console.log("r2",r2);
-                console.log("c1",c1);
-                console.log("c1",c2);
+
                 for(let r = r1; r <= r2; r++){
                     for(let c = c1; c <= c2; c++){
                         if(pivotTable.isPivotRange(r, c)){
