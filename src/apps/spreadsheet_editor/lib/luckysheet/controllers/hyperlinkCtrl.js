@@ -1,4 +1,4 @@
-import { replaceHtml } from '../utils/util';
+import { luckysheetContainerFocus, replaceHtml } from '../utils/util';
 import { getcellvalue } from '../global/getdata';
 import { luckysheetrefreshgrid } from '../global/refresh';
 import { rowLocation, colLocation, mouseposition } from '../global/location';
@@ -192,7 +192,8 @@ const hyperlinkCtrl = {
                 d, 
                 { row: [rowIndex, rowIndex], column: [colIndex, colIndex] }
             );
-
+            // TEN9 : Add event handler on delete
+            luckysheetContainerFocus();
             $("#luckysheet-modal-dialog-mask").hide();
             $("#luckysheet-insertLink-dialog").hide();
         })

@@ -24,7 +24,7 @@ import selection from './selection';
 import controlHistory from './controlHistory';
 import splitColumn from './splitColumn';
 import {hideMenuByCancel} from '../global/cursorPos';
-import { luckysheetdefaultstyle } from './constant';
+import { keycode, luckysheetdefaultstyle } from './constant';
 import {checkProtectionLockedRangeList,checkProtectionAllSelected,checkProtectionSelectLockedOrUnLockedCells,checkProtectionNotEnable,checkProtectionAuthorityNormal} from './protection';
 import { openCellFormatModel } from './cellFormat';
 
@@ -74,6 +74,25 @@ require('spectrum-colorpicker');
 
 //, columeflowset, rowflowset
 export default function luckysheetHandler() {
+    // TEN9 : Add event handler on delete 
+    document.addEventListener('keydown', (evt) => {
+        if (evt.keyCode == keycode.DELETE) { 
+            $("#luckysheet-delete-text").click();
+            event.preventDefault();
+        }
+        if (evt.keyCode == keycode.UP) { 
+            luckysheetContainerFocus();
+        }
+        if (evt.keyCode == keycode.DOWN) { 
+            luckysheetContainerFocus();
+        }
+        if (evt.keyCode == keycode.LEFT) { 
+            luckysheetContainerFocus();
+        }
+        if (evt.keyCode == keycode.RIGHT) { 
+            luckysheetContainerFocus();
+        }
+    })
     /* TEN9 : Added to remove selected state of toolbar menu */
     document.addEventListener('click', (evt) => {
         if (!(evt.srcElement.classList.contains('luckysheet-toolbar-textinput') || 
