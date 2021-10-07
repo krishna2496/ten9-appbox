@@ -43,7 +43,6 @@ import { modelHTML } from './constant';
 import { replaceHtml } from '../utils/chartUtil';
 import sheetmanage from './sheetmanage';
 import hyperlinkCtrl from './hyperlinkCtrl';
-import controlHistory from './controlHistory';
 
 export function rowColumnOperationInitial() {
     //表格行标题 mouse事件

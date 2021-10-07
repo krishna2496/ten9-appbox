@@ -444,13 +444,11 @@ const controlHistory = {
         
     },
     undo: function () {
-        console.log("indo",Store.jfundo);
         if (Store.jfundo.length == 0) {
             return;
         }
 
         let ctr = Store.jfundo.pop();
-        console.log("ctr",ctr);
         Store.jfredo.push(ctr);
         Store.clearjfundo = false;
 
