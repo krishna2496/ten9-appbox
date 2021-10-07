@@ -43,6 +43,7 @@ import { modelHTML } from './constant';
 import { replaceHtml } from '../utils/chartUtil';
 import sheetmanage from './sheetmanage';
 import hyperlinkCtrl from './hyperlinkCtrl';
+import controlHistory from './controlHistory';
 
 export function rowColumnOperationInitial() {
     //表格行标题 mouse事件
@@ -2105,7 +2106,6 @@ export function rowColumnOperationInitial() {
         // TEN9 : Link is not removed after clearing cell contents
         const index = sheetmanage.getSheetIndex(Store.currentSheetIndex);
         hyperlinkCtrl.removeLink(index);
-
         if(Store.luckysheet_select_save.length > 0){
             let d = editor.deepCopyFlowData(Store.flowdata);
 

@@ -73,8 +73,13 @@ const controlHistory = {
         }
 
         // formula.execFunctionExist = [];
-
+        
         if (ctr.type == "datachange") {
+            // TEN9 : Hyperlink ctrl restore link on ctrl + z
+            if (ctr.range[0] && hyperlinkCtrl.hyperLinkHistory[ctr.range[0].row_focus+'_'+ctr.range[0].column_focus]) {
+                const range = ctr.range[0].row_focus+'_'+ctr.range[0].column_focus;
+                Store.luckysheetfile[ctr.sheetIndex-1].hyperlink[range] = hyperlinkCtrl.hyperLinkHistory[range];
+            }
             //如果有单元格为null,则对应公式应该删除
             formulaHistoryHanddler(ctr);
             
@@ -439,11 +444,13 @@ const controlHistory = {
         
     },
     undo: function () {
+        console.log("indo",Store.jfundo);
         if (Store.jfundo.length == 0) {
             return;
         }
 
         let ctr = Store.jfundo.pop();
+        console.log("ctr",ctr);
         Store.jfredo.push(ctr);
         Store.clearjfundo = false;
 
