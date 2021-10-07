@@ -1109,6 +1109,10 @@ export default function luckysheetHandler() {
                 });
             }
             else {
+                // TEN9 : Resolved console error
+                if (!Store.luckysheet_select_save[0]) {
+                    Store.luckysheet_select_save = [];
+                }
                 Store.luckysheet_select_save.length = 0;
                 Store.luckysheet_select_save.push({
                     "left": col_pre,
