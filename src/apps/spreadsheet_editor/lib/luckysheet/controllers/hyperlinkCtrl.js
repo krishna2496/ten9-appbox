@@ -1,4 +1,4 @@
-import { replaceHtml } from '../utils/util';
+import { luckysheetContainerFocus, replaceHtml } from '../utils/util';
 import { getcellvalue } from '../global/getdata';
 import { luckysheetrefreshgrid } from '../global/refresh';
 import { rowLocation, colLocation, mouseposition } from '../global/location';
@@ -22,6 +22,7 @@ const hyperlinkCtrl = {
         linkTooltip: '',  //提示
     },
     hyperlink: null,
+    hyperLinkHistory: null,
     createDialog: function(){
         let _this = this;
         
@@ -192,7 +193,8 @@ const hyperlinkCtrl = {
                 d, 
                 { row: [rowIndex, rowIndex], column: [colIndex, colIndex] }
             );
-
+            // TEN9 : Add event handler on delete
+            luckysheetContainerFocus();
             $("#luckysheet-modal-dialog-mask").hide();
             $("#luckysheet-insertLink-dialog").hide();
         })
@@ -383,6 +385,11 @@ const hyperlinkCtrl = {
         let _this = this;
         const hyperLinkCell = Object.keys(Store.luckysheetfile[index].hyperlink);
         const hyperLinkVal = Object.values(Store.luckysheetfile[index].hyperlink);
+        _this.hyperLinkHistory = {};
+        for (var i = 0; i < hyperLinkCell.length; i++) {
+            _this.hyperLinkHistory[hyperLinkCell[i]] = hyperLinkVal[i];
+        }
+        
         hyperLinkCell.forEach((data,key) => {
             const hyperlinkKey = data.split("_");
             const row = hyperlinkKey[0];
@@ -405,13 +412,6 @@ const hyperlinkCtrl = {
                 cell.m = hyperLinkVal[key].linkText;
                 cell.v = hyperLinkVal[key].linkText;
                 d[rowIndex][colIndex] = cell;
-                this.ref(
-                    historyHyperlink, 
-                    currentHyperlink, 
-                    Store.currentSheetIndex, 
-                    d, 
-                    { row: [rowIndex, rowIndex], column: [colIndex, colIndex] }
-                );
             }
         });
     }

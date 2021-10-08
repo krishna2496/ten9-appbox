@@ -98,7 +98,7 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
             /*
             TEN9 : background color changes
             luckysheetTableContent.fillStyle = "#ffffff"; */
-            if (Store.luckysheet_select_save[0].row_focus == r && Store.luckysheet_select_save[0].row_select) {
+            if (Store.luckysheet_select_save[0] && Store.luckysheet_select_save[0].row_focus == r && Store.luckysheet_select_save[0].row_select) {
                 luckysheetTableContent.fillStyle = "rgb(95,99,104)";
             } else {
                 luckysheetTableContent.fillStyle = "#F8F9FA";
@@ -112,7 +112,7 @@ function luckysheetDrawgridRowTitle(scrollHeight, drawHeight, offsetTop) {
             /* TEN9: Color changes
             luckysheetTableContent.fillStyle = "#000000";
             */
-            if (Store.luckysheet_select_save[0].row_focus == r && Store.luckysheet_select_save[0].row_select) {
+            if (Store.luckysheet_select_save[0] && Store.luckysheet_select_save[0].row_focus == r && Store.luckysheet_select_save[0].row_select) {
                 luckysheetTableContent.fillStyle = "white";
             } else {
                 luckysheetTableContent.fillStyle = "#76797E";
@@ -312,7 +312,7 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
             /*
             TEN9 : background color changes
             luckysheetTableContent.fillStyle = "#ffffff"; */
-            if (Store.luckysheet_select_save[0].column_focus == c && Store.luckysheet_select_save[0].column_select) {
+            if (Store.luckysheet_select_save[0] && Store.luckysheet_select_save[0].column_focus == c && Store.luckysheet_select_save[0].column_select) {
                 luckysheetTableContent.fillStyle = "rgb(95,99,104)";
             } else {
                 luckysheetTableContent.fillStyle = "#F8F9FA";
@@ -328,7 +328,7 @@ function luckysheetDrawgridColumnTitle(scrollWidth, drawWidth, offsetLeft) {
             TEN9 : background color changes
             luckysheetTableContent.fillStyle = "#000000";
             */
-            if (Store.luckysheet_select_save[0].column_focus == c && Store.luckysheet_select_save[0].column_select) {
+            if (Store.luckysheet_select_save[0] && Store.luckysheet_select_save[0].column_focus == c && Store.luckysheet_select_save[0].column_select) {
                 luckysheetTableContent.fillStyle = "white";
             } else {
                 luckysheetTableContent.fillStyle = "#76797E";
