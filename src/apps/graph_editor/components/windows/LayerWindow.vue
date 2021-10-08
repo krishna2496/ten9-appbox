@@ -321,7 +321,7 @@ export default defineComponent({
       graph.addListener('changeSelectionStage', changeSelectionStage);
 
       document.addEventListener('click', (event) => {
-        if (event.target['classList'][1] !== 'fa-share-square-o') {
+        if (event.target['classList'][1] !== 'fa-share-from-square') {
           isShow.value = false;
         }
       });
@@ -355,7 +355,8 @@ export default defineComponent({
 
     // Delete selected layer from layers listing
     function deleteLayer() {
-      const deleteButton = document.querySelector('.fa-trash-o').parentElement;
+      // TODO: Fix this.. we shouldn't find elements this way since we could have a trash can in other places
+      const deleteButton = document.querySelector('.fa-trash-can').parentElement;
       if (!deleteButton.classList.contains('mxDisabled')) {
         const { graph } = props.editorUi.editor;
         const graphModel = graph.model;
@@ -605,20 +606,20 @@ export default defineComponent({
           title='Delete layer',
           :class='{ mxDisabled: isDeleteEnabled }'
         )
-          i.fa.fa-trash-o.fa-lg.layer-window-footerBtn
+          i.fal.fa-trash-can.fa-lg.layer-window-footerBtn
         span#layer-window-moveSelectionBtn.mr-15.cursor-pointer(
           aria-hidden='true',
           @click='isEnableBindMove ? moveSelection() : null',
           title='Move to...',
           :class='{ isEnableBindMove: !isEnableBindMove, mxDisabled: !isEnableBindMove }'
         )
-          i.fa.fa-share-square-o.fa-lg.layer-window-footerBtn
+          i.fa.fa-share-from-square.fa-lg.layer-window-footerBtn
         span.mr-15.cursor-pointer(
           aria-hidden='true',
           title='Create a new group',
           :class='{ mxDisabled: true }'
         )
-          i.fa.fa-folder-open-o.fa-lg.layer-window-footerBtn
+          i.fal.fa-folder-open.fa-lg.layer-window-footerBtn
         span.mr-15.cursor-pointer(
           aria-hidden='true',
           @click='addLayer',
