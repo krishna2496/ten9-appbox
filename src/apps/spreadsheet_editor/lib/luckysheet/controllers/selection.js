@@ -16,6 +16,7 @@ import { replaceHtml, getObjType, luckysheetfontformat } from '../utils/util';
 import Store from '../store';
 import locale from '../locale/locale';
 import imageCtrl from './imageCtrl';
+import hyperlinkCtrl from './hyperlinkCtrl';
 
 const selection = {
     clearcopy: function (e) {
@@ -1434,6 +1435,10 @@ const selection = {
                     let x = [].concat(d[h]);
 
                     for (let c = mtc; c < maxcellCahe; c++) {
+                        /* TEN9 : Copy paste link loses focus */
+                        if (hyperlinkCtrl.hyperlink[c_r1+'_'+c_c1]) {
+                            hyperlinkCtrl.addLink(copySheetIndex-1,mth,mtc,c_r1,c_c1);
+                        }
                         if(borderInfoCompute[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)]){
                             let bd_obj = {
                                 "rangeType": "cell",

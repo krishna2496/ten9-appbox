@@ -414,6 +414,24 @@ const hyperlinkCtrl = {
                 d[rowIndex][colIndex] = cell;
             }
         });
+    },
+    /* TEN9 : Add link on copy paste */
+    addLink: function(index,mth,mtc,c_r1,c_c1) {
+        let _this = this;
+        const hyperLinkCell = Object.keys(Store.luckysheetfile[index].hyperlink);
+        const hyperLinkVal = Object.values(Store.luckysheetfile[index].hyperlink);
+        _this.hyperLinkHistory = {};
+        for (var i = 0; i < hyperLinkCell.length; i++) {
+            _this.hyperLinkHistory[hyperLinkCell[i]] = hyperLinkVal[i];
+        }
+        hyperlinkCtrl.hyperlink[mth+'_'+mtc] = hyperlinkCtrl.hyperlink[c_r1+'_'+c_c1];
+        Store.luckysheetfile[index].hyperlink[mth+'_'+mtc] = hyperlinkCtrl.hyperlink[c_r1+'_'+c_c1];
+        let d = editor.deepCopyFlowData(Store.flowdata);
+        let cell = d[c_r1][c_c1];
+        d[mth][mtc] = cell;
+        let historyHyperlink = $.extend(true, {}, _this.hyperlink);
+        let currentHyperlink = Store.luckysheetfile[index].hyperlink;
+        _this.ref(historyHyperlink, currentHyperlink,index+1,d,{ row: [mth, mth], column: [mtc, mtc] })
     }
 }
 
