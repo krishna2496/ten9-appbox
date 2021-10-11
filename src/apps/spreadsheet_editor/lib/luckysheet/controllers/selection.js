@@ -1357,7 +1357,7 @@ const selection = {
         }
 
         let copyData = $.extend(true, [], arr);
-
+       
         //多重选择选择区域 单元格如果有函数 则只取值 不取函数
         if(copyRange["copyRange"].length > 1){
             for(let i = 0; i < copyData.length; i++){
@@ -1435,10 +1435,7 @@ const selection = {
                     let x = [].concat(d[h]);
 
                     for (let c = mtc; c < maxcellCahe; c++) {
-                        /* TEN9 : Copy paste link loses focus */
-                        if (hyperlinkCtrl.hyperlink[c_r1+'_'+c_c1]) {
-                            hyperlinkCtrl.addLink(copySheetIndex-1,mth,mtc,c_r1,c_c1);
-                        }
+                        
                         if(borderInfoCompute[(c_r1 + h - mth) + "_" + (c_c1 + c - mtc)]){
                             let bd_obj = {
                                 "rangeType": "cell",
@@ -1605,6 +1602,31 @@ const selection = {
 
         last["row"] = [minh, maxh];
         last["column"] = [minc, maxc];
+
+         /* TEN9 : Copy paste link loses focus */
+        let copyRow = last.row;
+        let copyColumn = last.column;
+        let toCopy = copyRange.copyRange[0];
+        let storeHyperLink = [];
+        for(let i=toCopy.row[0];i<=toCopy.row[1];i++) {
+            for(let j=toCopy.column[0];j<=toCopy.column[1];j++) { 
+                if (hyperlinkCtrl.hyperlink[i+'_'+j]) {
+                    storeHyperLink.push(i+'_'+j);
+                } else {
+                    storeHyperLink.push(0);
+                }
+            }
+        }
+        let k =0 ;
+        for(let i=copyRow[0];i<=copyRow[1];i++) {
+            for(let j=copyColumn[0];j<=copyColumn[1];j++) { 
+                if (storeHyperLink[k]) {
+                    let fromCell = storeHyperLink[k].split("_");
+                    hyperlinkCtrl.addLink(copySheetIndex-1,i,j,fromCell[0],fromCell[1]);
+                }
+                k++;
+            }
+        }
 
         if(copyRowlChange || addr > 0 || addc > 0){
             cfg = rowlenByRange(d, minh, maxh, cfg);
