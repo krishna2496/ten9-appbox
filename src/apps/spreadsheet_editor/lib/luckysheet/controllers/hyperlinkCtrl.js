@@ -426,7 +426,7 @@ const hyperlinkCtrl = {
         }
         hyperlinkCtrl.hyperlink[mth+'_'+mtc] = hyperlinkCtrl.hyperlink[c_r1+'_'+c_c1];
         Store.luckysheetfile[index].hyperlink[mth+'_'+mtc] = hyperlinkCtrl.hyperlink[c_r1+'_'+c_c1];
-        let d = editor.deepCopyFlowData(Store.flowdata);
+        let d = Store.flowdata;
         let cell = d[c_r1][c_c1];
         d[mth][mtc] = cell;
         let historyHyperlink = $.extend(true, {}, _this.hyperlink);
